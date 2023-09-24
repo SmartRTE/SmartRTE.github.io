@@ -1,0 +1,166 @@
+@font-face {
+	font-family: "geosansLight";
+	src: url("../Fonts/GeosansLight.ttf");
+}
+@font-face{
+	font-family: "fonteditor";
+	src: url("../Fonts/fonteditor.ttf");
+}
+*{
+	margin: 0;
+	padding: 0;
+	position: absolute;
+}
+
+body{
+	height: 1600px;
+	width: 2560px;
+}
+#backgroundimg{
+	position: absolute;
+	height: 1600px;
+	width: 2560px;
+	opacity: 100%;
+	z-index: 1;
+} 
+#bglight{
+	position: absolute;
+	z-index: 2;
+	height: 1600px;
+	width: 2560px;
+	opacity: 0%;
+}
+#resultBanner{
+	z-index: 2;
+	height: 1260px;
+	top: 182px;
+	left: 00px;
+	opacity: 0;
+}
+#songillustration{
+	height: 753px;
+	left: 60px;
+	top: 615px;
+	z-index: 3;
+	opacity: 100%;
+}
+#maxrecall{
+	left: 59px;
+	top: 477px;
+	width: 500px;
+	z-index: 4;
+	font-size: 41px;
+	letter-spacing: -1.5px;
+	font-weight: bold;
+}
+#combo{
+	top: -7px;
+	left: 303px;
+	font-size: 55px;
+}
+#difficultylevel{
+	top: 544px;
+	left: 63px;
+	z-index: 5;
+	width: 500px;
+	font-size: 48px;
+}
+#hpbar{
+	z-index: 6;
+	left: 813px;
+	top: 615px;
+	height: 753px;
+}
+#hpbar img{
+	height: 753px;
+}
+#hp{
+	font-size: 30px;
+}
+#scoreContainer{
+	
+	left: 803px;
+	top: 613px;
+	height: 582px;
+	opacity: 100%;
+}
+#scoresection{
+	z-index: 2;
+	height: 480px;
+	opacity: 0%;
+}
+#score{
+	width: 780px;
+	height: 200px;
+	z-index: 99;
+	font-size: 120px;
+	left: 88px;
+	top: 23px;
+	color: white;
+	text-shadow: 7px 6px 0px rgba(0,0,0,0.75),
+				7px 6px 5px rgba(0,0,0,0.25),
+				0px 0px 3px rgba(255,255,255,0.45);
+	text-align: center; 
+	letter-spacing: 0px;
+	font-weight: 100;
+	font-family: "geosansLight";
+	opacity: 100%;
+}
+#rank{
+	left: 292px;
+	top: 260px;
+	height: 177px;
+	z-index: 99;
+}
+#back{
+	z-index: 99;
+	position: absolute;
+	top: 1468px;
+	height: 300px;
+}
+#backButton{
+	height: 132px;
+}
+#back a{
+	height: 100px;
+	width: 400px;
+	left: 155px;
+	top: 20px;
+	font-size: 43px;
+}
+#retry{
+	z-index: 99;
+	position: absolute;
+	top: 1468px;
+	left: 2119px;
+	height: 300px;
+}
+#retryButton{
+	height: 132px;
+	transform: rotateY(180deg);
+}
+#retry a{
+	height: 100px;
+	width: 400px;
+	left: 210px;
+	top: 20px;
+	font-size: 43px;
+}
+#share{
+	z-index: 99;
+	position: absolute;
+	top: 1465px;
+	left: 1025px;
+	height: 300px;
+}
+#shareButton{
+	height: 135px;
+	width: 490px;
+}
+#share a{
+	height: 100px;
+	width: 400px;
+	left: 205px;
+	top: 20px;
+	font-size: 43px;
+}
