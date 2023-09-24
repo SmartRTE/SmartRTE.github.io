@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>st3解析</title>
+		<script src="js/sql-wasm.js"></script>
+		<script src="js/index.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+	<body>
+		<div id="bgimg">
+			<img src="bgs/bg_light.jpg">
+		</div>
+		<h1 id="noticeButton" onclick="switchNotices()">注意事项</h1>
+		<ul id="notices">
+			<li>!点上面的“注意事项”可以把这一段文字收起</li>
+			<li>!若打开本网页或跳转b30生成页面时弹出下载提示框，请取消掉，<br />因为页面需要从服务器下载所需的脚本等文件，<br />而有时这些文件会被下载软件的浏览器插件监听并接管下载。<br />若嫌麻烦可以设置默认屏蔽该网页的下载请求</li>
+			<li>1.点击 “上传st3文件” 上传你的st3文件，文件名可改可不改 </li>
+			<li><a href="#">查看原理以及获取st3数据库文件的方法</a></li>
+			<li>2.上传完之后如果不出意外会立马显示数据库内的全曲目游玩记录表格 </li><br />
+			<li>*若有字符显示“?”是因为我用了比较懒的方法进行数据库查询，字符集有点问题，<br />但是不影响会意以及后面的b30生成</li><br />
+			<li>3.点击 下载csv文件 可以把表格保存到本地 </li>
+			<li>4.获得csv文件后跳转b30生成页，将生成好的csv文件上传即可显示b39 </li>
+			<li>5.玩家名、好友码和显示ptt需要手动填写，可以手动指定显示曲目的数量 </li>
+			<li>6.保存图片用时和显示的曲目数量有关，保存图片时最好不超过100。<br />若数值填得过大，在某些设备上可能会导致严重卡顿</li>
+			<li style="color: darkred;">7.所有对文件的读写以及缓存都只在本地实现，不会上传到服务器(我也存不起) </li>
+			<li>8.如果遇到载图不全、或者缺失其他组件，多刷新几次页面</li>
+			<li>9.如果遇到bug或者其他问题请务必联系我！</li><br />
+			<li>*本意是方便自己查看分数表，免受手打成绩之苦，如果能帮到更多的人那就太好了</li>
+			<li>*水平有限，缝缝补补得到的这几个页面难免会有性能问题🙏</li><br />
+			<li>————RTE 2232194759</li><br />
+		</ul>
+		<input type="file" id="dbFileInput" style="display: none;"><br />
+		<div id="controller">
+			<button type="button" id="b30gen" onclick="window.open('b30gen.html')" >点击跳转b30生成页</button>
+			<button type="button" id="difgen" onclick="window.open('DividedByDifficulty.html')" >点击跳转定数查曲生成页</button><br />
+			<button type="button" id="uploadButton" >上传st3文件 </button>
+			<button type="button" id="download" onclick="exportCSV()" style="display: none;">下载csv文件</button><br><br />
+			<output  id="queryResult"></output>
+		</div>
+		<table id="queryTable">
+			<thead>
+				
+				<tr></tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</body>
+</html>
