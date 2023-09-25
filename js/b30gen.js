@@ -310,7 +310,12 @@ function displayB30Data(data) {
 			const spliterGen = document.createElement("img");
 			spliterGen.src = "img/divider.png";
 			spliterGen.className = "spliter";
+			const overflow = document.createElement("img");
+			overflow.src = "img/overflow.png";
+			overflow.className = "besttext";
+			overflow.id = "overflow";
 			document.getElementById("b30Data").appendChild(spliterGen);
+			document.getElementById("b30Data").appendChild(overflow);
 		}
 
 		const singlePTTContainer = document.createElement("div");

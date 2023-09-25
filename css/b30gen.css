@@ -292,6 +292,23 @@ body {
 	top: 20px;
 }
 
+.besttext {
+	position: absolute;
+	display: block;
+	opacity: 75%;
+	height: 90px;
+	z-index: 7;
+}
+
+#best30{
+	top: 235px;
+	left: 500px;
+}
+
+#overflow{
+	top: 2020px;
+	left: 557px;
+}
 
 .singlePTT {
 	margin-left: 50px;
@@ -483,7 +500,7 @@ body {
 
 #controller {
 	margin: auto;
-	height: 520px;
+	height: 530px;
 	width: 1450px;
 	left: 150px;
 	top: 300px;
@@ -506,7 +523,7 @@ body {
 	margin-bottom: 4px;
 	float: left;
 	width: 99%;
-	height: 200px;
+	height: 250px;
 	overflow: auto;
 	border: 2px solid black;
 	background-color: antiquewhite;
@@ -554,26 +571,26 @@ body {
 	background-color: aliceblue;
 }
 
-input {
+#controller input {
 	display: inline-block;
-	width: 220px;
+	width: 470px;
 	height: 48px;
 	line-height: 30px;
 	font-size: 30px;
 	margin: auto;
 }
 
-label {
+#controller label {
 	display: inline-block;
 	float: none;
 }
 
-button {
+#controller button {
 	position: relative;
 	height: 50px;
 	line-height: 30px;
 	font-size: 30px;
-	width: 350px;
+	width: 470px;
 }
 
 #avatarSelect{
@@ -582,7 +599,7 @@ button {
 	cursor: pointer;
 }
 
-td {
+#sheet td {
 	position: relative;
 	display: block;
 	width: 95px;
