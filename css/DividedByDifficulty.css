@@ -1,11 +1,7 @@
 @font-face {
-	font-family: GeosansLight;
-	src: url(../Fonts/GeosansLight.ttf);
-}
-
-@font-face {
-	font-family: GeosansLight-Oblique;
-	src: url(../Fonts/GeosansLight-Oblique.ttf);
+	font-family: 'geosans';
+	src: url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.woff') format('woff'),
+		url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.otf') format('opentype');
 }
 
 @font-face {
@@ -87,7 +83,7 @@ body {
 	left: 250px;
 	top: 40px;
 	width: 1000px;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	font-weight: 800;
 	font-size: 85px;
 	float: right;
@@ -111,7 +107,7 @@ body {
 	max-width: 100%;
 	left: 270px;
 	top: 120px;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	font-size: 50px;
 	font-weight: bolder;
 	height: 100px;
@@ -198,7 +194,7 @@ body {
 	width: 119px;
 	height: 119px;
 	color: aliceblue;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	font-size: 110%;
 	font-weight: bolder;
 
@@ -253,7 +249,7 @@ body {
 		-1px -1px 2px black,
 		0px -1px 2px black,
 		1px -1px 2px black;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	font-weight: bolder;
 	text-align: center;
 
@@ -280,7 +276,7 @@ body {
 		-1px -1px 2px black,
 		0px -1px 2px black,
 		1px -1px 2px black;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	font-weight: bolder;
 	text-align: center;
 
@@ -405,7 +401,7 @@ body {
 	position: relative;
 	line-height: 40px;
 	left: 20px;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	top: -1px;
 }
 

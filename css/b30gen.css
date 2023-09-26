@@ -1,6 +1,7 @@
 @font-face {
-	font-family: GeosansLight;
-	src: url(../Fonts/GeosansLight.ttf);
+	font-family: 'geosans';
+	src: url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.woff') format('woff'),
+		url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.otf') format('opentype');
 }
 
 @font-face {
@@ -9,14 +10,10 @@
 }
 
 @font-face {
-	font-family: Exo-SemiBold;
-	src: url(../Fonts/Exo-SemiBold.ttf);
-}
-
-@font-face {
 	font-family: DingTalkJinBuTi;
 	src: url(../Fonts/DingTalkJinBuTi.ttf);
 }
+
 
 * {
 	margin: 0;
@@ -25,8 +22,6 @@
 	font-weight: bold;
 	/*font-size: 105%;*/
 	/* -webkit-filter: blur(1px); */
-
-
 }
 
 body {
@@ -87,7 +82,7 @@ body {
 	left: 250px;
 	top: 40px;
 	width: 1000px;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	font-weight: 800;
 	font-size: 85px;
 	float: right;
@@ -111,7 +106,7 @@ body {
 	max-width: 100%;
 	left: 270px;
 	top: 120px;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	font-size: 50px;
 	font-weight: bolder;
 	height: 100px;
@@ -207,7 +202,7 @@ body {
 	width: 119px;
 	height: 119px;
 	color: aliceblue;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	font-size: 110%;
 	font-weight: bolder;
 
@@ -229,7 +224,7 @@ body {
 	position: relative;
 	top: -126px;
 	left: -2px;
-	font-family: "Exo-SemiBold";
+	font-family: 'Exo', sans-serif;
 	text-shadow: 0px 0px 6px rgba(90, 0, 90, 1.0),
 		1px 0px 1px rgba(90, 0, 90, 1.0),
 		1px 1px 1px rgba(90, 0, 90, 1.0),
@@ -262,7 +257,7 @@ body {
 		-1px -1px 1px black,
 		0px -1px 1px black,
 		1px -1px 1px black;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	font-weight: bolder;
 	text-align: center;
 
@@ -354,7 +349,7 @@ body {
 	text-align: center;
 	font-weight: bolder;
 	letter-spacing: 1.5px;
-	font-family: "Exo-SemiBold";
+	font-family: 'Exo', sans-serif;
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 }
@@ -369,7 +364,7 @@ body {
 	line-height: 30px;
 	font-weight: bold;
 	/* z-index: 6; */
-	font-family: "Exo-SemiBold";
+	font-family: 'Exo', sans-serif;
 }
 
 .sPTT a {
@@ -386,7 +381,7 @@ body {
 	position: relative;
 	line-height: 40px;
 	left: 10px;
-	font-family: "GeosansLight";
+	font-family: 'geosans';
 	top: -1px;
 }
 
@@ -404,7 +399,7 @@ body {
 	position: relative;
 	top: -10px;
 	left: 5px;
-	font-family: "Exo-SemiBold";
+	font-family: 'Exo', sans-serif;
 }
 
 .score {
@@ -492,7 +487,7 @@ body {
 	line-height: 100px;
 	font-weight: bolder;
 	text-align: center;
-	font-family: "Exo-SemiBold";
+	font-family: 'Exo', sans-serif;
 	color: aliceblue;
 	text-shadow: 0px 0px 5px black;
 	letter-spacing: 1px;
