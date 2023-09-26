@@ -221,7 +221,7 @@ function displayPersonalPTT(data) {
 async function getImageMapping() {
 	try {
 		if (!imageMapping) {
-			const response = await fetch('Different_Illustration.json');
+			const response = await fetch('json/Different_Illustration.json');
 			imageMapping = await response.json();
 		}
 		return imageMapping;
@@ -236,7 +236,7 @@ async function getImageMapping() {
 async function getTitleMapping() {
 	try {
 		if (!titleMapping) {
-			const response = await fetch('Different_SongName.json');
+			const response = await fetch('json/Different_SongName.json');
 			titleMapping = await response.json();
 		}
 		return titleMapping;
