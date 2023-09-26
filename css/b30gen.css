@@ -491,6 +491,7 @@ body {
 	color: aliceblue;
 	text-shadow: 0px 0px 5px black;
 	letter-spacing: 1px;
+	top: -15px;
 }
 
 #controller {
