@@ -128,18 +128,25 @@ function formatScore(score, symbol) {
 	var scoreStr = String(score);
 
 	// 确保id有至少9位字符, 否则补0
-	while (scoreStr.length < 9) {
-		if (symbol === " ") {
+
+	if (symbol === " ") {
+		while (scoreStr.length < 9) {
 			scoreStr = "0" + scoreStr;
-		} else {
-			scoreStr = scoreStr + "0";
 		}
+		var formattedScore = scoreStr.replace(/(\d{3})(?=\d)/g, "$1" + symbol);
+		return formattedScore;
+	} else {
+		var formattedScore = String(Number(score).toLocaleString('en-US', {
+			useGrouping: true
+		}));
+
+		return formattedScore.replace(/,/g, symbol);
 	}
 
 	//添加分隔符symbol
-	var formattedScore = scoreStr.replace(/(\d{3})(?=\d)/g, "$1" + symbol);
 
-	return formattedScore;
+
+	
 }
 
 //判定PTT边框
