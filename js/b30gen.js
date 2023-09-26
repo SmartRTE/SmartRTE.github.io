@@ -738,7 +738,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 function cln() {
-	localStorage.clear();
+	if(confirm("确定要清空本地缓存吗？该操作不可撤销！")){
+		localStorage.clear();
+		location.reload();
+	}
+	
 }
 
 
