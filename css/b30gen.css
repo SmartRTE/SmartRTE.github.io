@@ -328,7 +328,7 @@ body {
 }
 
 .singlePTT:hover {
-	transform: scale(1.25, 1.25);
+	transform: scale(1.21, 1.21);
 	z-index: 9999;
 }
 
