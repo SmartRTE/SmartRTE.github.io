@@ -123,19 +123,20 @@ function cutDecimal(a, pow) { //原数据，保留位数
 // 	}
 // 	return formattedScore.replace(/,/g, symble);
 // }
-
 function formatScore(score, symbol) {
 	// 将score转换为字符串
 	var scoreStr = String(score);
-	if (symbol = " ") {
-		// 确保id对应的score有至少9位字符
-		while (scoreStr.length < 9) {
+
+	// 确保id有至少9位字符, 否则补0
+	while (scoreStr.length < 9) {
+		if (symbol === " ") {
 			scoreStr = "0" + scoreStr;
+		} else {
+			scoreStr = scoreStr + "0";
 		}
 	}
 
-
-	// 使用正则表达式添加分隔符symbol
+	//添加分隔符symbol
 	var formattedScore = scoreStr.replace(/(\d{3})(?=\d)/g, "$1" + symbol);
 
 	return formattedScore;
