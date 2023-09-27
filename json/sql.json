@@ -356,16 +356,16 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Vexaria', '
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Kanjou no Matenrou ~ Arr.Demetori', 'matenrou', 3.5, 6.5, 9.8, '');
 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('To the Furthest Dream', 'tothefurthestdream', '', '', 9.8, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('B.B.K.K.B.K.K.', 'bbkkbkk', '', '', 9.7, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Amekagura', 'amekagura', '', '', 9.9, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Dynitikós', 'dynitikos', '', '', 9.5, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Remind the Souls (Short Version)', 'remindthesouls', '', '', 9.5, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('B.B.K.K.B.K.K.', 'bbkkbkk', 4.5, 7, 9.7, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Amekagura', 'amekagura', 4, 7.5, 9.9, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Dynitikós', 'dynitikos', 4, 6.5, 9.5, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Remind the Souls (Short Version)', 'remindthesouls', 3.5, 6.5, 9.5, '');
 
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Primeval Texture', 'primevaltexture', '', '', 9.0, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Technicolour', 'technicolour', '', '', 9.8, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Logos', 'logos', '', '', 10.1, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Ego Eimi', 'egoeimi', '', 8.6, 10.5, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Arghena', 'arghena', '', 9.5, 11.3, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Primeval Texture', 'primevaltexture', 3, 6, 9.0, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Technicolour', 'technicolour', 3.5, 7, 9.8, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Logos', 'logos', 4, 7, 10.1, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Ego Eimi', 'egoeimi', 5.5, 8.6, 10.5, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Arghena', 'arghena', 6, 9.5, 11.3, '');
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
 
