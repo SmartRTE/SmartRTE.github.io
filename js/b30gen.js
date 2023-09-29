@@ -814,7 +814,7 @@ function switchBg(f){
 		bg.innerHTML = "";
 		let bgImg = document.createElement("img");
 		bgImg.id = "bgImg";
-		bgImg.src = "bgs/" + localStorage.saved_bg % 9 + ".jpg";
+		bgImg.src = "bgs/" + localStorage.saved_bg % 9 + ".webp";
 		bg.appendChild(bgImg);
 		bg.style.opacity = "100%";
 	}, 250)

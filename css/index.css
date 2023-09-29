@@ -11,7 +11,8 @@ body{
 	z-index: -99;
 	width: 1000px;
 	height: 100%;
-	opacity: 30%;
+	opacity: 40%;
+	-webkit-filter: blur(1px);
 }
 
 #noticeButton{

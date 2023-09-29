@@ -294,7 +294,7 @@ body {
 .besttext {
 	position: absolute;
 	display: block;
-	opacity: 75%;
+	opacity: 85%;
 	height: 90px;
 	z-index: 7;
 }
@@ -618,7 +618,7 @@ body {
 
 #sheet {
 	position: absolute;
-	left: 500px;
+	left: 1100px;
 	top: 20px;
 	display: none;
 	opacity: 0%;

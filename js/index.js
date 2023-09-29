@@ -69,13 +69,13 @@ function executeQuery(query) {
 
 					// 根据值设置背景颜色
 					if (value === 'Past') {
-						tr.style.backgroundColor = 'rgba(0,0,255,0.25)';
+						tr.style.backgroundColor = 'rgba(0,0,255,0.35)';
 					} else if (value === 'Present') {
-						tr.style.backgroundColor = 'rgba(0,255,0,0.25)';
+						tr.style.backgroundColor = 'rgba(0,255,0,0.35)';
 					} else if (value === 'Future') {
-						tr.style.backgroundColor = 'rgba(128,0,128,0.25)';
+						tr.style.backgroundColor = 'rgba(128,0,128,0.35)';
 					} else if (value === 'Beyond') {
-						tr.style.backgroundColor = 'rgba(255,0,0,0.25)';
+						tr.style.backgroundColor = 'rgba(255,0,0,0.35)';
 					}
 				});
 				tbody.appendChild(tr);
