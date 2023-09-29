@@ -756,12 +756,12 @@ function showSelect() {
 		sheet.style.display = "block";
 		setTimeout(function () {
 			sheet.style.opacity = "100%";
-			sheet.style.left = "-990px";
+			sheet.style.left = "500px";
 		}, 350);
 		console.log("display!");
 	} else if (sheet.style.display === "block") {
 		sheet.style.opacity = "0%";
-		sheet.style.left = "-400px";
+		sheet.style.left = "1100px";
 		setTimeout(function () {
 			sheet.style.display = "none";
 		}, 350);

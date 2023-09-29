@@ -564,7 +564,7 @@ body {
 	margin-bottom: 4px;
 	float: left;
 	width: 99%;
-	height: 370px;
+	height: 200px;
 	overflow: auto;
 	border: 2px solid mediumpurple;
 	background-color: aliceblue;
@@ -596,6 +596,7 @@ body {
 	display: block;
 	float: left;
 	cursor: pointer;
+	scrollbar-width: none;
 }
 
 #sheet td {
@@ -613,16 +614,21 @@ body {
 
 
 #sheet {
-	position: relative;
-	left: -400px;
-	top: 0px;
+	position: absolute;
+	left: 500px;
+	top: 20px;
 	display: none;
 	opacity: 0%;
-	overflow-y: scroll;
-	height: 510px;
-	width: 490px;
+	overflow-x: hidden;
+	height: 480px;
+	width: 460px;
 	background-color: paleturquoise;
 	transition-duration: 0.35s;
+	scrollbar-width: none;
+	-ms-overflow-style: none; /* IE 10+ */
+}
+#sheet::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
 }
 
 .selectImage {
