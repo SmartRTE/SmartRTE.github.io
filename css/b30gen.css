@@ -34,14 +34,17 @@ body {
 	overflow: hidden;
 }
 
-#background {
+#background, #bgImg{
 	width: 1700px;
 	height: 3100px;
 	/* 3100px */
 	position: absolute;
 	/*-webkit-filter: blur(5px);*/
 	z-index: -999;
+	transition-duration: 0.25s;
+	opacity: 100%;
 }
+
 
 #notice {
 	font-size: 200px;
