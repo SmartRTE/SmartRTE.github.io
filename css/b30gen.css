@@ -429,6 +429,7 @@ body {
 	flex: 48;
 	color: rgba(100, 61, 100, 1.0);
 	text-shadow: 0px 0px 4px rgba(101, 67, 86, 1.0);
+	white-space: nowrap;
 }
 
 .far {
@@ -436,6 +437,7 @@ body {
 	flex: 27;
 	color: rgba(205, 192, 0, 1.0);
 	text-shadow: 0px 0px 4px rgba(155, 145, 0, 1.0);
+	white-space: nowrap;
 }
 
 .lost {
@@ -443,6 +445,7 @@ body {
 	flex: 25;
 	color: rgba(166, 51, 73, 1.0);
 	text-shadow: 0px 0px 4px rgba(66, 20, 29, 1.0);
+	white-space: nowrap;
 }
 
 .rank {
