@@ -146,7 +146,7 @@ function formatScore(score, symbol) {
 	//添加分隔符symbol
 
 
-	
+
 }
 
 //判定PTT边框
@@ -172,7 +172,7 @@ function switchController() {
 	flag_switch_controller = 1;
 	if (controller.style.display === "" || controller.style.display === "none") {
 		controller.style.display = "block";
-		setTimeout(function() {
+		setTimeout(function () {
 			controller.style.opacity = "100%";
 			controller.style.left = "150px";
 			controller.style.top = "300px";
@@ -183,7 +183,7 @@ function switchController() {
 		controller.style.opacity = "0";
 		controller.style.left = "0px";
 		controller.style.top = "0px";
-		setTimeout(function() {
+		setTimeout(function () {
 
 			controller.style.display = "none";
 		}, 350);
@@ -353,7 +353,7 @@ function displayB30Data(data) {
 		singlePTTContainer.className = "singlePTT";
 		singlePTTContainer.id = songId + "_" + Difficulty;
 
-		singlePTTContainer.onclick = function() {
+		singlePTTContainer.onclick = function () {
 			// 在点击事件处理程序中获取被点击的div的id
 			var id = singlePTTContainer.id;
 			console.log("被点击的div的id是：" + id);
@@ -518,7 +518,7 @@ function displayB30Data(data) {
 			statistic_full_recall = statistic_full_recall + 1;
 		}
 		if (Number(perfect) !== 0 && (Number(far) === 1 && Number(lost) === 0) || (Number(far) === 0 && Number(
-				lost) === 1)) {
+			lost) === 1)) {
 			statistic_xing = statistic_xing + 1;
 		}
 		if (Number(perfect) !== 0 && Number(perfect - 1) === Number(criticalPerfect) && Number(far) === 0 &&
@@ -554,7 +554,7 @@ function displayB30Data(data) {
 }
 
 //用html2canvas进行截图
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	//清除刷新提示notice
 	resizeWidth();
 	document.getElementById("notice").textContent = "";
@@ -665,23 +665,23 @@ function refreshUID() {
 	localStorage.setItem('saved_uid', input2.value);
 }
 //上传使用的csv文件
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	// 获取上传按钮和文件输入元素
 	const uploadButton = document.getElementById("uploadButton");
 	const fileInput = document.getElementById("fileInput");
 
 	// 添加上传按钮的点击事件处理程序
-	uploadButton.addEventListener("click", function() {
+	uploadButton.addEventListener("click", function () {
 		// 触发文件选择对话框
 		fileInput.click();
 	});
 
 	// 读取新csv文件逻辑
-	fileInput.addEventListener("change", function(event) {
+	fileInput.addEventListener("change", function (event) {
 		const selectedFile = event.target.files[0];
 		if (selectedFile) {
 			const reader = new FileReader();
-			reader.onload = function(event) {
+			reader.onload = function (event) {
 				flag = 1;
 				csv_data = event.target.result;
 				csv_name = selectedFile.name; // 获取文件名
@@ -704,7 +704,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 //更换成选定的头像、id、好友码、ptt
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	console.log("localstorage:saved_icon:" + localStorage.saved_icon);
 	if (localStorage.saved_icon != null) {
 		switchSelect(localStorage.saved_icon);
@@ -738,11 +738,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 function cln() {
-	if(confirm("确定要清空本地缓存吗？该操作不可撤销！")){
+	if (confirm("确定要清空本地缓存吗？该操作不可撤销！")) {
 		localStorage.clear();
 		location.reload();
 	}
-	
+
 }
 
 
@@ -754,7 +754,7 @@ function showSelect() {
 	flag_switch_controller = 0;
 	if (sheet.style.display === "" || sheet.style.display === "none") {
 		sheet.style.display = "block";
-		setTimeout(function() {
+		setTimeout(function () {
 			sheet.style.opacity = "100%";
 			sheet.style.left = "-990px";
 		}, 350);
@@ -762,7 +762,7 @@ function showSelect() {
 	} else if (sheet.style.display === "block") {
 		sheet.style.opacity = "0%";
 		sheet.style.left = "-400px";
-		setTimeout(function() {
+		setTimeout(function () {
 			sheet.style.display = "none";
 		}, 350);
 
@@ -777,7 +777,7 @@ function switchSelect(path) {
 	let img2; //conblur
 	icn.style.opacity = "0";
 	icb.style.opacity = "0";
-	setTimeout(function() {
+	setTimeout(function () {
 		icn.innerHTML = "";
 		icb.innerHTML = "";
 		img1 = document.createElement("img");
