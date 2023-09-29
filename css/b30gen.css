@@ -9,10 +9,10 @@
 	src: url(../Fonts/GeosansLight-Oblique.ttf);
 }
 
-@font-face {
+/* @font-face {
 	font-family: DingTalkJinBuTi;
 	src: url(../Fonts/DingTalkJinBuTi.ttf);
-}
+} */
 
 
 * {
@@ -26,7 +26,7 @@
 
 body {
 	width: 1700px;
-	height: 3100px;
+	height: 3150px;
 	margin: 0;
 }
 
@@ -36,8 +36,8 @@ body {
 
 #background, #bgImg{
 	width: 1700px;
-	height: 3100px;
-	/* 3100px */
+	height: 3150px;
+	/* 3150px */
 	position: absolute;
 	/*-webkit-filter: blur(5px);*/
 	z-index: -999;
@@ -45,11 +45,11 @@ body {
 	opacity: 100%;
 }
 
-
+/* 
 #notice {
 	font-size: 200px;
 	position: absolute;
-}
+} */
 
 #partner {
 	width: 500px;
@@ -60,7 +60,7 @@ body {
 }
 
 #PTTValue {
-	height: 300px;
+	height: 350px;
 	width: 100%;
 }
 
@@ -278,7 +278,7 @@ body {
 	align-items: center;
 	width: 100%;
 	height: 45px;
-	top: 35px;
+	top: 40px;
 	position: relative;
 	display: block;
 	/* 
@@ -288,7 +288,7 @@ body {
 }
 
 .spliter2 {
-	top: 20px;
+	top: 40px;
 }
 
 .besttext {
@@ -300,7 +300,7 @@ body {
 }
 
 #best30 {
-	top: 235px;
+	top: 265px;
 	left: 500px;
 }
 

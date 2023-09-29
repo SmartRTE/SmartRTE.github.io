@@ -563,7 +563,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		const body = document.body;
 		const bg = document.getElementById("bgImg");
 		const captureWidth = bg.width; //1700
-		const captureHeight = bg.height; //3100
+		const captureHeight = bg.height; //3150
 		const saveButton = document.getElementById("saveButton");
 		switchController();
 		saveButton.disabled = true;
@@ -601,7 +601,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 //重新设定背景图高度
 function calculateBackgroundHeight(amount) {
-	var fixed = 400;
+	var fixed = 450;
 	var height = 200.95 * (1 + Math.floor((amount - 1) / 3)) + fixed;
 	if (amount <= 30) {
 		return height;
