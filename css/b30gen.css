@@ -1,12 +1,17 @@
 @font-face {
-	font-family: 'geosans';
-	src: url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.woff') format('woff'),
+	font-family: "geosans";
+	src: url("../Fonts/GeosansLight.ttf"),
 		url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.otf') format('opentype');
 }
 
-@font-face {
+/* @font-face {
 	font-family: GeosansLight-Oblique;
 	src: url(../Fonts/GeosansLight-Oblique.ttf);
+} */
+
+@font-face {
+	font-family: "Exo";
+	src: url("../Fonts/Exo-SemiBold.ttf");
 }
 
 /* @font-face {
