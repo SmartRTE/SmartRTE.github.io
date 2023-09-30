@@ -412,6 +412,10 @@ body {
 	font-family: 'Exo', sans-serif;
 }
 
+.songNameHeader{
+	font-weight: 200;
+}
+
 .score {
 	font-size: 41px;
 	text-align: left;
