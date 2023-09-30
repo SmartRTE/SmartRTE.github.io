@@ -172,7 +172,7 @@ function switchController() {
 	flag_switch_controller = 1;
 	if (controller.style.display === "" || controller.style.display === "none") {
 		controller.style.display = "block";
-		setTimeout(function () {
+		setTimeout(function() {
 			controller.style.opacity = "100%";
 			controller.style.left = "150px";
 			controller.style.top = "300px";
@@ -183,7 +183,7 @@ function switchController() {
 		controller.style.opacity = "0";
 		controller.style.left = "0px";
 		controller.style.top = "0px";
-		setTimeout(function () {
+		setTimeout(function() {
 
 			controller.style.display = "none";
 		}, 350);
@@ -353,7 +353,7 @@ function displayB30Data(data) {
 		singlePTTContainer.className = "singlePTT";
 		singlePTTContainer.id = songId + "_" + Difficulty;
 
-		singlePTTContainer.onclick = function () {
+		singlePTTContainer.onclick = function() {
 			// 在点击事件处理程序中获取被点击的div的id
 			var id = singlePTTContainer.id;
 			console.log("被点击的div的id是：" + id);
@@ -518,7 +518,7 @@ function displayB30Data(data) {
 			statistic_full_recall = statistic_full_recall + 1;
 		}
 		if (Number(perfect) !== 0 && (Number(far) === 1 && Number(lost) === 0) || (Number(far) === 0 && Number(
-			lost) === 1)) {
+				lost) === 1)) {
 			statistic_xing = statistic_xing + 1;
 		}
 		if (Number(perfect) !== 0 && Number(perfect - 1) === Number(criticalPerfect) && Number(far) === 0 &&
@@ -554,7 +554,7 @@ function displayB30Data(data) {
 }
 
 //用html2canvas进行截图
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
 	//清除刷新提示notice
 	resizeWidth();
 	document.getElementById("notice").textContent = "";
@@ -665,23 +665,23 @@ function refreshUID() {
 	localStorage.setItem('saved_uid', input2.value);
 }
 //上传使用的csv文件
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
 	// 获取上传按钮和文件输入元素
 	const uploadButton = document.getElementById("uploadButton");
 	const fileInput = document.getElementById("fileInput");
 
 	// 添加上传按钮的点击事件处理程序
-	uploadButton.addEventListener("click", function () {
+	uploadButton.addEventListener("click", function() {
 		// 触发文件选择对话框
 		fileInput.click();
 	});
 
 	// 读取新csv文件逻辑
-	fileInput.addEventListener("change", function (event) {
+	fileInput.addEventListener("change", function(event) {
 		const selectedFile = event.target.files[0];
 		if (selectedFile) {
 			const reader = new FileReader();
-			reader.onload = function (event) {
+			reader.onload = function(event) {
 				flag = 1;
 				csv_data = event.target.result;
 				csv_name = selectedFile.name; // 获取文件名
@@ -703,14 +703,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-	if(localStorage.saved_bg){
+document.addEventListener("DOMContentLoaded", function() {
+	if (localStorage.saved_bg) {
 		switchBg(0);
 	}
 });
 
 //更换成选定的头像、id、好友码、ptt、背景图
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
 	if (localStorage.saved_icon != null) {
 		switchSelect(localStorage.saved_icon);
 	} else {
@@ -739,7 +739,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	} else {
 		fetchAndSaveCSV(default_csv_name, csv_data); //显示一次默认b39
 	}
-	
+
 });
 
 
@@ -760,7 +760,7 @@ function showSelect() {
 	flag_switch_controller = 0;
 	if (sheet.style.display === "" || sheet.style.display === "none") {
 		sheet.style.display = "inline-block";
-		setTimeout(function () {
+		setTimeout(function() {
 			sheet.style.opacity = "100%";
 			sheet.style.left = "-965px";
 		}, 350);
@@ -768,7 +768,7 @@ function showSelect() {
 	} else if (sheet.style.display === "inline-block") {
 		sheet.style.opacity = "0%";
 		sheet.style.left = "0px";
-		setTimeout(function () {
+		setTimeout(function() {
 			sheet.style.display = "none";
 		}, 350);
 
@@ -783,7 +783,7 @@ function switchSelect(path) {
 	let img2; //conblur
 	icn.style.opacity = "0";
 	icb.style.opacity = "0";
-	setTimeout(function () {
+	setTimeout(function() {
 		icn.innerHTML = "";
 		icb.innerHTML = "";
 		img1 = document.createElement("img");
@@ -800,9 +800,9 @@ function switchSelect(path) {
 }
 
 //切换背景图
-function switchBg(f){
+function switchBg(f) {
 	f = parseFloat(f);
-	if(!localStorage.saved_bg){
+	if (!localStorage.saved_bg) {
 		localStorage.setItem("saved_bg", 8);
 		console.log("bg=" + localStorage.saved_bg);
 	}
@@ -810,7 +810,7 @@ function switchBg(f){
 	console.log("current bg:" + localStorage.saved_bg);
 	localStorage.saved_bg = (parseFloat(localStorage.saved_bg) + parseFloat(f) + 9) % 9;
 	bg.style.opacity = 0;
-	setTimeout(function(){
+	setTimeout(function() {
 		bg.innerHTML = "";
 		let bgImg = document.createElement("img");
 		bgImg.id = "bgImg";
@@ -818,7 +818,7 @@ function switchBg(f){
 		bg.appendChild(bgImg);
 		bg.style.opacity = "100%";
 	}, 250)
-	
+
 	changeDisplayAmount();
 }
 

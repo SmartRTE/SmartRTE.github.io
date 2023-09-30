@@ -33,14 +33,15 @@ body {
 	width: 1700px;
 	height: 3150px;
 	margin: 0;
-/* 	overflow-x: hidden; */
+	/* 	overflow-x: hidden; */
 }
 
 #container {
 	overflow: hidden;
 }
 
-#background, #bgImg{
+#background,
+#bgImg {
 	width: 1700px;
 	height: 3150px;
 	/* 3150px */
@@ -515,7 +516,7 @@ body {
 	/* border: 10px solid seagreen; */
 	border-radius: 15px;
 	/* background-color: seagreen; */
-	background: url("../bgs/bg_light.jpg");
+	background: url("../bgs/bg_light.webp");
 	position: absolute;
 	font-size: 30px;
 	line-height: 32px;
@@ -524,7 +525,6 @@ body {
 	column-gap: 0px;
 	transition-duration: 0.35s;
 }
-
 
 #easyPTT {
 	margin-top: 4px;
@@ -542,7 +542,7 @@ body {
 	margin-bottom: 4px;
 	float: left;
 	width: 99%;
-	height: 287px;
+	height: 317px;
 	overflow: auto;
 	border: 2px solid gold;
 	background-color: gainsboro;
@@ -599,6 +599,7 @@ body {
 	line-height: 30px;
 	font-size: 30px;
 	width: 470px;
+	cursor: pointer;
 }
 
 #avatarSelect {
@@ -624,7 +625,8 @@ body {
 
 #sheet {
 	position: relative;
-	left: 0px; /* 965 */
+	left: 0px;
+	/* 965 */
 	top: 20px;
 	display: none;
 	opacity: 0;
@@ -637,6 +639,7 @@ body {
 	/* scrollbar-width: none; */
 	/* -ms-overflow-style: none; */
 }
+
 /* #sheet::-webkit-scrollbar {
   display: none; 
 } */

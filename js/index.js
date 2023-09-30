@@ -1,5 +1,6 @@
 let db;
 let SQL;
+let csvContent;	//用于保存生成的csv文件，便于传入localStorage
 // 加载sqlite组件
 let config = {
 	locateFile: () => "sql-wasm.wasm",
@@ -34,11 +35,11 @@ function executeQuery(query) {
 	const table = document.getElementById('queryTable');
 	const resultArea = document.getElementById('queryResult');
 	resultArea.value = ''; //清除区域内容
-	if(localStorage.saved_notices_flag == "1"){
+	if (localStorage.saved_notices_flag == "1") {
 		notices.style.opacity = "0";
-		setTimeout(function(){
+		setTimeout(function() {
 			notices.style.display = "none";
-		},300)
+		}, 300)
 		localStorage.setItem("saved_notices_flag", "0");
 	}
 	try {
@@ -80,11 +81,20 @@ function executeQuery(query) {
 				});
 				tbody.appendChild(tr);
 			});
-
+			
 			//加载完表格显示csv下载按钮
+			const uploadButton = document.getElementById("uploadButton");
+			uploadButton.style.width = "300px";
+			uploadButton.style.backgroundPosition = "center";
+			uploadButton.textContent = "重新上传";
 			const downloadButton = document.getElementById("download");
 			downloadButton.style.display = "inline-block";
-
+			const sendButton = document.getElementById("sendToB30");
+			sendButton.style.display = "inline-block";
+			
+			//转换成csv保存到内存
+			convertCSV();
+			
 			resultArea.value = '查询执行成功！';
 		} else {
 			resultArea.value = '查询结果为空！';
@@ -113,16 +123,13 @@ document.addEventListener("DOMContentLoaded", function() {
 	});
 });
 
-
-
-
-function exportCSV() {
+function convertCSV(){
 	// 获取表格元素
 	const table = document.getElementById('queryTable');
-
+	
 	// 准备存储数据的数组
 	const data = [];
-
+	
 	// 处理表格的标题行
 	const headerRow = table.querySelector('thead tr');
 	const headerData = [];
@@ -131,7 +138,7 @@ function exportCSV() {
 		headerData.push(cell.textContent);
 	});
 	data.push(headerData);
-
+	
 	// 遍历表格行和列，提取数据
 	const rows = table.querySelectorAll('tbody tr');
 	rows.forEach(row => {
@@ -142,10 +149,13 @@ function exportCSV() {
 		});
 		data.push(rowData);
 	});
-
+	
 	// 将数据转换为CSV格式
-	const csvContent = data.map(row => row.map(value => `${value}`).join(',')).join('\n');
+	csvContent = data.map(row => row.map(value => `${value}`).join(',')).join('\n');
+}
 
+
+function exportCSV() {
 	// 创建Blob对象，用于创建文件
 	const blob = new Blob([csvContent], {
 		type: 'text/csv;charset=utf-8'
@@ -165,31 +175,35 @@ function exportCSV() {
 	document.body.removeChild(link);
 }
 
+function sendToB30(){
+	localStorage.setItem("saved_csv_data", csvContent);
+	window.location.href = "b30gen.html";
+}
+
 //展开收起notices
-function switchNotices(){
+function switchNotices() {
 	console.log("notices flag = " + localStorage.saved_notices_flag)
 	const notices = document.getElementById("notices");
-	if(localStorage.saved_notices_flag == "1"){
+	if (localStorage.saved_notices_flag == "1") {
 		notices.style.opacity = "0";
-		setTimeout(function(){
+		setTimeout(function() {
 			notices.style.display = "none";
-		},300)
+		}, 300)
 		localStorage.setItem("saved_notices_flag", "0");
-	}
-	else if(localStorage.saved_notices_flag == undefined || localStorage.saved_notices_flag == "0"){
+	} else if (localStorage.saved_notices_flag == undefined || localStorage.saved_notices_flag == "0") {
 		notices.style.display = "block";
-		setTimeout(function(){
+		setTimeout(function() {
 			notices.style.opacity = "100%";
-		},300)
+		}, 300)
 		localStorage.setItem("saved_notices_flag", "1");
 	}
 }
 document.addEventListener("DOMContentLoaded", function() {
-	if(localStorage.saved_notices_flag == undefined){
+	if (localStorage.saved_notices_flag == undefined) {
 		notices.style.display = "block";
 		notices.style.opacity = "1";
 		localStorage.setItem("saved_notices_flag", "1");
-	}else if(localStorage.saved_notices_flag == "0"){
+	} else if (localStorage.saved_notices_flag == "0") {
 		notices.style.display = "none";
 		notices.style.opacity = "0";
 		localStorage.setItem("saved_notices_flag", "0");
