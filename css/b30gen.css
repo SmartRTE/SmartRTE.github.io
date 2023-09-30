@@ -28,6 +28,7 @@ body {
 	width: 1700px;
 	height: 3150px;
 	margin: 0;
+	overflow-x: hidden;
 }
 
 #container {

@@ -823,7 +823,7 @@ function switchBg(f){
 }
 
 
-//自动调整页面缩放，打开网页时占满横向空间
+//调整页面缩放
 function resizeWidth() {
 	if (window.innerWidth < 1720) {
 		document.body.style.zoom = (window.innerWidth / 1730);
