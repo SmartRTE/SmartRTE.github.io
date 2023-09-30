@@ -629,7 +629,7 @@ body {
 
 #sheet {
 	position: relative;
-	left: 0px;
+	left: -965px;
 	/* 965 */
 	top: 20px;
 	display: none;
