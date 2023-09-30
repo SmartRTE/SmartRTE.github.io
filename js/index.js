@@ -176,6 +176,8 @@ function exportCSV() {
 }
 
 function sendToB30(){
+	let currentDateTime = new Date().toLocaleString();
+	localStorage.setItem("saved_csv_name", 'B30_' + currentDateTime + '.csv')
 	localStorage.setItem("saved_csv_data", csvContent);
 	window.location.href = "b30gen.html";
 }
