@@ -759,15 +759,15 @@ function showSelect() {
 	}
 	flag_switch_controller = 0;
 	if (sheet.style.display === "" || sheet.style.display === "none") {
-		sheet.style.display = "block";
+		sheet.style.display = "inline-block";
 		setTimeout(function () {
 			sheet.style.opacity = "100%";
-			sheet.style.left = "500px";
+			sheet.style.left = "-965px";
 		}, 350);
 		console.log("display!");
-	} else if (sheet.style.display === "block") {
+	} else if (sheet.style.display === "inline-block") {
 		sheet.style.opacity = "0%";
-		sheet.style.left = "1100px";
+		sheet.style.left = "0px";
 		setTimeout(function () {
 			sheet.style.display = "none";
 		}, 350);

@@ -16,7 +16,7 @@ body{
 }
 
 #noticeButton{
-	width: 130px;
+	width: 150px;
 	cursor: pointer;
 	transition-duration: 0.3s;
 }
@@ -32,6 +32,7 @@ h1{
 	margin-left: 15px;
 	font-size: 20px;
 	transition-duration: 0.3s;
+	
 }
 
 #bili{
