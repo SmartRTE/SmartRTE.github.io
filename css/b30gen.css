@@ -632,7 +632,7 @@ body {
 	left: -485px;
 	/* 965 */
 	top: -180px;
-	display: inline-block;
+	display: none;
 	opacity: 0;
 	overflow-x: hidden;
 	height: 480px;
