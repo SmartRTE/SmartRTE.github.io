@@ -21,7 +21,6 @@ const R10Event = new Event("DOMContentLoaded");
 
 
 
-
 //读取csv文件
 async function fetchAndSaveCSV(csvName, csvdata) {
 	try {
@@ -751,7 +750,7 @@ function cln() {
 
 }
 
-
+//显示头像选取框
 function showSelect() {
 	if (flag_switch_controller === 1) {
 		const sheet = document.getElementById("sheet");
@@ -762,12 +761,12 @@ function showSelect() {
 		sheet.style.display = "inline-block";
 		setTimeout(function() {
 			sheet.style.opacity = "100%";
-			sheet.style.left = "-965px";
+			// sheet.style.left = "-480px";
 		}, 350);
 		console.log("display!");
 	} else if (sheet.style.display === "inline-block") {
 		sheet.style.opacity = "0%";
-		sheet.style.left = "0px";
+		// sheet.style.left = "0px";
 		setTimeout(function() {
 			sheet.style.display = "none";
 		}, 350);
@@ -775,7 +774,7 @@ function showSelect() {
 		console.log("hidden!");
 	}
 }
-
+//头像切换
 function switchSelect(path) {
 	let icn = document.getElementById("icon");
 	let icb = document.getElementById("iconblur");
@@ -815,11 +814,17 @@ function switchBg(f) {
 		let bgImg = document.createElement("img");
 		bgImg.id = "bgImg";
 		bgImg.src = "bgs/" + localStorage.saved_bg % 9 + ".webp";
+		console.log("displayAmount = " + displayAmount);
+		bgImg.style.height = String(calculateBackgroundHeight(displayAmount)) + "px";
 		bg.appendChild(bgImg);
 		bg.style.opacity = "100%";
 	}, 250)
-
-	changeDisplayAmount();
+	//显示当前序号
+	const index = document.getElementById("currentBgIndex");
+	index.textContent = parseFloat(localStorage.saved_bg) + 1 + "/9";
+	//changeDisplayAmount();
+	
+	
 }
 
 

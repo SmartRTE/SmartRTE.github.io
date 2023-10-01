@@ -336,8 +336,9 @@
 				</table>
 
 				<label style="background-color: bisque; width: 99%">切换背景图片</label>
-				<button style="width: 150px;" onclick="switchBg(-1)">上一张</button>
-				<button style="width: 150px; position: relative; left: 170px;" onclick="switchBg(1)">下一张</button><br />
+				<button style="width: 150px; float: left;" onclick="switchBg(-1)">上一张</button>
+				<label id="currentBgIndex" style="float: left; width: 170px; text-align: center; font-size: 40px; top: 8px; position: relative;">9/9</label>
+				<button style="width: 150px; position: relative; float: left;" onclick="switchBg(1)">下一张</button><br />
 				<label style="background-color: bisque; width: 99%">点击下方按钮清除本地缓存</label>
 				<button onclick="cln()" style="cursor: pointer;">清除本地缓存并刷新页面</button>
 			</div>

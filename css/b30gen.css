@@ -412,7 +412,7 @@ body {
 	font-family: 'Exo', sans-serif;
 }
 
-.songNameHeader{
+.songNameHeader {
 	font-weight: 200;
 }
 
@@ -628,15 +628,15 @@ body {
 }
 
 #sheet {
-	position: relative;
-	left: -965px;
+	position: absolute;
+	left: -485px;
 	/* 965 */
-	top: 20px;
-	display: none;
+	top: -180px;
+	display: inline-block;
 	opacity: 0;
 	overflow-x: hidden;
 	height: 480px;
-	width: 478px;
+	width: 483px;
 	background-color: paleturquoise;
 	line-height: 0px;
 	transition-duration: 0.35s;
