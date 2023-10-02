@@ -633,12 +633,12 @@ function recalculateR10() {
 	const calculatedR10 = calculateR10(newPTT, parseFloat(B30.textContent));
 	if (isNaN(newPTT)) {
 		newPTT = 0.00;
-	} else if (newPTT > 13.08) {
+	} else if (newPTT >= 13.11) {
 		newPTT = "🤔";
 		console.log("🤔");
 	}
 	pPTTDiv.textContent = newPTT.toFixed(2);
-	R10.textContent = calculatedR10 <= 13.33 ? calculatedR10.toFixed(4) : "🤔";
+	R10.textContent = calculatedR10 <= 13.36 ? calculatedR10.toFixed(4) : "🤔";
 	starFrame.src = "img/rating/rating_" + judgeStars(newPTT) + ".png";
 
 	function calculateR10(newPTT, B30Value) {
@@ -702,11 +702,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
-document.addEventListener("DOMContentLoaded", function() {
-	if (localStorage.saved_bg) {
-		switchBg(0);
-	}
-});
 
 //更换成选定的头像、id、好友码、ptt、背景图
 document.addEventListener("DOMContentLoaded", function() {
@@ -741,6 +736,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
+
+document.addEventListener("DOMContentLoaded", function() {
+	if (localStorage.saved_bg) {
+		switchBg(0);
+	}
+});
 
 function cln() {
 	if (confirm("确定要清空本地缓存吗？该操作不可撤销！")) {
