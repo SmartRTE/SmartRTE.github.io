@@ -5,7 +5,7 @@ let csv_name = null; //手动选择的新csv
 let csv_data = null; //储存csv内容到内存
 let flag = 0; //替换default.csv
 let flag_switch_controller = 0; //控件初始值赋值block
-
+let flag_reverse = 0;
 let imageMapping = null; //图片路径映射
 let titleMapping = null; //曲名映射
 
@@ -274,6 +274,7 @@ function displayB30Value(data, flag) {
 	document.getElementById("r10PTTContainer").appendChild(R10);
 
 }
+
 //显示头像旁2位小数的PTT（不四舍五入）
 function displayPersonalPTT(data) {
 	personalPTT = displayB30Value(data, 1);
@@ -283,8 +284,6 @@ function displayPersonalPTT(data) {
 	const b30PTTContainer = document.getElementById("div");
 	b30PTTContainer.textContent = personalPTT;
 };
-
-
 
 
 // 获取曲绘映射
@@ -623,10 +622,11 @@ function changeDisplayAmount() {
 //输入个人潜力值重新计算R10
 function recalculateR10() {
 	console.log("recalcR10 Called");
-	const pPTTDiv = document.getElementById("personalPTT");
+	//const pPTTDiv = document.getElementById("personalPTT");
 	const inputElement = document.getElementById("pPTTInput");
 	const R10 = document.getElementById("R10");
-	const starFrame = document.getElementById("starImg");
+	//const starFrame = document.getElementById("starImg");
+	const starFrame = document.getElementById("b30Value");	//清空后重新append一个图img和文字div
 	const B30 = document.getElementById("B30");
 	const newPTT = parseFloat(inputElement.value);
 	localStorage.setItem('saved_ptt', newPTT);
@@ -637,10 +637,26 @@ function recalculateR10() {
 		newPTT = "🤔";
 		console.log("🤔");
 	}
-	pPTTDiv.textContent = newPTT.toFixed(2);
+	// pPTTDiv.textContent = newPTT.toFixed(2);
+	// R10.textContent = calculatedR10 <= 13.36 ? calculatedR10.toFixed(4) : "🤔";
+	// starFrame.src = "img/rating/rating_" + judgeStars(newPTT) + ".png";
+	starFrame.style.opacity = "0%";
+	starFrame.innerHTML = "";
+	
+	
+	
+	setTimeout(function(){
+		const starImg = document.createElement("img");
+		starImg.id = "starImg";
+		starImg.src = "img/rating/rating_" + judgeStars(newPTT) + ".png";
+		starFrame.appendChild(starImg);
+		starFrame.style.opacity = "100%"
+		const pPTTDiv = document.createElement("div");
+		pPTTDiv.id = "personalPTT";
+		pPTTDiv.textContent = newPTT.toFixed(2);
+		starFrame.appendChild(pPTTDiv);
+	}, 120);
 	R10.textContent = calculatedR10 <= 13.36 ? calculatedR10.toFixed(4) : "🤔";
-	starFrame.src = "img/rating/rating_" + judgeStars(newPTT) + ".png";
-
 	function calculateR10(newPTT, B30Value) {
 		console.log("reR10 Called");
 		const res = 4 * newPTT - 3 * B30Value;
@@ -836,4 +852,15 @@ function resizeWidth() {
 	} else {
 		document.body.style.zoom = 1;
 	}
+}
+
+function reverse(){
+	if(flag_reverse === 0){
+		document.body.style.transform = "scale(-1, -1)";
+		flag_reverse = 1;
+	} else {
+		document.body.style.transform = "scale(1, 1)";
+		flag_reverse = 0;
+	}
+	
 }

@@ -390,7 +390,7 @@ PRAGMA foreign_keys = on;
 		WHEN songDifficulty = 1 THEN allsongs.PRS
 		WHEN songDifficulty = 2 THEN allsongs.FTR
 		WHEN songDifficulty = 3 THEN allsongs.BYD
-		END AS realDifficulty,
+		END AS Constant,
 		CASE
 		WHEN score >= 10000000 THEN
 		CASE
@@ -453,7 +453,7 @@ PRAGMA foreign_keys = on;
 			criticalPerfect INTEGER,
 			Far INTEGER,
 			Lost INTEGER,
-			realDifficulty REAL,
+			Constant REAL,
 			singlePTT REAL
 		);
 

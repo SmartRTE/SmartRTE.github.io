@@ -34,6 +34,7 @@ body {
 	height: 3150px;
 	margin: 0;
 	/* 	overflow-x: hidden; */
+	transition-duration: 1.0s;
 }
 
 #container {
@@ -215,7 +216,7 @@ body {
 	font-family: 'geosans';
 	font-size: 110%;
 	font-weight: bolder;
-
+	transition-duration: 0.11s;
 }
 
 #starImg {
@@ -223,6 +224,7 @@ body {
 	position: relative;
 	width: 119px;
 	height: 119px;
+	transition-duration: 0.11s;
 }
 
 #personalPTT {
@@ -246,6 +248,7 @@ body {
 		1px -1px 1px rgba(90, 0, 90, 1.0);
 	letter-spacing: 1px;
 	font-size: 40px;
+	transition-duration: 0.3s;
 }
 
 #PTTDisplay {
