@@ -1,5 +1,5 @@
 body {
-	width: 1000px;
+	width: 1700px;
 	margin: 0 auto;
 	border-radius: 15px;
 	background-color: rgba(fe, ef, ef, 1);
@@ -10,7 +10,7 @@ body {
 	display: block;
 	position: fixed;
 	z-index: -99;
-	width: 1000px;
+	width: 1700px;
 	height: 100%;
 	opacity: 40%;
 	-webkit-filter: blur(1px);
@@ -118,4 +118,19 @@ table {
 
 #queryResult {
 	display: none;
+}
+
+.rowActions{
+	height: 100%;
+	line-height: 100%;
+}
+
+.addRow, .deleteRow{
+	height: 100%;
+	border: solid 1px black;
+	border-radius: 5px;
+}
+
+tbody:first-child{
+	border-radius: 15px;
 }
