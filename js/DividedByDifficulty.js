@@ -145,7 +145,7 @@ function judgeLevel(singlePTTInfo) {
 //判定游玩等级
 function judgeRank(score, far, lost) {
 	if (Number(far) !== 0 && Number(lost) === 0) {
-		return "img/FR.png";
+		return "img/rank/FR.png";
 	}
 	const ranges = [8599999, 8899999, 9199999, 9499999, 9799999, 9899999, 10000000,
 		10002222
@@ -153,7 +153,7 @@ function judgeRank(score, far, lost) {
 	const rankLabels = ["D", "C", "B", "A", "AA", "EX", "EX+", "PM"];
 	for (let i = 0; i < ranges.length; i++) {
 		if (score < ranges[i]) {
-			return ("img/" + rankLabels[i] + ".png");
+			return ("img/rank/" + rankLabels[i] + ".png");
 		}
 	}
 }
