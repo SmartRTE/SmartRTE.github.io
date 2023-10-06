@@ -1,21 +1,21 @@
-let displayAmount = 39; //显示条目数量
-let fetch_flag = 0; //是否上传了新csv
-let default_csv_name = "sample/default.csv"; //初始的默认csv路径
-let csv_name = null; //手动选择的新csv
-let csv_data = null; //储存csv内容到内存
-let flag = 0; //替换default.csv
-let flag_switch_controller = 0; //控件初始值赋值block
-let flag_reverse = 0;
-let imageMapping = null; //图片路径映射
-let titleMapping = null; //曲名映射
+let displayAmount = 39; 						//显示条目数量
+let fetch_flag = 0; 							//是否上传了新csv
+let default_csv_name = "sample/default.csv"; 	//初始的默认csv路径
+let csv_name = null; 							//手动选择的新csv
+let csv_data = null; 							//储存csv内容到内存
+let flag = 0; 									//替换default.csv
+let flag_switch_controller = 0; 				//控件初始值赋值block
+let flag_reverse = 0;							//没有什么用呢
+let imageMapping = null; 						//图片路径映射
+let titleMapping = null; 						//曲名映射
 
-let statistic_full_recall = 0; //fr数
-let statistic_pure_memory = 0; //pm数
-let statistic_theory = 0; //理论数
-let statistic_xing = 0; //1f/1l性数
-let statistic_1xiao = 0; //1小p性数
+let statistic_full_recall = 0; 					//fr数
+let statistic_pure_memory = 0; 					//pm数
+let statistic_theory = 0; 						//理论数
+let statistic_xing = 0; 						//1f/1l性数
+let statistic_1xiao = 0; 						//1小p性数
 
-let avatarFolderPath = "img/avatar/"; //头像文件路径
+let avatarFolderPath = "img/avatar/"; 			//头像文件路径
 
 const R10Event = new Event("DOMContentLoaded");
 
@@ -110,18 +110,6 @@ function cutDecimal(a, pow) { //原数据，保留位数
 	return (Math.floor(a * Math.pow(10, pow)) / Math.pow(10, pow)).toFixed(pow);
 }
 
-// //整数显示三位分割
-// function formatScore(score, symble) {
-// 	var formattedScore = String(Number(score).toLocaleString('en-US', {
-// 		useGrouping: true
-// 	}));
-// 	if(formattedScore.length < 9){
-// 		for(let i=0; i< 9-formattedScore.length; i++){
-// 			formattedScore = "0"+formattedScore;
-// 		}
-// 	}
-// 	return formattedScore.replace(/,/g, symble);
-// }
 function formatScore(score, symbol) {
 	// 将score转换为字符串
 	var scoreStr = String(score);
@@ -171,7 +159,7 @@ function switchController() {
 	flag_switch_controller = 1;
 	if (controller.style.display === "" || controller.style.display === "none") {
 		controller.style.display = "block";
-		setTimeout(function() {
+		setTimeout(function () {
 			controller.style.opacity = "100%";
 			controller.style.left = "150px";
 			controller.style.top = "300px";
@@ -182,7 +170,7 @@ function switchController() {
 		controller.style.opacity = "0";
 		controller.style.left = "0px";
 		controller.style.top = "0px";
-		setTimeout(function() {
+		setTimeout(function () {
 
 			controller.style.display = "none";
 		}, 350);
@@ -351,7 +339,7 @@ function displayB30Data(data) {
 		singlePTTContainer.className = "singlePTT";
 		singlePTTContainer.id = songId + "_" + Difficulty;
 
-		singlePTTContainer.onclick = function() {
+		singlePTTContainer.onclick = function () {
 			// 在点击事件处理程序中获取被点击的div的id
 			var id = singlePTTContainer.id;
 			console.log("被点击的div的id是：" + id);
@@ -516,7 +504,7 @@ function displayB30Data(data) {
 			statistic_full_recall = statistic_full_recall + 1;
 		}
 		if (Number(perfect) !== 0 && (Number(far) === 1 && Number(lost) === 0) || (Number(far) === 0 && Number(
-				lost) === 1)) {
+			lost) === 1)) {
 			statistic_xing = statistic_xing + 1;
 		}
 		if (Number(perfect) !== 0 && Number(perfect - 1) === Number(criticalPerfect) && Number(far) === 0 &&
@@ -552,7 +540,7 @@ function displayB30Data(data) {
 }
 
 //用html2canvas进行截图
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	//清除刷新提示notice
 	resizeWidth();
 	document.getElementById("notice").textContent = "";
@@ -642,10 +630,10 @@ function recalculateR10() {
 	// starFrame.src = "img/rating/rating_" + judgeStars(newPTT) + ".png";
 	starFrame.style.opacity = "0%";
 	starFrame.innerHTML = "";
-	
-	
-	
-	setTimeout(function(){
+
+
+
+	setTimeout(function () {
 		const starImg = document.createElement("img");
 		starImg.id = "starImg";
 		starImg.src = "img/rating/rating_" + judgeStars(newPTT) + ".png";
@@ -680,23 +668,23 @@ function refreshUID() {
 	localStorage.setItem('saved_uid', input2.value);
 }
 //上传使用的csv文件
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	// 获取上传按钮和文件输入元素
 	const uploadButton = document.getElementById("uploadButton");
 	const fileInput = document.getElementById("fileInput");
 
 	// 添加上传按钮的点击事件处理程序
-	uploadButton.addEventListener("click", function() {
+	uploadButton.addEventListener("click", function () {
 		// 触发文件选择对话框
 		fileInput.click();
 	});
 
 	// 读取新csv文件逻辑
-	fileInput.addEventListener("change", function(event) {
+	fileInput.addEventListener("change", function (event) {
 		const selectedFile = event.target.files[0];
 		if (selectedFile) {
 			const reader = new FileReader();
-			reader.onload = function(event) {
+			reader.onload = function (event) {
 				flag = 1;
 				csv_data = event.target.result;
 				csv_name = selectedFile.name; // 获取文件名
@@ -720,7 +708,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 //更换成选定的头像、id、好友码、ptt、背景图
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	if (localStorage.saved_icon != null) {
 		switchSelect(localStorage.saved_icon);
 	} else {
@@ -755,7 +743,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 	if (localStorage.saved_bg) {
 		switchBg(0);
 	}
@@ -778,7 +766,7 @@ function showSelect() {
 	flag_switch_controller = 0;
 	if (sheet.style.display === "" || sheet.style.display === "none") {
 		sheet.style.display = "inline-block";
-		setTimeout(function() {
+		setTimeout(function () {
 			sheet.style.opacity = "100%";
 			// sheet.style.left = "-480px";
 		}, 350);
@@ -786,7 +774,7 @@ function showSelect() {
 	} else if (sheet.style.display === "inline-block") {
 		sheet.style.opacity = "0%";
 		// sheet.style.left = "0px";
-		setTimeout(function() {
+		setTimeout(function () {
 			sheet.style.display = "none";
 		}, 350);
 
@@ -801,7 +789,7 @@ function switchSelect(path) {
 	let img2; //conblur
 	icn.style.opacity = "0";
 	icb.style.opacity = "0";
-	setTimeout(function() {
+	setTimeout(function () {
 		icn.innerHTML = "";
 		icb.innerHTML = "";
 		img1 = document.createElement("img");
@@ -828,7 +816,7 @@ function switchBg(f) {
 	console.log("current bg:" + localStorage.saved_bg);
 	localStorage.saved_bg = (parseFloat(localStorage.saved_bg) + parseFloat(f) + 9) % 9;
 	bg.style.opacity = 0;
-	setTimeout(function() {
+	setTimeout(function () {
 		bg.innerHTML = "";
 		let bgImg = document.createElement("img");
 		bgImg.id = "bgImg";
@@ -842,12 +830,12 @@ function switchBg(f) {
 	const index = document.getElementById("currentBgIndex");
 	index.textContent = parseFloat(localStorage.saved_bg) + 1 + "/9";
 	//changeDisplayAmount();
-	
-	
+
+
 }
 
-function reverse(){
-	if(flag_reverse === 0){
+function reverse() {
+	if (flag_reverse === 0) {
 		document.body.style.transform = "scale(-1, -1)";
 		flag_reverse = 1;
 	} else {
@@ -858,8 +846,8 @@ function reverse(){
 
 //调整页面缩放
 function resizeWidth() {
-	if (window.innerWidth < 1720) {
-		document.body.style.zoom = (window.innerWidth / 1730);
+	if (document.documentElement.clientWidth < 1720) {
+		document.body.style.zoom = (document.documentElement.clientWidth / 1700);
 	} else {
 		document.body.style.zoom = 1;
 	}
