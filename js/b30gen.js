@@ -748,6 +748,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		recalculateR10();
 	} else {
 		fetchAndSaveCSV(default_csv_name, csv_data); //显示一次默认b39
+		setItem("saved_csv_name", default_csv_name);
+		setItem("saved_csv_data", csv_data);
 	}
 
 });
@@ -844,16 +846,6 @@ function switchBg(f) {
 	
 }
 
-
-//调整页面缩放
-function resizeWidth() {
-	if (window.innerWidth < 1720) {
-		document.body.style.zoom = (window.innerWidth / 1730);
-	} else {
-		document.body.style.zoom = 1;
-	}
-}
-
 function reverse(){
 	if(flag_reverse === 0){
 		document.body.style.transform = "scale(-1, -1)";
@@ -862,5 +854,13 @@ function reverse(){
 		document.body.style.transform = "scale(1, 1)";
 		flag_reverse = 0;
 	}
-	
+}
+
+//调整页面缩放
+function resizeWidth() {
+	if (window.innerWidth < 1720) {
+		document.body.style.zoom = (window.innerWidth / 1730);
+	} else {
+		document.body.style.zoom = 1;
+	}
 }
