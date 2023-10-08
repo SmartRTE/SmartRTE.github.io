@@ -42,7 +42,11 @@
 		<div id="controller">
 			<button type="button" id="b30gen" onclick="window.open('b30gen.html')">点击跳转b30生成页</button>
 			<!-- <button type="button" id="difgen"
-				onclick="window.open('DividedByDifficulty.html')">点击跳转定数查曲生成页（还没做好</button> --><br /><br />
+				onclick="window.open('DividedByDifficulty.html')">点击跳转定数查曲生成页（还没做好</button> -->
+			<button type="button" id="difgen">
+				<a style="width: 100%; height: 100%; text-decoration: none; color: aliceblue;" 
+					download="模板.csv" href="sample/模板.csv">下载模板.csv手动填入成绩</a>
+			</button><br /><br />
 			<button type="button" id="uploadButton">上传st3文件 </button>
 			<button type="button" id="download" onclick="exportCSV()" style="display: none;">下载csv文件</button>
 			<button type="button" id="sendToB30" onclick="sendToB30()" style="display: none;">以下表生成b30</button>
