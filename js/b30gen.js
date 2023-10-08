@@ -552,6 +552,8 @@ document.addEventListener("DOMContentLoaded", function () {
 		const captureHeight = bg.height; //3150
 		const saveButton = document.getElementById("saveButton");
 		switchController();
+		document.body.style.zoom = 1;
+		document.body.style = "-moz-transform: scale(" + document.body.style.zoom + "); -moz-transform-origin: 0 0;";
 		saveButton.disabled = true;
 		html2canvas(body, {
 			useCORS: true,
@@ -571,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			link.click();
 
 			document.body.removeChild(link);
-			switchController();
+			resizeWidth();
 			saveButton.disabled = false;
 		});
 	}
@@ -847,6 +849,7 @@ function reverse() {
 //调整页面缩放
 function resizeWidth() {
 	if (document.documentElement.clientWidth < 1720) {
+		document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1700) + "); -moz-transform-origin: 0 0;";
 		document.body.style.zoom = (document.documentElement.clientWidth / 1700);
 	} else {
 		document.body.style.zoom = 1;

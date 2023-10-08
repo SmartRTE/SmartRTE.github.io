@@ -24,7 +24,7 @@
 	margin: 0;
 	padding: 0;
 	border-radius: 5px;
-	font-weight: bold;
+	/* font-weight: bold; */
 	/*font-size: 105%;*/
 	/* -webkit-filter: blur(1px); */
 }
@@ -34,7 +34,7 @@ body {
 	height: 3150px;
 	margin: 0;
 	/* 	overflow-x: hidden; */
-	transition-duration: 1.0s;
+	/* transition-duration: 1.0s; */
 }
 
 #container {
@@ -145,6 +145,7 @@ body {
 	left: 20px;
 	top: 20px;
 	-webkit-filter: blur(15px);
+	filter: blur(15px);
 	transition-duration: 0.75s;
 }
 
@@ -248,6 +249,7 @@ body {
 		1px -1px 1px rgba(90, 0, 90, 1.0);
 	letter-spacing: 1px;
 	font-size: 40px;
+	font-weight: 300;
 	transition-duration: 0.3s;
 }
 
@@ -360,7 +362,6 @@ body {
 	font-size: 20px;
 	line-height: 30px;
 	text-align: center;
-	font-weight: bolder;
 	letter-spacing: 1.5px;
 	font-family: 'Exo', sans-serif;
 	border-top-right-radius: 0;
@@ -375,9 +376,10 @@ body {
 	font-size: 21px;
 	color: white;
 	line-height: 30px;
-	font-weight: bold;
+	font-weight: 200;
 	/* z-index: 6; */
 	font-family: 'Exo', sans-serif;
+
 }
 
 .sPTT a {
@@ -416,11 +418,12 @@ body {
 }
 
 .songNameHeader {
-	font-weight: 200;
+	font-weight: 300;
 }
 
 .score {
 	font-size: 41px;
+	font-weight: 400;
 	text-align: left;
 	line-height: 41px;
 	position: relative;
