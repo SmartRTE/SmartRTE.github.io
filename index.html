@@ -45,7 +45,8 @@
 				onclick="window.open('DividedByDifficulty.html')">点击跳转定数查曲生成页（还没做好</button> -->
 			<button type="button" id="difgen">
 				<a style="width: 100%; height: 100%; text-decoration: none; color: aliceblue;" 
-					download="模板.csv" href="sample/模板.csv">下载模板.csv手动填入成绩</a>
+					download="模板.csv" href="sample/模板.csv" 
+					onclick="alert('请读完这条提示！\n 稍后下载的模板.csv内含有全部曲目的全部难度的分级条目，顺序是\n※游戏内全部歌曲的曲名序※\n尽量填写多于30条数据以保证B30计算正常。填写完成后请使用Excel或WPS表格的函数手动计算每首歌的单曲PTT（具体计算公式见Arcaea Wiki）\n 物量信息（p，f，l）可以不填，但是会影响B30图中理论值曲目的显示效果（缺少蓝色阴影，但是没有也不影响\n没有成绩的条目请手动删除，并最终把文件仍保存为csv格式。软件可能会提示丢失信息，请忽略！\n确认阅读完毕并理解之后，点击 确定')">下载模板.csv手动填入成绩</a>
 			</button><br /><br />
 			<button type="button" id="uploadButton">上传st3文件 </button>
 			<button type="button" id="download" onclick="exportCSV()" style="display: none;">下载csv文件</button>
@@ -54,10 +55,10 @@
 		</div>
 		<table id="queryTable">
 			<thead>
-
-				<tr></tr>
+				
 			</thead>
 			<tbody>
+				
 			</tbody>
 		</table>
 	</body>
