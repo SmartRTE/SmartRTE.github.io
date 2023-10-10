@@ -843,12 +843,14 @@ function hideUid() {
 	const uid = document.getElementById("uid");
 	if (f.value == 1) {
 		f.value = 0;
+		f.style.backgroundColor = "lightpink";
 		f.textContent = "显示";
 		uid.style.letterSpacing = "-3px";
 		uid.textContent = "✱✱✱ ✱✱✱ ✱✱✱";
 		flag_uid = 0;
 	} else {
 		f.value = 1;
+		f.style.backgroundColor = "cornflowerblue";
 		f.textContent = "隐藏";
 		uid.style.letterSpacing = "2px";
 		flag_uid = 1;
