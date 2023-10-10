@@ -110,12 +110,9 @@ function cutDecimal(a, pow) { //原数据，保留位数
 	return (Math.floor(a * Math.pow(10, pow)) / Math.pow(10, pow)).toFixed(pow);
 }
 
+//长数字三位分割
 function formatScore(score, symbol) {
-	// 将score转换为字符串
 	var scoreStr = String(score);
-
-	// 确保id有至少9位字符, 否则补0
-
 	if (symbol === " ") {
 		while (scoreStr.length < 9) {
 			scoreStr = "0" + scoreStr;
@@ -129,11 +126,6 @@ function formatScore(score, symbol) {
 
 		return formattedScore.replace(/,/g, symbol);
 	}
-
-	//添加分隔符symbol
-
-
-
 }
 
 //判定PTT边框
@@ -559,9 +551,9 @@ document.addEventListener("DOMContentLoaded", function () {
 			useCORS: true,
 			width: captureWidth,
 			height: captureHeight,
-			scale: 1.2,
+			scale: 1.1,
 		}).then(canvas => {
-			const dataURL = canvas.toDataURL("image/png");
+			const dataURL = canvas.toDataURL("image/jpg");
 			const link = document.createElement("a");
 			link.href = dataURL;
 			let currentDateTime = new Date().toLocaleString();
@@ -796,8 +788,8 @@ function switchSelect(path) {
 		icb.innerHTML = "";
 		img1 = document.createElement("img");
 		img2 = document.createElement("img");
-		img1.src = "img/avatar/" + path + "_icon.png";
-		img2.src = "img/avatar/" + path + "_icon.png";
+		img1.src = "img/avatar/" + path + "_icon.webp";
+		img2.src = "img/avatar/" + path + "_icon.webp";
 		icn.appendChild(img1);
 		icb.appendChild(img2);
 		icn.style.opacity = "100%";
@@ -848,10 +840,12 @@ function reverse() {
 
 //调整页面缩放
 function resizeWidth() {
-	if (document.documentElement.clientWidth < 1720) {
-		document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1700) + "); -moz-transform-origin: 0 0;";
-		document.body.style.zoom = (document.documentElement.clientWidth / 1700);
-	} else {
-		document.body.style.zoom = 1;
-	}
+	// if (document.documentElement.clientWidth < 1700) {
+	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1700) + "); -moz-transform-origin: 0 0;";
+	document.body.style.zoom = (document.documentElement.clientWidth / 1700);
+	// } else {
+	// 	document.body.style.zoom = 1;
+	// }
 }
+
+window.addEventListener('resize', resizeWidth);

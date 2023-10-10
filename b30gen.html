@@ -19,17 +19,17 @@
 				<img id="bgImg" src="bgs/8.webp" />
 			</div>
 
-			<!--<img id="partner" src="img/kou.png" />-->
+			<!--<img id="partner" src="img/kou.webp" />-->
 			<h1 id="notice">若页面显示不完整，请刷新几次</h1>
 			<div id="PTTValue">
 				<div id="playerInfo">
 
 					<div id="Avatar">
 						<div id="iconblur">
-							<img src="img/avatar/60_icon.png" />
+							<img src="img/avatar/60_icon.webp" />
 						</div>
 						<div id="icon" onclick="switchController()">
-							<img src="img/avatar/60_icon.png" />
+							<img src="img/avatar/60_icon.webp" />
 						</div>
 						<div id="stars">
 
@@ -65,7 +65,7 @@
 				<label>在此修改要显示的👇</label><br />
 				<label>用户名</label><br />
 				<input id="nameInput" oninput="refreshUsername()" value="Hikari" /><br />
-				<label>好友码</label><br />
+				<label>好友码</label> <button style="width: auto;height: auto;">隐藏</button><br />
 				<input id="uidInput" maxlength="9" oninput="refreshUID()" value="100000001" /><br />
 				<label>潜力值</label><br />
 				<input id="pPTTInput" maxlength="5" oninput="recalculateR10()" value="6.16" />
@@ -113,223 +113,223 @@
 				<table id="sheet">
 					<tbody>
 						<tr>
-							<td onclick="switchSelect('0')"><img class="selectImage" src="img/avatar/0_icon.png" /></td>
-							<td onclick="switchSelect('0u')"><img class="selectImage" src="img/avatar/0u_icon.png" />
+							<td onclick="switchSelect('0')"><img class="selectImage" src="img/avatar/0_icon.webp" /></td>
+							<td onclick="switchSelect('0u')"><img class="selectImage" src="img/avatar/0u_icon.webp" />
 							</td>
-							<td onclick="switchSelect('1')"><img class="selectImage" src="img/avatar/1_icon.png" /></td>
-							<td onclick="switchSelect('1u')"><img class="selectImage" src="img/avatar/1u_icon.png" />
-							</td>
-						</tr>
-						<tr>
-							<td onclick="switchSelect('2')"><img class="selectImage" src="img/avatar/2_icon.png" /></td>
-							<td onclick="switchSelect('2u')"><img class="selectImage" src="img/avatar/2u_icon.png" />
-							</td>
-							<td onclick="switchSelect('3')"><img class="selectImage" src="img/avatar/3_icon.png" /></td>
-							<td onclick="switchSelect('99')"><img class="selectImage" src="img/avatar/99_icon.png" />
+							<td onclick="switchSelect('1')"><img class="selectImage" src="img/avatar/1_icon.webp" /></td>
+							<td onclick="switchSelect('1u')"><img class="selectImage" src="img/avatar/1u_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('4')"><img class="selectImage" src="img/avatar/4_icon.png" /></td>
-							<td onclick="switchSelect('4u')"><img class="selectImage" src="img/avatar/4u_icon.png" />
+							<td onclick="switchSelect('2')"><img class="selectImage" src="img/avatar/2_icon.webp" /></td>
+							<td onclick="switchSelect('2u')"><img class="selectImage" src="img/avatar/2u_icon.webp" />
 							</td>
-							<td onclick="switchSelect('5')"><img class="selectImage" src="img/avatar/5_icon.png" /></td>
-							<td onclick="switchSelect('6')"><img class="selectImage" src="img/avatar/6_icon.png" /></td>
-						</tr>
-						<tr>
-							<td onclick="switchSelect('7')"><img class="selectImage" src="img/avatar/7_icon.png" /></td>
-							<td onclick="switchSelect('8')"><img class="selectImage" src="img/avatar/8_icon.png" /></td>
-							<td onclick="switchSelect('9')"><img class="selectImage" src="img/avatar/9_icon.png" /></td>
-							<td onclick="switchSelect('10')"><img class="selectImage" src="img/avatar/10_icon.png" />
+							<td onclick="switchSelect('3')"><img class="selectImage" src="img/avatar/3_icon.webp" /></td>
+							<td onclick="switchSelect('99')"><img class="selectImage" src="img/avatar/99_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('10u')"><img class="selectImage" src="img/avatar/10u_icon.png" />
+							<td onclick="switchSelect('4')"><img class="selectImage" src="img/avatar/4_icon.webp" /></td>
+							<td onclick="switchSelect('4u')"><img class="selectImage" src="img/avatar/4u_icon.webp" />
 							</td>
-							<td onclick="switchSelect('11u')"><img class="selectImage" src="img/avatar/11u_icon.png" />
-							</td>
-							<td onclick="switchSelect('12')"><img class="selectImage" src="img/avatar/12_icon.png" />
-							</td>
-							<td onclick="switchSelect('12u')"><img class="selectImage" src="img/avatar/12u_icon.png" />
+							<td onclick="switchSelect('5')"><img class="selectImage" src="img/avatar/5_icon.webp" /></td>
+							<td onclick="switchSelect('6')"><img class="selectImage" src="img/avatar/6_icon.webp" /></td>
+						</tr>
+						<tr>
+							<td onclick="switchSelect('7')"><img class="selectImage" src="img/avatar/7_icon.webp" /></td>
+							<td onclick="switchSelect('8')"><img class="selectImage" src="img/avatar/8_icon.webp" /></td>
+							<td onclick="switchSelect('9')"><img class="selectImage" src="img/avatar/9_icon.webp" /></td>
+							<td onclick="switchSelect('10')"><img class="selectImage" src="img/avatar/10_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('13')"><img class="selectImage" src="img/avatar/13_icon.png" />
+							<td onclick="switchSelect('10u')"><img class="selectImage" src="img/avatar/10u_icon.webp" />
 							</td>
-							<td onclick="switchSelect('13u')"><img class="selectImage" src="img/avatar/13u_icon.png" />
+							<td onclick="switchSelect('11u')"><img class="selectImage" src="img/avatar/11u_icon.webp" />
 							</td>
-							<td onclick="switchSelect('14')"><img class="selectImage" src="img/avatar/14_icon.png" />
+							<td onclick="switchSelect('12')"><img class="selectImage" src="img/avatar/12_icon.webp" />
 							</td>
-							<td onclick="switchSelect('15')"><img class="selectImage" src="img/avatar/15_icon.png" />
-							</td>
-						</tr>
-						<tr>
-							<td onclick="switchSelect('16')"><img class="selectImage" src="img/avatar/16_icon.png" />
-							</td>
-							<td onclick="switchSelect('17')"><img class="selectImage" src="img/avatar/17_icon.png" />
-							</td>
-							<td onclick="switchSelect('18')"><img class="selectImage" src="img/avatar/18_icon.png" />
-							</td>
-							<td onclick="switchSelect('19')"><img class="selectImage" src="img/avatar/19_icon.png" />
+							<td onclick="switchSelect('12u')"><img class="selectImage" src="img/avatar/12u_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('19u')"><img class="selectImage" src="img/avatar/19u_icon.png" />
+							<td onclick="switchSelect('13')"><img class="selectImage" src="img/avatar/13_icon.webp" />
 							</td>
-							<td onclick="switchSelect('20')"><img class="selectImage" src="img/avatar/20_icon.png" />
+							<td onclick="switchSelect('13u')"><img class="selectImage" src="img/avatar/13u_icon.webp" />
 							</td>
-							<td onclick="switchSelect('21')"><img class="selectImage" src="img/avatar/21_icon.png" />
+							<td onclick="switchSelect('14')"><img class="selectImage" src="img/avatar/14_icon.webp" />
 							</td>
-							<td onclick="switchSelect('21u')"><img class="selectImage" src="img/avatar/21u_icon.png" />
-							</td>
-						</tr>
-						<tr>
-							<td onclick="switchSelect('22')"><img class="selectImage" src="img/avatar/22_icon.png" />
-							</td>
-							<td onclick="switchSelect('23')"><img class="selectImage" src="img/avatar/23_icon.png" />
-							</td>
-							<td onclick="switchSelect('24')"><img class="selectImage" src="img/avatar/24_icon.png" />
-							</td>
-							<td onclick="switchSelect('25')"><img class="selectImage" src="img/avatar/25_icon.png" />
+							<td onclick="switchSelect('15')"><img class="selectImage" src="img/avatar/15_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('26')"><img class="selectImage" src="img/avatar/26_icon.png" />
+							<td onclick="switchSelect('16')"><img class="selectImage" src="img/avatar/16_icon.webp" />
 							</td>
-							<td onclick="switchSelect('26u')"><img class="selectImage" src="img/avatar/26u_icon.png" />
+							<td onclick="switchSelect('17')"><img class="selectImage" src="img/avatar/17_icon.webp" />
 							</td>
-							<td onclick="switchSelect('27')"><img class="selectImage" src="img/avatar/27_icon.png" />
+							<td onclick="switchSelect('18')"><img class="selectImage" src="img/avatar/18_icon.webp" />
 							</td>
-							<td onclick="switchSelect('27u')"><img class="selectImage" src="img/avatar/27u_icon.png" />
-							</td>
-						</tr>
-						<tr>
-							<td onclick="switchSelect('28')"><img class="selectImage" src="img/avatar/28_icon.png" />
-							</td>
-							<td onclick="switchSelect('28u')"><img class="selectImage" src="img/avatar/28u_icon.png" />
-							</td>
-							<td onclick="switchSelect('29')"><img class="selectImage" src="img/avatar/29_icon.png" />
-							</td>
-							<td onclick="switchSelect('29u')"><img class="selectImage" src="img/avatar/29u_icon.png" />
+							<td onclick="switchSelect('19')"><img class="selectImage" src="img/avatar/19_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('30')"><img class="selectImage" src="img/avatar/30_icon.png" />
+							<td onclick="switchSelect('19u')"><img class="selectImage" src="img/avatar/19u_icon.webp" />
 							</td>
-							<td onclick="switchSelect('31')"><img class="selectImage" src="img/avatar/31_icon.png" />
+							<td onclick="switchSelect('20')"><img class="selectImage" src="img/avatar/20_icon.webp" />
 							</td>
-							<td onclick="switchSelect('32')"><img class="selectImage" src="img/avatar/32_icon.png" />
+							<td onclick="switchSelect('21')"><img class="selectImage" src="img/avatar/21_icon.webp" />
 							</td>
-							<td onclick="switchSelect('33')"><img class="selectImage" src="img/avatar/33_icon.png" />
-							</td>
-						</tr>
-						<tr>
-							<td onclick="switchSelect('34')"><img class="selectImage" src="img/avatar/34_icon.png" />
-							</td>
-							<td onclick="switchSelect('35')"><img class="selectImage" src="img/avatar/35_icon.png" />
-							</td>
-							<td onclick="switchSelect('36')"><img class="selectImage" src="img/avatar/36_icon.png" />
-							</td>
-							<td onclick="switchSelect('36u')"><img class="selectImage" src="img/avatar/36u_icon.png" />
+							<td onclick="switchSelect('21u')"><img class="selectImage" src="img/avatar/21u_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('37')"><img class="selectImage" src="img/avatar/37_icon.png" />
+							<td onclick="switchSelect('22')"><img class="selectImage" src="img/avatar/22_icon.webp" />
 							</td>
-							<td onclick="switchSelect('38')"><img class="selectImage" src="img/avatar/38_icon.png" />
+							<td onclick="switchSelect('23')"><img class="selectImage" src="img/avatar/23_icon.webp" />
 							</td>
-							<td onclick="switchSelect('39')"><img class="selectImage" src="img/avatar/39_icon.png" />
+							<td onclick="switchSelect('24')"><img class="selectImage" src="img/avatar/24_icon.webp" />
 							</td>
-							<td onclick="switchSelect('40')"><img class="selectImage" src="img/avatar/40_icon.png" />
-							</td>
-						</tr>
-						<tr>
-							<td onclick="switchSelect('41')"><img class="selectImage" src="img/avatar/41_icon.png" />
-							</td>
-							<td onclick="switchSelect('42')"><img class="selectImage" src="img/avatar/42_icon.png" />
-							</td>
-							<td onclick="switchSelect('42u')"><img class="selectImage" src="img/avatar/42u_icon.png" />
-							</td>
-							<td onclick="switchSelect('43')"><img class="selectImage" src="img/avatar/43_icon.png" />
+							<td onclick="switchSelect('25')"><img class="selectImage" src="img/avatar/25_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('43u')"><img class="selectImage" src="img/avatar/43u_icon.png" />
+							<td onclick="switchSelect('26')"><img class="selectImage" src="img/avatar/26_icon.webp" />
 							</td>
-							<td onclick="switchSelect('44')"><img class="selectImage" src="img/avatar/44_icon.png" />
+							<td onclick="switchSelect('26u')"><img class="selectImage" src="img/avatar/26u_icon.webp" />
 							</td>
-							<td onclick="switchSelect('45')"><img class="selectImage" src="img/avatar/45_icon.png" />
+							<td onclick="switchSelect('27')"><img class="selectImage" src="img/avatar/27_icon.webp" />
 							</td>
-							<td onclick="switchSelect('46')"><img class="selectImage" src="img/avatar/46_icon.png" />
-							</td>
-						</tr>
-						<tr>
-							<td onclick="switchSelect('47')"><img class="selectImage" src="img/avatar/47_icon.png" />
-							</td>
-							<td onclick="switchSelect('48')"><img class="selectImage" src="img/avatar/48_icon.png" />
-							</td>
-							<td onclick="switchSelect('49')"><img class="selectImage" src="img/avatar/49_icon.png" />
-							</td>
-							<td onclick="switchSelect('50')"><img class="selectImage" src="img/avatar/50_icon.png" />
+							<td onclick="switchSelect('27u')"><img class="selectImage" src="img/avatar/27u_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('51')"><img class="selectImage" src="img/avatar/51_icon.png" />
+							<td onclick="switchSelect('28')"><img class="selectImage" src="img/avatar/28_icon.webp" />
 							</td>
-							<td onclick="switchSelect('52')"><img class="selectImage" src="img/avatar/52_icon.png" />
+							<td onclick="switchSelect('28u')"><img class="selectImage" src="img/avatar/28u_icon.webp" />
 							</td>
-							<td onclick="switchSelect('53')"><img class="selectImage" src="img/avatar/53_icon.png" />
+							<td onclick="switchSelect('29')"><img class="selectImage" src="img/avatar/29_icon.webp" />
 							</td>
-							<td onclick="switchSelect('54')"><img class="selectImage" src="img/avatar/54_icon.png" />
-							</td>
-						</tr>
-						<tr>
-							<td onclick="switchSelect('55')"><img class="selectImage" src="img/avatar/55_icon.png" />
-							</td>
-							<td onclick="switchSelect('56')"><img class="selectImage" src="img/avatar/56_icon.png" />
-							</td>
-							<td onclick="switchSelect('57')"><img class="selectImage" src="img/avatar/57_icon.png" />
-							</td>
-							<td onclick="switchSelect('58')"><img class="selectImage" src="img/avatar/58_icon.png" />
+							<td onclick="switchSelect('29u')"><img class="selectImage" src="img/avatar/29u_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('59')"><img class="selectImage" src="img/avatar/59_icon.png" />
+							<td onclick="switchSelect('30')"><img class="selectImage" src="img/avatar/30_icon.webp" />
 							</td>
-							<td onclick="switchSelect('60')"><img class="selectImage" src="img/avatar/60_icon.png" />
+							<td onclick="switchSelect('31')"><img class="selectImage" src="img/avatar/31_icon.webp" />
 							</td>
-							<td onclick="switchSelect('62')"><img class="selectImage" src="img/avatar/62_icon.png" />
+							<td onclick="switchSelect('32')"><img class="selectImage" src="img/avatar/32_icon.webp" />
 							</td>
-							<td onclick="switchSelect('63')"><img class="selectImage" src="img/avatar/63_icon.png" />
-							</td>
-						</tr>
-						<tr>
-							<td onclick="switchSelect('64')"><img class="selectImage" src="img/avatar/64_icon.png" />
-							</td>
-							<td onclick="switchSelect('65')"><img class="selectImage" src="img/avatar/65_icon.png" />
-							</td>
-							<td onclick="switchSelect('66')"><img class="selectImage" src="img/avatar/66_icon.png" />
-							</td>
-							<td onclick="switchSelect('66u')"><img class="selectImage" src="img/avatar/66u_icon.png" />
+							<td onclick="switchSelect('33')"><img class="selectImage" src="img/avatar/33_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('67')"><img class="selectImage" src="img/avatar/67_icon.png" />
+							<td onclick="switchSelect('34')"><img class="selectImage" src="img/avatar/34_icon.webp" />
 							</td>
-							<td onclick="switchSelect('68')"><img class="selectImage" src="img/avatar/68_icon.png" />
+							<td onclick="switchSelect('35')"><img class="selectImage" src="img/avatar/35_icon.webp" />
 							</td>
-							<td onclick="switchSelect('69')"><img class="selectImage" src="img/avatar/69_icon.png" />
+							<td onclick="switchSelect('36')"><img class="selectImage" src="img/avatar/36_icon.webp" />
 							</td>
-							<td onclick="switchSelect('70')"><img class="selectImage" src="img/avatar/70_icon.png" />
+							<td onclick="switchSelect('36u')"><img class="selectImage" src="img/avatar/36u_icon.webp" />
 							</td>
 						</tr>
 						<tr>
-							<td onclick="switchSelect('71')"><img class="selectImage" src="img/avatar/71_icon.png" />
+							<td onclick="switchSelect('37')"><img class="selectImage" src="img/avatar/37_icon.webp" />
 							</td>
-							<td onclick="switchSelect('71l')"><img class="selectImage" src="img/avatar/71l_icon.png" />
+							<td onclick="switchSelect('38')"><img class="selectImage" src="img/avatar/38_icon.webp" />
 							</td>
-							<td onclick="switchSelect('72')"><img class="selectImage" src="img/avatar/72_icon.png" />
+							<td onclick="switchSelect('39')"><img class="selectImage" src="img/avatar/39_icon.webp" />
 							</td>
-							<td onclick="switchSelect('1l')"><img class="selectImage" src="img/avatar/1l_icon.png" />
+							<td onclick="switchSelect('40')"><img class="selectImage" src="img/avatar/40_icon.webp" />
+							</td>
+						</tr>
+						<tr>
+							<td onclick="switchSelect('41')"><img class="selectImage" src="img/avatar/41_icon.webp" />
+							</td>
+							<td onclick="switchSelect('42')"><img class="selectImage" src="img/avatar/42_icon.webp" />
+							</td>
+							<td onclick="switchSelect('42u')"><img class="selectImage" src="img/avatar/42u_icon.webp" />
+							</td>
+							<td onclick="switchSelect('43')"><img class="selectImage" src="img/avatar/43_icon.webp" />
+							</td>
+						</tr>
+						<tr>
+							<td onclick="switchSelect('43u')"><img class="selectImage" src="img/avatar/43u_icon.webp" />
+							</td>
+							<td onclick="switchSelect('44')"><img class="selectImage" src="img/avatar/44_icon.webp" />
+							</td>
+							<td onclick="switchSelect('45')"><img class="selectImage" src="img/avatar/45_icon.webp" />
+							</td>
+							<td onclick="switchSelect('46')"><img class="selectImage" src="img/avatar/46_icon.webp" />
+							</td>
+						</tr>
+						<tr>
+							<td onclick="switchSelect('47')"><img class="selectImage" src="img/avatar/47_icon.webp" />
+							</td>
+							<td onclick="switchSelect('48')"><img class="selectImage" src="img/avatar/48_icon.webp" />
+							</td>
+							<td onclick="switchSelect('49')"><img class="selectImage" src="img/avatar/49_icon.webp" />
+							</td>
+							<td onclick="switchSelect('50')"><img class="selectImage" src="img/avatar/50_icon.webp" />
+							</td>
+						</tr>
+						<tr>
+							<td onclick="switchSelect('51')"><img class="selectImage" src="img/avatar/51_icon.webp" />
+							</td>
+							<td onclick="switchSelect('52')"><img class="selectImage" src="img/avatar/52_icon.webp" />
+							</td>
+							<td onclick="switchSelect('53')"><img class="selectImage" src="img/avatar/53_icon.webp" />
+							</td>
+							<td onclick="switchSelect('54')"><img class="selectImage" src="img/avatar/54_icon.webp" />
+							</td>
+						</tr>
+						<tr>
+							<td onclick="switchSelect('55')"><img class="selectImage" src="img/avatar/55_icon.webp" />
+							</td>
+							<td onclick="switchSelect('56')"><img class="selectImage" src="img/avatar/56_icon.webp" />
+							</td>
+							<td onclick="switchSelect('57')"><img class="selectImage" src="img/avatar/57_icon.webp" />
+							</td>
+							<td onclick="switchSelect('58')"><img class="selectImage" src="img/avatar/58_icon.webp" />
+							</td>
+						</tr>
+						<tr>
+							<td onclick="switchSelect('59')"><img class="selectImage" src="img/avatar/59_icon.webp" />
+							</td>
+							<td onclick="switchSelect('60')"><img class="selectImage" src="img/avatar/60_icon.webp" />
+							</td>
+							<td onclick="switchSelect('62')"><img class="selectImage" src="img/avatar/62_icon.webp" />
+							</td>
+							<td onclick="switchSelect('63')"><img class="selectImage" src="img/avatar/63_icon.webp" />
+							</td>
+						</tr>
+						<tr>
+							<td onclick="switchSelect('64')"><img class="selectImage" src="img/avatar/64_icon.webp" />
+							</td>
+							<td onclick="switchSelect('65')"><img class="selectImage" src="img/avatar/65_icon.webp" />
+							</td>
+							<td onclick="switchSelect('66')"><img class="selectImage" src="img/avatar/66_icon.webp" />
+							</td>
+							<td onclick="switchSelect('66u')"><img class="selectImage" src="img/avatar/66u_icon.webp" />
+							</td>
+						</tr>
+						<tr>
+							<td onclick="switchSelect('67')"><img class="selectImage" src="img/avatar/67_icon.webp" />
+							</td>
+							<td onclick="switchSelect('68')"><img class="selectImage" src="img/avatar/68_icon.webp" />
+							</td>
+							<td onclick="switchSelect('69')"><img class="selectImage" src="img/avatar/69_icon.webp" />
+							</td>
+							<td onclick="switchSelect('70')"><img class="selectImage" src="img/avatar/70_icon.webp" />
+							</td>
+						</tr>
+						<tr>
+							<td onclick="switchSelect('71')"><img class="selectImage" src="img/avatar/71_icon.webp" />
+							</td>
+							<td onclick="switchSelect('71l')"><img class="selectImage" src="img/avatar/71l_icon.webp" />
+							</td>
+							<td onclick="switchSelect('72')"><img class="selectImage" src="img/avatar/72_icon.webp" />
+							</td>
+							<td onclick="switchSelect('1l')"><img class="selectImage" src="img/avatar/1l_icon.webp" />
 							</td>
 						</tr>
 					</tbody>
@@ -341,7 +341,7 @@
 				<button style="width: 150px; position: relative; float: left;" onclick="switchBg(1)">下一张</button><br />
 				<label style="background-color: bisque; width: 99%">点击下方按钮清除本地缓存</label>
 				<button onclick="cln()" style="cursor: pointer;">清除本地缓存并刷新页面</button><br /><br />
-				<button style="cursor: pointer; transform: scale(-1, -1)" onclick="reverse()">反转了！</button>
+				
 			</div>
 		</div>
 	</body>
