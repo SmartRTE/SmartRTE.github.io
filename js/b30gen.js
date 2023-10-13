@@ -534,16 +534,24 @@ function displayB30Data(data) {
 //用html2canvas进行截图
 document.addEventListener("DOMContentLoaded", function() {
 	//清除刷新提示notice
-	resizeWidth();
 	document.getElementById("notice").textContent = "";
 
 	async function savePageAsImage() {
-		const body = document.body;
+		const body = document.getElementById("mainCapture");
 		const bg = document.getElementById("bgImg");
 		const captureWidth = bg.width; //1700
 		const captureHeight = bg.height; //3150
 		const saveButton = document.getElementById("saveButton");
+		const cover = document.getElementById("mainCover");
+		let vw = document.documentElement.clientWidth;
+		document.getElementById("loadingGif").style.left = vw/2 - 32 + "px";
+		document.getElementById("loadingNotice").style.left = vw/2 - 300 + "px";
+		
 		switchController();
+		cover.style.display = "block";
+		setTimeout(function(){
+			cover.style.opacity = "1";
+		}, 50);
 		document.body.style.zoom = 1;
 		document.body.style = "-moz-transform: scale(" + document.body.style.zoom +
 			"); -moz-transform-origin: 0 0;";
@@ -567,10 +575,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
 			document.body.removeChild(link);
 			resizeWidth();
+			
+			cover.style.opacity = "0";
+			setTimeout(function(){
+				cover.style.display = "none";
+			}, 800);
+			
 			saveButton.disabled = false;
+			setTimeout(function(){
+				switchController();
+			}, 800);
+			
 		});
 	}
-	document.getElementById("saveButton").addEventListener("click", savePageAsImage);
+	saveButton.addEventListener("click", savePageAsImage);
 
 	//页脚显示copyright和当前时间
 	var currentDateTime = new Date().toLocaleString();
@@ -595,9 +613,12 @@ function changeDisplayAmount() {
 	const displayAmountInput = document.getElementById("displayAmount");
 	const newDisplayAmount = parseInt(displayAmountInput.value);
 	const bgImg = document.getElementById("bgImg");
+	const mainCapture = document.getElementById("mainCapture");
 	if (!isNaN(newDisplayAmount)) {
 		displayAmount = newDisplayAmount;
 		bgImg.style.height = String(calculateBackgroundHeight(newDisplayAmount)) + "px";
+		document.body.style.height = bgImg.style.height;
+		mainCapture.style.height = bgImg.style.height;
 		refreshData((flag === 1) ? (csv_data) : (localStorage.saved_csv_data));
 	}
 };
@@ -703,6 +724,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 //更换成选定的头像、id、好友码、ptt、背景图
 document.addEventListener("DOMContentLoaded", function() {
+	resizeWidth();
 	if (localStorage.saved_icon != null) {
 		switchSelect(localStorage.saved_icon);
 	} else {
@@ -861,10 +883,11 @@ function hideUid() {
 
 //调整页面缩放
 function resizeWidth() {
-	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1700) +
-		"); -moz-transform-origin: 0 0;";
-	document.body.style.zoom = (document.documentElement.clientWidth / 1700);
 
+	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1700) +
+		"); -moz-transform-origin: 0 0; -moz-";
+	document.body.style.zoom = (document.documentElement.clientWidth / 1700);
+	
 }
 
 window.addEventListener('resize', resizeWidth);
