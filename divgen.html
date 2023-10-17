@@ -116,7 +116,7 @@
 
 			<div id="adjustDifficulty">
 				<label>调整要显示指定曲目的定数范围：</label><br />
-				<label>下限</label><br />
+				<label style="width: 100px;">下限</label> <button id="ftrOnly" style="width: auto;height: auto;background-color: cornflowerblue;" onclick="switchFTR()">只要FTR和BYD</button><br />
 				<input id="lowDifficulty" maxlength="4" value="10.0" oninput="setDifficulty()" />
 				<label>上限</label><br />
 				<input id="highDifficulty" maxlength="4" value="10.6" oninput="setDifficulty()">
