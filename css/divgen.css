@@ -1,29 +1,36 @@
 @font-face {
-	font-family: "geosans";
-	src: url("../Fonts/GeosansLight.ttf"),
+	font-family: 'geosans';
+	src: url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.woff') format('woff'),
 		url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.otf') format('opentype');
 }
 
 @font-face {
-	font-family: "Exo";
-	src: url("../Fonts/Exo-SemiBold.ttf");
+	font-family: Exo-SemiBold;
+	src: url(../Fonts/Exo-SemiBold.ttf);
+}
+
+@font-face {
+	font-family: DingTalkJinBuTi;
+	src: url(../Fonts/DingTalkJinBuTi.ttf);
 }
 
 * {
 	margin: 0;
 	padding: 0;
 	border-radius: 5px;
-	/* font-weight: bold; */
+	font-weight: bold;
 	/*font-size: 105%;*/
 	/* -webkit-filter: blur(1px); */
+
+
 }
 
 body {
 	width: 1700px;
-	height: 3150px;
+	height: 3100px;
 	margin: 0;
-	/* transition-duration: 1.0s; */
 }
+
 
 #mainCapture {
 	width: 100%;
@@ -64,16 +71,24 @@ body {
 	overflow: hidden;
 }
 
+
+#container {
+	overflow: hidden;
+}
+
 #background,
 #bgImg {
 	width: 1700px;
-	height: 3150px;
-	/* 3150px */
+	height: 3100px;
+	/* 3100px */
 	position: absolute;
 	/*-webkit-filter: blur(5px);*/
 	z-index: -999;
-	transition-duration: 0.25s;
-	opacity: 100%;
+}
+
+#notice {
+	font-size: 200px;
+	position: absolute;
 }
 
 #partner {
@@ -85,7 +100,7 @@ body {
 }
 
 #PTTValue {
-	height: 350px;
+	height: 300px;
 	width: 100%;
 }
 
@@ -96,7 +111,7 @@ body {
 	height: 240px;
 	width: 500px;
 	float: left;
-	display: block;
+	display: inline-block;
 	/*border: 2px solid black;*/
 }
 
@@ -196,20 +211,20 @@ body {
 	height: 150px;
 	position: relative;
 	margin: 0;
-	top: 6px;
-	left: 7px;
+	top: 9px;
+	left: 9px;
 	display: inline-block;
 	float: left;
 
 }
 
 .songImage {
-	width: 145px;
-	height: 145px;
+	width: 150px;
+	height: 150px;
 	border-radius: 5px;
 	display: inline-block;
 	float: left;
-	position: relative;
+	z-index: 7;
 }
 
 #icon img {
@@ -234,7 +249,7 @@ body {
 	font-family: 'geosans';
 	font-size: 110%;
 	font-weight: bolder;
-	transition-duration: 0.11s;
+
 }
 
 #starImg {
@@ -242,7 +257,6 @@ body {
 	position: relative;
 	width: 119px;
 	height: 119px;
-	transition-duration: 0.11s;
 }
 
 #personalPTT {
@@ -254,7 +268,7 @@ body {
 	position: relative;
 	top: -126px;
 	left: -2px;
-	font-family: 'Exo', sans-serif;
+	font-family: "Exo", sans-serif;
 	text-shadow: 0px 0px 6px rgba(90, 0, 90, 1.0),
 		1px 0px 1px rgba(90, 0, 90, 1.0),
 		1px 1px 1px rgba(90, 0, 90, 1.0),
@@ -266,34 +280,125 @@ body {
 		1px -1px 1px rgba(90, 0, 90, 1.0);
 	letter-spacing: 1px;
 	font-size: 40px;
-	font-weight: 300;
-	transition-duration: 0.3s;
 }
 
 #PTTDisplay {
 	display: inline-block;
 	position: relative;
-	top: 30px;
-	right: -600px;
+	left: 350px;
+	top: 20px;
 	height: 240px;
-	width: 500px;
+	width: 400px;
 	line-height: 82px;
 	font-size: 65px;
 	color: aliceblue;
 	text-shadow: 0px 0px 10px black,
-		1px 0px 1px black,
-		1px 1px 1px black,
-		0px 1px 1px black,
-		-1px 1px 1px black,
-		-1px 0px 1px black,
-		-1px -1px 1px black,
-		0px -1px 1px black,
-		1px -1px 1px black;
+		1px 0px 2px black,
+		1px 1px 2px black,
+		0px 1px 2px black,
+		-1px 1px 2px black,
+		-1px 0px 2px black,
+		-1px -1px 2px black,
+		0px -1px 2px black,
+		1px -1px 2px black;
 	font-family: 'geosans';
 	font-weight: bolder;
 	text-align: center;
 
 	letter-spacing: 2px;
+}
+
+#statisticsDisplay {
+	display: inline-block;
+	position: relative;
+	float: left;
+	top: 20px;
+	right: -350px;
+	height: 120px;
+	width: 400px;
+	line-height: 48px;
+	font-size: 45px;
+	color: aliceblue;
+	text-shadow: 0px 0px 10px black,
+		1px 0px 2px black,
+		1px 1px 2px black,
+		0px 1px 2px black,
+		-1px 1px 2px black,
+		-1px 0px 2px black,
+		-1px -1px 2px black,
+		0px -1px 2px black,
+		1px -1px 2px black;
+	font-family: 'geosans';
+	font-weight: bolder;
+	text-align: center;
+
+	letter-spacing: 2px;
+}
+
+#statisticsTheory {
+	color: rgba(85, 255, 255, 1.0);
+	text-shadow:
+		1px 0px 2px black,
+		1px 1px 2px black,
+		0px 1px 2px black,
+		-1px 1px 2px black,
+		-1px 0px 2px black,
+		-1px -1px 2px black,
+		0px -1px 2px black,
+		1px -1px 2px black,
+		0px 1px 10px rgba(0, 210, 210, 1.0),
+		-1px 1px 10px rgba(0, 210, 210, 1.0),
+		1px 1px 10px rgba(0, 210, 210, 1.0),
+		0px -1px 10px rgba(255, 0, 127, 1.0),
+		-1px -1px 10px rgba(255, 0, 127, 1.0),
+		1px -1px 10px rgba(255, 0, 127, 1.0);
+}
+
+#statisticsPMFR {
+	color: whitesmoke;
+	text-shadow:
+		1px 0px 2px black,
+		1px 1px 2px black,
+		0px 1px 2px black,
+		-1px 1px 2px black,
+		-1px 0px 2px black,
+		-1px -1px 2px black,
+		0px -1px 2px black,
+		1px -1px 2px black,
+		0px 0px 8px rgba(0, 210, 210, 1.0),
+		0px 0px 8px rgba(0, 210, 210, 1.0);
+}
+
+#statistics1Xiao {
+	color: rgba(255, 185, 185, 1);
+	text-shadow:
+		1px 0px 2px black,
+		1px 1px 2px black,
+		0px 1px 2px black,
+		-1px 1px 2px black,
+		-1px 0px 2px black,
+		-1px -1px 2px black,
+		0px -1px 2px black,
+		1px -1px 2px black,
+		0px 0px 8px rgba(255, 0, 0, 1.0),
+		0px 0px 8px rgba(255, 0, 0, 1.0);
+		
+		
+}
+
+#statisticsXing {
+	color: rgba(255, 174, 251, 1.0);
+	text-shadow:
+		1px 0px 2px black,
+		1px 1px 2px black,
+		0px 1px 2px black,
+		-1px 1px 2px black,
+		-1px 0px 2px black,
+		-1px -1px 2px black,
+		0px -1px 2px black,
+		1px -1px 2px black,
+		0px 0px 8px rgba(255, 0, 234, 1.0),
+		0px 0px 8px rgba(255, 0, 234, 1.0);
 }
 
 #Max,
@@ -302,61 +407,55 @@ body {
 	display: inline-block;
 }
 
-.spliter,
-.spliter2 {
+.spliter {
 	align-items: center;
 	width: 100%;
 	height: 45px;
-	top: 40px;
+	top: 20px;
 	position: relative;
 	display: block;
 	/* 
 	line-height: 15px; */
-	margin-top: 5px;
-	margin-bottom: 70px;
-}
 
-.spliter2 {
-	top: 40px;
-}
-
-.besttext {
-	position: absolute;
-	display: block;
-	opacity: 85%;
-	height: 90px;
-	z-index: 7;
-}
-
-#best30 {
-	top: 265px;
-	left: 500px;
-}
-
-#overflow {
-	top: 2020px;
-	left: 557px;
 }
 
 .singlePTT {
-	margin-left: 50px;
-	width: 498px;
-	height: 158px;
+	position: relative;
+	margin-left: 103px;
+	margin-right: 50px;
+	width: 668px;
+	height: 168px;
 	margin-top: 20px;
 	margin-bottom: 20px;
 	border: 1px solid gray;
-	box-shadow: 0px 0px 11px gray;
+	box-shadow: 0px 0px 7px gray;
 	background-color: aliceblue;
 	border-radius: 10px;
 	float: left;
 	cursor: pointer;
 	transition-duration: 0.35s;
+	transition-delay: 0.1s;
 }
 
-.singlePTT:hover {
-	transform: scale(1.21, 1.21);
-	z-index: 9999;
+.singlePTT:hover{
+	z-index: 100;
+	transform: scale(1.3);
 }
+
+/* .singlePTT:nth-child(odd):hover{
+	position: relative;
+	right: -400px;
+	transition-duration: 0.3s;
+	transform: scale(1.8, 1.8);
+	z-index: 100;
+}
+.singlePTT:nth-child(even):hover{
+	position: relative;
+	left: -400px;
+	transition-duration: 0.3s;
+	transform: scale(1.8, 1.8);
+	z-index: 100;
+} */
 
 .realDiffInfo {
 	width: 280px;
@@ -364,8 +463,8 @@ body {
 	font-size: 15px;
 	display: inline-block;
 	position: relative;
-	top: 5px;
-	/* z-index: 8; */
+	top: 8px;
+	z-index: 8;
 }
 
 
@@ -378,22 +477,21 @@ body {
 	font-size: 20px;
 	line-height: 30px;
 	text-align: center;
+	font-weight: bolder;
 	letter-spacing: 1.5px;
-	font-family: 'Exo', sans-serif;
-	border-top-right-radius: 0;
-	border-bottom-right-radius: 0;
+	font-family: "Exo", serif;
 }
 
 .sPTT {
 	height: 30px;
 	position: absolute;
-	width: 180px;
+	width: 200px;
 	display: inline-block;
 	font-size: 21px;
 	color: white;
 	line-height: 30px;
 	font-weight: 200;
-	/* z-index: 6; */
+	z-index: 6;
 	font-family: 'Exo', sans-serif;
 
 }
@@ -405,13 +503,16 @@ body {
 
 .songInformation {
 	width: 340px;
-	height: 160px;
+	height: 170px;
+	border-right: 2px solid grey;
 	float: none;
 	display: inline-block;
 	border-radius: 15px;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
 	position: relative;
 	line-height: 40px;
-	left: 10px;
+	left: 20px;
 	font-family: 'geosans';
 	top: -1px;
 }
@@ -428,9 +529,9 @@ body {
 	font-size: 22px;
 	line-height: 40px;
 	position: relative;
-	top: -10px;
+	top: -7px;
 	left: 5px;
-	font-family: 'Exo', sans-serif;
+	font-family: "Exo-SemiBold";
 }
 
 .songNameHeader {
@@ -438,10 +539,9 @@ body {
 }
 
 .score {
-	font-size: 41px;
-	font-weight: 400;
-	text-align: left;
-	line-height: 41px;
+	font-size: 55px;
+	text-align: justify;
+	line-height: 50px;
 	position: relative;
 	top: -20px;
 	text-shadow: 1px 1px 1px dimgray;
@@ -453,7 +553,7 @@ body {
 	font-weight: bolder;
 	align-items: stretch;
 	position: relative;
-	top: -105px;
+	top: -5px;
 	left: 10px;
 	font-size: 20px;
 	line-height: 15px;
@@ -465,7 +565,6 @@ body {
 	flex: 48;
 	color: rgba(100, 61, 100, 1.0);
 	text-shadow: 0px 0px 4px rgba(101, 67, 86, 1.0);
-	white-space: nowrap;
 }
 
 .far {
@@ -473,7 +572,6 @@ body {
 	flex: 27;
 	color: rgba(205, 192, 0, 1.0);
 	text-shadow: 0px 0px 4px rgba(155, 145, 0, 1.0);
-	white-space: nowrap;
 }
 
 .lost {
@@ -481,7 +579,6 @@ body {
 	flex: 25;
 	color: rgba(166, 51, 73, 1.0);
 	text-shadow: 0px 0px 4px rgba(66, 20, 29, 1.0);
-	white-space: nowrap;
 }
 
 .rank {
@@ -491,10 +588,9 @@ body {
 	position: absolute;
 	left: 275px;
 	border-radius: 0;
-	border-top-left-radius: 0;
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
-	top: 5px;
+	top: 8px;
 	background-color: rgba(221, 221, 221, 1);
 	font-size: 24px;
 	line-height: 34px;
@@ -502,7 +598,7 @@ body {
 	text-align: center;
 	color: black;
 
-	/* z-index: 5; */
+	z-index: 5;
 }
 
 .rank a {
@@ -511,10 +607,10 @@ body {
 }
 
 .songRank {
+	display: inline-block;
+	width: 150px;
 	position: relative;
-	float: right;
-	height: 100px;
-	top: -73px;
+	left: 21px;
 }
 
 #copyright {
@@ -526,107 +622,96 @@ body {
 	line-height: 100px;
 	font-weight: bolder;
 	text-align: center;
-	font-family: 'Exo', sans-serif;
+	font-family: "Exo-SemiBold";
 	color: aliceblue;
 	text-shadow: 0px 0px 5px black;
 	letter-spacing: 1px;
-	top: -15px;
 }
 
 #controller {
 	margin: auto;
-	height: 560px;
+	height: 460px;
 	width: 1450px;
 	left: 150px;
 	top: 300px;
 	/* border: 10px solid seagreen; */
 	border-radius: 15px;
-	/* background-color: seagreen; */
-	background: url("../bgs/bg_light.webp");
+	background-color: seagreen;
 	position: absolute;
 	font-size: 30px;
 	line-height: 32px;
-	z-index: 100;
+	z-index: 8;
 	column-count: 3;
 	column-gap: 0px;
-	transition-duration: 0.35s;
+	transition-duration: 0.3s;
+	float: left;
 }
 
-#easyPTT {
+#controller * {
 	margin-top: 4px;
 	margin-bottom: 4px;
 	float: left;
 	width: 99%;
-	height: 250px;
+}
+
+#easyPTT {
 	overflow: auto;
 	border: 2px solid black;
 	background-color: antiquewhite;
 }
 
 #player {
-	margin-top: 4px;
-	margin-bottom: 4px;
-	float: left;
-	width: 99%;
-	height: 325px;
 	overflow: auto;
 	border: 2px solid gold;
 	background-color: gainsboro;
 }
 
 #units {
-	margin-top: 4px;
-	margin-bottom: 4px;
-	float: left;
-	width: 99%;
 	overflow: auto;
 	border: 2px solid red;
 	background-color: lightblue;
 }
 
 #files {
-	margin-top: 4px;
-	margin-bottom: 4px;
-	float: left;
-	width: 99%;
 	overflow: auto;
 	border: 2px solid aqua;
 	background-color: cadetblue;
 }
 
 #statistic {
-	margin-top: 4px;
-	margin-bottom: 4px;
-	float: left;
-	width: 99%;
-	height: 200px;
 	overflow: auto;
 	border: 2px solid mediumpurple;
 	background-color: aliceblue;
 }
 
-#controller input {
+input {
 	display: inline-block;
-	width: 470px;
+	width: 220px;
 	height: 48px;
 	line-height: 30px;
 	font-size: 30px;
 	margin: auto;
 }
 
-#controller label {
+label {
 	display: inline-block;
 	float: none;
 }
 
-#controller button {
+button {
 	position: relative;
 	height: 50px;
 	line-height: 30px;
 	font-size: 30px;
-	width: 470px;
-	cursor: pointer;
+	width: 350px;
 }
+
+#adjustDifficulty {
+	overflow: auto;
+	border: 2px solid aqua;
+	background-color: cadetblue;
+}
+
 
 #avatarSelect {
 	position: relative;
@@ -653,12 +738,12 @@ body {
 	position: absolute;
 	left: -485px;
 	/* 965 */
-	top: -180px;
+	top: -255px;
 	display: none;
 	opacity: 0;
 	overflow-x: hidden;
 	height: 480px;
-	width: 483px;
+	width: 490px;
 	background-color: paleturquoise;
 	line-height: 0px;
 	transition-duration: 0.35s;

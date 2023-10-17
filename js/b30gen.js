@@ -258,8 +258,8 @@ function displayB30Value(data, flag) {
 //显示头像旁2位小数的PTT（不四舍五入）
 function displayPersonalPTT(data) {
 	personalPTT = displayB30Value(data, 1);
-	const starImage = document.getElementById("img");
-	starImage.src = "img/rating/rating_" + judgeStars(personalPTT) + ".png";
+	// const starImage = document.getElementById("starImg");
+	// starImage.src = "img/rating_" + judgeStars(personalPTT) + ".png";
 
 	const b30PTTContainer = document.getElementById("div");
 	b30PTTContainer.textContent = personalPTT;
@@ -332,7 +332,7 @@ function displayB30Data(data) {
 		singlePTTContainer.id = songId + "_" + Difficulty;
 
 		singlePTTContainer.onclick = function() {
-			// 在点击事件处理程序中获取被点击的div的id
+			//获取被点击的div的id
 			var id = singlePTTContainer.id;
 			console.log("被点击的div的id是：" + id);
 			console.log("songName=" + songName);
@@ -345,6 +345,8 @@ function displayB30Data(data) {
 			console.log("lost=" + lost);
 			console.log("singlePTTInfo=" + singlePTTInfo);
 			console.log("singlePTT=" + singlePTT);
+			const url = `divgen.html?singlePTTInfo=${singlePTTInfo}`;
+			window.location.href = url;
 			// const url =
 			// 	`clicktest.html?songName=${songName}&songId=${songId}&Difficulty=${Difficulty}&score=${score}&perfect=${perfect}&criticalPerfect=${criticalPerfect}&far=${far}&lost=${lost}&singlePTTInfo=${singlePTTInfo}&singlePTT=${singlePTT}`;
 			// window.location.href = url;
@@ -544,12 +546,12 @@ document.addEventListener("DOMContentLoaded", function() {
 		const saveButton = document.getElementById("saveButton");
 		const cover = document.getElementById("mainCover");
 		let vw = document.documentElement.clientWidth;
-		document.getElementById("loadingGif").style.left = vw/2 - 32 + "px";
-		document.getElementById("loadingNotice").style.left = vw/2 - 300 + "px";
-		
+		document.getElementById("loadingGif").style.left = vw / 2 - 32 + "px";
+		document.getElementById("loadingNotice").style.left = vw / 2 - 300 + "px";
+
 		switchController();
 		cover.style.display = "block";
-		setTimeout(function(){
+		setTimeout(function() {
 			cover.style.opacity = "1";
 		}, 50);
 		document.body.style.zoom = 1;
@@ -575,17 +577,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
 			document.body.removeChild(link);
 			resizeWidth();
-			
+
 			cover.style.opacity = "0";
-			setTimeout(function(){
+			setTimeout(function() {
 				cover.style.display = "none";
 			}, 800);
-			
+
 			saveButton.disabled = false;
-			setTimeout(function(){
+			setTimeout(function() {
 				switchController();
 			}, 800);
-			
+
 		});
 	}
 	saveButton.addEventListener("click", savePageAsImage);
@@ -887,7 +889,7 @@ function resizeWidth() {
 	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1700) +
 		"); -moz-transform-origin: 0 0; -moz-";
 	document.body.style.zoom = (document.documentElement.clientWidth / 1700);
-	
+
 }
 
 window.addEventListener('resize', resizeWidth);
