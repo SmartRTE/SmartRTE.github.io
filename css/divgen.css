@@ -416,7 +416,8 @@ body {
 	display: block;
 	/* 
 	line-height: 15px; */
-
+	margin-top: 5px;
+	margin-bottom: 70px;
 }
 
 .singlePTT {
