@@ -1,7 +1,12 @@
 @font-face {
-	font-family: 'geosans';
-	src: url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.woff') format('woff'),
+	font-family: "geosans";
+	src: url("../Fonts/GeosansLight.ttf"),
 		url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.otf') format('opentype');
+}
+
+@font-face {
+	font-family: "Exo";
+	src: url("../Fonts/Exo-SemiBold.ttf");
 }
 
 @font-face {
@@ -532,7 +537,7 @@ body {
 	position: relative;
 	top: -7px;
 	left: 5px;
-	font-family: "Exo-SemiBold";
+	font-family: "Exo";
 }
 
 .songNameHeader {
@@ -623,7 +628,7 @@ body {
 	line-height: 100px;
 	font-weight: bolder;
 	text-align: center;
-	font-family: "Exo-SemiBold";
+	font-family: "Exo";
 	color: aliceblue;
 	text-shadow: 0px 0px 5px black;
 	letter-spacing: 1px;
