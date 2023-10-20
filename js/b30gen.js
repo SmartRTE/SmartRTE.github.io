@@ -334,18 +334,18 @@ function displayB30Data(data) {
 
 		singlePTTContainer.onclick = function() {
 			//获取被点击的div的id
-			var id = singlePTTContainer.id;
-			console.log("被点击的div的id是：" + id);
-			console.log("songName=" + songName);
-			console.log("songId=" + songId);
-			console.log("Difficulty=" + Difficulty);
-			console.log("score=" + score);
-			console.log("perfect=" + perfect);
-			console.log("criticalPerfect=" + criticalPerfect);
-			console.log("far=" + far);
-			console.log("lost=" + lost);
-			console.log("singlePTTInfo=" + singlePTTInfo);
-			console.log("singlePTT=" + singlePTT);
+			// var id = singlePTTContainer.id;
+			// console.log("被点击的div的id是：" + id);
+			// console.log("songName=" + songName);
+			// console.log("songId=" + songId);
+			// console.log("Difficulty=" + Difficulty);
+			// console.log("score=" + score);
+			// console.log("perfect=" + perfect);
+			// console.log("criticalPerfect=" + criticalPerfect);
+			// console.log("far=" + far);
+			// console.log("lost=" + lost);
+			// console.log("singlePTTInfo=" + singlePTTInfo);
+			// console.log("singlePTT=" + singlePTT);
 			const url = `divgen.html?singlePTTInfo=${singlePTTInfo}`;
 			window.location.href = url;
 			// const url =
@@ -552,12 +552,13 @@ document.addEventListener("DOMContentLoaded", function() {
 		let vw = document.documentElement.clientWidth;
 		document.getElementById("loadingGif").style.left = vw / 2 - 32 + "px";
 		document.getElementById("loadingNotice").style.left = vw / 2 - 300 + "px";
-
+		
 		switchController();
 		cover.style.display = "block";
 		setTimeout(function() {
+			document.getElementById("mainCapture").style = "filter: blur(15px);"
 			cover.style.opacity = "1";
-		}, 50);
+		}, 500);
 		document.body.style.zoom = 1;
 		document.body.style = "-moz-transform: scale(" + document.body.style.zoom +
 			"); -moz-transform-origin: 0 0;";
@@ -581,7 +582,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 			document.body.removeChild(link);
 			resizeWidth();
-
+			document.getElementById("mainCapture").style = "filter: blur(0px);"
 			cover.style.opacity = "0";
 			setTimeout(function() {
 				cover.style.display = "none";

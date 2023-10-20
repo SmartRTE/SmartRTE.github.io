@@ -9,6 +9,28 @@
 	src: url("../Fonts/Exo-SemiBold.ttf");
 }
 
+@keyframes divBlur {
+	0% {
+		filter: blur(0px);
+	}
+	20%{
+		filter: blur(15px);
+	}
+	100%{
+		filter: blur(0px);
+	}
+	
+}
+
+@keyframes captureBlur {
+	0% {
+		filter: blur(0px);
+	}
+	100% {
+		filter: blur(10px);
+	}
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -31,6 +53,7 @@ body {
 	margin: 0;
 	overflow-x: hidden;
 	overflow-y: hidden;
+	transition-duration: 0.6s;
 }
 
 #mainCover {
@@ -362,18 +385,7 @@ body {
 	animation: divBlur forwards 0.5s;
 }
 
-@keyframes divBlur {
-	0% {
-		filter: blur(0px);
-	}
-	20%{
-		filter: blur(15px);
-	}
-	100%{
-		filter: blur(0px);
-	}
-	
-}
+
 
 .realDiffInfo {
 	width: 280px;
