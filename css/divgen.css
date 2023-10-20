@@ -9,15 +9,6 @@
 	src: url("../Fonts/Exo-SemiBold.ttf");
 }
 
-@font-face {
-	font-family: Exo-SemiBold;
-	src: url(../Fonts/Exo-SemiBold.ttf);
-}
-
-@font-face {
-	font-family: DingTalkJinBuTi;
-	src: url(../Fonts/DingTalkJinBuTi.ttf);
-}
 
 * {
 	margin: 0;

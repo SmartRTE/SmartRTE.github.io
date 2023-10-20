@@ -326,7 +326,8 @@ function displayB30Data(data) {
 			document.getElementById("b30Data").appendChild(spliterGen);
 			document.getElementById("b30Data").appendChild(overflow);
 		}
-
+		setTimeout(function(){
+			console.log("🤔")},1000);
 		const singlePTTContainer = document.createElement("div");
 		singlePTTContainer.className = "singlePTT";
 		singlePTTContainer.id = songId + "_" + Difficulty;

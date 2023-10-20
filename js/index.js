@@ -174,7 +174,6 @@ function executeQuery(query) {
 
 			//加载完表格显示csv下载按钮
 			const uploadButton = document.getElementById("uploadButton");
-			uploadButton.style.width = "300px";
 			uploadButton.style.backgroundPosition = "center";
 			uploadButton.textContent = "重新上传";
 			const downloadButton = document.getElementById("download");
@@ -338,10 +337,14 @@ function calculateSinglePTT(score, constant) {
 	return s.toFixed(6);
 }
 
+
+//调整页面缩放
 function resizeWidth() {
-	if (window.innerWidth < 1000) {
-		document.body.style.zoom = (window.innerWidth / 1010);
-	} else {
-		document.body.style.zoom = 1;
-	}
+
+	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1500) +
+		"); -moz-transform-origin: 0 0; -moz-";
+	document.body.style.zoom = (document.documentElement.clientWidth / 1500);
+
 }
+
+window.addEventListener('resize', resizeWidth);

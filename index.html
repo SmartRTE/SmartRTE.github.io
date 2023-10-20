@@ -19,11 +19,12 @@
 			<li style="color: firebrick;">
 				!若打开本网页或跳转b30生成页面时弹出下载提示框，请取消掉，<br />因为页面需要从服务器下载所需的脚本等文件，<br />而有时这些文件会被下载软件的浏览器插件监听并接管下载。<br />若嫌麻烦可以设置默认屏蔽该网页的下载请求
 			</li>
-			<li style="color: firebrick; font-size: 30px;">!请确定完全看完下面的视频并了解了本页所有内容后再使用！!</li>
+			<li style="color: firebrick; font-size: 60px;">!!请确定完全看完下面的视频<br />并了解了本页所有内容后再使用！!</li>
 
 			<li><a href="https://www.bilibili.com/video/BV1kp4y1F7Jw" target="_blank">查看原理、食用方法以及获取st3数据库文件的方法</a></li>
 			<iframe id="bili" src="//player.bilibili.com/player.html?aid=958967055&bvid=BV1kp4y1F7Jw&cid=1281665008&p=1"
 				scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+				<li style="color: rgba(255, 170, 127, 1.0); font-size: 22px;">我不要脸，给我三连(</li>
 			<li>1.点击 “上传st3文件” 上传你的st3文件，文件名可改可不改 </li>
 			<li>2.上传完之后如果不出意外会立马显示数据库内的全曲目游玩记录表格 </li><br />
 			<li>*若有字符显示“?”是因为我用了比较懒的方法进行数据库查询，字符集有点问题，<br />但是不影响会意以及后面的b30生成</li><br />
@@ -36,13 +37,13 @@
 			<li>9.如果遇到bug或者其他问题请务必联系我！</li><br />
 			<li>*本意是方便自己查看分数表，免受手打成绩之苦，如果能帮到更多的人那就太好了</li>
 			<li>*水平有限，缝缝补补得到的这几个页面难免会有性能问题🙏</li><br />
-			<li>————RTE 2232194759</li><br />
+			<li>————RTE QQ: 2232194759</li><br />
 		</ul>
 		<input type="file" id="dbFileInput" style="display: none;"><br />
 		<div id="controller">
 			<button type="button" id="b30gen" onclick="window.open('b30gen.html')">点击跳转b30生成页</button>
-			<!-- <button type="button" id="difgen"
-				onclick="window.open('DividedByDifficulty.html')">点击跳转定数查曲生成页（还没做好</button> -->
+			<button type="button" id="difgen"
+				onclick="window.open('divgen.html')">点击跳转定数查曲生成页</button>
 			<button type="button" id="difgen">
 				<a style="width: 100%; height: 100%; text-decoration: none; color: aliceblue;" 
 					download="模板.csv" href="sample/模板.csv" 

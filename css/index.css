@@ -1,23 +1,26 @@
 body {
-	width: 1700px;
+	width: 1500px;
 	margin: 0 auto;
 	border-radius: 15px;
 	background-color: rgba(fe, ef, ef, 1);
-
+	overflow-x: hidden;
 }
 
 #bgimg img {
 	display: block;
 	position: fixed;
 	z-index: -99;
-	width: 1700px;
+	width: 1500px;
 	height: 100%;
 	opacity: 40%;
 	-webkit-filter: blur(1px);
 }
 
 #noticeButton {
-	width: 150px;
+	font-size: 60px;
+	position: relative;
+	left: 50px;
+	width: 300px;
 	cursor: pointer;
 	transition-duration: 0.3s;
 }
@@ -26,18 +29,23 @@ body {
 	transform: scale(1.3, 1.3);
 }
 
-h1 {
-	margin-left: 15px;
-}
 
 #notices {
-	margin-left: 15px;
-	font-size: 20px;
+	position: relative;
+	left: -50px;
+	font-size: 35px;
 	transition-duration: 0.3s;
+	width: 1500px;
+	list-style: none;
+}
 
+#notices li{
+	text-align: center;
 }
 
 #bili {
+	position: relative;
+	left: 350px;
 	width: 800px;
 	height: 450px;
 }
@@ -48,17 +56,14 @@ h1 {
 	display: inline-block;
 	align-items: center;
 }
-
-#uploadButton,
-#download,
-#sendToB30 {
+#controller button{
 	position: relative;
 	margin: 16px;
+	width: 450px;
 	height: 120px;
 	font-size: 25px;
 	font-weight: 500;
 	display: inline-block;
-	background: url(../img/btn-accept-zh-Hans.png);
 	background-repeat: no-repeat;
 	background-size: 100%;
 	border: none;
@@ -67,34 +72,18 @@ h1 {
 	transition-duration: 0.3s;
 }
 
-#uploadButton{
-	width: 450px;
+#uploadButton,
+#download,
+#sendToB30{
+	background: url(../img/btn-accept-zh-Hans.png);
 }
 
-#download, #sendToB30{
-	width: 300px;
-	background-size: 100%;
-	background-position: center;
-}
 
 #b30gen,
 #difgen {
 	color: aliceblue;
 	position: relative;
-	margin: 25px;
-	width: 450px;
-	height: 120px;
-	font-size: 25px;
-	font-weight: 500;
-	display: inline-block;
 	background: url(../img/btn-refuse-zh-Hans.png);
-	background-repeat: no-repeat;
-	background-size: 100%;
-	border: none;
-	float: left;
-	cursor: pointer;
-	transition-duration: 0.3s;
-
 }
 
 #b30gen:hover,
@@ -108,10 +97,19 @@ h1 {
 td {
 	text-align: left;
 	margin: 5px;
-	font-size: 18px;
+	font-size: 25px;
+	height: 40px;
+	min-width: 50px;
+	line-height: 30px;
+}
+
+tr {
+	height: 40px;
 }
 
 table {
+	width: 1500px;
+	margin: 0 auto;
 	border-radius: 8px;
 	border: 3px rgba(80, 80, 80, 0.5) solid;
 }
