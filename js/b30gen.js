@@ -556,9 +556,9 @@ document.addEventListener("DOMContentLoaded", function() {
 		switchController();
 		cover.style.display = "block";
 		setTimeout(function() {
-			document.getElementById("mainCapture").style = "filter: blur(15px);"
 			cover.style.opacity = "1";
-		}, 500);
+			document.getElementById("mainCapture").style = "filter: blur(15px);"
+		}, 50);
 		document.body.style.zoom = 1;
 		document.body.style = "-moz-transform: scale(" + document.body.style.zoom +
 			"); -moz-transform-origin: 0 0;";
@@ -581,18 +581,19 @@ document.addEventListener("DOMContentLoaded", function() {
 			link.click();
 
 			document.body.removeChild(link);
-			resizeWidth();
-			document.getElementById("mainCapture").style = "filter: blur(0px);"
+			
+			
 			setTimeout(function() {
 				cover.style.opacity = "0";
 				cover.style.display = "none";
+				document.getElementById("mainCapture").style = "filter: blur(0px);"
 			}, 800);
 
 			saveButton.disabled = false;
 			setTimeout(function() {
 				switchController();
 			}, 800);
-
+			resizeWidth();
 		});
 	}
 	saveButton.addEventListener("click", savePageAsImage);
