@@ -303,7 +303,7 @@ function displayB30Data(data) {
 	const lines = data.split("\n");
 	const b30Data = lines.slice(1, Number(displayAmount) + 1);
 	var counter = 1;
-	var spliter = 1;
+	// var spliter = 1;
 	var rowCounter = 0;
 
 
@@ -349,7 +349,10 @@ function displayB30Data(data) {
 			const url = `divgen.html?singlePTTInfo=${singlePTTInfo}`;
 			window.location.href = url;
 			// const url =
-			// 	`clicktest.html?songName=${songName}&songId=${songId}&Difficulty=${Difficulty}&score=${score}&perfect=${perfect}&criticalPerfect=${criticalPerfect}&far=${far}&lost=${lost}&singlePTTInfo=${singlePTTInfo}&singlePTT=${singlePTT}`;
+			// 	`clicktest.html?songName=${songName}&songId=${songId}
+			// &Difficulty=${Difficulty}&score=${score}&perfect=${perfect}
+			// &criticalPerfect=${criticalPerfect}&far=${far}&lost=${lost}
+			// &singlePTTInfo=${singlePTTInfo}&singlePTT=${singlePTT}`;
 			// window.location.href = url;
 		};
 
@@ -421,7 +424,7 @@ function displayB30Data(data) {
 			}
 		}
 
-		let newSongName;
+		// let newSongName;
 		const songNameDiv = document.createElement("div");
 		songNameDiv.className = "songName";
 
