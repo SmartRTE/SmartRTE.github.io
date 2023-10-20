@@ -583,8 +583,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			document.body.removeChild(link);
 			resizeWidth();
 			document.getElementById("mainCapture").style = "filter: blur(0px);"
-			cover.style.opacity = "0";
 			setTimeout(function() {
+				cover.style.opacity = "0";
 				cover.style.display = "none";
 			}, 800);
 
