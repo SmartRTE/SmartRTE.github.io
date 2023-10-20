@@ -592,8 +592,12 @@ document.addEventListener("DOMContentLoaded", function() {
 			saveButton.disabled = false;
 			setTimeout(function() {
 				switchController();
+				setTimeout(function() {
+					resizeWidth();
+				}, 80);
 			}, 800);
-			resizeWidth();
+			
+			
 		});
 	}
 	saveButton.addEventListener("click", savePageAsImage);
