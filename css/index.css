@@ -96,6 +96,10 @@ body {
 	transform: scale(1.1, 1.1);
 }
 
+th{
+	font-size: 20px;
+}
+
 td {
 	text-align: left;
 	margin: 5px;

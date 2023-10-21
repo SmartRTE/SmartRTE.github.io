@@ -1,17 +1,35 @@
 let db;
 let SQL;
 let csvContent; //用于保存生成的csv文件，便于传入localStorage
-
+let edit_flag = 0;
 // 加载sqlite组件
 let config = {
 	locateFile: () => "sql-wasm.wasm",
 };
+
+
 //组件初始化
 initSqlJs(config).then(function(sqlModule) {
 	SQL = sqlModule;
 	resizeWidth();
 	console.log("sql.js initialized 🎉");
 });
+
+function isEdit() {
+	const urlParams = new URLSearchParams(window.location.search);
+	if (urlParams.has("edit")) {
+		edit_flag = urlParams.get("edit");
+		console.log("edit="+urlParams.get("edit"));
+		if (edit_flag === "1") {
+		    showCSV(localStorage.saved_csv_data); // 你需要将showCSV()函数的调用添加到这里
+		}
+	}
+}
+
+window.onload = function(){
+	isEdit();
+}
+
 //异步加载db文件
 async function openDatabase(file) {
 	const buffer = await file.arrayBuffer();
@@ -26,8 +44,13 @@ async function openDatabase(file) {
 	executeQuery(query);
 }
 
+
+
 //修改表格事件监听
 addEventListener("DOMContentLoaded", function() {
+	
+
+	
 	let table = document.getElementById("queryTable");
 	// 添加删除行和添加行事件监听器
 	table.addEventListener("click", function(e) {
@@ -67,7 +90,7 @@ addEventListener("DOMContentLoaded", function() {
 			var currentValue = target.textContent;
 			var input = document.createElement("input");
 			input.value = currentValue;
-			
+
 			// 替换单元格内容为输入框
 			target.innerHTML = "";
 			target.appendChild(input);
@@ -76,22 +99,52 @@ addEventListener("DOMContentLoaded", function() {
 			input.addEventListener("blur", function() {
 				// 当输入框失去焦点时，更新单元格内容为输入框的值
 				target.textContent = input.value;
-				if (cellIndex === 4 || cellIndex === 9){
-					console.log("score selected,current singlePTT=" + target.closest("tr").cells[10].textContent);
-					target.closest("tr").cells[10].textContent = calculateSinglePTT(target.closest("tr").cells[4].textContent, target.closest("tr").cells[9].textContent);
+				if (cellIndex === 4 || cellIndex === 9) {
+					console.log("score selected,current singlePTT=" + target.closest("tr")
+						.cells[10].textContent);
+					target.closest("tr").cells[10].textContent = calculateSinglePTT(target
+						.closest("tr").cells[4].textContent, target.closest("tr").cells[9]
+						.textContent);
 				}
-				convertCSV();
+
 				console.log("td changed." + target.textContent);
+				sortTable();
+				convertCSV();
 			});
 
 			// 使输入框获得焦点
 			input.focus();
 			// convertCSV();
+			convertCSV();
 		}
-		convertCSV();
+		// 调用函数来进行排序
+
 	});
 
 });
+
+//表格按ptt排序
+function sortTable() {
+	var table = document.getElementById("queryTable");
+	var tbody = table.querySelector("tbody");
+	var rows = Array.from(tbody.rows);
+
+	rows.sort(function(a, b) {
+		var aValue = parseFloat(a.cells[10].textContent); // 第11列的值，这里假设是数值
+		var bValue = parseFloat(b.cells[10].textContent);
+		return bValue - aValue; // 降序排序
+	});
+
+	// 清空tbody内容
+	while (tbody.rows.length > 0) {
+		tbody.deleteRow(0);
+	}
+
+	// 重新插入排序后的行
+	rows.forEach(function(row) {
+		tbody.appendChild(row);
+	});
+}
 
 function executeQuery(query) {
 	if (!db) {
@@ -150,7 +203,7 @@ function executeQuery(query) {
 				addRow.textContent = "新增一行";
 				actButtons.appendChild(deleteRow);
 				actButtons.appendChild(addRow);
-				
+
 				//开始添加数据
 				valueRow.forEach(value => {
 					const td = document.createElement('td');
@@ -183,7 +236,7 @@ function executeQuery(query) {
 
 			//转换成csv保存到内存
 			convertCSV();
-			console.log("csv:\n",csvContent);
+			console.log("csv:\n", csvContent);
 			resultArea.value = '查询执行成功！';
 		} else {
 			resultArea.value = '查询结果为空！';
@@ -193,17 +246,31 @@ function executeQuery(query) {
 	}
 }
 
+
+
 //监听上传
 document.addEventListener("DOMContentLoaded", function() {
 	const dbFileInput = document.getElementById('dbFileInput');
+	const uploadButton = document.getElementById("uploadButton");
+	const fileInput = document.getElementById("dbFileInput");
+
 	dbFileInput.addEventListener("change", () => {
 		const file = dbFileInput.files[0];
 		if (file) {
-			openDatabase(file);
+			if (file.name.endsWith(".csv")) {
+				const reader = new FileReader();
+
+				reader.onload = function(event) {
+					const csvContent = event.target.result;
+					showCSV(csvContent); // 调用 showCSV 函数，并传递CSV内容
+				}
+
+				reader.readAsText(file);
+			} else {
+				openDatabase(file);
+			}
 		}
-	})
-	const uploadButton = document.getElementById("uploadButton");
-	const fileInput = document.getElementById("dbFileInput");
+	});
 
 	// 添加上传按钮的点击事件处理程序
 	uploadButton.addEventListener("click", function() {
@@ -211,6 +278,94 @@ document.addEventListener("DOMContentLoaded", function() {
 		fileInput.click();
 	});
 });
+
+
+
+function showCSV(file) {
+	const reader = new FileReader();
+	if (localStorage.saved_notices_flag == "1") {
+		notices.style.opacity = "0";
+		setTimeout(function() {
+			notices.style.display = "none";
+		}, 300)
+		localStorage.setItem("saved_notices_flag", "0");
+	}
+	const rows = file.split('\n'); // 按行拆分CSV数据
+	const table = document.getElementById("queryTable");
+	table.innerHTML = ''; // 清空表格内容
+
+	// 创建表头
+	const thead = document.createElement('thead');
+	const headerRow = document.createElement('tr');
+	const columns = rows[0].split(',');
+
+	// 添加操作列
+	headerRow.innerHTML = '<th>操作</th>';
+
+	columns.forEach(column => {
+		const th = document.createElement('th');
+		th.textContent = column;
+		headerRow.appendChild(th);
+	});
+
+	thead.appendChild(headerRow);
+	table.appendChild(thead);
+
+	// 创建表格内容
+	const tbody = document.createElement('tbody');
+
+	for (let i = 1; i < rows.length; i++) {
+		const row = rows[i].split(',');
+		const tr = document.createElement('tr');
+
+		// 添加操作列
+		const actButtons = document.createElement('td');
+		actButtons.className = "rowActions";
+		tr.appendChild(actButtons);
+		const deleteRow = document.createElement("button");
+		deleteRow.className = "deleteRow";
+		deleteRow.textContent = "删除本行";
+		const addRow = document.createElement("button");
+		addRow.className = "addRow";
+		addRow.textContent = "新增一行";
+		actButtons.appendChild(deleteRow);
+		actButtons.appendChild(addRow);
+
+		row.forEach(value => {
+			const td = document.createElement('td');
+			td.textContent = value;
+
+			tr.appendChild(td);
+			if (value === 'Past') {
+				tr.style.backgroundColor = 'rgba(0,0,255,0.35)';
+			} else if (value === 'Present') {
+				tr.style.backgroundColor = 'rgba(0,255,0,0.35)';
+			} else if (value === 'Future') {
+				tr.style.backgroundColor = 'rgba(128,0,128,0.35)';
+			} else if (value === 'Beyond') {
+				tr.style.backgroundColor = 'rgba(255,0,0,0.35)';
+			}
+		});
+
+		tbody.appendChild(tr);
+	}
+
+	table.appendChild(tbody);
+
+	//加载完表格显示csv下载按钮
+	const uploadButton = document.getElementById("uploadButton");
+	uploadButton.style.backgroundPosition = "center";
+	uploadButton.textContent = "重新上传";
+	const downloadButton = document.getElementById("download");
+	downloadButton.style.display = "inline-block";
+	const sendButton = document.getElementById("sendToB30");
+	sendButton.style.display = "inline-block";
+
+	convertCSV();
+
+	reader.readAsText(file);
+}
+
 
 //表格转csv
 function convertCSV() {
@@ -235,7 +390,7 @@ function convertCSV() {
 		// headerData.push(cell.textContent);
 	});
 	data.push(headerData);
-	
+
 	// 遍历表格行和列，提取数据
 	const rows = table.querySelectorAll('tbody tr');
 	rows.forEach(row => {
@@ -288,7 +443,7 @@ function sendToB30() {
 	let currentDateTime = new Date().toLocaleString();
 	localStorage.setItem("saved_csv_name", 'B30_' + currentDateTime + '.csv')
 	localStorage.setItem("saved_csv_data", csvContent);
-	window.location.href = "b30gen.html";
+	window.open("b30gen.html", "_blank");
 }
 
 //展开收起notices
@@ -336,7 +491,6 @@ function calculateSinglePTT(score, constant) {
 	}
 	return s.toFixed(6);
 }
-
 
 //调整页面缩放
 function resizeWidth() {

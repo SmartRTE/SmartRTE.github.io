@@ -892,6 +892,11 @@ function hideUid() {
 	}
 }
 
+//修改分数表
+function editScore(){
+	const url = `index.html?edit=1`;
+	window.location.href = url;
+}
 
 //调整页面缩放
 function resizeWidth() {
