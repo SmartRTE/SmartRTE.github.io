@@ -21,7 +21,7 @@ function isEdit() {
 		edit_flag = urlParams.get("edit");
 		console.log("edit="+urlParams.get("edit"));
 		if (edit_flag === "1") {
-		    showCSV(localStorage.saved_csv_data); // 你需要将showCSV()函数的调用添加到这里
+		    showCSV(localStorage.saved_csv_data);·
 		}
 	}
 }
