@@ -546,7 +546,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		const body = document.getElementById("mainCapture");
 		const bg = document.getElementById("bgImg");
 		const captureWidth = bg.width; //1700
-		const captureHeight = bg.height; //3150
+		const captureHeight = bg.height - 10; //3150
 		const saveButton = document.getElementById("saveButton");
 		const cover = document.getElementById("mainCover");
 		let vw = document.documentElement.clientWidth;
