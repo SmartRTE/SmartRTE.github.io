@@ -19,15 +19,21 @@ function isEdit() {
 	const urlParams = new URLSearchParams(window.location.search);
 	if (urlParams.has("edit")) {
 		edit_flag = urlParams.get("edit");
-		console.log("edit="+urlParams.get("edit"));
+		console.log("edit=" + urlParams.get("edit"));
 		if (edit_flag === "1") {
-		    showCSV(localStorage.saved_csv_data);·
+			showCSV(localStorage.saved_csv_data);
 		}
 	}
 }
 
-window.onload = function(){
+window.onload = function() {
 	isEdit();
+}
+
+function showEdit(){
+	const btn = document.getElementById("edit");
+	btn.style.display = "none";
+	showCSV(localStorage.saved_csv_data); 
 }
 
 //异步加载db文件
@@ -48,9 +54,9 @@ async function openDatabase(file) {
 
 //修改表格事件监听
 addEventListener("DOMContentLoaded", function() {
-	
 
-	
+
+
 	let table = document.getElementById("queryTable");
 	// 添加删除行和添加行事件监听器
 	table.addEventListener("click", function(e) {
@@ -228,7 +234,7 @@ function executeQuery(query) {
 			//加载完表格显示csv下载按钮
 			const uploadButton = document.getElementById("uploadButton");
 			uploadButton.style.backgroundPosition = "center";
-			uploadButton.textContent = "重新上传";
+			uploadButton.textContent = "重新上传文件";
 			const downloadButton = document.getElementById("download");
 			downloadButton.style.display = "inline-block";
 			const sendButton = document.getElementById("sendToB30");
@@ -355,7 +361,7 @@ function showCSV(file) {
 	//加载完表格显示csv下载按钮
 	const uploadButton = document.getElementById("uploadButton");
 	uploadButton.style.backgroundPosition = "center";
-	uploadButton.textContent = "重新上传";
+	uploadButton.textContent = "重新上传文件";
 	const downloadButton = document.getElementById("download");
 	downloadButton.style.display = "inline-block";
 	const sendButton = document.getElementById("sendToB30");

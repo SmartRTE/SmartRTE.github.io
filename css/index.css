@@ -76,7 +76,8 @@ body {
 
 #uploadButton,
 #download,
-#sendToB30{
+#sendToB30,
+#edit{
 	background: url(../img/btn-accept-zh-Hans.png);
 }
 
@@ -92,7 +93,8 @@ body {
 #difgen:hover,
 #uploadButton:hover,
 #download:hover,
-#sendToB30:hover {
+#sendToB30:hover,
+#edit:hover{
 	transform: scale(1.1, 1.1);
 }
 
