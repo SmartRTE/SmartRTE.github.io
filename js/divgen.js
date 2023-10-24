@@ -6,6 +6,8 @@ let default_csv_name = "default.csv"; //初始的默认csv路径
 let csv_name = null; //手动选择的新csv
 let csv_data = null; //储存csv内容到内存
 
+let spliter_counter = 0; //分割线数
+
 let flag = 0; //替换default.csv
 let flag_switch_controller = 0; //控件初始值赋值block
 let flag_uid = 1; //显示/隐藏uid
@@ -23,6 +25,41 @@ let statistic_1xiao = 0; //1小p性数
 
 let future_only = 0; //只要FTR和BYD难度
 
+let array = []; //在上下界内符合的成绩数组
+
+class singleResult {
+	constructor(n, id, dif, scr, p, cp, f, l, c, s) {
+		this.songName = n;
+		this.songId = id;
+		this.Difficulty = dif;
+		this.score = scr;
+		this.perfect = p;
+		this.criticalPerfect = cp;
+		this.far = f;
+		this.lost = l;
+		this.singlePTTInfo = c;
+		this.singlePTT = s;
+	}
+}
+
+function resultSort(a, b) {
+	// 先按 singlePTTInfo 从大到小排序
+	if (parseFloat(a.singlePTTInfo) > parseFloat(b.singlePTTInfo)) {
+		return -1;
+	} else if (parseFloat(a.singlePTTInfo) < parseFloat(b.singlePTTInfo)) {
+		return 1;
+	} else {
+		// 如果 singlePTTInfo 相同，按 score 从大到小排序
+		if (parseFloat(a.score) > parseFloat(b.score)) {
+			return -1;
+		} else if (parseFloat(a.score) < parseFloat(b.score)) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+}
+
 function getConstant() {
 	const urlParams = new URLSearchParams(window.location.search);
 	if (urlParams.has("singlePTTInfo")) {
@@ -30,11 +67,11 @@ function getConstant() {
 	}
 }
 
-function switchFTR(){
+function switchFTR() {
 	const f = document.getElementById("ftrOnly");
 	future_only = future_only === 1 ? 0 : 1;
 	f.style.backgroundColor = future_only === 1 ? "lightpink" : "cornflowerblue";
-	f.textContent = future_only === 1 ? "全部显示" : "只要FTR和BYD"; 
+	f.textContent = future_only === 1 ? "全部显示" : "只要FTR和BYD";
 	refreshData(csv_data);
 }
 
@@ -146,7 +183,7 @@ function refreshData(data) {
 	const statisticsDisplay = document.getElementById("statisticsDisplay");
 	pttDisplay.innerHTML = "";
 	statisticsDisplay.innerHTML = "";
-
+	spliter_counter = 0;
 	// console.log("pttcleared");
 	//数据统计初始化
 	rowCounter = 0;
@@ -166,13 +203,25 @@ function resetBackgroundHeight() {
 	// console.log("Height called, amount=" + rowCounter);
 	const bgImg = document.getElementById("bgImg");
 	const mainCapture = document.getElementById("mainCapture");
-	let fixed = 300;
-	let height = 211 * (1 + Math.floor((rowCounter - 1) / 2)) + fixed;
-	// console.log("result = " + height);
-	h = String(height + 100) + "px";
+
+	// const container = document.getElementById("container");
+	// const b30 = document.getElementById("b30Data");
+	// const copyright = document.getElementById("copyright");
+	// let h = parseInt(container.style.height.replace("px",'')) + parseInt(b30.style.height.replace("px",'')) + parseInt(copyright.style.height.replace("px",''));
+	
+	// 直接读取高度
+	let h1 = window.getComputedStyle(container, null).height.replace("px",'');
+	let h2 = window.getComputedStyle(b30Data, null).height.replace("px",'');
+	let h3 = window.getComputedStyle(copyright, null).height.replace("px",'');
+	// console.log("h1="+h1+"h2="+h2+"h3="+h3);
+	// let fixed = 400;
+	// let height = 211 * (1 + Math.floor((rowCounter - 1) / 2)) + fixed + spliter_counter * 100;
+	// // console.log("height = " + height+"spliter_counter * 60="+spliter_counter * 60);
+	let h = parseInt(h1)+parseInt(h2)+parseInt(h3) + "px";
 	bgImg.style.height = h;
 	mainCapture.style.height = h;
 	document.body.style.height = h;
+	console.log(h);
 
 }
 //不四舍五入的小数取舍
@@ -269,7 +318,7 @@ function displayB30Value(data, flag) {
 	document.getElementById("statisticsDisplay").appendChild(statisticsContainer);
 	const statisticsTitle = document.createElement("div");
 	statisticsTitle.id = "statisticsTitle";
-	statisticsTitle.textContent = "In " + rowCounter + " results:";
+	statisticsTitle.textContent = "In " + array.length + " results:";
 	document.getElementById("statisticsContainer").appendChild(statisticsTitle);
 
 	const statisticsTheory = document.createElement("div");
@@ -354,12 +403,10 @@ async function getTitleMapping() {
 //图片单元生成部分
 
 function displayB30Data(data) {
-	//console.log("displayAmount:" + displayAmount);
 	const lines = data.split("\n");
 	const b30Data = lines.slice(1, );
-	var counter = 1;
 	var spliter = 1;
-
+	array = [];
 	b30Data.forEach((row, index) => {
 		const cells = row.split(",");
 		const [songName, songId, Difficulty, score, perfect, criticalPerfect, far, lost,
@@ -370,222 +417,244 @@ function displayB30Data(data) {
 			if (future_only === 1 && (Difficulty === "Past" || Difficulty === "Present")) {
 				//🤔
 			} else {
+				let singleresult = new singleResult(songName, songId, Difficulty, score, perfect,
+					criticalPerfect, far, lost, singlePTTInfo, singlePTT);
+				array.push(singleresult);
 				rowCounter = rowCounter + 1;
-				//console.log("rouCounter = " + rowCounter + songName + singlePTTInfo);
-				const singlePTTContainer = document.createElement("div");
-				singlePTTContainer.className = "singlePTT";
-				singlePTTContainer.id = songId + "_" + Difficulty;
-
-				singlePTTContainer.onclick = function() {
-					// 在点击事件处理程序中获取被点击的div的id
-					var id = singlePTTContainer.id;
-					// console.log("被点击的div的id是：" + id);
-					// console.log("songName=" + songName);
-					// console.log("songId=" + songId);
-					// console.log("Difficulty=" + Difficulty);
-					// console.log("score=" + score);
-					// console.log("perfect=" + perfect);
-					// console.log("criticalPerfect=" + criticalPerfect);
-					// console.log("far=" + far);
-					// console.log("lost=" + lost);
-					// console.log("singlePTTInfo=" + singlePTTInfo);
-					// console.log("singlePTT=" + singlePTT);
-					// const url =
-					// 	`clicktest.html?songName=${songName}&songId=${songId}&Difficulty=${Difficulty}&score=${score}&perfect=${perfect}&criticalPerfect=${criticalPerfect}&far=${far}&lost=${lost}&singlePTTInfo=${singlePTTInfo}&singlePTT=${singlePTT}`;
-					// window.location.href = url;
-					const url = `divgen.html?singlePTTInfo=${singlePTTInfo}`;
-					window.location.href = url;
-				};
-
-				// 曲绘
-				const songImageDiv = document.createElement("div");
-				songImageDiv.className = "songImageDiv";
-				const songImage = document.createElement("img");
-				songImage.className = "songImage";
-				songImage.id = songId + "_" + Difficulty;
-				// 获取差分曲绘
-				getImageMapping().then(imageMapping => {
-					if (imageMapping) {
-						const diffSongId = imageMapping[songId];
-						if (diffSongId && diffSongId[Difficulty]) {
-							songImage.src = "Processed_Illustration/" + songId + diffSongId[
-								Difficulty] +
-								".jpg";
-						} else {
-							songImage.src = "Processed_Illustration/" + songId + ".jpg";
-						}
-					} else {
-						songImage.src = "Processed_Illustration/sayonarahatsukoi.jpg";
-					}
-
-					singlePTTContainer.appendChild(songImageDiv);
-					songImageDiv.appendChild(songImage);
-				});
-
-				//曲目信息
-				const songInfoContainer = document.createElement("div");
-				songInfoContainer.className = "songInformation";
-
-				const realDiffInfo = document.createElement("div");
-				realDiffInfo.className = "realDiffInfo";
-
-				const sPTTDiv = document.createElement("div");
-				sPTTDiv.className = "sPTT";
-				const sPTTLinkValue = document.createElement("a");
-
-				sPTTLinkValue.textContent = Difficulty + judgeLevel(singlePTTInfo) +
-					" [" + parseFloat(singlePTTInfo).toFixed(1) + "]";
-				sPTTDiv.appendChild(sPTTLinkValue);
-
-				const singlePTTInfoDiv = document.createElement("div");
-				singlePTTInfoDiv.className = "singlePTTInfo";
-				const singlePTTInfoLink = document.createElement("a");
-				singlePTTInfoLink.textContent = parseFloat(singlePTT).toFixed(4);
-				singlePTTInfoDiv.appendChild(singlePTTInfoLink);
-
-				switch (Difficulty) {
-					case "Beyond": {
-						singlePTTInfoDiv.style.backgroundColor = "rgba(191,41,65,1)";
-						realDiffInfo.style.backgroundColor = "rgba(150,35,54,1)";
-						break;
-					}
-					case "Future": {
-						singlePTTInfoDiv.style.backgroundColor = "rgba(138,72,117,1)";
-						realDiffInfo.style.backgroundColor = "rgba(110,58,96,1)";
-						break;
-					}
-					case "Present": {
-						singlePTTInfoDiv.style.backgroundColor = "rgba(0, 130, 0, 1.0)";
-						realDiffInfo.style.backgroundColor = "rgba(0, 90, 0, 1.0)";
-						break;
-					}
-					case "Past": {
-						singlePTTInfoDiv.style.backgroundColor = "rgba(0, 133, 200, 1.0)";
-						realDiffInfo.style.backgroundColor = "rgba(0, 66, 200, 1.0)";
-						break;
-					}
-				}
-
-				let newSongName;
-				const songNameDiv = document.createElement("div");
-				songNameDiv.className = "songName";
-
-				const songNameHeader = document.createElement("h2");
-				songNameHeader.className = "songNameHeader";
-
-				// 获取差分曲名
-				getTitleMapping().then(titleMapping => {
-					if (titleMapping) {
-						const diffSongId = titleMapping[songId];
-						if (diffSongId && diffSongId[Difficulty]) {
-							songNameHeader.textContent = diffSongId[Difficulty];
-						} else {
-							songNameHeader.textContent = songName;
-						}
-					} else {
-						songNameHeader.textContent = "sayonarahatsukoi";
-					}
-					songNameDiv.appendChild(songNameHeader);
-				});
-
-				const scoreDiv = document.createElement("div");
-				scoreDiv.className = "score";
-
-				const scoreHeader = document.createElement("h3");
-				scoreHeader.textContent = formatScore(score, "'");
-				scoreDiv.appendChild(scoreHeader);
-
-				const itemsDiv = document.createElement("div");
-				itemsDiv.className = "items";
-
-				const pureDiv = document.createElement("div");
-				pureDiv.className = "pure";
-				const pureHeader = document.createElement("h4");
-				pureHeader.textContent = `P / ${perfect} (${criticalPerfect - perfect})`;
-				pureDiv.appendChild(pureHeader);
-
-				const farDiv = document.createElement("div");
-				farDiv.className = "far";
-				const farHeader = document.createElement("h4");
-				farHeader.textContent = `F / ${far}`;
-				farDiv.appendChild(farHeader);
-
-				const lostDiv = document.createElement("div");
-				lostDiv.className = "lost";
-				const lostHeader = document.createElement("h4");
-				lostHeader.textContent = `L / ${lost}`;
-				lostDiv.appendChild(lostHeader);
-
-				const rankDiv = document.createElement("div");
-				rankDiv.className = "rank";
-				const rankHeader = document.createElement("h4");
-				rankHeader.textContent = "#" + counter;
-				counter = counter + 1;
-
-				const songRank = document.createElement("img");
-				songRank.className = "songRank";
-				songRank.src = judgeRank(score, far, lost);
-
-
-				const image = new Image();
-				image.src = songImage.src;
-				//理论值调整分数和sPTT颜色
-				//并给对应的计数器累加
-				if (Number(perfect) !== 0 && perfect === criticalPerfect && Number(far) === 0 && Number(
-					lost) ===
-					0) {
-					scoreHeader.style.color = "rgba(0, 12, 48, 1.0)";
-					scoreHeader.style.textShadow = "0px 0px 6px rgba(0, 210, 210, 1.0)";
-					sPTTLinkValue.style.textShadow = "0px 0px 6px rgba(0, 210, 210, 1.0)";
-					statistic_theory = statistic_theory + 1;
-				}
-				if (Number(perfect) !== 0 && Number(far) === 0 && Number(lost) === 0) {
-					statistic_pure_memory = statistic_pure_memory + 1;
-				}
-				if (Number(perfect) !== 0 && Number(far) !== 0 && Number(lost) === 0) {
-					statistic_full_recall = statistic_full_recall + 1;
-				}
-				if (Number(perfect) !== 0 && (Number(far) === 1 && Number(lost) === 0) || (Number(far) === 0 &&
-						Number(
-							lost) === 1)) {
-					statistic_xing = statistic_xing + 1;
-				}
-				if (Number(perfect) !== 0 && Number(perfect - 1) === Number(criticalPerfect) && Number(far) ===
-					0 &&
-					Number(lost) === 0) {
-					statistic_1xiao = statistic_1xiao + 1;
-				}
-				if (rowCounter === 1) {
-					rankHeader.style.backgroundColor = "rgba(255,202,1,1)";
-				}
-				if (rowCounter === 2) {
-					rankHeader.style.backgroundColor = "rgba(175, 175, 175, 1.0)";
-				}
-				if (rowCounter === 3) {
-					rankHeader.style.backgroundColor = "rgba(165,124,80,1)";
-				}
-				itemsDiv.appendChild(pureDiv);
-				itemsDiv.appendChild(farDiv);
-				itemsDiv.appendChild(lostDiv);
-				rankDiv.appendChild(rankHeader);
-				realDiffInfo.appendChild(singlePTTInfoDiv);
-				realDiffInfo.appendChild(sPTTDiv);
-				songInfoContainer.appendChild(realDiffInfo);
-				songInfoContainer.appendChild(songNameDiv);
-				songInfoContainer.appendChild(scoreDiv);
-				songInfoContainer.appendChild(itemsDiv);
-				songInfoContainer.appendChild(rankDiv);
-				singlePTTContainer.appendChild(songInfoContainer);
-				singlePTTContainer.appendChild(songRank);
-				document.getElementById("b30Data").appendChild(singlePTTContainer);
 			}
-			//console.log("fr:" + statistic_full_recall + ", pm:" + statistic_pure_memory + ", th:" +statistic_theory);
+		}
+	});
+	array.sort(resultSort);
+	console.log(array);
+	appendUnit(array);
+}
 
+function appendSpliter() {
+	const spliterGen = document.createElement("img");
+	spliterGen.src = "img/divider.png";
+	spliterGen.className = "spliter";
+	document.getElementById("b30Data").appendChild(spliterGen);
+}
+
+function appendUnit(array) {
+	let idx;
+	let counter = 1;
+
+	for (idx = 0; idx < array.length; idx++) {
+		let songName = array[idx].songName;
+		let songId = array[idx].songId;
+		let Difficulty = array[idx].Difficulty;
+		let score = array[idx].score;
+		let perfect = array[idx].perfect;
+		let criticalPerfect = array[idx].criticalPerfect;
+		let far = array[idx].far;
+		let lost = array[idx].lost;
+		let singlePTTInfo = array[idx].singlePTTInfo;
+		let singlePTT = array[idx].singlePTT;
+		const singlePTTContainer = document.createElement("div");
+		singlePTTContainer.className = "singlePTT";
+		singlePTTContainer.id = songId + "_" + Difficulty;
+		if (array[idx - 1] != undefined && array[idx].singlePTTInfo != array[idx - 1].singlePTTInfo) {
+			// console.log("currentIDX=" + (idx - 1));
+			appendSpliter();
+			spliter_counter++;
+			if ((idx - 1) % 2 == 0 && idx != (array.length - 1)) {
+				rowCounter++;
+			}
+			counter = 1;
+		}
+		// singlePTTContainer.onclick = function() {
+		// 	// 在点击事件处理程序中获取被点击的div的id
+		// 	var id = singlePTTContainer.id;
+		// 	const url = `divgen.html?singlePTTInfo=${singlePTTInfo}`;
+		// 	window.location.href = url;
+		// };
+
+		// 曲绘
+		const songImageDiv = document.createElement("div");
+		songImageDiv.className = "songImageDiv";
+		const songImage = document.createElement("img");
+		songImage.className = "songImage";
+		songImage.id = songId + "_" + Difficulty;
+		// 获取差分曲绘
+		getImageMapping().then(imageMapping => {
+			if (imageMapping) {
+				const diffSongId = imageMapping[songId];
+				if (diffSongId && diffSongId[Difficulty]) {
+					songImage.src = "Processed_Illustration/" + songId + diffSongId[
+							Difficulty] +
+						".jpg";
+				} else {
+					songImage.src = "Processed_Illustration/" + songId + ".jpg";
+				}
+			} else {
+				songImage.src = "Processed_Illustration/sayonarahatsukoi.jpg";
+			}
+
+			singlePTTContainer.appendChild(songImageDiv);
+			songImageDiv.appendChild(songImage);
+		});
+
+		//曲目信息
+		const songInfoContainer = document.createElement("div");
+		songInfoContainer.className = "songInformation";
+
+		const realDiffInfo = document.createElement("div");
+		realDiffInfo.className = "realDiffInfo";
+
+		const sPTTDiv = document.createElement("div");
+		sPTTDiv.className = "sPTT";
+		const sPTTLinkValue = document.createElement("a");
+
+		sPTTLinkValue.textContent = Difficulty + judgeLevel(singlePTTInfo) +
+			" [" + parseFloat(singlePTTInfo).toFixed(1) + "]";
+		sPTTDiv.appendChild(sPTTLinkValue);
+
+		const singlePTTInfoDiv = document.createElement("div");
+		singlePTTInfoDiv.className = "singlePTTInfo";
+		const singlePTTInfoLink = document.createElement("a");
+		singlePTTInfoLink.textContent = parseFloat(singlePTT).toFixed(4);
+		singlePTTInfoDiv.appendChild(singlePTTInfoLink);
+
+		switch (Difficulty) {
+			case "Beyond": {
+				singlePTTInfoDiv.style.backgroundColor = "rgba(191,41,65,1)";
+				realDiffInfo.style.backgroundColor = "rgba(150,35,54,1)";
+				break;
+			}
+			case "Future": {
+				singlePTTInfoDiv.style.backgroundColor = "rgba(138,72,117,1)";
+				realDiffInfo.style.backgroundColor = "rgba(110,58,96,1)";
+				break;
+			}
+			case "Present": {
+				singlePTTInfoDiv.style.backgroundColor = "rgba(0, 130, 0, 1.0)";
+				realDiffInfo.style.backgroundColor = "rgba(0, 90, 0, 1.0)";
+				break;
+			}
+			case "Past": {
+				singlePTTInfoDiv.style.backgroundColor = "rgba(0, 133, 200, 1.0)";
+				realDiffInfo.style.backgroundColor = "rgba(0, 66, 200, 1.0)";
+				break;
+			}
 		}
 
-	});
-	// console.log("B30Over");
+		let newSongName;
+		const songNameDiv = document.createElement("div");
+		songNameDiv.className = "songName";
+
+		const songNameHeader = document.createElement("h2");
+		songNameHeader.className = "songNameHeader";
+
+		// 获取差分曲名
+		getTitleMapping().then(titleMapping => {
+			if (titleMapping) {
+				const diffSongId = titleMapping[songId];
+				if (diffSongId && diffSongId[Difficulty]) {
+					songNameHeader.textContent = diffSongId[Difficulty];
+				} else {
+					songNameHeader.textContent = songName;
+				}
+			} else {
+				songNameHeader.textContent = "sayonarahatsukoi";
+			}
+			songNameDiv.appendChild(songNameHeader);
+		});
+
+		const scoreDiv = document.createElement("div");
+		scoreDiv.className = "score";
+
+		const scoreHeader = document.createElement("h3");
+		scoreHeader.textContent = formatScore(score, "'");
+		scoreDiv.appendChild(scoreHeader);
+
+		const itemsDiv = document.createElement("div");
+		itemsDiv.className = "items";
+
+		const pureDiv = document.createElement("div");
+		pureDiv.className = "pure";
+		const pureHeader = document.createElement("h4");
+		pureHeader.textContent = `P / ${perfect} (${criticalPerfect - perfect})`;
+		pureDiv.appendChild(pureHeader);
+
+		const farDiv = document.createElement("div");
+		farDiv.className = "far";
+		const farHeader = document.createElement("h4");
+		farHeader.textContent = `F / ${far}`;
+		farDiv.appendChild(farHeader);
+
+		const lostDiv = document.createElement("div");
+		lostDiv.className = "lost";
+		const lostHeader = document.createElement("h4");
+		lostHeader.textContent = `L / ${lost}`;
+		lostDiv.appendChild(lostHeader);
+
+		const rankDiv = document.createElement("div");
+		rankDiv.className = "rank";
+		const rankHeader = document.createElement("h4");
+		rankHeader.textContent = "#" + counter;
+		counter = counter + 1;
+
+		const songRank = document.createElement("img");
+		songRank.className = "songRank";
+		songRank.src = judgeRank(score, far, lost);
+
+
+		const image = new Image();
+		image.src = songImage.src;
+		//理论值调整分数和sPTT颜色
+		//并给对应的计数器累加
+		if (Number(perfect) !== 0 && perfect === criticalPerfect && Number(far) === 0 && Number(
+				lost) ===
+			0) {
+			scoreHeader.style.color = "rgba(0, 12, 48, 1.0)";
+			scoreHeader.style.textShadow = "0px 0px 6px rgba(0, 210, 210, 1.0)";
+			sPTTLinkValue.style.textShadow = "0px 0px 6px rgba(0, 210, 210, 1.0)";
+			statistic_theory = statistic_theory + 1;
+		}
+		if (Number(perfect) !== 0 && Number(far) === 0 && Number(lost) === 0) {
+			statistic_pure_memory = statistic_pure_memory + 1;
+		}
+		if (Number(perfect) !== 0 && Number(far) !== 0 && Number(lost) === 0) {
+			statistic_full_recall = statistic_full_recall + 1;
+		}
+		if (Number(perfect) !== 0 && (Number(far) === 1 && Number(lost) === 0) || (Number(far) === 0 &&
+				Number(
+					lost) === 1)) {
+			statistic_xing = statistic_xing + 1;
+		}
+		if (Number(perfect) !== 0 && Number(perfect - 1) === Number(criticalPerfect) && Number(far) ===
+			0 &&
+			Number(lost) === 0) {
+			statistic_1xiao = statistic_1xiao + 1;
+		}
+		// if (rowCounter === 1) {
+		// 	rankHeader.style.backgroundColor = "rgba(255,202,1,1)";
+		// }
+		// if (rowCounter === 2) {
+		// 	rankHeader.style.backgroundColor = "rgba(175, 175, 175, 1.0)";
+		// }
+		// if (rowCounter === 3) {
+		// 	rankHeader.style.backgroundColor = "rgba(165,124,80,1)";
+		// }
+		itemsDiv.appendChild(pureDiv);
+		itemsDiv.appendChild(farDiv);
+		itemsDiv.appendChild(lostDiv);
+		rankDiv.appendChild(rankHeader);
+		realDiffInfo.appendChild(singlePTTInfoDiv);
+		realDiffInfo.appendChild(sPTTDiv);
+		songInfoContainer.appendChild(realDiffInfo);
+		songInfoContainer.appendChild(songNameDiv);
+		songInfoContainer.appendChild(scoreDiv);
+		songInfoContainer.appendChild(itemsDiv);
+		songInfoContainer.appendChild(rankDiv);
+		singlePTTContainer.appendChild(songInfoContainer);
+		singlePTTContainer.appendChild(songRank);
+		document.getElementById("b30Data").appendChild(singlePTTContainer);
+	}
 }
+
+
 //用html2canvas进行截图
 document.addEventListener("DOMContentLoaded", function() {
 	//清除刷新提示notice
@@ -715,7 +784,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		// 触发文件选择对话框
 		fileInput.click();
 	});
-
+	
 	// 读取新csv文件逻辑
 	fileInput.addEventListener("change", function(event) {
 		const selectedFile = event.target.files[0];
@@ -737,10 +806,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 //设置显示的上下界
 function setDifficulty() {
-
 	const low = document.getElementById("lowDifficulty");
 	const high = document.getElementById("highDifficulty");
-
 	if (parseFloat(flag_constant) !== -1) {
 		low.value = flag_constant;
 		high.value = flag_constant;
@@ -752,16 +819,12 @@ function setDifficulty() {
 	if (highDifficulty < lowDifficulty) {
 		swap(highDifficulty, lowDifficulty);
 	}
-	// lowDifficulty = low.value < high.value ? low.value : high.value;
-	// highDifficulty = low.value > high.value ? low.value : high.value;
 	if (parseFloat(lowDifficulty) === parseFloat(highDifficulty)) {
 		document.getElementById("b30PTTContainer").textContent = "";
 		document.getElementById("r10PTTContainer").textContent = highDifficulty;
 	}
-
 	refreshData(csv_data);
 }
-
 
 //显示头像选取框
 function showSelect() {
@@ -774,17 +837,12 @@ function showSelect() {
 		sheet.style.display = "inline-block";
 		setTimeout(function() {
 			sheet.style.opacity = "100%";
-			// sheet.style.left = "-480px";
 		}, 350);
-		// console.log("display!");
 	} else if (sheet.style.display === "inline-block") {
 		sheet.style.opacity = "0%";
-		// sheet.style.left = "0px";
 		setTimeout(function() {
 			sheet.style.display = "none";
 		}, 350);
-
-		// console.log("hidden!");
 	}
 }
 //头像切换
@@ -808,7 +866,6 @@ function switchSelect(path) {
 		icb.style.opacity = "100%";
 	}, 320)
 	localStorage.setItem('saved_icon', path);
-	// console.log("localstorage:saved_icon:" + localStorage.saved_icon);
 }
 
 function cln() {
@@ -824,10 +881,8 @@ function switchBg(f) {
 	f = parseFloat(f);
 	if (!localStorage.saved_bg) {
 		localStorage.setItem("saved_bg", 8);
-		// console.log("bg=" + localStorage.saved_bg);
 	}
 	const bg = document.getElementById("background");
-	// console.log("current bg:" + localStorage.saved_bg);
 	localStorage.saved_bg = (parseFloat(localStorage.saved_bg) + parseFloat(f) + 9) % 9;
 	bg.style.opacity = 0;
 	setTimeout(function() {
@@ -845,8 +900,6 @@ function switchBg(f) {
 	const index = document.getElementById("currentBgIndex");
 	index.textContent = parseFloat(localStorage.saved_bg) + 1 + "/9";
 	//changeDisplayAmount();
-
-
 }
 //显示隐藏ID
 function hideUid() {
@@ -869,16 +922,11 @@ function hideUid() {
 	}
 }
 
-
-
-
 //调整页面缩放
 function resizeWidth() {
-
 	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1700) +
 		"); -moz-transform-origin: 0 0; -moz-";
 	document.body.style.zoom = (document.documentElement.clientWidth / 1700);
-
 }
 
 window.addEventListener('resize', resizeWidth);
