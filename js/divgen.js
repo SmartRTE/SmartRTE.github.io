@@ -213,11 +213,12 @@ function resetBackgroundHeight() {
 	let h1 = window.getComputedStyle(container, null).height.replace("px",'');
 	let h2 = window.getComputedStyle(b30Data, null).height.replace("px",'');
 	let h3 = window.getComputedStyle(copyright, null).height.replace("px",'');
-	// console.log("h1="+h1+"h2="+h2+"h3="+h3);
+	console.log("h1="+h1+"h2="+h2+"h3="+h3);
 	// let fixed = 400;
 	// let height = 211 * (1 + Math.floor((rowCounter - 1) / 2)) + fixed + spliter_counter * 100;
 	// // console.log("height = " + height+"spliter_counter * 60="+spliter_counter * 60);
-	let h = parseInt(h1)+parseInt(h2)+parseInt(h3) + "px";
+	// let h = parseInt(h1) + parseInt(h2) +parseInt(h3) + "px";
+	let h = parseInt(h1) + "px";
 	bgImg.style.height = h;
 	mainCapture.style.height = h;
 	document.body.style.height = h;
@@ -349,12 +350,12 @@ function displayB30Value(data, flag) {
 
 	const b30PTTContainer = document.createElement("div");
 	b30PTTContainer.id = "b30PTTContainer";
-	b30PTTContainer.textContent = "From：" + document.getElementById("lowDifficulty").value;
+	b30PTTContainer.textContent = "From：" + parseFloat(document.getElementById("lowDifficulty").value).toFixed(1);
 	document.getElementById("PTTDisplay").appendChild(b30PTTContainer);
 
 	const r10PTTContainer = document.createElement("div");
 	r10PTTContainer.id = "r10PTTContainer";
-	r10PTTContainer.textContent = "To：" + document.getElementById("highDifficulty").value;
+	r10PTTContainer.textContent = "To：" + parseFloat(document.getElementById("highDifficulty").value).toFixed(1);
 	document.getElementById("PTTDisplay").appendChild(r10PTTContainer);
 }
 //显示头像旁2位小数的PTT（不四舍五入）
@@ -429,17 +430,25 @@ function displayB30Data(data) {
 	appendUnit(array);
 }
 
-function appendSpliter() {
-	const spliterGen = document.createElement("img");
-	spliterGen.src = "img/divider.png";
+function appendSpliter(cst) {
+	const spliterGen = document.createElement("div");
 	spliterGen.className = "spliter";
+	const spliterText = document.createElement("img");
+	spliterText.src = "img/constant/"+parseFloat(cst).toFixed(1)+".png";
+	spliterText.className = "spliterText";
 	document.getElementById("b30Data").appendChild(spliterGen);
+	spliterGen.appendChild(spliterText);
 }
 
 function appendUnit(array) {
 	let idx;
 	let counter = 1;
-
+	const firstSpliter = document.getElementById("firstSpliter");
+	firstSpliter.innerHTML = '';
+	const spliterText = document.createElement("img");
+	spliterText.src = "img/constant/"+parseFloat(array[0].singlePTTInfo).toFixed(1)+".png";
+	spliterText.className = "spliterText";
+	firstSpliter.appendChild(spliterText);
 	for (idx = 0; idx < array.length; idx++) {
 		let songName = array[idx].songName;
 		let songId = array[idx].songId;
@@ -456,20 +465,14 @@ function appendUnit(array) {
 		singlePTTContainer.id = songId + "_" + Difficulty;
 		if (array[idx - 1] != undefined && array[idx].singlePTTInfo != array[idx - 1].singlePTTInfo) {
 			// console.log("currentIDX=" + (idx - 1));
-			appendSpliter();
+			appendSpliter(array[idx].singlePTTInfo);
 			spliter_counter++;
 			if ((idx - 1) % 2 == 0 && idx != (array.length - 1)) {
 				rowCounter++;
 			}
 			counter = 1;
 		}
-		// singlePTTContainer.onclick = function() {
-		// 	// 在点击事件处理程序中获取被点击的div的id
-		// 	var id = singlePTTContainer.id;
-		// 	const url = `divgen.html?singlePTTInfo=${singlePTTInfo}`;
-		// 	window.location.href = url;
-		// };
-
+		
 		// 曲绘
 		const songImageDiv = document.createElement("div");
 		songImageDiv.className = "songImageDiv";

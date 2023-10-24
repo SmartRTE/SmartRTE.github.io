@@ -214,6 +214,7 @@ body {
 	position: relative;
 	float: left;
 	width: 100%;
+	top: 30px;
 }
 
 
@@ -324,7 +325,7 @@ body {
 	position: relative;
 	float: left;
 	top: 20px;
-	right: -350px;
+	right: -380px;
 	height: 120px;
 	width: 400px;
 	line-height: 48px;
@@ -419,16 +420,30 @@ body {
 }
 
 .spliter {
-	align-items: center;
 	width: 100%;
 	height: 45px;
-	top: 20px;
+	top: 10px;
 	position: relative;
 	display: block;
-	/* 
-	line-height: 15px; */
-	/* margin-top: 5px;*/
-	margin-bottom: 20px; 
+	margin-top: 10px;
+	margin-bottom: 15px; 
+	background: url("../img/divider.png");
+	background-size: 90%;
+	background-position: center 40%;
+	float: left;
+}
+
+.spliterText{
+	position: relative;
+	display: block;
+	margin: 0 auto;
+	top: -25px;
+	height: 90px;
+	left: 642;
+}
+
+#firstSpliter{
+	top: 30px;
 }
 
 .singlePTT {
@@ -578,6 +593,7 @@ body {
 	flex: 48;
 	color: rgba(100, 61, 100, 1.0);
 	text-shadow: 0px 0px 4px rgba(101, 67, 86, 1.0);
+	white-space: nowrap;
 }
 
 .far {
@@ -585,6 +601,7 @@ body {
 	flex: 27;
 	color: rgba(205, 192, 0, 1.0);
 	text-shadow: 0px 0px 4px rgba(155, 145, 0, 1.0);
+	white-space: nowrap;
 }
 
 .lost {
@@ -592,6 +609,7 @@ body {
 	flex: 25;
 	color: rgba(166, 51, 73, 1.0);
 	text-shadow: 0px 0px 4px rgba(66, 20, 29, 1.0);
+	white-space: nowrap;
 }
 
 .rank {
@@ -630,6 +648,7 @@ body {
 	width: 100%;
 	margin: auto;
 	position: relative;
+	top: 10px;
 	display: inline-block;
 	font-size: 40px;
 	line-height: 100px;
