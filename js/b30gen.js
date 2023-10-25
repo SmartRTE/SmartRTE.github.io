@@ -612,12 +612,13 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 //重新设定背景图高度
 function calculateBackgroundHeight(amount) {
-	// 直接读取高度
-	let h1 = window.getComputedStyle(container, null).height.replace("px",'');
-	let h2 = window.getComputedStyle(b30Data, null).height.replace("px",'');
-	let h3 = window.getComputedStyle(copyright, null).height.replace("px",'');
-	let h = parseInt(h1)+parseInt(h2)+parseInt(h3) + "px";
-	return h;
+	var fixed = 450;
+	var height = 200 * (1 + Math.floor((amount - 1) / 3)) + fixed;
+	if (amount <= 30) {
+		return height;
+	} else {
+		return height + 95;
+	}
 }
 //修改显示单元个数
 function changeDisplayAmount() {
