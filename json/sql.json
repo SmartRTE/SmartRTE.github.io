@@ -366,7 +366,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Technicolou
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Logos', 'logos', 4, 7, 10.1, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Ego Eimi', 'egoeimi', 5.5, 8.6, 10.5, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Arghena', 'arghena', 6, 9.5, 11.3, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Teravolt', 'teravolt','', '', '10.9');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Teravolt', 'teravolt','', '', 10.9,'');
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
 
