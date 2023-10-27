@@ -19,7 +19,7 @@ function isEdit() {
 	const urlParams = new URLSearchParams(window.location.search);
 	if (urlParams.has("edit")) {
 		edit_flag = urlParams.get("edit");
-		console.log("edit=" + urlParams.get("edit"));
+		// console.log("edit=" + urlParams.get("edit"));
 		if (edit_flag === "1") {
 			showCSV(localStorage.saved_csv_data);
 		}
@@ -30,10 +30,10 @@ window.onload = function() {
 	isEdit();
 }
 
-function showEdit(){
+function showEdit() {
 	const btn = document.getElementById("edit");
 	btn.style.display = "none";
-	showCSV(localStorage.saved_csv_data); 
+	showCSV(localStorage.saved_csv_data);
 }
 
 //异步加载db文件
@@ -41,7 +41,7 @@ async function openDatabase(file) {
 	const buffer = await file.arrayBuffer();
 	const uInt8Array = new Uint8Array(buffer);
 	db = new SQL.Database(uInt8Array);
-	console.log('Database opened successfully.');
+	// console.log('Database opened successfully.');
 
 	//执行sql.json里的SQL语句
 	const queryFilePath = 'json/sql.json';
@@ -50,13 +50,8 @@ async function openDatabase(file) {
 	executeQuery(query);
 }
 
-
-
 //修改表格事件监听
 addEventListener("DOMContentLoaded", function() {
-
-
-
 	let table = document.getElementById("queryTable");
 	// 添加删除行和添加行事件监听器
 	table.addEventListener("click", function(e) {
@@ -90,7 +85,7 @@ addEventListener("DOMContentLoaded", function() {
 		var target = e.target;
 		// 检查点击的是否是表格单元格
 		if (target.tagName === "TD") {
-			console.log("td clicked");
+			// console.log("td clicked");
 			var rowIndex = target.parentNode.rowIndex; // 获取行索引
 			var cellIndex = target.cellIndex; // 获取列索引
 			var currentValue = target.textContent;
@@ -106,24 +101,22 @@ addEventListener("DOMContentLoaded", function() {
 				// 当输入框失去焦点时，更新单元格内容为输入框的值
 				target.textContent = input.value;
 				if (cellIndex === 4 || cellIndex === 9) {
-					console.log("score selected,current singlePTT=" + target.closest("tr")
-						.cells[10].textContent);
+					// console.log("score selected,current singlePTT=" + target.closest("tr")
+						// .cells[10].textContent);
 					target.closest("tr").cells[10].textContent = calculateSinglePTT(target
 						.closest("tr").cells[4].textContent, target.closest("tr").cells[9]
 						.textContent);
 				}
 
-				console.log("td changed." + target.textContent);
-				sortTable();
+				// console.log("td changed." + target.textContent);
+				sortTable();		// 调用函数来进行排序
 				convertCSV();
 			});
 
 			// 使输入框获得焦点
 			input.focus();
-			// convertCSV();
 			convertCSV();
 		}
-		// 调用函数来进行排序
 
 	});
 
@@ -171,87 +164,22 @@ function executeQuery(query) {
 		}, 300)
 		localStorage.setItem("saved_notices_flag", "0");
 	}
-	try {
-		const result = db.exec(query);
-		if (result.length > 0 && result[0].values) {
-			const columns = result[0].columns;
-			const values = result[0].values;
 
-
-			// 创建表头
-			const headerRow = table.querySelector('thead tr');
-			headerRow.innerHTML = '';
-			const ctr = document.createElement('th');
-			ctr.textContent = "操作";
-			headerRow.appendChild(ctr);
-
-			columns.forEach(column => {
-				const th = document.createElement('th');
-				th.textContent = column;
-				headerRow.appendChild(th);
-			});
-
-			// 创建表格内容
-			const tbody = table.querySelector('tbody');
-			tbody.innerHTML = '';
-			values.forEach(valueRow => {
-				const tr = document.createElement('tr');
-
-				//添加/删除行的控件
-				const actButtons = document.createElement('td');
-				actButtons.className = "rowActions";
-				tr.appendChild(actButtons);
-				const deleteRow = document.createElement("button");
-				deleteRow.className = "deleteRow";
-				deleteRow.textContent = "删除本行";
-				const addRow = document.createElement("button");
-				addRow.className = "addRow";
-				addRow.textContent = "新增一行";
-				actButtons.appendChild(deleteRow);
-				actButtons.appendChild(addRow);
-
-				//开始添加数据
-				valueRow.forEach(value => {
-					const td = document.createElement('td');
-					td.textContent = value;
-					tr.appendChild(td);
-
-					// 根据值设置背景颜色
-					if (value === 'Past') {
-						tr.style.backgroundColor = 'rgba(0,0,255,0.35)';
-					} else if (value === 'Present') {
-						tr.style.backgroundColor = 'rgba(0,255,0,0.35)';
-					} else if (value === 'Future') {
-						tr.style.backgroundColor = 'rgba(128,0,128,0.35)';
-					} else if (value === 'Beyond') {
-						tr.style.backgroundColor = 'rgba(255,0,0,0.35)';
-					}
-				});
-
-				tbody.appendChild(tr);
-			});
-
-			//加载完表格显示csv下载按钮
-			const uploadButton = document.getElementById("uploadButton");
-			uploadButton.style.backgroundPosition = "center";
-			uploadButton.textContent = "重新上传文件";
-			const downloadButton = document.getElementById("download");
-			downloadButton.style.display = "inline-block";
-			const sendButton = document.getElementById("sendToB30");
-			sendButton.style.display = "inline-block";
-
-			//转换成csv保存到内存
-			convertCSV();
-			console.log("csv:\n", csvContent);
-			resultArea.value = '查询执行成功！';
-		} else {
-			resultArea.value = '查询结果为空！';
-		}
-	} catch (error) {
-		resultArea.value = error.message;
+	const result = db.exec(query);
+	// console.log(result);
+	let tempCSVData;
+	if (result.length > 0) {
+		const rows = result[0].values;
+        const columns = result[0].columns;
+        tempCSVData = [columns.join(',')].concat(rows.map(row => row.join(','))).join('\n');
+		// console.log(tempCSVData);
+		showCSV(tempCSVData);
+		convertCSV();
+	}
+	else{
+		alert("上传的数据库是空的！你是不是忘记把存档同步到本地辣？")
 	}
 }
-
 
 
 //监听上传
@@ -268,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 				reader.onload = function(event) {
 					const csvContent = event.target.result;
-					showCSV(csvContent); // 调用 showCSV 函数，并传递CSV内容
+					showCSV(csvContent); 
 				}
 
 				reader.readAsText(file);
@@ -288,7 +216,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 function showCSV(file) {
-	const reader = new FileReader();
 	if (localStorage.saved_notices_flag == "1") {
 		notices.style.opacity = "0";
 		setTimeout(function() {
@@ -342,14 +269,14 @@ function showCSV(file) {
 			td.textContent = value;
 
 			tr.appendChild(td);
-			if (value === 'Past') {
-				tr.style.backgroundColor = 'rgba(0,0,255,0.35)';
-			} else if (value === 'Present') {
-				tr.style.backgroundColor = 'rgba(0,255,0,0.35)';
-			} else if (value === 'Future') {
+			if (value === 'Future') {
 				tr.style.backgroundColor = 'rgba(128,0,128,0.35)';
 			} else if (value === 'Beyond') {
 				tr.style.backgroundColor = 'rgba(255,0,0,0.35)';
+			} else if (value === 'Past') {
+				tr.style.backgroundColor = 'rgba(0,0,255,0.35)';
+			} else if (value === 'Present') {
+				tr.style.backgroundColor = 'rgba(0,255,0,0.35)';
 			}
 		});
 
@@ -368,8 +295,6 @@ function showCSV(file) {
 	sendButton.style.display = "inline-block";
 
 	convertCSV();
-
-	reader.readAsText(file);
 }
 
 
@@ -412,7 +337,6 @@ function convertCSV() {
 			} else {
 				rowData.push(cell.textContent);
 			}
-			// rowData.push(cell.textContent);
 		});
 
 		data.push(rowData);
@@ -454,7 +378,7 @@ function sendToB30() {
 
 //展开收起notices
 function switchNotices() {
-	console.log("notices flag = " + localStorage.saved_notices_flag)
+	// console.log("notices flag = " + localStorage.saved_notices_flag)
 	const notices = document.getElementById("notices");
 	if (localStorage.saved_notices_flag == "1") {
 		notices.style.opacity = "0";
@@ -486,10 +410,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 function calculateSinglePTT(score, constant) {
-	console.log("ezptt called");
+	// console.log("ezptt called");
 	let s = 0;
 	if (Number(score) < 9800000) {
 		s = Number(constant) + (Number(score) - 9500000) / 300000;
+		s = s >= 0 ? s : 0;
 	} else if (Number(score) >= 9800000 && Number(score) < 10000000) {
 		s = Number(constant) + 1 + (Number(score) - 9800000) / 200000;
 	} else {
