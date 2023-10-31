@@ -172,7 +172,7 @@ function switchController() {
 //判定曲目分级
 function judgeLevel(singlePTTInfo) {
 	let dig = Math.floor(singlePTTInfo);
-	let isPlus = dig >= 9 && (singlePTTInfo - dig >= 0.7);
+	let isPlus = dig >= 9 && (singlePTTInfo - dig > 0.6);
 	return `${dig}${isPlus ? "+" : ""}`
 }
 
