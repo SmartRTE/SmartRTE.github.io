@@ -1,4 +1,11 @@
-let displayAmount = 39; //显示条目数量
+const rowCount = localStorage.saved_csv_data.split('\n').length - 1;
+let displayAmount = rowCount >= 39 ? 39 : rowCount; //显示条目数量
+
+window.onload = function() {
+	document.getElementById("displayAmount").value = displayAmount;
+	changeDisplayAmount();
+	// console.log("rowCount:"+rowCount+",displayAmount:"+displayAmount);
+}
 let fetch_flag = 0; //是否上传了新csv
 let default_csv_name = "sample/default.csv"; //初始的默认csv路径
 let csv_name = null; //手动选择的新csv
@@ -16,6 +23,8 @@ let statistic_xing = 0; //1f/1l性数
 let statistic_1xiao = 0; //1小p性数
 
 let avatarFolderPath = "img/avatar/"; //头像文件路径
+
+
 
 const R10Event = new Event("DOMContentLoaded");
 
@@ -47,26 +56,26 @@ async function fetchAndSaveCSV(csvName, csvdata) {
 function refreshData(data) {
 	const b30DataContainer = document.getElementById("b30Data");
 	b30DataContainer.innerHTML = "";
-	console.log("b30cleared");
+	// console.log("b30cleared");
 	const pttDisplay = document.getElementById("PTTDisplay");
 	pttDisplay.innerHTML = "";
-	console.log("pttcleared");
+	// console.log("pttcleared");
 	//数据统计初始化
 	clearStatistics();
-	console.log("statistics cleared");
+	// console.log("statistics cleared");
 	displayB30Data(data); //显示新的csv数据
 	statisticBests();
 	displayB30Value(data, 1);
 	displayB30Value(data);
 	displayPersonalPTT(data);
-	console.log("refreshdata called");
+	// console.log("refreshdata called");
 	recalculateR10();
 	resizeWidth(); //重设页面缩放
 }
 
 //显示统计信息
 function statisticBests() {
-	console.log("statisticBests called");
+	// console.log("statisticBests called");
 	const fr = document.getElementById("statistic_FR");
 	const pm = document.getElementById("statistic_PM");
 	const th = document.getElementById("statistic_TH");
@@ -90,7 +99,7 @@ function clearStatistics() {
 
 //手动计算单曲ptt
 function calculateSinglePTT() {
-	console.log("ezptt called");
+	// console.log("ezptt called");
 	const dif = document.getElementById("realDifficulty");
 	const scr = document.getElementById("score");
 	const spt = document.getElementById("singleptt");
@@ -157,7 +166,7 @@ function switchController() {
 			controller.style.top = "300px";
 		}, 350);
 
-		console.log("display!");
+		// console.log("display!");
 	} else if (controller.style.display === "block") {
 		controller.style.opacity = "0";
 		controller.style.left = "0px";
@@ -166,7 +175,7 @@ function switchController() {
 
 			controller.style.display = "none";
 		}, 350);
-		console.log("hidden!");
+		// console.log("hidden!");
 	}
 }
 //判定曲目分级
@@ -326,8 +335,8 @@ function displayB30Data(data) {
 			document.getElementById("b30Data").appendChild(spliterGen);
 			document.getElementById("b30Data").appendChild(overflow);
 		}
-		setTimeout(function(){
-			console.log("🤔")},1000);
+		// setTimeout(function(){
+		// console.log("🤔")},1000);
 		const singlePTTContainer = document.createElement("div");
 		singlePTTContainer.className = "singlePTT";
 		singlePTTContainer.id = songId + "_" + Difficulty;
@@ -509,15 +518,6 @@ function displayB30Data(data) {
 			Number(lost) === 0) {
 			statistic_1xiao = statistic_1xiao + 1;
 		}
-		if (index === 0) {
-			rankHeader.style.backgroundColor = "rgba(255,202,1,1)";
-		}
-		if (index === 1) {
-			rankHeader.style.backgroundColor = "rgba(175, 175, 175, 1.0)";
-		}
-		if (index === 2) {
-			rankHeader.style.backgroundColor = "rgba(165,124,80,1)";
-		}
 		itemsDiv.appendChild(pureDiv);
 		itemsDiv.appendChild(farDiv);
 		itemsDiv.appendChild(lostDiv);
@@ -552,7 +552,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		let vw = document.documentElement.clientWidth;
 		document.getElementById("loadingGif").style.left = vw / 2 - 32 + "px";
 		document.getElementById("loadingNotice").style.left = vw / 2 - 300 + "px";
-		
+
 		switchController();
 		cover.style.display = "block";
 		setTimeout(function() {
@@ -581,8 +581,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			link.click();
 
 			document.body.removeChild(link);
-			
-			
+
+
 			setTimeout(function() {
 				cover.style.opacity = "0";
 				cover.style.display = "none";
@@ -596,8 +596,8 @@ document.addEventListener("DOMContentLoaded", function() {
 					resizeWidth();
 				}, 80);
 			}, 800);
-			
-			
+
+
 		});
 	}
 	saveButton.addEventListener("click", savePageAsImage);
@@ -637,7 +637,7 @@ function changeDisplayAmount() {
 
 //输入个人潜力值重新计算R10
 function recalculateR10() {
-	console.log("recalcR10 Called");
+	// console.log("recalcR10 Called");
 	//const pPTTDiv = document.getElementById("personalPTT");
 	const inputElement = document.getElementById("pPTTInput");
 	const R10 = document.getElementById("R10");
@@ -651,7 +651,7 @@ function recalculateR10() {
 		newPTT = 0.00;
 	} else if (newPTT >= 13.11) {
 		newPTT = "🤔";
-		console.log("🤔");
+		// console.log("🤔");
 	}
 	starFrame.style.opacity = "0%";
 	starFrame.innerHTML = "";
@@ -670,7 +670,7 @@ function recalculateR10() {
 	R10.textContent = calculatedR10 <= 13.36 ? calculatedR10.toFixed(4) : "🤔";
 
 	function calculateR10(newPTT, B30Value) {
-		console.log("reR10 Called");
+		// console.log("reR10 Called");
 		const res = 4 * newPTT - 3 * B30Value;
 		return res <= 0 ? 0 : res;
 	}
@@ -719,8 +719,8 @@ document.addEventListener("DOMContentLoaded", function() {
 				localStorage.setItem('saved_csv_name', csv_name);
 				localStorage.setItem('saved_csv_data', csv_data);
 
-				console.log("new csv get");
-				console.log(localStorage.saved_csv_data);
+				// console.log("new csv get");
+				// console.log(localStorage.saved_csv_data);
 
 				default_csv_name = csv_name;
 				refreshData(csv_data);
@@ -755,8 +755,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		refreshUID();
 	}
 	if (localStorage.saved_csv_name && localStorage.saved_csv_data) {
-		console.log("saved_bg:" + localStorage.saved_bg);
-		console.log("try refilling b39 with localstorage");
+		// console.log("saved_bg:" + localStorage.saved_bg);
+		// console.log("try refilling b39 with localstorage");
 		document.getElementById("b30Data").innerHTML = "";
 		csv_data = localStorage.saved_csv_data;
 		//console.log(localStorage.saved_csv_data);
@@ -798,7 +798,7 @@ function showSelect() {
 			sheet.style.opacity = "100%";
 			// sheet.style.left = "-480px";
 		}, 350);
-		console.log("display!");
+		// console.log("display!");
 	} else if (sheet.style.display === "inline-block") {
 		sheet.style.opacity = "0%";
 		// sheet.style.left = "0px";
@@ -806,7 +806,7 @@ function showSelect() {
 			sheet.style.display = "none";
 		}, 350);
 
-		console.log("hidden!");
+		// console.log("hidden!");
 	}
 }
 //头像切换
@@ -830,7 +830,7 @@ function switchSelect(path) {
 		icb.style.opacity = "100%";
 	}, 320)
 	localStorage.setItem('saved_icon', path);
-	console.log("localstorage:saved_icon:" + localStorage.saved_icon);
+	// console.log("localstorage:saved_icon:" + localStorage.saved_icon);
 }
 
 //切换背景图
@@ -838,10 +838,10 @@ function switchBg(f) {
 	f = parseFloat(f);
 	if (!localStorage.saved_bg) {
 		localStorage.setItem("saved_bg", 8);
-		console.log("bg=" + localStorage.saved_bg);
+		// console.log("bg=" + localStorage.saved_bg);
 	}
 	const bg = document.getElementById("background");
-	console.log("current bg:" + localStorage.saved_bg);
+	// console.log("current bg:" + localStorage.saved_bg);
 	localStorage.saved_bg = (parseFloat(localStorage.saved_bg) + parseFloat(f) + 9) % 9;
 	bg.style.opacity = 0;
 	setTimeout(function() {
@@ -849,7 +849,7 @@ function switchBg(f) {
 		let bgImg = document.createElement("img");
 		bgImg.id = "bgImg";
 		bgImg.src = "bgs/" + localStorage.saved_bg % 9 + ".webp";
-		console.log("displayAmount = " + displayAmount);
+		// console.log("displayAmount = " + displayAmount);
 		bgImg.style.height = String(calculateBackgroundHeight(displayAmount)) + "px";
 		bg.appendChild(bgImg);
 		bg.style.opacity = "100%";
@@ -893,7 +893,7 @@ function hideUid() {
 }
 
 //修改分数表
-function editScore(){
+function editScore() {
 	const url = `index.html?edit=1`;
 	window.location.href = url;
 }

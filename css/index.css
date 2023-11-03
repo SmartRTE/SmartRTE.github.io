@@ -83,7 +83,8 @@ body {
 
 
 #b30gen,
-#difgen {
+#difgen,
+#dldbtn {
 	color: aliceblue;
 	position: relative;
 	background: url(../img/btn-refuse-zh-Hans.png);
@@ -94,7 +95,8 @@ body {
 #uploadButton:hover,
 #download:hover,
 #sendToB30:hover,
-#edit:hover{
+#edit:hover,
+#dldbtn:hover {
 	transform: scale(1.1, 1.1);
 }
 

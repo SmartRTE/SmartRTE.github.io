@@ -102,14 +102,14 @@ addEventListener("DOMContentLoaded", function() {
 				target.textContent = input.value;
 				if (cellIndex === 4 || cellIndex === 9) {
 					// console.log("score selected,current singlePTT=" + target.closest("tr")
-						// .cells[10].textContent);
+					// .cells[10].textContent);
 					target.closest("tr").cells[10].textContent = calculateSinglePTT(target
 						.closest("tr").cells[4].textContent, target.closest("tr").cells[9]
 						.textContent);
 				}
 
 				// console.log("td changed." + target.textContent);
-				sortTable();		// 调用函数来进行排序
+				sortTable(); // 调用函数来进行排序
 				convertCSV();
 			});
 
@@ -170,13 +170,12 @@ function executeQuery(query) {
 	let tempCSVData;
 	if (result.length > 0) {
 		const rows = result[0].values;
-        const columns = result[0].columns;
-        tempCSVData = [columns.join(',')].concat(rows.map(row => row.join(','))).join('\n');
+		const columns = result[0].columns;
+		tempCSVData = [columns.join(',')].concat(rows.map(row => row.join(','))).join('\n');
 		// console.log(tempCSVData);
 		showCSV(tempCSVData);
 		convertCSV();
-	}
-	else{
+	} else {
 		alert("上传的数据库是空的！你是不是忘记把存档同步到本地辣？")
 	}
 }
@@ -196,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 				reader.onload = function(event) {
 					const csvContent = event.target.result;
-					showCSV(csvContent); 
+					showCSV(csvContent);
 				}
 
 				reader.readAsText(file);
@@ -214,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-
+//显示csv，绘制表格
 function showCSV(file) {
 	if (localStorage.saved_notices_flag == "1") {
 		notices.style.opacity = "0";
@@ -223,6 +222,7 @@ function showCSV(file) {
 		}, 300)
 		localStorage.setItem("saved_notices_flag", "0");
 	}
+	file = file.trim();	//删除文件最后多余的回车
 	const rows = file.split('\n'); // 按行拆分CSV数据
 	const table = document.getElementById("queryTable");
 	table.innerHTML = ''; // 清空表格内容
@@ -249,6 +249,14 @@ function showCSV(file) {
 
 	for (let i = 1; i < rows.length; i++) {
 		const row = rows[i].split(',');
+		
+		// 添加条件检查：如果第四列为空，跳过该行
+		if (row.length >= 4 && row[3].trim() === '') {
+			continue;
+		}
+		row[9] = calculateSinglePTT(row[3], row[8]);
+		// console.log(row[3] + "," + row[8]);
+		// console.log(row[9].trim());
 		const tr = document.createElement('tr');
 
 		// 添加操作列
@@ -293,7 +301,7 @@ function showCSV(file) {
 	downloadButton.style.display = "inline-block";
 	const sendButton = document.getElementById("sendToB30");
 	sendButton.style.display = "inline-block";
-
+	sortTable();
 	convertCSV();
 }
 
