@@ -197,6 +197,7 @@ body {
 	position: relative;
 	left: 20px;
 	top: 20px;
+	scale: 1.2;
 	transition-duration: 0.6s;
 }
 

@@ -208,12 +208,12 @@ function resetBackgroundHeight() {
 	// const b30 = document.getElementById("b30Data");
 	// const copyright = document.getElementById("copyright");
 	// let h = parseInt(container.style.height.replace("px",'')) + parseInt(b30.style.height.replace("px",'')) + parseInt(copyright.style.height.replace("px",''));
-	
+
 	// 直接读取高度
-	let h1 = window.getComputedStyle(container, null).height.replace("px",'');
-	let h2 = window.getComputedStyle(b30Data, null).height.replace("px",'');
-	let h3 = window.getComputedStyle(copyright, null).height.replace("px",'');
-	console.log("h1="+h1+"h2="+h2+"h3="+h3);
+	let h1 = window.getComputedStyle(container, null).height.replace("px", '');
+	let h2 = window.getComputedStyle(b30Data, null).height.replace("px", '');
+	let h3 = window.getComputedStyle(copyright, null).height.replace("px", '');
+	console.log("h1=" + h1 + "h2=" + h2 + "h3=" + h3);
 	// let fixed = 400;
 	// let height = 211 * (1 + Math.floor((rowCounter - 1) / 2)) + fixed + spliter_counter * 100;
 	// // console.log("height = " + height+"spliter_counter * 60="+spliter_counter * 60);
@@ -434,7 +434,7 @@ function appendSpliter(cst) {
 	const spliterGen = document.createElement("div");
 	spliterGen.className = "spliter";
 	const spliterText = document.createElement("img");
-	spliterText.src = "img/constant/"+parseFloat(cst).toFixed(1)+".png";
+	spliterText.src = "img/constant/" + parseFloat(cst).toFixed(1) + ".png";
 	spliterText.className = "spliterText";
 	document.getElementById("b30Data").appendChild(spliterGen);
 	spliterGen.appendChild(spliterText);
@@ -446,7 +446,7 @@ function appendUnit(array) {
 	const firstSpliter = document.getElementById("firstSpliter");
 	firstSpliter.innerHTML = '';
 	const spliterText = document.createElement("img");
-	spliterText.src = "img/constant/"+parseFloat(array[0].singlePTTInfo).toFixed(1)+".png";
+	spliterText.src = "img/constant/" + parseFloat(array[0].singlePTTInfo).toFixed(1) + ".png";
 	spliterText.className = "spliterText";
 	firstSpliter.appendChild(spliterText);
 	for (idx = 0; idx < array.length; idx++) {
@@ -472,7 +472,7 @@ function appendUnit(array) {
 			}
 			counter = 1;
 		}
-		
+
 		// 曲绘
 		const songImageDiv = document.createElement("div");
 		songImageDiv.className = "songImageDiv";
@@ -621,25 +621,14 @@ function appendUnit(array) {
 		if (Number(perfect) !== 0 && Number(far) !== 0 && Number(lost) === 0) {
 			statistic_full_recall = statistic_full_recall + 1;
 		}
-		if (Number(perfect) !== 0 && (Number(far) === 1 && Number(lost) === 0) || (Number(far) === 0 &&
-				Number(
-					lost) === 1)) {
+		if (Number(perfect) !== 0 && (Number(far) === 1 && Number(lost) === 0) || (Number(far) === 0 && Number(lost) ===
+				1)) {
 			statistic_xing = statistic_xing + 1;
 		}
-		if (Number(perfect) !== 0 && Number(perfect - 1) === Number(criticalPerfect) && Number(far) ===
-			0 &&
-			Number(lost) === 0) {
+		if (Number(perfect) !== 0 && Number(perfect - 1) === Number(criticalPerfect) && Number(far) === 0 && Number(
+				lost) === 0) {
 			statistic_1xiao = statistic_1xiao + 1;
 		}
-		// if (rowCounter === 1) {
-		// 	rankHeader.style.backgroundColor = "rgba(255,202,1,1)";
-		// }
-		// if (rowCounter === 2) {
-		// 	rankHeader.style.backgroundColor = "rgba(175, 175, 175, 1.0)";
-		// }
-		// if (rowCounter === 3) {
-		// 	rankHeader.style.backgroundColor = "rgba(165,124,80,1)";
-		// }
 		itemsDiv.appendChild(pureDiv);
 		itemsDiv.appendChild(farDiv);
 		itemsDiv.appendChild(lostDiv);
@@ -787,7 +776,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		// 触发文件选择对话框
 		fileInput.click();
 	});
-	
+
 	// 读取新csv文件逻辑
 	fileInput.addEventListener("change", function(event) {
 		const selectedFile = event.target.files[0];

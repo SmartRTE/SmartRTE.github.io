@@ -1,11 +1,12 @@
-const rowCount = localStorage.saved_csv_data.split('\n').length - 1;
-let displayAmount = rowCount >= 39 ? 39 : rowCount; //显示条目数量
+let displayAmount = 39;
+// const rowCount = localStorage.saved_csv_data.split('\n').length - 1;
+// displayAmount = rowCount >= 39 ? 39 : rowCount; //显示条目数量
 
-window.onload = function() {
-	document.getElementById("displayAmount").value = displayAmount;
-	changeDisplayAmount();
-	// console.log("rowCount:"+rowCount+",displayAmount:"+displayAmount);
-}
+// window.onload = function() {
+// 	document.getElementById("displayAmount").value = displayAmount;
+// 	changeDisplayAmount();
+// 	// console.log("rowCount:"+rowCount+",displayAmount:"+displayAmount);
+// }
 let fetch_flag = 0; //是否上传了新csv
 let default_csv_name = "sample/default.csv"; //初始的默认csv路径
 let csv_name = null; //手动选择的新csv
@@ -270,7 +271,9 @@ function displayPersonalPTT(data) {
 	// const starImage = document.getElementById("starImg");
 	// starImage.src = "img/rating_" + judgeStars(personalPTT) + ".png";
 
-	const b30PTTContainer = document.getElementById("div");
+	//报错，明显不对，但是
+	//改了怎么就跑不对了呢o。O
+	const b30PTTContainer = null;
 	b30PTTContainer.textContent = personalPTT;
 };
 
@@ -318,8 +321,9 @@ function displayB30Data(data) {
 
 	b30Data.forEach((row, index) => {
 		const cells = row.split(",");
-		const [songName, songId, Difficulty, score, perfect, criticalPerfect, far, lost,
-			singlePTTInfo, singlePTT
+		const [songName, songId, Difficulty, score,
+			perfect, criticalPerfect, far,
+			lost, singlePTTInfo, singlePTT
 		] = cells;
 		rowCounter = rowCounter + 1;
 
@@ -335,34 +339,13 @@ function displayB30Data(data) {
 			document.getElementById("b30Data").appendChild(spliterGen);
 			document.getElementById("b30Data").appendChild(overflow);
 		}
-		// setTimeout(function(){
-		// console.log("🤔")},1000);
 		const singlePTTContainer = document.createElement("div");
 		singlePTTContainer.className = "singlePTT";
 		singlePTTContainer.id = songId + "_" + Difficulty;
 
 		singlePTTContainer.onclick = function() {
-			//获取被点击的div的id
-			// var id = singlePTTContainer.id;
-			// console.log("被点击的div的id是：" + id);
-			// console.log("songName=" + songName);
-			// console.log("songId=" + songId);
-			// console.log("Difficulty=" + Difficulty);
-			// console.log("score=" + score);
-			// console.log("perfect=" + perfect);
-			// console.log("criticalPerfect=" + criticalPerfect);
-			// console.log("far=" + far);
-			// console.log("lost=" + lost);
-			// console.log("singlePTTInfo=" + singlePTTInfo);
-			// console.log("singlePTT=" + singlePTT);
 			const url = `divgen.html?singlePTTInfo=${singlePTTInfo}`;
 			window.location.href = url;
-			// const url =
-			// 	`clicktest.html?songName=${songName}&songId=${songId}
-			// &Difficulty=${Difficulty}&score=${score}&perfect=${perfect}
-			// &criticalPerfect=${criticalPerfect}&far=${far}&lost=${lost}
-			// &singlePTTInfo=${singlePTTInfo}&singlePTT=${singlePTT}`;
-			// window.location.href = url;
 		};
 
 		// 曲绘
@@ -371,23 +354,39 @@ function displayB30Data(data) {
 		const songImage = document.createElement("img");
 		songImage.className = "songImage";
 		songImage.id = songId + "_" + Difficulty;
+
+		//图像加载函数
+		function loadImage(imageUrl) {
+			if (localStorage.getItem(imageUrl)) {
+				// console.log("ills " + imageUrl + " in localstorage");
+				songImage.src = localStorage.getItem(imageUrl);
+			} else {
+				// console.log("ills " + imageUrl + " not in localstorage");
+				songImage.src = imageUrl;
+				songImage.onload = function() {
+					localStorage.setItem(imageUrl, this.src);
+					// console.log("ills " + imageUrl + " saved in localstorage");
+				};
+			}
+		}
+
 		// 获取差分曲绘
 		getImageMapping().then(imageMapping => {
 			if (imageMapping) {
 				const diffSongId = imageMapping[songId];
 				if (diffSongId && diffSongId[Difficulty]) {
-					songImage.src = "Processed_Illustration/" + songId + diffSongId[Difficulty] +
-						".jpg";
+					loadImage("Processed_Illustration/" + songId + diffSongId[Difficulty] + ".jpg");
 				} else {
-					songImage.src = "Processed_Illustration/" + songId + ".jpg";
+					loadImage("Processed_Illustration/" + songId + ".jpg");
 				}
 			} else {
-				songImage.src = "Processed_Illustration/sayonarahatsukoi.jpg";
+				loadImage("Processed_Illustration/sayonarahatsukoi.jpg");
 			}
 
 			singlePTTContainer.appendChild(songImageDiv);
 			songImageDiv.appendChild(songImage);
 		});
+
 
 		//曲目信息
 		const songInfoContainer = document.createElement("div");
@@ -810,6 +809,37 @@ function showSelect() {
 	}
 }
 //头像切换
+
+// 加载头像列表
+fetch('sample/avatar.csv')
+	.then(response => response.text())
+	.then(data => {
+		const fileNames = data.trim().split('\n');
+
+		const avatarTable = document.getElementById('avatarTable');
+		let row = document.createElement('tr');
+
+		for (const fileName of fileNames) {
+			if (row.childElementCount >= 4) {
+				avatarTable.appendChild(row);
+				row = document.createElement('tr');
+			}
+
+			const cell = document.createElement('td');
+			cell.onclick = () => switchSelect(fileName.trim());
+			const img = document.createElement('img');
+			img.className = 'selectImage';
+			img.src = `img/avatar/${fileName.trim()}_icon.webp`;
+			cell.appendChild(img);
+			row.appendChild(cell);
+		}
+
+		if (row.childElementCount > 0) {
+			avatarTable.appendChild(row);
+		}
+	})
+	.catch(error => console.error(error));
+
 function switchSelect(path) {
 	let icn = document.getElementById("icon");
 	let icb = document.getElementById("iconblur");
@@ -838,29 +868,38 @@ function switchBg(f) {
 	f = parseFloat(f);
 	if (!localStorage.saved_bg) {
 		localStorage.setItem("saved_bg", 8);
-		// console.log("bg=" + localStorage.saved_bg);
 	}
+
 	const bg = document.getElementById("background");
-	// console.log("current bg:" + localStorage.saved_bg);
 	localStorage.saved_bg = (parseFloat(localStorage.saved_bg) + parseFloat(f) + 9) % 9;
 	bg.style.opacity = 0;
+
 	setTimeout(function() {
 		bg.innerHTML = "";
 		let bgImg = document.createElement("img");
 		bgImg.id = "bgImg";
-		bgImg.src = "bgs/" + localStorage.saved_bg % 9 + ".webp";
-		// console.log("displayAmount = " + displayAmount);
+		const bgIndex = localStorage.saved_bg % 9;
+		const bgUrl = "bgs/" + bgIndex + ".webp";
+
+		if (localStorage.getItem(bgUrl)) {
+			bgImg.src = localStorage.getItem(bgUrl);
+		} else {
+			bgImg.src = bgUrl;
+			bgImg.onload = function() {
+				localStorage.setItem(bgUrl, this.src);
+			};
+		}
+
 		bgImg.style.height = String(calculateBackgroundHeight(displayAmount)) + "px";
 		bg.appendChild(bgImg);
 		bg.style.opacity = "100%";
-	}, 250)
+	}, 250);
 	//显示当前序号
 	const index = document.getElementById("currentBgIndex");
 	index.textContent = parseFloat(localStorage.saved_bg) + 1 + "/9";
-	//changeDisplayAmount();
-
-
 }
+
+
 
 function reverse() {
 	if (flag_reverse === 0) {

@@ -576,7 +576,7 @@ body {
 
 #controller {
 	margin: auto;
-	height: 560px;
+	height: 570px;
 	width: 1450px;
 	left: 150px;
 	top: 300px;
@@ -610,7 +610,7 @@ body {
 	float: left;
 	width: 99%;
 	height: 325px;
-	overflow: auto;
+	overflow: hidden;
 	border: 2px solid gold;
 	background-color: gainsboro;
 }
