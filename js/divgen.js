@@ -24,6 +24,7 @@ let statistic_xing = 0; //1f/1l性数
 let statistic_1xiao = 0; //1小p性数
 
 let future_only = 0; //只要FTR和BYD难度
+let pm_only = 0;	//只要PM成绩
 
 let array = []; //在上下界内符合的成绩数组
 
@@ -72,6 +73,14 @@ function switchFTR() {
 	future_only = future_only === 1 ? 0 : 1;
 	f.style.backgroundColor = future_only === 1 ? "lightpink" : "cornflowerblue";
 	f.textContent = future_only === 1 ? "全部显示" : "只要FTR和BYD";
+	refreshData(csv_data);
+}
+
+function switchPM() {
+	const f = document.getElementById("pmOnly");
+	pm_only = pm_only === 1 ? 0 : 1;
+	f.style.backgroundColor = pm_only === 1 ? "lightpink" : "cornflowerblue";
+	f.textContent = pm_only === 1 ? "不止要PM" : "🐉只要PM🐉";
 	refreshData(csv_data);
 }
 
@@ -369,8 +378,6 @@ function displayPersonalPTT(data) {
 };
 
 
-
-
 // 获取曲绘映射
 async function getImageMapping() {
 	try {
@@ -417,7 +424,9 @@ function displayB30Data(data) {
 				highDifficulty)) {
 			if (future_only === 1 && (Difficulty === "Past" || Difficulty === "Present")) {
 				//🤔
-			} else {
+			} else if(pm_only === 1 && (far > 0 || lost > 0)){
+				
+			}else {
 				let singleresult = new singleResult(songName, songId, Difficulty, score, perfect,
 					criticalPerfect, far, lost, singlePTTInfo, singlePTT);
 				array.push(singleresult);
@@ -430,6 +439,7 @@ function displayB30Data(data) {
 	appendUnit(array);
 }
 
+//生成分割线
 function appendSpliter(cst) {
 	const spliterGen = document.createElement("div");
 	spliterGen.className = "spliter";
@@ -440,6 +450,7 @@ function appendSpliter(cst) {
 	spliterGen.appendChild(spliterText);
 }
 
+//生成单个成绩单元
 function appendUnit(array) {
 	let idx;
 	let counter = 1;
@@ -479,21 +490,35 @@ function appendUnit(array) {
 		const songImage = document.createElement("img");
 		songImage.className = "songImage";
 		songImage.id = songId + "_" + Difficulty;
+		
+		//图像加载函数
+		function loadImage(imageUrl) {
+			if (localStorage.getItem(imageUrl)) {
+				// console.log("ills " + imageUrl + " in localstorage");
+				songImage.src = localStorage.getItem(imageUrl);
+			} else {
+				// console.log("ills " + imageUrl + " not in localstorage");
+				songImage.src = imageUrl;
+				songImage.onload = function() {
+					localStorage.setItem(imageUrl, this.src);
+					// console.log("ills " + imageUrl + " saved in localstorage");
+				};
+			}
+		}
+		
 		// 获取差分曲绘
 		getImageMapping().then(imageMapping => {
 			if (imageMapping) {
 				const diffSongId = imageMapping[songId];
 				if (diffSongId && diffSongId[Difficulty]) {
-					songImage.src = "Processed_Illustration/" + songId + diffSongId[
-							Difficulty] +
-						".jpg";
+					loadImage("Processed_Illustration/" + songId + diffSongId[Difficulty] + ".jpg");
 				} else {
-					songImage.src = "Processed_Illustration/" + songId + ".jpg";
+					loadImage("Processed_Illustration/" + songId + ".jpg");
 				}
 			} else {
-				songImage.src = "Processed_Illustration/sayonarahatsukoi.jpg";
+				loadImage("Processed_Illustration/sayonarahatsukoi.jpg");
 			}
-
+		
 			singlePTTContainer.appendChild(songImageDiv);
 			songImageDiv.appendChild(songImage);
 		});
@@ -868,31 +893,72 @@ function cln() {
 
 }
 
+// 加载头像列表
+fetch('sample/avatar.csv')
+	.then(response => response.text())
+	.then(data => {
+		const fileNames = data.trim().split('\n');
+
+		const avatarTable = document.getElementById('avatarTable');
+		let row = document.createElement('tr');
+
+		for (const fileName of fileNames) {
+			if (row.childElementCount >= 4) {
+				avatarTable.appendChild(row);
+				row = document.createElement('tr');
+			}
+
+			const cell = document.createElement('td');
+			cell.onclick = () => switchSelect(fileName.trim());
+			const img = document.createElement('img');
+			img.className = 'selectImage';
+			img.src = `img/avatar/${fileName.trim()}_icon.webp`;
+			cell.appendChild(img);
+			row.appendChild(cell);
+		}
+
+		if (row.childElementCount > 0) {
+			avatarTable.appendChild(row);
+		}
+	})
+	.catch(error => console.error(error));
+
 //切换背景图
 function switchBg(f) {
 	f = parseFloat(f);
 	if (!localStorage.saved_bg) {
 		localStorage.setItem("saved_bg", 8);
 	}
+
 	const bg = document.getElementById("background");
 	localStorage.saved_bg = (parseFloat(localStorage.saved_bg) + parseFloat(f) + 9) % 9;
 	bg.style.opacity = 0;
+
 	setTimeout(function() {
 		bg.innerHTML = "";
 		let bgImg = document.createElement("img");
 		bgImg.id = "bgImg";
-		bgImg.src = "bgs/" + localStorage.saved_bg % 9 + ".webp";
-		// console.log("displayAmount = " + displayAmount);
+		const bgIndex = localStorage.saved_bg % 9;
+		const bgUrl = "bgs/" + bgIndex + ".webp";
+
+		if (localStorage.getItem(bgUrl)) {
+			bgImg.src = localStorage.getItem(bgUrl);
+		} else {
+			bgImg.src = bgUrl;
+			bgImg.onload = function() {
+				localStorage.setItem(bgUrl, this.src);
+			};
+		}
+
 		bg.appendChild(bgImg);
 		resetBackgroundHeight();
 		bg.style.opacity = "100%";
-
-	}, 250)
+	}, 250);
 	//显示当前序号
 	const index = document.getElementById("currentBgIndex");
 	index.textContent = parseFloat(localStorage.saved_bg) + 1 + "/9";
-	//changeDisplayAmount();
 }
+
 //显示隐藏ID
 function hideUid() {
 	const f = document.getElementById("hideUID");

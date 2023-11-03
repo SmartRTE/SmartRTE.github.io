@@ -153,10 +153,10 @@ body {
 }
 
 #uidBox {
+	display: block;
 	position: absolute;
 	float: left;
 	width: 1000px;
-	max-width: 100%;
 	left: 270px;
 	top: 120px;
 	font-family: 'geosans';
@@ -180,6 +180,7 @@ body {
 #uid {
 	position: relative;
 	display: inline;
+	max-width: 600px;
 }
 
 #iconblur {

@@ -595,8 +595,6 @@ document.addEventListener("DOMContentLoaded", function() {
 					resizeWidth();
 				}, 80);
 			}, 800);
-
-
 		});
 	}
 	saveButton.addEventListener("click", savePageAsImage);
@@ -612,7 +610,7 @@ document.addEventListener("DOMContentLoaded", function() {
 //重新设定背景图高度
 function calculateBackgroundHeight(amount) {
 	var fixed = 450;
-	var height = 200 * (1 + Math.floor((amount - 1) / 3)) + fixed;
+	var height = 200.4 * (1 + Math.floor((amount - 1) / 3)) + fixed;
 	if (amount <= 30) {
 		return height;
 	} else {
@@ -900,16 +898,6 @@ function switchBg(f) {
 }
 
 
-
-function reverse() {
-	if (flag_reverse === 0) {
-		document.body.style.transform = "scale(-1, -1)";
-		flag_reverse = 1;
-	} else {
-		document.body.style.transform = "scale(1, 1)";
-		flag_reverse = 0;
-	}
-}
 
 function hideUid() {
 	const f = document.getElementById("hideUID");
