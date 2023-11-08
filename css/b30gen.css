@@ -185,6 +185,7 @@ body {
 	position: absolute;
 	left: 20px;
 	top: 20px;
+	scale: 1.2;
 	-webkit-filter: blur(15px);
 	filter: blur(15px);
 	transition-duration: 0.75s;
@@ -197,7 +198,7 @@ body {
 	left: 20px;
 	top: 20px;
 	transition-duration: 0.6s;
-	scale: 1.2;
+	scale: 1.15;
 }
 
 #Avatar:hover #iconblur {
@@ -247,7 +248,7 @@ body {
 	left: 120px;
 	top: 85px;
 	position: absolute;
-
+	scale: 1.1;
 }
 
 #b30Value {
@@ -282,6 +283,7 @@ body {
 	left: -2px;
 	font-family: 'Exo', sans-serif;
 	text-shadow: 0px 0px 6px rgba(90, 0, 90, 1.0),
+		0px 0px 15px rgba(90, 0, 90, 1.0),
 		1px 0px 1px rgba(90, 0, 90, 1.0),
 		1px 1px 1px rgba(90, 0, 90, 1.0),
 		0px 1px 1px rgba(90, 0, 90, 1.0),
@@ -569,7 +571,8 @@ body {
 	text-align: center;
 	font-family: 'Exo', sans-serif;
 	color: aliceblue;
-	text-shadow: 0px 0px 5px black;
+	text-shadow: 0px 0px 4px black,
+				0px 0px 10px black;
 	letter-spacing: 1px;
 	top: -15px;
 }
@@ -620,7 +623,7 @@ body {
 	margin-bottom: 4px;
 	float: left;
 	width: 99%;
-	overflow: auto;
+	overflow: hidden;
 	border: 2px solid red;
 	background-color: lightblue;
 }
@@ -646,9 +649,26 @@ body {
 	background-color: aliceblue;
 }
 
+#backgroundSelect{
+	width: 100%;
+	margin-top: 4px;
+	display: inline-block;
+	border: solid 2px black;
+	background-color: rgba(119, 201, 255, 1.0);
+}
+
+#clearLocalStorage{
+	width: 100%;
+	margin-top: 4px;
+	margin-bottom: 4px;
+	display: inline-block;
+	border: solid white 2px;
+	background-color: indianred;
+}
+
 #controller input {
 	display: inline-block;
-	width: 470px;
+	width: 99%;
 	height: 48px;
 	line-height: 30px;
 	font-size: 30px;
@@ -665,10 +685,9 @@ body {
 	height: 50px;
 	line-height: 30px;
 	font-size: 30px;
-	width: 470px;
+	width: 100%;
 	cursor: pointer;
 	margin-top: 5px;
-	
 }
 
 #avatarSelect {
@@ -677,6 +696,8 @@ body {
 	float: left;
 	cursor: pointer;
 	scrollbar-width: none;
+	border: 1px solid black;
+	background-color: rgba(169, 255, 230, 1.0);
 }
 
 #sheet td {
