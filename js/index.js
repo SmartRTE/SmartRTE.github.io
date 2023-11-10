@@ -550,9 +550,9 @@ function getMinMaxValues(tableId, columnIndex, rowCount) {
 //调整页面缩放
 function resizeWidth() {
 
-	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1500) +
-		"); -moz-transform-origin: 0 0; -moz-";
-	document.body.style.zoom = (document.documentElement.clientWidth / 1500);
+	// document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1500) +
+	// 	"); -moz-transform-origin: 0 0; -moz-";
+	// document.body.style.zoom = (document.documentElement.clientWidth / 1500);
 
 }
 
