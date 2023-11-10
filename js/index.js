@@ -12,7 +12,7 @@ let myScatterChart;
 //组件初始化
 initSqlJs(config).then(function(sqlModule) {
 	SQL = sqlModule;
-	resizeWidth();
+	// resizeWidth();
 	console.log("sql.js initialized 🎉");
 });
 
@@ -548,12 +548,12 @@ function getMinMaxValues(tableId, columnIndex, rowCount) {
 
 
 //调整页面缩放
-function resizeWidth() {
+// function resizeWidth() {
 
-	// document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1500) +
-	// 	"); -moz-transform-origin: 0 0; -moz-";
-	// document.body.style.zoom = (document.documentElement.clientWidth / 1500);
+// 	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1500) +
+// 		"); -moz-transform-origin: 0 0; -moz-";
+// 	document.body.style.zoom = (document.documentElement.clientWidth / 1500);
 
-}
+// }
 
-window.addEventListener('resize', resizeWidth);
+// window.addEventListener('resize', resizeWidth);
