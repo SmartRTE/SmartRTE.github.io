@@ -7,6 +7,7 @@ let config = {
 	locateFile: () => "sql-wasm.wasm",
 };
 
+let myScatterChart;
 
 //组件初始化
 initSqlJs(config).then(function(sqlModule) {
@@ -78,6 +79,7 @@ addEventListener("DOMContentLoaded", function() {
 				row.parentNode.insertBefore(newRow, row.nextSibling); // 在当前行的下一行插入新行
 			}
 			convertCSV();
+
 		}
 	});
 
@@ -111,11 +113,13 @@ addEventListener("DOMContentLoaded", function() {
 				// console.log("td changed." + target.textContent);
 				sortTable(); // 调用函数来进行排序
 				convertCSV();
+				generateScatterChart('queryTable', 'chart', 9, 4, [1]);
 			});
 
 			// 使输入框获得焦点
 			input.focus();
 			convertCSV();
+
 		}
 
 	});
@@ -222,7 +226,7 @@ function showCSV(file) {
 		}, 300)
 		localStorage.setItem("saved_notices_flag", "0");
 	}
-	file = file.trim();	//删除文件最后多余的回车
+	file = file.trim(); //删除文件最后多余的回车
 	const rows = file.split('\n'); // 按行拆分CSV数据
 	const table = document.getElementById("queryTable");
 	table.innerHTML = ''; // 清空表格内容
@@ -246,10 +250,10 @@ function showCSV(file) {
 
 	// 创建表格内容
 	const tbody = document.createElement('tbody');
-
+	tbody.id = "tbody";
 	for (let i = 1; i < rows.length; i++) {
 		const row = rows[i].split(',');
-		
+
 		// 添加条件检查：如果第四列为空，跳过该行
 		if (row.length >= 4 && row[3].trim() === '') {
 			continue;
@@ -303,6 +307,8 @@ function showCSV(file) {
 	sendButton.style.display = "inline-block";
 	sortTable();
 	convertCSV();
+
+	generateScatterChart('queryTable', 'chart', 9, 4, [1]);
 }
 
 
@@ -414,6 +420,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		notices.style.opacity = "0";
 		localStorage.setItem("saved_notices_flag", "0");
 	}
+	document.getElementById("chartContainer").style.display = "none";
 });
 
 
@@ -430,6 +437,120 @@ function calculateSinglePTT(score, constant) {
 	}
 	return s.toFixed(6);
 }
+
+//定数-分数图表生成
+function generateScatterChart(tableId, canvasId, xColumnIndex, yColumnIndex, tooltipColumns) {
+	var table = document.getElementById(tableId);
+	var canvas = document.getElementById(canvasId);
+	var ctx = canvas.getContext('2d');
+	let tbody = document.getElementById("tbody");
+	let cst = getMinMaxValues("tbody", 9, 39);
+	let highx = cst.max;
+	let lowx = cst.min;
+	let scr = getMinMaxValues("tbody", 4, 39);
+	let highy = scr.max;
+	let lowy = scr.min;
+	document.getElementById("chartContainer").style.display = "block";
+	// if (window.scatterChart) {
+	// 	window.scatterChart.destroy();
+	// }
+
+	var tableData = [];
+	for (var i = 1; i < table.rows.length; i++) {
+		var row = table.rows[i];
+		var xValue = parseFloat(row.cells[xColumnIndex].textContent);
+		var yValue = parseInt(row.cells[yColumnIndex].textContent);
+
+		var dataObject = {
+			x: xValue,
+			y: yValue,
+			rowIndex: i
+		};
+		tooltipColumns.forEach(function(columnIndex) {
+			dataObject[`column${columnIndex}`] = row.cells[columnIndex].textContent;
+		});
+
+		tableData.push(dataObject);
+	}
+	if (!myScatterChart) {
+		myScatterChart = new Chart(ctx, {
+			type: 'scatter',
+			data: {
+				datasets: [{
+					label: '定数-分数分布图',
+					data: tableData,
+					backgroundColor: 'rgba(6, 218, 165, 1.0)',
+					radius: 8,
+					hoverRadius: 13,
+					borderWidth: 5,
+				}]
+			},
+			options: {
+				scales: {
+					x: {
+						type: 'linear',
+						position: 'bottom',
+						min: lowx - 0.5,
+						max: highx > 11.5 ? 12.1 : highx + 0.5,
+						step: 0.1,
+					},
+					y: {
+						min: parseInt(lowy/10000)*10000 - 10000,
+						max: parseInt(highy/10000)*10000 + 10000,
+						step: 50000,
+					}
+				},
+				plugins: {
+					tooltip: {
+						callbacks: {
+							label: function(context) {
+								var data = context.dataset.data[context.dataIndex];
+								var tooltipText = '';
+								tooltipColumns.forEach(function(columnIndex) {
+									tooltipText +=
+										`best${data.rowIndex}:${data[`column${columnIndex}`]}:[${data.x}]:(${data.y})`;
+								});
+								return tooltipText;
+							}
+						}
+					}
+				}
+			}
+		});
+	} else {
+		// 如果已经存在，则直接更新数据
+		myScatterChart.data.datasets[0].data = tableData;
+		myScatterChart.update();
+	}
+}
+
+
+function getMinMaxValues(tableId, columnIndex, rowCount) {
+	var table = document.getElementById(tableId);
+
+	// 初始化最大值和最小值
+	var maxValue = Number.MIN_VALUE;
+	var minValue = Number.MAX_VALUE;
+
+	// 遍历表格的前 rowCount 行
+	for (var i = 1; i <= rowCount && i < table.rows.length; i++) {
+		var cellValue = parseFloat(table.rows[i].cells[columnIndex].textContent);
+
+		// 检查是否是有效的数字
+		if (!isNaN(cellValue)) {
+			// 更新最大值和最小值
+			maxValue = Math.max(maxValue, cellValue);
+			minValue = Math.min(minValue, cellValue);
+		}
+	}
+
+	// 返回结果
+	return {
+		min: minValue,
+		max: maxValue
+	};
+}
+
 
 //调整页面缩放
 function resizeWidth() {

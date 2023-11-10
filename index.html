@@ -6,6 +6,7 @@
 		<title>st3解析</title>
 		<script src="js/sql-wasm.js"></script>
 		<script src="js/index.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/index.css" />
 		<link rel="icon" href="favicon.ico" />
 	</head>
@@ -24,7 +25,7 @@
 			<li><a href="https://www.bilibili.com/video/BV1kp4y1F7Jw" target="_blank">查看原理、食用方法以及获取st3数据库文件的方法</a></li>
 			<iframe id="bili" src="//player.bilibili.com/player.html?aid=958967055&bvid=BV1kp4y1F7Jw&cid=1281665008&p=1"
 				scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-				<li style="color: rgba(255, 170, 127, 1.0); font-size: 22px;">我不要脸，给我三连(</li>
+			<li style="color: rgba(255, 170, 127, 1.0); font-size: 22px;">我不要脸，给我三连(</li>
 			<li>1.点击 “上传st3文件” 上传你的st3文件，文件名可改可不改 </li>
 			<li>2.上传完之后如果不出意外会立马显示数据库内的全曲目游玩记录表格 </li><br />
 			<li>*若有字符显示“?”是因为我用了比较懒的方法进行数据库查询，字符集有点问题，<br />但是不影响会意以及后面的b30生成</li><br />
@@ -39,31 +40,41 @@
 			<li>*水平有限，缝缝补补得到的这几个页面难免会有性能问题🙏</li><br />
 			<li>————RTE QQ: 2232194759</li><br />
 		</ul>
-		
-		<h2 style="position: relative; left: 50px;">当前数据库版本：5.1</h2>
-		<h2 style="position: relative; left: 50px;">更新于 2023/10/27</h2>
+
+		<h2 style="position: relative; left: 10%;">当前数据库版本：5.1</h2>
+		<h2 style="position: relative; left: 10%;">更新于 2023/10/27</h2>
 		<input type="file" id="dbFileInput" style="display: none;"><br />
 		<div id="controller">
-			<button type="button" id="b30gen" onclick="window.open('b30gen.html')">点击跳转b30生成页</button>
-			<button type="button" id="difgen"
-				onclick="window.open('divgen.html')">点击跳转定数查曲生成页</button>
-			<button type="button" id="dldbtn">
-				<a style="width: 100%; height: 100%; text-decoration: none; color: aliceblue;" 
-					download="模板.csv" href="sample/模板.csv" 
-					onclick="alert('请读完这条提示！\n 稍后下载的模板.csv内含有全部曲目的全部难度的分级条目，顺序是\n※游戏内全部歌曲的曲名序※\n尽量填写多于30条数据以保证B30计算正常。填写完成后请使用Excel或WPS表格的函数手动计算每首歌的单曲PTT（具体计算公式见Arcaea Wiki）\n 物量信息（p，f，l）可以不填，但是会影响B30图中理论值曲目的显示效果（缺少蓝色阴影，但是没有也不影响\n没有成绩的条目请手动删除，并最终把文件仍保存为csv格式。软件可能会提示丢失信息，请忽略！\n确认阅读完毕并理解之后，点击 确定')">下载模板.csv手动填入成绩</a>
-			</button><br /><br />
-			<button type="button" id="uploadButton">上传st3数据库或分数表csv文件 </button>
-			<button type="button" id="edit" onclick="showEdit()">读取缓存的分数表并修改</button>
-			<button type="button" id="download" onclick="exportCSV()" style="display: none;">下载分数表csv文件</button>
-			<button type="button" id="sendToB30" onclick="sendToB30()" style="display: none;">以下表生成b30</button>
-			<output id="queryResult"></output>
+			<div id="controllerRow1">
+				<button type="button" id="b30gen" onclick="window.open('b30gen.html')">点击跳转b30生成页</button>
+				<button type="button" id="difgen" onclick="window.open('divgen.html')">点击跳转定数查曲生成页</button>
+				<button type="button" id="dldbtn">
+					<a style="width: 100%; height: 100%; text-decoration: none; color: aliceblue;" download="模板.csv"
+						href="sample/模板.csv"
+						onclick="alert('请读完这条提示！\n 稍后下载的模板.csv内含有全部曲目的全部难度的分级条目，顺序是\n※游戏内全部歌曲的曲名序※\n尽量填写多于30条数据以保证B30计算正常。填写完成后请使用Excel或WPS表格的函数手动计算每首歌的单曲PTT（具体计算公式见Arcaea Wiki）\n 物量信息（p，f，l）可以不填，但是会影响B30图中理论值曲目的显示效果（缺少蓝色阴影，但是没有也不影响\n没有成绩的条目请手动删除，并最终把文件仍保存为csv格式。软件可能会提示丢失信息，请忽略！\n确认阅读完毕并理解之后，点击 确定')">下载模板.csv手动填入成绩</a>
+				</button>
+			</div>
+			<div id="controllerRow2">
+				<button type="button" id="uploadButton">上传st3数据库或分数表csv文件 </button>
+				<button type="button" id="download" onclick="exportCSV()" style="display: none;">下载分数表csv文件</button>
+				<button type="button" id="sendToB30" onclick="sendToB30()" style="display: none;">以下表生成b30</button>
+				<output id="queryResult"></output>
+			</div>
+			<div id="controllerRow3">
+				<button type="button" id="edit" onclick="showEdit()">读取缓存的分数表并修改</button>
+
+			</div>
 		</div>
+		<div id="chartContainer" style="position: relative; width:70%; margin: 0 auto; height: 600px;">
+			<canvas id="chart"></canvas>
+		</div>
+		
 		<table id="queryTable">
 			<thead>
 				<tr></tr>
 			</thead>
 			<tbody>
-				
+
 			</tbody>
 		</table>
 	</body>
