@@ -1,7 +1,7 @@
 body {
 	position: absolute;
 	left: 0;
-	width: 100vw;
+	width: 1500px;
 	margin: 0 auto;
 	border-radius: 15px;
 	background-color: rgba(fe, ef, ef, 1);
@@ -12,7 +12,7 @@ body {
 	display: block;
 	position: fixed;
 	z-index: -99;
-	width: 100vw;
+	width: 1500px;
 	height: 100%;
 	opacity: 40%;
 	-webkit-filter: blur(1px);
@@ -34,10 +34,10 @@ body {
 
 #notices {
 	position: relative;
-	margin: 0 auto;
-	font-size: 2vw;
+	left: -50px;
+	font-size: 35px;
 	transition-duration: 0.3s;
-	width: 90vw;
+	width: 1500px;
 	list-style: none;
 }
 
@@ -46,14 +46,15 @@ body {
 }
 
 #bili {
-	display: flex;
-	margin: 0 auto;
+	position: relative;
+	left: 350px;
 	width: 800px;
 	height: 450px;
 }
 
 #controller {
 	line-height: 100px;
+	font-size: 30px;
 	align-items: center;
 }
 
@@ -62,7 +63,7 @@ body {
 #controllerRow3 {
 	display: flex;
 	justify-content: space-between;
-	width: 90%;
+	width: 80%;
 	margin: 0 auto;
 }
 
@@ -71,7 +72,7 @@ body {
 	margin: 16px;
 	width: 450px;
 	height: 120px;
-	font-size: 1.8vw;
+	font-size: 25px;
 	font-weight: 500;
 	display: inline-block;
 	background-repeat: no-repeat;
@@ -109,21 +110,24 @@ body {
 }
 
 th {
-	font-size: 1.8vh;
+	font-size: 20px;
 }
 
 td {
 	text-align: left;
 	margin: 5px;
-	font-size: 1.6vw;
-	height: 1.6vh;
-	min-width: 1.2vw;
-	max-height: 1.2vw;
+	font-size: 25px;
+	height: 40px;
+	min-width: 50px;
+	line-height: 30px;
 }
 
+tr {
+	height: 40px;
+}
 
 table {
-	width: 95vw;
+	width: 80%;
 	margin: 0 auto;
 	border-radius: 8px;
 	border: 3px rgba(80, 80, 80, 0.5) solid;
@@ -149,10 +153,9 @@ tbody:first-child {
 	border-radius: 15px;
 }
 
-#chartContainer {
+#chartContainer{
 	display: none;
-	position: relative;
-	width: 80vw;
+	width: 800px;
 	margin: 0 auto;
 }
 
