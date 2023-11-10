@@ -495,8 +495,8 @@ function generateScatterChart(tableId, canvasId, xColumnIndex, yColumnIndex, too
 						step: 0.1,
 					},
 					y: {
-						min: parseInt(lowy/10000)*10000 - 10000,
-						max: parseInt(highy/10000)*10000 + 10000,
+						min: parseInt(lowy / 10000) * 10000 - 10000,
+						max: parseInt(highy / 10000) * 10000 + 10000,
 						step: 50000,
 					}
 				},
@@ -528,23 +528,18 @@ function generateScatterChart(tableId, canvasId, xColumnIndex, yColumnIndex, too
 function getMinMaxValues(tableId, columnIndex, rowCount) {
 	var table = document.getElementById(tableId);
 
-	// 初始化最大值和最小值
 	var maxValue = Number.MIN_VALUE;
 	var minValue = Number.MAX_VALUE;
 
-	// 遍历表格的前 rowCount 行
 	for (var i = 1; i <= rowCount && i < table.rows.length; i++) {
 		var cellValue = parseFloat(table.rows[i].cells[columnIndex].textContent);
 
-		// 检查是否是有效的数字
 		if (!isNaN(cellValue)) {
-			// 更新最大值和最小值
 			maxValue = Math.max(maxValue, cellValue);
 			minValue = Math.min(minValue, cellValue);
 		}
 	}
 
-	// 返回结果
 	return {
 		min: minValue,
 		max: maxValue
