@@ -24,7 +24,7 @@ let statistic_xing = 0; //1f/1l性数
 let statistic_1xiao = 0; //1小p性数
 
 let future_only = 0; //只要FTR和BYD难度
-let pm_only = 0;	//只要PM成绩
+let pm_only = 0; //只要PM成绩
 
 let array = []; //在上下界内符合的成绩数组
 
@@ -424,9 +424,9 @@ function displayB30Data(data) {
 				highDifficulty)) {
 			if (future_only === 1 && (Difficulty === "Past" || Difficulty === "Present")) {
 				//🤔
-			} else if(pm_only === 1 && (far > 0 || lost > 0)){
-				
-			}else {
+			} else if (pm_only === 1 && (far > 0 || lost > 0)) {
+
+			} else {
 				let singleresult = new singleResult(songName, songId, Difficulty, score, perfect,
 					criticalPerfect, far, lost, singlePTTInfo, singlePTT);
 				array.push(singleresult);
@@ -490,7 +490,7 @@ function appendUnit(array) {
 		const songImage = document.createElement("img");
 		songImage.className = "songImage";
 		songImage.id = songId + "_" + Difficulty;
-		
+
 		//图像加载函数
 		function loadImage(imageUrl) {
 			if (localStorage.getItem(imageUrl)) {
@@ -505,7 +505,7 @@ function appendUnit(array) {
 				};
 			}
 		}
-		
+
 		// 获取差分曲绘
 		getImageMapping().then(imageMapping => {
 			if (imageMapping) {
@@ -518,7 +518,7 @@ function appendUnit(array) {
 			} else {
 				loadImage("Processed_Illustration/sayonarahatsukoi.jpg");
 			}
-		
+
 			singlePTTContainer.appendChild(songImageDiv);
 			songImageDiv.appendChild(songImage);
 		});
@@ -677,6 +677,31 @@ document.addEventListener("DOMContentLoaded", function() {
 	//清除刷新提示notice
 	document.getElementById("notice").textContent = "";
 
+	//压缩
+	async function compressImage(dataURL, quality) {
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.onload = function() {
+				const canvas = document.createElement("canvas");
+				const ctx = canvas.getContext("2d");
+
+				// 设置canvas尺寸等于图像尺寸
+				canvas.width = img.width;
+				canvas.height = img.height;
+
+				// 在canvas上绘制图像
+				ctx.drawImage(img, 0, 0, img.width, img.height);
+
+				// 将图像数据压缩为指定质量的JPEG格式
+				const compressedDataURL = canvas.toDataURL("image/jpeg", quality);
+
+				resolve(compressedDataURL);
+			};
+
+			img.src = dataURL;
+		});
+	}
+
 	async function savePageAsImage() {
 		const body = document.getElementById("mainCapture");
 		const bg = document.getElementById("bgImg");
@@ -702,10 +727,14 @@ document.addEventListener("DOMContentLoaded", function() {
 			width: captureWidth,
 			height: captureHeight,
 			scale: 1.2,
-		}).then(canvas => {
+		}).then(async canvas => {
 			const dataURL = canvas.toDataURL("image/jpg");
+
+			const compressedDataURL = await compressImage(dataURL, 0.8);
+
 			const link = document.createElement("a");
-			link.href = dataURL;
+			// link.href = dataURL;
+			link.href = compressedDataURL;
 			let currentDateTime = new Date().toLocaleString();
 			const username = document.getElementById("userName").textContent;
 			link.download = "B30_" + username + "_" + currentDateTime + ".jpg";

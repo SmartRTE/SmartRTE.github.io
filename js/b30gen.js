@@ -541,6 +541,31 @@ document.addEventListener("DOMContentLoaded", function() {
 	//清除刷新提示notice
 	document.getElementById("notice").textContent = "";
 
+	//压缩
+	async function compressImage(dataURL, quality) {
+		return new Promise((resolve, reject) => {
+			const img = new Image();
+			img.onload = function() {
+				const canvas = document.createElement("canvas");
+				const ctx = canvas.getContext("2d");
+
+				// 设置canvas尺寸等于图像尺寸
+				canvas.width = img.width;
+				canvas.height = img.height;
+
+				// 在canvas上绘制图像
+				ctx.drawImage(img, 0, 0, img.width, img.height);
+
+				// 将图像数据压缩为指定质量的JPEG格式
+				const compressedDataURL = canvas.toDataURL("image/jpeg", quality);
+
+				resolve(compressedDataURL);
+			};
+
+			img.src = dataURL;
+		});
+	}
+
 	async function savePageAsImage() {
 		const body = document.getElementById("mainCapture");
 		const bg = document.getElementById("bgImg");
@@ -567,10 +592,14 @@ document.addEventListener("DOMContentLoaded", function() {
 			width: captureWidth,
 			height: captureHeight,
 			scale: 1.2,
-		}).then(canvas => {
+		}).then(async canvas => {
 			const dataURL = canvas.toDataURL("image/jpg");
+
+			const compressedDataURL = await compressImage(dataURL, 0.8);
+
 			const link = document.createElement("a");
-			link.href = dataURL;
+			// link.href = dataURL;
+			link.href = compressedDataURL;
 			let currentDateTime = new Date().toLocaleString();
 			const username = document.getElementById("userName").textContent;
 			link.download = "B30_" + username + "_" + currentDateTime + ".jpg";

@@ -14,7 +14,16 @@
 		<div id="bgimg">
 			<img src="bgs/bg_light.webp">
 		</div>
-		<h1 id="noticeButton" onclick="switchNotices()">注意事项</h1>
+		<div style="display: inline-block; width: 100%;">
+			<h1 id="noticeButton" onclick="switchNotices()">注意事项</h1>
+			<button id="constantSheet">查看定数表</button>
+			<div id="version">
+				<h2>当前数据库版本：5.1</h2>
+				<h2>更新于 2023/10/27</h2>
+			</div>
+			
+		</div>
+
 		<ul id="notices">
 			<li style="color: firebrick;">!点上面的“注意事项”可以把这一段文字收起</li>
 			<li style="color: firebrick;">
@@ -41,8 +50,7 @@
 			<li>————RTE QQ: 2232194759</li><br />
 		</ul>
 
-		<h2 style="position: relative; left: 10%;">当前数据库版本：5.1</h2>
-		<h2 style="position: relative; left: 10%;">更新于 2023/10/27</h2>
+
 		<input type="file" id="dbFileInput" style="display: none;"><br />
 		<div id="controller">
 			<div id="controllerRow1">
@@ -65,10 +73,15 @@
 
 			</div>
 		</div>
-		<div id="chartContainer" >
+		<div id="chartContainer">
 			<canvas id="chart"></canvas>
 		</div>
-		
+		<div id="briefStatistic">
+			<a id="best30"></a>
+			<a id="top30"></a>
+			<a id="top39"></a>
+
+		</div>
 		<table id="queryTable">
 			<thead>
 				<tr></tr>
