@@ -374,7 +374,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Transient S
 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Stratoliner', 'stratoliner', 3.5, 6.5, 9.6, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('XTREME', 'xtreme', 4.5, 7.5, 10.5, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Ouverture', 'Ouverture', 2.5, 7.5, 9.8, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Ouverture', 'ouverture', 2.5, 7.5, 9.8, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('eden', 'edenwacca', 4.5, 8.0, 10.5, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Meta-Mysteria', 'metamysteria', 5.0, 7.5, 10.8, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Alone & Lorn', 'aloneandlorn', 3.0, 6.0, 9.6, '');
