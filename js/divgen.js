@@ -100,12 +100,6 @@ function isInteger(obj) {
 	return obj % 1 === 0
 }
 
-function swap(a, b) {
-	let t;
-	t = a;
-	a = b;
-	b = t;
-}
 //清除统计信息
 function clearStatistics() {
 	statistic_full_recall = 0;
@@ -863,7 +857,7 @@ function setDifficulty() {
 	lowDifficulty = isInteger(low.value) ? low.value | 0 : parseFloat(low.value).toFixed(1);
 	highDifficulty = isInteger(high.value) ? high.value | 0 : parseFloat(high.value).toFixed(1);
 	if (highDifficulty < lowDifficulty) {
-		swap(highDifficulty, lowDifficulty);
+		[highDifficulty,lowDifficulty] = [lowDifficulty,highDifficulty];
 	}
 	if (parseFloat(lowDifficulty) === parseFloat(highDifficulty)) {
 		document.getElementById("b30PTTContainer").textContent = "";
