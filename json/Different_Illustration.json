@@ -33,7 +33,8 @@
 	},
 	"ii": {
 		"Past": "_0",
-		"Present": "_1"
+		"Present": "_1",
+		"Beyond": "_3"
 	},
 	"infinityheaven": {
 		"Beyond": "_3"
@@ -114,5 +115,9 @@
 	},
 	"redandblue": {
 		"Beyond": "_3"
+	},
+	"wishuponasnow":{
+		"Beyond":"_3"
 	}
+	
 }
