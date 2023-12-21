@@ -380,6 +380,11 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Meta-Myster
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Alone & Lorn', 'aloneandlorn', 3.0, 6.0, 9.6, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Wish Upon a Snow', 'wishuponasnow', 4.5, 7.5, 10.5, '');
 
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Kanbu de Tomatte Sugu Tokeru', 'overdrive', 4.0, 7.0, 10.0, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('felys final remix', 'felys', 3.0, 6.5, 9.5);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('On And On!! feat. Jenga', 'onandon', 3.0, 7.0, 9.5, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('LIVHT MY WΔY', 'lightmyway', 4.5, 7.5, 9.5, '');
+
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
