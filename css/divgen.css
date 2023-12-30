@@ -580,7 +580,8 @@ body {
 
 .items {
 	display: flex;
-	width: 290px;
+	justify-content: space-evenly;
+	width: 320px;
 	font-weight: bolder;
 	align-items: stretch;
 	position: relative;
