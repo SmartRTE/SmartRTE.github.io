@@ -807,8 +807,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		recalculateR10();
 	} else {
 		fetchAndSaveCSV(default_csv_name, csv_data); //显示一次默认b39
-		setItem("saved_csv_name", default_csv_name);
-		setItem("saved_csv_data", csv_data);
+		localStorage.setItem("saved_csv_name", default_csv_name);
+		localStorage.setItem("saved_csv_data", csv_data);
 	}
 
 });
