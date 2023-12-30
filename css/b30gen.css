@@ -13,19 +13,22 @@
 	0% {
 		filter: blur(0px);
 	}
-	20%{
+
+	20% {
 		filter: blur(15px);
 	}
-	100%{
+
+	100% {
 		filter: blur(0px);
 	}
-	
+
 }
 
 @keyframes captureBlur {
 	0% {
 		filter: blur(0px);
 	}
+
 	100% {
 		filter: blur(10px);
 	}
@@ -376,6 +379,7 @@ body {
 	box-shadow: 0px 0px 11px gray;
 	background-color: aliceblue;
 	border-radius: 10px;
+	position: relative;
 	float: left;
 	cursor: pointer;
 	transition-duration: 0.35s;
@@ -400,7 +404,7 @@ body {
 }
 
 
-.singlePTTInfo a,
+/* .singlePTTInfo a, */
 .singlePTTInfo {
 	color: white;
 	width: 90px;
@@ -542,16 +546,16 @@ body {
 	text-align: center;
 }
 
-.singlePTT:first-child .rank{
-	background-color: rgba(255,202,1,1.0);
+.singlePTT:first-child .rank {
+	background-color: rgba(255, 202, 1, 1.0);
 }
 
-.singlePTT:nth-child(2) .rank{
+.singlePTT:nth-child(2) .rank {
 	background-color: rgba(175, 175, 175, 1.0);
 }
 
-.singlePTT:nth-child(3) .rank{
-	background-color: rgba(165,124,80,1.0);
+.singlePTT:nth-child(3) .rank {
+	background-color: rgba(165, 124, 80, 1.0);
 }
 
 .songRank {
@@ -573,7 +577,7 @@ body {
 	font-family: 'Exo', sans-serif;
 	color: aliceblue;
 	text-shadow: 0px 0px 4px black,
-				0px 0px 10px black;
+		0px 0px 10px black;
 	letter-spacing: 1px;
 	top: -15px;
 }
@@ -650,7 +654,7 @@ body {
 	background-color: aliceblue;
 }
 
-#backgroundSelect{
+#backgroundSelect {
 	width: 100%;
 	margin-top: 4px;
 	display: inline-block;
@@ -658,7 +662,7 @@ body {
 	background-color: rgba(119, 201, 255, 1.0);
 }
 
-#clearLocalStorage{
+#clearLocalStorage {
 	width: 100%;
 	margin-top: 4px;
 	margin-bottom: 4px;

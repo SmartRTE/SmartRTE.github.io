@@ -382,9 +382,6 @@ function displayB30Data(data) {
 			} else {
 				loadImage("Processed_Illustration/sayonarahatsukoi.jpg");
 			}
-
-			singlePTTContainer.appendChild(songImageDiv);
-			songImageDiv.appendChild(songImage);
 		});
 
 
@@ -517,17 +514,20 @@ function displayB30Data(data) {
 			Number(lost) === 0) {
 			statistic_1xiao = statistic_1xiao + 1;
 		}
-		itemsDiv.appendChild(pureDiv);
-		itemsDiv.appendChild(farDiv);
-		itemsDiv.appendChild(lostDiv);
-		rankDiv.appendChild(rankHeader);
+
 		realDiffInfo.appendChild(singlePTTInfoDiv);
 		realDiffInfo.appendChild(sPTTDiv);
 		songInfoContainer.appendChild(realDiffInfo);
+		singlePTTContainer.appendChild(songImageDiv);
+		songImageDiv.appendChild(songImage);
 		songInfoContainer.appendChild(songNameDiv);
 		songInfoContainer.appendChild(scoreDiv);
-		scoreDiv.appendChild(songRank);
+		itemsDiv.appendChild(pureDiv);
+		itemsDiv.appendChild(farDiv);
+		itemsDiv.appendChild(lostDiv);
 		songInfoContainer.appendChild(itemsDiv);
+		rankDiv.appendChild(rankHeader);
+		scoreDiv.appendChild(songRank);
 		songInfoContainer.appendChild(rankDiv);
 		singlePTTContainer.appendChild(songInfoContainer);
 
@@ -793,7 +793,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		setItem("saved_csv_name", default_csv_name);
 		setItem("saved_csv_data", csv_data);
 	}
-
+	
 });
 
 
@@ -801,6 +801,39 @@ document.addEventListener("DOMContentLoaded", function() {
 	if (localStorage.saved_bg) {
 		switchBg(0);
 	}
+	//头像切换
+	
+	// 加载头像列表
+	fetch('sample/avatar.csv')
+		.then(response => response.text())
+		.then(data => {
+			const fileNames = data.trim().split('\n');
+	
+			const avatarTable = document.getElementById('avatarTable');
+			let row = document.createElement('tr');
+	
+			for (const fileName of fileNames) {
+				if (row.childElementCount >= 4) {
+					avatarTable.appendChild(row);
+					row = document.createElement('tr');
+				}
+	
+				const cell = document.createElement('td');
+				cell.onclick = () => switchSelect(fileName.trim());
+				const img = document.createElement('img');
+				img.className = 'selectImage';
+				img.src = `img/avatar/${fileName.trim()}_icon.webp`;
+				cell.appendChild(img);
+				row.appendChild(cell);
+			}
+	
+			if (row.childElementCount > 0) {
+				avatarTable.appendChild(row);
+			}
+		})
+		.catch(error => console.error(error));
+	
+	
 });
 
 function cln() {
@@ -835,37 +868,6 @@ function showSelect() {
 		// console.log("hidden!");
 	}
 }
-//头像切换
-
-// 加载头像列表
-fetch('sample/avatar.csv')
-	.then(response => response.text())
-	.then(data => {
-		const fileNames = data.trim().split('\n');
-
-		const avatarTable = document.getElementById('avatarTable');
-		let row = document.createElement('tr');
-
-		for (const fileName of fileNames) {
-			if (row.childElementCount >= 4) {
-				avatarTable.appendChild(row);
-				row = document.createElement('tr');
-			}
-
-			const cell = document.createElement('td');
-			cell.onclick = () => switchSelect(fileName.trim());
-			const img = document.createElement('img');
-			img.className = 'selectImage';
-			img.src = `img/avatar/${fileName.trim()}_icon.webp`;
-			cell.appendChild(img);
-			row.appendChild(cell);
-		}
-
-		if (row.childElementCount > 0) {
-			avatarTable.appendChild(row);
-		}
-	})
-	.catch(error => console.error(error));
 
 function switchSelect(path) {
 	let icn = document.getElementById("icon");
