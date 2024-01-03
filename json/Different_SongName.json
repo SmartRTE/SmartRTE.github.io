@@ -18,66 +18,6 @@
 	"pragmatism": {
 		"Beyond": "PRAGMATISM -RESURRECTION-"
 	},
-	"omegafour": {
-		"Past": "ω4",
-		"Present": "ω4",
-		"Future": "ω4"
-	},
-	"ii": {
-		"Past": "II",
-		"Present": "II",
-		"Future": "II"
-	},
-	"gou": {
-		"Past": "Misdeed -la bonté de Dieu et l'origine du mal-",
-		"Present": "Misdeed -la bonté de Dieu et l'origine du mal-",
-		"Future": "Misdeed -la bonté de Dieu et l'origine du mal-"
-	},
-	"anokumene": {
-		"Past": "Anökumene",
-		"Present": "Anökumene",
-		"Future": "Anökumene"
-	},
-	"loschen": {
-		"Past": "Löschen",
-		"Present": "Löschen",
-		"Future": "Löschen"
-	},
-	"crosssoul": {
-		"Past": "CROSS✝SOUL",
-		"Present": "CROSS✝SOUL",
-		"Future": "CROSS✝SOUL"
-	},
-	"crossover": {
-		"Past": "CROSS✝OVER",
-		"Present": "CROSS✝OVER",
-		"Future": "CROSS✝OVER"
-	},
-	"onefr": {
-		"Past": "1F√",
-		"Present": "1F√",
-		"Future": "1F√"
-	},
-	"neokosmo": {
-		"Past": "nέo κósmo",
-		"Present": "nέo κósmo",
-		"Future": "nέo κósmo"
-	},
-	"mu": {
-		"Past": "μ",
-		"Present": "μ",
-		"Future": "μ"
-	},
-	"odysseia": {
-		"Past": "ΟΔΥΣΣΕΙΑ",
-		"Present": "ΟΔΥΣΣΕΙΑ",
-		"Future": "ΟΔΥΣΣΕΙΑ"
-	},
-	"vector": {
-		"Past": "VECTOЯ",
-		"Present": "VECTOЯ",
-		"Future": "VECTOЯ"
-	},
 	"infinitestrife": {
 		"Past": "Infinite Strife, ",
 		"Present": "Infinite Strife, ",
@@ -88,16 +28,5 @@
 		"Past": "Good bye, Merry-Go-Round",
 		"Present": "Good bye, Merry-Go-Round",
 		"Future": "Good bye, Merry-Go-Round"
-	},
-	"avril": {
-		"Past": "Ävril -Flicka i krans-",
-		"Present": "Ävril -Flicka i krans-",
-		"Beyond": "Ävril -Flicka i krans-"
-	},
-	"dynitikos": {
-		"Past": "Dynitikós",
-		"Present": "Dynitikós",
-		"Future": "Dynitikós"
 	}
-
 }
