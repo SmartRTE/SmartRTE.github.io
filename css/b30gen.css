@@ -34,6 +34,15 @@
 	}
 }
 
+@keyframes buttonBgMove{
+	from{
+		background-position: 0%;
+	}
+	to{
+		background-position: 400%;
+	}
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -601,6 +610,10 @@ body {
 	transition-duration: 0.35s;
 }
 
+#controller div{
+	float: none;
+}
+
 #easyPTT {
 	margin-top: 4px;
 	margin-bottom: 4px;
@@ -693,6 +706,15 @@ body {
 	width: 100%;
 	cursor: pointer;
 	margin-top: 5px;
+}
+
+#saveButton{
+	position: relative;
+	background-color: #4158D0;
+	background-image: linear-gradient(90deg, #4158D0 0%, #C850C0 25%, #FFCC70 50%, #00c923 75%, #4158d0 100%);
+	background-size: 400%;
+	background-position: 0%;
+	animation: buttonBgMove 6s linear infinite;
 }
 
 #avatarSelect {
