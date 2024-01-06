@@ -675,7 +675,7 @@ body {
 
 #controller {
 	margin: auto;
-	height: 460px;
+	height: auto;
 	width: 1450px;
 	left: 150px;
 	top: 300px;
@@ -708,6 +708,15 @@ body {
 	width: 99%;
 }
 
+#controller div{
+	float: none;
+	display: inline-block;
+}
+
+#controller button:hover{
+	cursor: pointer;
+}
+
 #easyPTT {
 	overflow: auto;
 	border: 2px solid black;
@@ -726,6 +735,13 @@ body {
 	background-color: lightblue;
 }
 
+#backgroundSelect {
+	margin-top: 4px;
+	display: inline-block;
+	border: solid 2px black;
+	background-color: rgba(119, 201, 255, 1.0);
+}
+
 #files {
 	overflow: auto;
 	border: 2px solid aqua;
@@ -736,6 +752,11 @@ body {
 	overflow: auto;
 	border: 2px solid mediumpurple;
 	background-color: aliceblue;
+}
+
+#illustrationTypeDiv {
+	background-color: #9bb3d0;
+	margin-top: 4px;
 }
 
 input {

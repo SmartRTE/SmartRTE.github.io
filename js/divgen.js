@@ -16,6 +16,7 @@ let flag_constant = -1;
 let rowCounter = 0;
 let imageMapping = null; //图片路径映射
 let titleMapping = null; //曲名映射
+let illustration_path; //曲绘文件夹路径
 
 let statistic_full_recall = 0; //fr数
 let statistic_pure_memory = 0; //pm数
@@ -151,6 +152,18 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener("DOMContentLoaded", function() {
 	if (localStorage.saved_bg) {
 		switchBg(0);
+	}
+
+	if (localStorage.illustration_type == 'hd') {
+		console.log("hd ILLS");
+		illustration_path = "illustration/";
+		document.getElementById("illustrationType").textContent = "切换标清曲绘(快，省流量)";
+		document.getElementById("switchIllustrationType").textContent = "切换到标清曲绘";
+	} else {
+		console.log("sd ILLS");
+		illustration_path = "Processed_Illustration/";
+		document.getElementById("illustrationType").textContent = "切换高清曲绘(慢，费流量)";
+		document.getElementById("switchIllustrationType").textContent = "切换到高清曲绘";
 	}
 });
 
@@ -487,17 +500,7 @@ function appendUnit(array) {
 
 		//图像加载函数
 		function loadImage(imageUrl) {
-			if (localStorage.getItem(imageUrl)) {
-				// console.log("ills " + imageUrl + " in localstorage");
-				songImage.src = localStorage.getItem(imageUrl);
-			} else {
-				// console.log("ills " + imageUrl + " not in localstorage");
-				songImage.src = imageUrl;
-				songImage.onload = function() {
-					localStorage.setItem(imageUrl, this.src);
-					// console.log("ills " + imageUrl + " saved in localstorage");
-				};
-			}
+			songImage.src = imageUrl;
 		}
 
 		// 获取差分曲绘
@@ -505,12 +508,12 @@ function appendUnit(array) {
 			if (imageMapping) {
 				const diffSongId = imageMapping[songId];
 				if (diffSongId && diffSongId[Difficulty]) {
-					loadImage("Processed_Illustration/" + songId + diffSongId[Difficulty] + ".jpg");
+					loadImage(illustration_path + songId + diffSongId[Difficulty] + ".jpg");
 				} else {
-					loadImage("Processed_Illustration/" + songId + ".jpg");
+					loadImage(illustration_path + songId + ".jpg");
 				}
 			} else {
-				loadImage("Processed_Illustration/sayonarahatsukoi.jpg");
+				loadImage(illustration_path + "sayonarahatsukoi.jpg");
 			}
 
 			singlePTTContainer.appendChild(songImageDiv);
@@ -733,14 +736,14 @@ document.addEventListener("DOMContentLoaded", function() {
 			const username = document.getElementById("userName").textContent;
 			link.download = "B30_" + username + "_" + currentDateTime + ".jpg";
 			link.textContent = "Download Image";
-			
+
 			// 新标签页打开图片
 			const img = document.createElement("img");
 			img.src = compressedDataURL;
-			
+
 			const newTab = window.open();
 			newTab.document.body.appendChild(img);
-			
+
 			img.style.width = "100%";
 
 			document.body.appendChild(link);
@@ -764,12 +767,12 @@ document.addEventListener("DOMContentLoaded", function() {
 	saveButton.addEventListener("click", savePageAsImage);
 
 	// 页脚显示 copyright 和当前时间
-	var currentDateTime = new Date().toLocaleString('zh-CN', { 
-	    year: 'numeric',
-	    month: '2-digit',
-	    day: '2-digit',
-	    hour: '2-digit',
-	    minute: '2-digit',
+	var currentDateTime = new Date().toLocaleString('zh-CN', {
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
 		second: '2-digit',
 		hour12: false
 	});
@@ -874,7 +877,7 @@ function setDifficulty() {
 	lowDifficulty = isInteger(low.value) ? low.value | 0 : parseFloat(low.value).toFixed(1);
 	highDifficulty = isInteger(high.value) ? high.value | 0 : parseFloat(high.value).toFixed(1);
 	if (highDifficulty < lowDifficulty) {
-		[highDifficulty,lowDifficulty] = [lowDifficulty,highDifficulty];
+		[highDifficulty, lowDifficulty] = [lowDifficulty, highDifficulty];
 	}
 	if (parseFloat(lowDifficulty) === parseFloat(highDifficulty)) {
 		document.getElementById("b30PTTContainer").textContent = "";
@@ -931,6 +934,16 @@ function cln() {
 		location.reload();
 	}
 
+}
+//切换高清/标清曲绘
+function switchIllustrationType() {
+	if (localStorage.illustration_type == 'hd') {
+		localStorage.illustration_type = 'sd';
+		location.reload();
+	} else {
+		localStorage.setItem("illustration_type", 'hd');
+		location.reload();
+	}
 }
 
 // 加载头像列表

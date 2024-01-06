@@ -593,7 +593,7 @@ body {
 
 #controller {
 	margin: auto;
-	height: 600px;
+	height: auto;
 	width: 1450px;
 	left: 150px;
 	top: 300px;
@@ -613,6 +613,12 @@ body {
 #controller div{
 	float: none;
 }
+
+
+#controller button:hover{
+	cursor: pointer;
+}
+
 
 #easyPTT {
 	margin-top: 4px;
@@ -673,6 +679,11 @@ body {
 	display: inline-block;
 	border: solid 2px black;
 	background-color: rgba(119, 201, 255, 1.0);
+}
+
+#illustrationTypeDiv {
+	background-color: #9bb3d0;
+	margin-top: 4px;
 }
 
 #clearLocalStorage {

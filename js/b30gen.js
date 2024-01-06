@@ -24,6 +24,9 @@ let statistic_xing = 0; //1f/1l性数
 let statistic_1xiao = 0; //1小p性数
 
 let avatarFolderPath = "img/avatar/"; //头像文件路径
+let illustration_path;//曲绘文件夹路径
+// let illustration_path = "Processed_Illustration/";	
+
 
 
 
@@ -41,7 +44,9 @@ async function fetchAndSaveCSV(csvName, csvdata) {
 		const response = await fetch(csvName);
 		const data = await response.text();
 		csvdata = data;
-		//console.log('CSV数据已保存:', csvdata);
+		// console.log('CSV数据已保存:', csvdata);
+		localStorage.setItem("saved_csv_data", csvdata);
+		localStorage.setItem("saved_csv_name", csvName);
 		resizeWidth(); //重设页面缩放
 		clearStatistics();
 		displayB30Data(csvdata);
@@ -357,17 +362,7 @@ function displayB30Data(data) {
 
 		//图像加载函数
 		function loadImage(imageUrl) {
-			if (localStorage.getItem(imageUrl)) {
-				// console.log("ills " + imageUrl + " in localstorage");
-				songImage.src = localStorage.getItem(imageUrl);
-			} else {
-				// console.log("ills " + imageUrl + " not in localstorage");
-				songImage.src = imageUrl;
-				songImage.onload = function() {
-					localStorage.setItem(imageUrl, this.src);
-					// console.log("ills " + imageUrl + " saved in localstorage");
-				};
-			}
+			songImage.src = imageUrl;
 		}
 
 		// 获取差分曲绘
@@ -375,12 +370,12 @@ function displayB30Data(data) {
 			if (imageMapping) {
 				const diffSongId = imageMapping[songId];
 				if (diffSongId && diffSongId[Difficulty]) {
-					loadImage("Processed_Illustration/" + songId + diffSongId[Difficulty] + ".jpg");
+					loadImage(illustration_path + songId + diffSongId[Difficulty] + ".jpg");
 				} else {
-					loadImage("Processed_Illustration/" + songId + ".jpg");
+					loadImage(illustration_path + songId + ".jpg");
 				}
 			} else {
-				loadImage("Processed_Illustration/sayonarahatsukoi.jpg");
+				loadImage(illustration_path + "sayonarahatsukoi.jpg");
 			}
 		});
 
@@ -557,7 +552,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				ctx.drawImage(img, 0, 0, img.width, img.height);
 
 				// 将图像数据压缩为指定质量的JPEG格式
-				const compressedDataURL = canvas.toDataURL("image/jpeg", quality);
+				const compressedDataURL = canvas.toDataURL("image/jpg", quality);
 
 				resolve(compressedDataURL);
 			};
@@ -777,7 +772,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-//更换成选定的头像、id、好友码、ptt、背景图
+//更换成选定的头像、id、好友码、ptt、背景图、曲绘列表
 document.addEventListener("DOMContentLoaded", function() {
 	resizeWidth();
 	if (localStorage.saved_icon != null) {
@@ -817,6 +812,18 @@ document.addEventListener("DOMContentLoaded", function() {
 document.addEventListener("DOMContentLoaded", function() {
 	if (localStorage.saved_bg) {
 		switchBg(0);
+	}
+	
+	if (localStorage.illustration_type == 'hd'){
+		console.log("hd ILLS");
+		illustration_path = "illustration/";
+		document.getElementById("illustrationType").textContent = "切换标清曲绘(快，省流量)";
+		document.getElementById("switchIllustrationType").textContent = "切换到标清曲绘";
+	} else {
+		console.log("sd ILLS");
+		illustration_path = "Processed_Illustration/";
+		document.getElementById("illustrationType").textContent = "切换高清曲绘(慢，费流量)";
+		document.getElementById("switchIllustrationType").textContent = "切换到高清曲绘";
 	}
 	//头像切换
 
@@ -859,6 +866,16 @@ function cln() {
 		location.reload();
 	}
 
+}
+
+function switchIllustrationType(){
+	if(localStorage.illustration_type == 'hd'){
+		localStorage.illustration_type = 'sd';
+		location.reload();
+	} else {
+		localStorage.setItem("illustration_type", 'hd');
+		location.reload();
+	}
 }
 
 //显示头像选取框
@@ -982,4 +999,4 @@ function resizeWidth() {
 
 }
 
-window.addEventListener('resize', resizeWidth);
+// window.addEventListener('resize', resizeWidth);

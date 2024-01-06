@@ -49,7 +49,7 @@
 					</div>
 					<div id="statisticsDisplay"></div>
 					<div id="PTTDisplay"> </div>
-					<div class="spliter" id="firstSpliter"/>
+					<div class="spliter" id="firstSpliter" />
 				</div>
 			</div>
 
@@ -88,30 +88,39 @@
 				<button onclick="showSelect()" style="cursor: pointer;">展开/收起头像选择</button>
 				<table id="sheet">
 					<tbody id="avatarTable">
-						
+
 					</tbody>
 				</table>
 			</div>
-			
+
 
 			<!-- <button onclick="cln()" style="cursor: pointer;">清除本地缓存并刷新页面</button><br /><br /> -->
 
 			<div id="adjustDifficulty">
 				<label>调整要显示指定曲目的定数范围：</label><br />
-				<label>下限<button id="ftrOnly" style="width: auto;height: auto;background-color: cornflowerblue; float: right;" onclick="switchFTR()">只要FTR和BYD</button></label> 
+				<label>下限<button id="ftrOnly"
+						style="width: auto;height: auto;background-color: cornflowerblue; float: right;"
+						onclick="switchFTR()">只要FTR和BYD</button></label>
 				<br />
 				<input id="lowDifficulty" maxlength="4" value="10.0" oninput="setDifficulty()" /><br />
-				<label>上限 <button id="pmOnly" style="width: auto;height: auto;background-color: cornflowerblue; float: right;" onclick="switchPM()">🐉只要PM🐉</button></label>
+				<label>上限 <button id="pmOnly"
+						style="width: auto;height: auto;background-color: cornflowerblue; float: right;"
+						onclick="switchPM()">🐉只要PM🐉</button></label>
 				<br />
 				<input id="highDifficulty" maxlength="4" value="10.6" oninput="setDifficulty()">
 			</div>
 
-			
-			<label style="background-color: bisque; width: 99%">切换背景图片</label>
-			<button style="width: 150px; float: left;" onclick="switchBg(-1)">上一张</button>
-			<label id="currentBgIndex"
-				style="float: left; width: 170px; text-align: center; font-size: 40px; top: 8px; position: relative;">9/9</label>
-			<button style="width: 150px; position: relative; float: left;" onclick="switchBg(1)">下一张</button><br />
+			<div id="backgroundSelect">
+				<label>切换背景图片</label>
+				<button style="width: 150px; float: left;" onclick="switchBg(-1)">上一张</button>
+				<label id="currentBgIndex"
+					style="float: left; width: 170px; text-align: center; font-size: 40px; top: 8px; position: relative;">9/9</label>
+				<button style="width: 150px; position: relative; float: left;" onclick="switchBg(1)">下一张</button><br />
+			</div>
+			<div id="illustrationTypeDiv">
+				<label id="illustrationType">切换高清曲绘（慢、费流量）</label>
+				<button id="switchIllustrationType" onclick="switchIllustrationType()">切换到高清曲绘</button>
+			</div>
 			<br /><br /><br /><br />
 		</div>
 	</body>
