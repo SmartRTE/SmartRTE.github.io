@@ -999,4 +999,4 @@ function resizeWidth() {
 
 }
 
-// window.addEventListener('resize', resizeWidth);
+window.addEventListener('resize', resizeWidth);
