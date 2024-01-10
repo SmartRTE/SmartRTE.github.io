@@ -780,8 +780,8 @@ document.addEventListener("DOMContentLoaded", function(){
 		document.getElementById("b30Data").innerHTML = "";
 		csv_data = localStorage.saved_csv_data;
 		csv_data = transferP30(csv_data);
-		console.log(localStorage.saved_csv_data);
-		console.log(csv_data);
+		// console.log(localStorage.saved_csv_data);
+		// console.log(csv_data);
 		refreshData(csv_data);
 		recalculateR10();
 	} else {
@@ -799,17 +799,20 @@ document.addEventListener("DOMContentLoaded", function() {
 	} else {
 		switchSelect("0");
 	}
-	if (localStorage.saved_ptt != null) {
-		document.getElementById("pPTTInput").value = localStorage.saved_ptt;
-		recalculateR10();
-	}
 	if (localStorage.saved_username != null) {
+		console.log(localStorage.saved_username);
 		document.getElementById("nameInput").value = localStorage.saved_username;
 		refreshUsername();
 	}
 	if (localStorage.saved_uid != null) {
+		console.log(localStorage.saved_uid);
 		document.getElementById("uidInput").value = localStorage.saved_uid;
 		refreshUID();
+	}
+	if (localStorage.saved_ptt != null) {
+		console.log(localStorage.saved_ptt);
+		document.getElementById("pPTTInput").value = localStorage.saved_ptt;
+		recalculateR10();
 	}
 	
 
