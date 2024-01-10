@@ -47,6 +47,7 @@
 	margin: 0;
 	padding: 0;
 	border-radius: 5px;
+	text-decoration: none;
 	/* font-weight: bold; */
 	/*font-size: 105%;*/
 	/* -webkit-filter: blur(1px); */
@@ -371,6 +372,11 @@ body {
 #best30 {
 	top: 265px;
 	left: 500px;
+}
+
+#perfect30{
+	top: 265px;
+	left: 550px;
 }
 
 #overflow {
@@ -719,7 +725,11 @@ body {
 	margin-top: 5px;
 }
 
-#saveButton{
+div a{
+	color: black;
+}
+
+.colorbtn{
 	position: relative;
 	background-color: #4158D0;
 	background-image: linear-gradient(90deg, #4158D0 0%, #C850C0 25%, #FFCC70 50%, #00c923 75%, #4158d0 100%);
