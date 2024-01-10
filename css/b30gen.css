@@ -375,8 +375,8 @@ body {
 }
 
 #perfect30{
-	top: 265px;
-	left: 500px;
+	top: 264px;
+	left: 482px;
 }
 #overflow {
 	top: 2020px;
@@ -722,10 +722,6 @@ body {
 	width: 100%;
 	cursor: pointer;
 	margin-top: 5px;
-}
-
-div a{
-	color: black;
 }
 
 .colorbtn{
