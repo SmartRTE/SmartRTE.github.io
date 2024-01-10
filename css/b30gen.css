@@ -369,16 +369,15 @@ body {
 	z-index: 7;
 }
 
-#best30 {
+#best30{
 	top: 265px;
 	left: 500px;
 }
 
 #perfect30{
 	top: 265px;
-	left: 550px;
+	left: 500px;
 }
-
 #overflow {
 	top: 2020px;
 	left: 557px;
