@@ -385,6 +385,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('felys final
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('On And On!! feat. Jenga', 'onandon', 3.0, 7.0, 9.5, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('LIVHT MY WAY', 'lightmyway', 4.5, 7.5, 9.5, '');
 
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Hotarubi no Yuki', 'hotarubinoyuki',,,9.7,'');
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
