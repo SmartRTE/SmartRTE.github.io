@@ -185,12 +185,12 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('IMPACT', 'i
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Lazy Addiction', 'lazyaddiction', 2.5, 6.0, 9.6, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Loveless Dress', 'lovelessdress', 3.5, 6.5, 9.6, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('LunarOrbit -believe in the Espebranch road-', 'espebranch', 3.5, 6.0, 9.6, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Purple Verse', 'purpleverse', 4.0, 7.0, 9.6, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Purple Verse', 'purpleverse', 4.0, 7.0, 9.6, 10.6);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Quon', 'quonwacca', 2.5, 5.5, 8.7, 10.2);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Quon', 'quon', 4.0, 6.5, 9.6, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Vindication', 'vindication', 4.0, 6.5, 9.6, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('carmine:scythe', 'carminescythe', 4.0, 7.5, 9.6, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Cybernecia Catharsis', 'cyberneciacatharsis', 4.0, 7.0, 9.5, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Cybernecia Catharsis', 'cyberneciacatharsis', 4.0, 7.0, 9.5, 9.8);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('DRG', 'drg', 3.5, 7.0, 9.5, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('DataErr0r', 'dataerror', 3.0, 7.0, 9.5, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Evening in Scarlet', 'eveninginscarlet', 4.0, 7.0, 9.5, '');
@@ -242,7 +242,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Syro', 'syr
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Alice a la mode', 'alicealamode', 2.5, 6.5, 9.2, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Anokumene', 'anokumene', 2.5, 6.5, 9.2, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Dancin'' on a Cat''s Paw', 'nekonote', 3.0, 6.0, 9.2, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Libertas', 'libertas', 3.5, 5.5, 9.2, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Libertas', 'libertas', 3.5, 5.5, 9.2, 10.5);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Lost Civilization', 'lostcivilization', 4.0, 7.0, 9.2, 9.8);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Phantasia', 'phantasia', 4.0, 5.5, 9.2, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Redraw the Colorless World', 'mukishitsu', 4.0, 6.5, 9.2, '');
@@ -320,7 +320,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Altair (fea
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('April showers', 'aprilshowers', 2.0, 5.5, 8.3, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Bookmaker (2D Version)', 'bookmaker', 4.5, 6.5, 8.3, 10.0);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Dot to Dot feat. shully', 'dottodot', 3.0, 6.0, 8.3, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Oblivia', 'oblivia', 3.5, 5.0, 8.3, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Oblivia', 'oblivia', 3.5, 5.0, 8.3, 9.7);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Shades of Light in a Transcendent Realm', 'shadesoflight', 3.0, 6.0, 8.3, 9.0);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Tie me down gently', 'tiemedowngently', 3.0, 5.5, 8.3, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('san skia', 'sanskia', 3.5, 6.0, 8.3, '');
@@ -348,7 +348,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Paradise', 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Rise', 'rise', 2.5, 4.0, 7.5, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Romance Wars', 'romancewars', 1.0, 4.0, 7.5, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Suomi', 'suomi', 2.0, 5.0, 7.5, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('inkar-usi', 'inkarusi', 2.0, 4.0, 7.5, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('inkar-usi', 'inkarusi', 2.0, 4.0, 7.5, 9.4);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Blossoms', 'blossoms', 1.0, 4.0, 7.0, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Fairytale', 'fairytale', 1.0, 3.5, 7.0, 9.5);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Sayonara Hatsukoi', 'sayonarahatsukoi', 1.5, 4.5, 7.0, '');
@@ -387,8 +387,8 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('LIVHT MY WA
 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Hotarubi no Yuki', 'hotarubinoyuki', 3.0, 7.0, 9.7, '');
 
--- INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Luna Rossa', 'lunarossa', '', '', '', '');
--- INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('The Formula', 'theformula', '', '', '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Luna Rossa', 'lunarossa', 3, 7, 9.7, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('The Formula', 'theformula', 3, 6, 9.3, '');
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
 
