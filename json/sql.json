@@ -104,7 +104,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('HIVEMIND', 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Mirzam', 'mirzam', 4.0, 7.0, 10.0, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Modelista', 'modelista', 3.5, 7.5, 10.0, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Oshama Scramble!', 'oshamascramble', 3.5, 6.5, 10.0, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Vicious Heroism', 'viciousheroism', 4.0, 7.5, 10.0, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Vicious Heroism', 'viciousheroism', 4.0, 7.5, 10.0, 11.1);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Xanatos', 'xanatos', 4.0, 7.5, 10.0, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('trappola bewitching', 'trappola', 3.0, 6.0, 10.0, 10.5);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('7thSense', 'seventhsense', 3.0, 7.5, 9.9, '');
@@ -132,7 +132,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Callima Kar
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Corruption', 'corruption', 3.0, 6.5, 9.8, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('DX Choseinou Full Metal Shojo', 'dxfullmetal', 3.0, 6.0, 9.8, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Defection', 'defection', 3.5, 6.5, 9.8, '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Einherjar Joker', 'einherjar', 4.0, 7.0, 9.8, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Einherjar Joker', 'einherjar', 4.0, 7.0, 9.8, 10.9);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('FLUFFY FLASH', 'fluffyflash', 3.5, 6.5, 9.8, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Far Away Light', 'farawaylight', 4.5, 7.5, 9.8, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Galaxy Friends', 'galaxyfriends', 3.5, 6.0, 9.8, '');
@@ -386,6 +386,9 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('On And On!!
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('LIVHT MY WAY', 'lightmyway', 4.5, 7.5, 9.5, '');
 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Hotarubi no Yuki', 'hotarubinoyuki', 3.0, 7.0, 9.7, '');
+
+-- INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('Luna Rossa', 'lunarossa', '', '', '', '');
+-- INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD) VALUES ('The Formula', 'theformula', '', '', '', '');
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
 
