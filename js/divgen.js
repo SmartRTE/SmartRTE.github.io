@@ -795,7 +795,7 @@ function recalculateR10() {
 	localStorage.setItem('saved_ptt', newPTT);
 	if (isNaN(newPTT)) {
 		newPTT = 0.00;
-	} else if (newPTT >= 13.11) {
+	} else if (newPTT > 13.13) {
 		newPTT = "🤔";
 		// console.log("🤔");
 	}

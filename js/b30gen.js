@@ -687,7 +687,7 @@ function recalculateR10() {
 	const calculatedR10 = calculateR10(newPTT, parseFloat(B30.textContent));
 	if (isNaN(newPTT)) {
 		newPTT = 0.00;
-	} else if (newPTT > 13.11) {
+	} else if (newPTT > 13.13) {
 		newPTT = "🤔";
 		// console.log("🤔");
 	}
