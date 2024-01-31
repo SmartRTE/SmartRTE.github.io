@@ -965,14 +965,14 @@ function switchBg(f) {
 	}
 
 	const bg = document.getElementById("background");
-	localStorage.saved_bg = (parseFloat(localStorage.saved_bg) + parseFloat(f) + 9) % 9;
+	localStorage.saved_bg = (parseFloat(localStorage.saved_bg) + parseFloat(f) + 12) % 12;
 	bg.style.opacity = 0;
 
 	setTimeout(function() {
 		bg.innerHTML = "";
 		let bgImg = document.createElement("img");
 		bgImg.id = "bgImg";
-		const bgIndex = localStorage.saved_bg % 9;
+		const bgIndex = localStorage.saved_bg % 12;
 		const bgUrl = "bgs/" + bgIndex + ".webp";
 
 		if (localStorage.getItem(bgUrl)) {
@@ -990,7 +990,7 @@ function switchBg(f) {
 	}, 250);
 	//显示当前序号
 	const index = document.getElementById("currentBgIndex");
-	index.textContent = parseFloat(localStorage.saved_bg) + 1 + "/9";
+	index.textContent = parseFloat(localStorage.saved_bg) + 1 + "/12";
 }
 
 
