@@ -2,17 +2,19 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>aff变速</title>
-		<link href="css/AffSpeedChanger.css" type="text/css" rel="stylesheet" />
+		<title>aff裁剪</title>
+		<!-- <link href="css/AffSpeedChanger.css" type="text/css" rel="stylesheet" /> -->
 		<!-- <script src="js/jquery-3.6.1.min.js"></script> -->
 		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 		<!-- <script src="js/AffSpeedChanger.js"></script> -->
 	</head>
 	<body>
-		<label for="time-factor">变速倍率</label>
-		<input type="number" value="1.00" id="time-factor" />
+		<label for="begin-time">开始时间</label>
+		<input type="number" value="0" id="begin-time" />
+		<label for="end-time">截止时间</label>
+		<input type="number" value="9999999" id="end-time" />
 		<input type="file" id="aff-upload" />
-		<button id="excecute" onclick="handleLines()">执行变速</button>
+		<button id="excecute" onclick="handleLines()">执行裁切</button>
 		<button id="copy">复制到剪贴板</button>
 		<button id="save-aff" onclick="exportAff()">保存为aff</button><br />
 		<div style="display: block; height: 80vh;">
@@ -21,9 +23,12 @@
 			<textarea id="res" placeholder="变速后的aff会显示在这里"
 				style="display: block; position: relative; float: left; width: 48%; height: 80%;"></textarea>
 		</div>
-		
+
 	</body>
 	<script>
+		let beginTime = 0;
+		let endTime = 9999999;
+		let firstTimingFlag = 0;
 		let content = ''; //储存上传的aff
 		let slice = ''; //切分
 		let lines = ''; //切分得到的单行字符串数组
@@ -36,12 +41,16 @@
 		let cameraCounter = 0; //camera语句计数
 		$(document).ready(function() {
 			console.log("ready");
-			//监听倍率输入/变更
-			$('#time-factor').on('input', function(e) {
-				timeFactor = $('#time-factor').val();
-				console.log(timeFactor);
+			//监听输入/变更
+			$('#begin-time').on('input', function(e) {
+				beginTime = $('#begin-time').val();
+				console.log(beginTime);
 				// handleLines();
 			});
+			$('#end-time').on("input", function(e){
+				endTime = $('#begin-time').val();
+				console.log(endTime);
+			})
 			//监听输入
 			$('#text-input').on('change', function() {
 				if ($('#text-input').val() != null) {
@@ -84,12 +93,13 @@
 		 */
 
 		function handleLines() {
+			firstTimingFlag = 0;
 			// content = $('#text-input').val();
 			let content = $('#text-input').val();
 			let originalLines = content.split("\n");
 			let lines = [];
-			let line='';
-			let newline='';
+			let line = '';
+			let newline = '';
 			originalLines.forEach(function(l) {
 				line = l.replaceAll("\r", "");
 				newline = checkLine(line);
@@ -97,6 +107,7 @@
 			});
 			// console.log(lines);
 			let newContent = lines.join("\r\n");
+			newContent = newContent.replaceAll("ExceptionLine\r\n", "");
 			console.log("timingCounter:" + timingCounter);
 			console.log("inTimingGroupCounter:" + inTimingGroupCounter);
 			console.log("arcCounter:" + arcCounter);
@@ -120,9 +131,17 @@
 				let regex = /timing\((-?\d+),(-?\d+\.\d{2}),(-?\d+\.\d{2})\);/;
 				let match = line.match(regex);
 				if (match) {
-					let t = parseInt(match[1]) / timeFactor;
-					let bpm = parseFloat(match[2]) * timeFactor;
-					let newline = "timing(" + parseInt(t) + "," + bpm.toFixed(2) + "," + match[3] + ");";
+					let t = parseInt(match[1]);
+					let bpm = match[2];
+					let newline;
+					if ((t >= beginTime && t <= endTime) || (t == 0 && firstTimingFlag == 1)) {
+						if (t == 0) {
+							firstTimingFlag = 1;
+						}
+						newline = "timing(" + (t - beginTime) + "," + bpm + "," + match[3] + ");";
+					} else {
+						newline = "ExceptionLine";
+					}
 					// console.log("new:"+newline);
 					return newline;
 				}
@@ -131,8 +150,13 @@
 				let regex = /\((\d+),(\d+)\);/;
 				let match = line.match(regex);
 				if (match) {
-					let t = parseInt(match[1]) / timeFactor;
-					let newline = "(" + parseInt(t) + "," + match[2] + ");";
+					let t = parseInt(match[1]);
+					let newline;
+					if (t >= beginTime && t <= endTime) {
+						newline = "(" + (t - beginTime) + "," + match[2] + ");";
+					} else {
+						newline = "ExceptionLine";
+					}
 					return newline;
 				}
 			} else if (line.startsWith("hold(")) {
@@ -140,9 +164,15 @@
 				let regex = /hold\((\d+),(\d+),(\d+)\);/;
 				let match = line.match(regex);
 				if (match) {
-					let t1 = parseInt(match[1]) / timeFactor;
-					let t2 = parseInt(match[2]) / timeFactor;
-					let newline = "hold(" + parseInt(t1) + "," + parseInt(t2) + "," + match[3] + ");";
+					let t1 = parseInt(match[1]);
+					let t2 = parseInt(match[2]);
+					let newline;
+					if (t1 >= beginTime && t1 <= endTime) {
+						newline = "hold(" + (t1 - beginTime) + "," + (t2 - beginTime) + "," + match[3] + ");";
+					} else {
+						newline = "ExceptionLine";
+					}
+
 					return newline;
 				}
 			} else if (line.startsWith("arc(")) {
@@ -173,13 +203,18 @@
 		 */
 		function handleCamera(line) {
 			let t = parseInt(line.substring(7, line.indexOf(",")));
-			let duration = parseFloat(line.substring(line.lastIndexOf(",") + 1, line.length - 2));
+			if (t < beginTime || t > endTime) {
+				return "ExceptionLine";
+			} else {
+				let duration = parseFloat(line.substring(line.lastIndexOf(",") + 1, line.length - 2));
 
-			let newline = line.substring(0, 7) + parseInt(t / timeFactor) +
-				line.substring(line.indexOf(","), line.lastIndexOf(",") + 1) +
-				parseInt(duration / timeFactor) + ");";
+				let newline = line.substring(0, 7) + parseInt(t / timeFactor) +
+					line.substring(line.indexOf(","), line.lastIndexOf(",") + 1) +
+					parseInt(duration / timeFactor) + ");";
 
-			return newline;
+				return newline;
+			}
+
 		}
 
 		/**
@@ -190,6 +225,11 @@
 		function handleArcTap(line) {
 			// let inputStr = 'arc(126934,127913,0.00,1.00,b,1.00,1.00,0,none,true)[arctap(127235),arctap(127612)];';
 			let totalLength = line.length;
+			let r = /arc\((\d+),/;
+			let m = line.match(r);
+			if (m[1] < beginTime || m[1] > endTime) {
+				return "ExceptionLine";
+			}
 			let idx = line.lastIndexOf("arctap");
 			/* 
 				递归从右向左逐个处理附着天键
@@ -199,7 +239,7 @@
 			 */
 			while (idx !== -1) {
 				let p = line.substring(0, idx) + "aaaaaaa";
-				let t = parseInt(parseInt(line.substring(idx + 7, line.lastIndexOf(")"))) / timeFactor) + "#";
+				let t = parseInt(parseInt(line.substring(idx + 7, line.lastIndexOf(")")))) - beginTime + "#";
 				let r = line.substring(line.lastIndexOf(")") + 1, line.length);
 				line = p + t + r;
 				idx = line.lastIndexOf("arctap");
@@ -214,12 +254,12 @@
 			let regex = /arc\((\d+),(\d+),/;
 			let match = line.match(regex);
 			if (match) {
-				let t1 = parseInt(match[1]) / timeFactor;
-				let t2 = parseInt(match[2]) / timeFactor;
+				let t1 = parseInt(match[1]);
+				let t2 = parseInt(match[2]);
 				let r = line.substring(4 + match[1].length + 1 + match[2].length, line.length);
 				// console.log("r="+r.replaceAll("aaaaaaa","arctap(").replaceAll("#",")"));
 				r = r.replaceAll("aaaaaaa", "arctap(").replaceAll("#", ")");
-				let newline = "arc(" + parseInt(t1) + "," + parseInt(t2) + r;
+				let newline = "arc(" + (t1 - beginTime) + "," + (t2 - beginTime) + r;
 				// console.log("newarcline="+newline);
 				return newline;
 			}
@@ -244,10 +284,15 @@
 				enwidenlanes: 6k轨道显示隐藏
 				
 			*/
+			let r = /scenecontrol\((\d+),/;
+			let m = line.match(r);
+			if (m[1] < beginTime || m[1] > endTime) {
+				return "ExceptionLine";
+			}
 			if (line.indexOf("trackhide") !== -1 || line.indexOf("trackshow") !== -1) {
 				let p = line.substring(0, 13);
 				let r = line.substring(line.length - 12, line.length);
-				let t = parseInt(parseInt(line.substring(13, line.length - 12)) / timeFactor);
+				let t = parseInt(parseInt(line.substring(13, line.length - 12)) - beginTime);
 				let newline = p + t + r;
 				return newline;
 			} else if (line.indexOf("trackdisplay") !== -1) {
@@ -255,11 +300,11 @@
 				let match = line.match(regex);
 
 				if (match) {
-					let t = parseInt(parseInt(match[1] / timeFactor));
-					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
-					let param2 = parseInt(match[4]);
+					let t = parseInt(match[1]);
+					let param1 = match[2];
+					let param2 = match[4];
 
-					let newline = "scenecontrol(" + t + ",trackdisplay," + param1 + "," + param2 + ");"
+					let newline = "scenecontrol(" + (t - beginTime) + ",trackdisplay," + param1 + "," + param2 + ");"
 					return newline;
 				}
 			} else if (line.indexOf("redline") !== -1) {
@@ -267,11 +312,11 @@
 				let match = line.match(regex);
 
 				if (match) {
-					let t = parseInt(parseInt(match[1] / timeFactor));
-					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
-					let param2 = parseInt(match[4]);
+					let t = parseInt(match[1]);
+					let param1 = match[2];
+					let param2 = match[4];
 
-					let newline = "scenecontrol(" + t + ",redline," + param1 + "," + param2 + ");"
+					let newline = "scenecontrol(" + (t - beginTime) + ",redline," + param1 + "," + param2 + ");"
 					return newline;
 				}
 			} else if (line.indexOf("arcahvdistort") !== -1) {
@@ -279,11 +324,11 @@
 				let match = line.match(regex);
 
 				if (match) {
-					let t = parseInt(parseInt(match[1] / timeFactor));
-					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
-					let param2 = parseInt(match[4]);
+					let t = parseInt(match[1]);
+					let param1 = match[2];
+					let param2 = match[4];
 
-					let newline = "scenecontrol(" + t + ",arcahvdistort," + param1 + "," + param2 + ");"
+					let newline = "scenecontrol(" + (t-beginTime) + ",arcahvdistort," + param1 + "," + param2 + ");"
 					return newline;
 				}
 			} else if (line.indexOf("arcahvdebris") !== -1) {
@@ -291,16 +336,16 @@
 				let match = line.match(regex);
 
 				if (match) {
-					let t = parseInt(parseInt(match[1] / timeFactor));
-					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
-					let param2 = parseInt(match[4]);
+					let t = parseInt(match[1]);
+					let param1 = match[2];
+					let param2 = match[4];
 
-					let newline = "scenecontrol(" + t + ",arcahvdebris," + param1 + "," + param2 + ");"
+					let newline = "scenecontrol(" + (t - beginTime) + ",arcahvdebris," + param1 + "," + param2 + ");"
 					return newline;
 				}
 			} else if (line.indexOf("hidegroup") !== -1) {
 				let t = line.substring(13, line.indexOf(","));
-				let newline = line.substring(0, 13) + parseInt(parseInt(t) / timeFactor) + line.substring(line.indexOf(","),
+				let newline = line.substring(0, 13) + parseInt(t) - beginTime + line.substring(line.indexOf(","),
 					line.length);
 				return newline;
 			} else if (line.indexOf("enwidencamera") !== -1) {
@@ -308,11 +353,11 @@
 				let match = line.match(regex);
 
 				if (match) {
-					let t = parseInt(parseInt(match[1] / timeFactor));
-					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
-					let param2 = parseInt(match[4]);
+					let t = parseInt(match[1]);
+					let param1 = match[2];
+					let param2 = match[4];
 
-					let newline = "scenecontrol(" + t + ",enwidencamera," + param1 + "," + param2 + ");"
+					let newline = "scenecontrol(" + (t - beginTime) + ",enwidencamera," + param1 + "," + param2 + ");"
 					return newline;
 				}
 			} else if (line.indexOf("enwidenlanes") !== -1) {
@@ -320,11 +365,11 @@
 				let match = line.match(regex);
 
 				if (match) {
-					let t = parseInt(parseInt(match[1] / timeFactor));
-					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
-					let param2 = parseInt(match[4]);
+					let t = parseInt(match[1]);
+					let param1 = match[2];
+					let param2 = match[4];
 
-					let newline = "scenecontrol(" + t + ",enwidenlanes," + param1 + "," + param2 + ");"
+					let newline = "scenecontrol(" + (t - beginTime) + ",enwidenlanes," + param1 + "," + param2 + ");"
 					return newline;
 				}
 			}
@@ -335,26 +380,25 @@
 			let multiplier = Math.pow(10, decimal);
 			return Math.floor(number * multiplier) / multiplier;
 		}
-		
+
 		function exportAff() {
 			// 创建Blob对象，用于创建文件
 			const blob = new Blob([$('#res').val()], {
 				type: 'text/aff;charset=utf-8'
 			});
-		
+
 			// 创建一个下载链接
 			const link = document.createElement('a');
 			link.href = URL.createObjectURL(blob);
 			// let currentDateTime = new Date().toLocaleString();
 			link.download = timeFactor + 'x.aff'; // 下载文件的文件名
-		
+
 			// 添加链接到DOM中并触发点击以下载
 			document.body.appendChild(link);
 			link.click();
-		
+
 			// 清理链接对象
 			document.body.removeChild(link);
 		}
-		
 	</script>
 </html>
