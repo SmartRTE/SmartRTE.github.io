@@ -25,7 +25,7 @@ let statistic_xing = 0; //1f/1l性数
 let statistic_1xiao = 0; //1小p性数
 
 let future_only = 0; //只要FTR和BYD难度
-let pm_only = 0; //只要PM成绩
+let pm_only = 0; //只要PM成绩 0=all 1=pm 2=not pm
 
 let array = []; //在上下界内符合的成绩数组
 
@@ -79,9 +79,23 @@ function switchFTR() {
 
 function switchPM() {
 	const f = document.getElementById("pmOnly");
-	pm_only = pm_only === 1 ? 0 : 1;
-	f.style.backgroundColor = pm_only === 1 ? "lightpink" : "cornflowerblue";
-	f.textContent = pm_only === 1 ? "不止要PM" : "🐉只要PM🐉";
+	// pm_only = pm_only === 1 ? 0 : 1;
+	// f.style.backgroundColor = pm_only === 1 ? "lightpink" : "cornflowerblue";
+	// f.textContent = pm_only === 1 ? "不止要PM" : "🐉只要PM🐉";
+	
+	if(pm_only == 0){
+		pm_only = 1;
+		f.style.background = "lightpink";
+		f.textContent = "只要没pm的"
+	} else if(pm_only == 1){
+		pm_only = 2;
+		f.style.background = "aliceblue";
+		f.textContent = "显示全部的"
+	} else {
+		pm_only = 0;
+		f.style.background = "cornflowerblue";
+		f.textContent = "🐉只要pm的🐉"
+	}
 	refreshData(csv_data);
 }
 
@@ -433,7 +447,10 @@ function displayB30Data(data) {
 				//🤔
 			} else if (pm_only === 1 && (far > 0 || lost > 0)) {
 
-			} else {
+			} else if(pm_only == 2 && (far + lost) == 0){
+				
+			}
+			else {
 				let singleresult = new singleResult(songName, songId, Difficulty, score, perfect,
 					criticalPerfect, far, lost, singlePTTInfo, singlePTT);
 				array.push(singleresult);
