@@ -362,7 +362,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Amekag
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Dynitikos', 'dynitikos', 4, 7.5, 9.5, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Remind the Souls (Short Version)', 'remindthesouls', 3.5, 7.0, 9.5, '', '');
 
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Primeval Texture', 'primevaltexture', 3, 6, 9.0, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Primeval Texture', 'primevaltexture', 3, 7.5, 9.0, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Technicolour', 'technicolour', 3.5, 7, 9.8, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Logos', 'logos', 4, 7.5, 10.1, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Ego Eimi', 'egoeimi', 5.5, 8.6, 10.5, '', '');
