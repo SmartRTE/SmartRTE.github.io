@@ -403,9 +403,9 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('HELLOH
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('O.', 'ichirin', 2, 6, 9.5, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Awaken In Ruins', 'awakeninruins', 3, 7, 9.9, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MORNINGLOOM', 'morningloom', 3, 6, 8.8, '', 9.8);
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Lethal Voltage', 'lethalvoltage', 4, 7, 10.4, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Lethal Voltage', 'lethalvoltage', 4, 7.8, 10.4, '', '');
 
---INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MIRINAE', 'mirinae', 4, 8, 10, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MIRINAE', 'mirinae', 4.5, 8.3, 10.5, '', '');
 
 COMMIT TRANSACTION;
 
