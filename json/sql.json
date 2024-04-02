@@ -407,6 +407,8 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Lethal
 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MIRINAE', 'mirinae', 4.5, 8.3, 10.5, '', '');
 
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('ultradiaxon-N3', 'ultradiaxon', 4.5, 8.5, 10.5, '', '');
+
 COMMIT TRANSACTION;
 
 PRAGMA foreign_keys = on;
