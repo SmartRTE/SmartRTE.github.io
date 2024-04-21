@@ -456,7 +456,7 @@ function getConstantSheet() {
 		dataType: 'text',
 		success: function(resp) {
 			let cst = {};
-			let t = resp.trim().split('\r\n');
+			let t = resp.trim().split('\n');
 			t.forEach(function(row, index) {
 				let r = row.split(',');
 				outerkey = r[1];
@@ -1099,7 +1099,7 @@ async function initializeAvatarList() {
 		dataType: "text",
 		success: function(resp) {
 			// console.log(resp)
-			avatarList = resp.trim().split('\r\n');
+			avatarList = resp.trim().split('\n');
 			avatarList.forEach(function(avt) {
 				appendAvatarUnit(avt);
 			})
