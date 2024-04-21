@@ -994,7 +994,7 @@ function hideUID() {
  */
 function initializeQRCode() {
 	if (window.location.href.startsWith('https://smartrte.github.io')) {
-		$('#qrcode').attr('src', 'img/QRCODE-githubio.jpg');
+		$('#qrcode').attr('src', 'img/QRCODE-githubio.png');
 	}
 	// else if(window.location.href.startsWith('')){
 	// 	$('#qrcode').attr('src', 'img/QRCODE-githubio.jpg');

@@ -764,7 +764,7 @@ function hideUID() {
  */
 function initializeQRCode() {
 	if (window.location.href.startsWith('https://smartrte.github.io')) {
-		$('#qrcode').attr('src', 'img/QRCODE-githubio.jpg');
+		$('#qrcode').attr('src', 'img/QRCODE-githubio.png');
 	}
 	// else if(window.location.href.startsWith('')){
 	// 	$('#qrcode').attr('src', 'img/QRCODE-githubio.jpg');
@@ -866,7 +866,7 @@ async function initializeBackgroundList() {
 	let list = $('#background-list')
 	l.forEach(function(li) {
 		list.append(
-			$(`<li class="background-option" onclick="changeBackgroundImage(${String(li)})">`)
+			$(`<li class="background-option" onclick="changeBackgroundImage('${String(li)}')">`)
 			.append($(`<img src='bgs/${li}.webp'>`))
 		)
 	})
