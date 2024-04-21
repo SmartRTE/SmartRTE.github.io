@@ -1,5 +1,5 @@
 let diffIllPath = 'json/Different_Illustration.json';
-let diffSongNamePath = 'json/Different_Songname.json';
+let diffSongNamePath = 'json/Different_SongName.json';
 let aiChanPath = 'json/AiChan.json'
 
 let aiChanList = [];
