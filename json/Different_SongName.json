@@ -19,15 +19,15 @@
 		"Beyond": "PRAGMATISM -RESURRECTION-"
 	},
 	"infinitestrife": {
-		"Past": "Infinite Strife, ",
-		"Present": "Infinite Strife, ",
-		"Future": "Infinite Strife, ",
-		"Beyond": "Infinite Strife, "
+		"Past": "Infinite Strife .",
+		"Present": "Infinite Strife .",
+		"Future": "Infinite Strife .",
+		"Beyond": "Infinite Strife ."
 	},
 	"goodbyemerry": {
-		"Past": "Good bye, Merry-Go-Round",
-		"Present": "Good bye, Merry-Go-Round",
-		"Future": "Good bye, Merry-Go-Round"
+		"Past": "Good bye. Merry-Go-Round",
+		"Present": "Good bye. Merry-Go-Round",
+		"Future": "Good bye. Merry-Go-Round"
 	},
 	"viciousheroism": {
 		"Beyond": "Vicious[ANTi]Heroism"

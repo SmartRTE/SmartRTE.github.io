@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>完成表</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="css/completion.css" type="text/css" />
+		<!-- <script src="js/html2canvas.js"></script> -->
+		<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+		<script src="js/jquery-3.6.1.min.js"></script>
+		<script src="js/CommonFunctions.js"></script>
+		<script src="js/sql-wasm.js"></script>
+		<script src="js/completion.js"></script>
+		<link rel="icon" href="favicon.ico" />
+	</head>
+	<body>
+		<div hidden="hidden" id="top-of-body"></div>
+		<div id="mainCover">
+			<img id="loadingGif" src="img/loading.gif" />
+			<h1> 正在生成，稍等一下 </h1><br />
+			<h1> 如果生成时间超过30秒，请尝试刷新页面重试 </h1>
+			<h1> 生成成功会自动唤起下载，</h1>
+			<h1> 如果没有，可以手动长按保存 </h1>
+		</div>
+
+		<div id="mainCapture">
+			<div id="container">
+				<div id="background">
+					<img id="background-image" src="bgs/s9.png" />
+				</div>
+
+				<!--<img id="partner" src="img/kou.webp" />-->
+				<h1 id="notice" hidden="hidden">若页面显示不完整，请刷新几次</h1>
+				<div id="info-display">
+					<div id="player-info">
+
+						<div id="avatar">
+							<div id="iconblur">
+								<img src="img/blur.png" />
+							</div>
+							<div id="icon" onclick="displayWindow('setting-window')">
+								<img src="img/avatar/34u_icon.webp" />
+							</div>
+							<div id="potential-container">
+								<div id="potential">
+									<img id="potential-frame" src="img/rating/rating_6.png" />
+									<div id="potential-value">6.16</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+					<div id="user-name-container">
+						<img id="user-course-dan" src="img/course/1.png" />
+						<div id="user-name">Hikari</div>
+					</div>
+					<div id="user-id-container">
+						<img id="id-course-dan" src="img/course/1.png" />
+						<div id="user-id">ID : <span>100 000 001</span></div>
+					</div>
+					<div id="ptt-display" onclick="displayAccuratePtt()">
+						<div id="ptt-max">Max : <span>6.16</span></div>
+						<div id="ptt-b30">B30 : <span>6.16</span></div>
+						<div id="ptt-r10">R10 : <span>6.16</span></div>
+						<div><span></span></div>
+						<div id="ptt-p30">P30 : <span>6.16</span></div>
+					</div>
+					<!-- <div class="spliter" id="spliter-best30">
+						<img class="spliter-image" src="img/divider.png" />
+						<img id="spliter-text-best30" src="img/best30.png" />
+					</div> -->
+				</div>
+
+
+			</div>
+
+			<!-- 显示 b30 数据 主体在js内 -->
+			<div id="b30-data">
+				<!-- 样式模板 -->
+				<!-- <div class="song-result-unit future">
+					<div class="song-illustration-container">
+						<img class="song-illustration" src="illustration/grievouslady.jpg" />
+					</div>
+					<div class="song-information">
+						<div class="song-playrating">12.8000</div>
+						<div class="song-constant">Future10+[10.8]</div>
+						<div class="song-rank">#1</div>
+					</div>
+					<div class="song-name">Grievous Lady</div>
+					<div class="song-score">12'345'678</div>
+					<div class="song-items">
+						<div class="item-pure">P/1051(-32)</div>
+						<div class="item-far">F/0</div>
+						<div class="item-lost">L/0</div>
+					</div>
+					<img class="song-ranking-image" src="img/rank/PM.png" />
+				</div> -->
+			</div>
+
+			<div id="copyright">
+				Generated at http://SmartRTE.github.io @ <span>2024/xx/xx</span>
+				<img id="qrcode" src="img/QRCODE-githubio.png" />
+			</div>
+		</div>
+
+
+		<div id="setting-window" hidden="hidden">
+			<div id="setting-bg" onclick="displayWindow('setting-window')"></div>
+			<div id="setting-close" onclick="displayWindow('setting-window')">×</div>
+			<div id="setting-main">
+				<div hidden="hidden">
+					<img id="temp-avatar" src="img/avatar/0_icon.webp" alt="暂存自定义头像" />
+					<img id="temp-background" src="bgs/0.webp" alt="暂存自定义背景" />
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<input type="file" id="file-input" hidden="hidden" />
+						<button id="file-input-button" class="setting-button"
+							onclick="inputFile('file-input')">选择st3或分数表</button>
+					</div>
+				</div>
+
+				<div class="setting-row">
+					<div class="setting-container">
+						<button class="setting-button" onclick="window.open('index.html', parent)">返回主页</button>
+					</div>
+				</div>
+
+				<div class="setting-row">
+					<div class="setting-container">
+						<label for="user-name-input" class="setting-label">用户名</label>
+						<input id="user-name-input" class="setting-input" placeholder="Hikari" />
+					</div>
+				</div>
+
+				<div class="setting-row">
+					<div class="setting-container">
+						<label for="user-id-input" class="setting-label">好友码</label>
+						<input id="user-id-input" class="setting-input" placeholder="100000001" />
+					</div>
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<button class="setting-button" onclick="hideUID()">显示/隐藏好友码</button>
+					</div>
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<label for="potential-input" class="setting-label">潜力值</label>
+						<input id="potential-input" class="setting-input" placeholder="6.16" />
+						<!-- <label class="setting-label" style="float: none;">(*影响r10计算)</label> -->
+					</div>
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<label for="range-upper-bound" class="setting-label">显示定数从</label>
+						<input class="setting-input" type="number" id="range-upper-bound" placeholder="11.0"
+							value="12.0" />
+					</div>
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<label for="range-lower-bound" class="setting-label">到</label>
+						<input class="setting-input" type="number" id="range-lower-bound" placeholder="9.0"
+							value="9.0" />
+						<button class="setting-button" onclick="changeBound()">更改</button>
+					</div>
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<div id="no-record-hidden" ></div>
+						<button class="setting-button" onclick="displayNoRecord()" id="no-record-button">隐藏没有记录的成绩</button>
+					</div>
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<button class="setting-button" onclick="saveAsImage('mainCapture')">生成图片</button>
+					</div>
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<label for="user-course-dan-display" class="setting-label">段位</label>
+						<input type="number" id="selected-dan" hidden="hidden" value="0" />
+						<div id="user-course-dan-display" onclick="displayWindow('user-course-dan-select')">不显示</div>
+						<br />
+						<div id="user-course-dan-select">
+							<ul id="user-course-dan-list">
+								<li class="user-course-dan-option" value="0" onclick="changeCourseDanFrame(0)">
+									<button>不显示</button>
+								</li>
+								<!-- <li class="user-course-dan-option" value="1" onclick="changeCourseDanFrame(1)"><img
+										class="user-course-dan-img" src="img/course/1.png"></li>-->
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="setting-row">
+					<div class="setting-container">
+						<button class="setting-button" id="show-uid-frame"
+							onclick="displayWindow('id-course-dan')">显示/隐藏好友码段位框</button>
+					</div>
+				</div>
+
+				<div class="setting-row">
+					<div class="setting-container">
+						<label for="avatar-select" class="setting-label">选择头像</label>
+						<div id="avatar-display">
+							<img src="img/avatar/0_icon.webp" onclick="displayWindow('avatar-select')" />
+						</div>
+						<!-- <button class="setting-button" >换</button> -->
+						<br />
+						<div id="avatar-select">
+							<ul id="avatar-list">
+								<!-- 
+								<li class="avatar-option" onclick="changeAvatar(0)"><img src="img/avatar/0_icon.webp" /></li>
+								<li class="avatar-option" onclick="changeAvatar(1)"><img src="img/avatar/1_icon.webp" /></li>
+								-->
+							</ul>
+						</div>
+
+					</div>
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<input type="file" id="custom-avatar-input" hidden="hidden">
+						<input type="checkbox" id="use-custom-avatar">
+						<label for="custom-avatar" class="setting-label">手动上传头像</label>
+						<br />
+						<div id="custom-avatar" onclick="inputFile('custom-avatar-input')">
+							<img src="Processed_Illustration/random.jpg" />
+						</div>
+					</div>
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<label class="setting-label">选择背景图</label>
+						<img id="background-display" onclick="displayWindow('background-select')" src="bgs/1.webp" />
+						<div id="background-select">
+							<ul id="background-list">
+								<!-- <li class="background-option"><img src="bgs/s25.webp"
+										onclick="changeBackgroundImage('s25')" /></li>
+								<li class="background-option"><img src="bgs/s26.webp"
+										onclick="changeBackgroundImage('s26')" /></li> -->
+
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="setting-row">
+					<div class="setting-container">
+						<input type="file" id="custom-background-input" hidden="hidden">
+						<input type="checkbox" id="use-custom-background">
+						<label for="custom-background" class="setting-label">手动上传背景图</label>
+						<br />
+						<div id="custom-background" onclick="inputFile('custom-background-input')">
+							<img src="Processed_Illustration/random.jpg" />
+						</div>
+					</div>
+				</div>
+				
+				<div class="setting-row">
+					<div class="setting-container">
+						<button id="delete-local-storage" onclick="deleteLocalStorage()">⚠清空本地缓存⚠</button>
+					</div>
+				</div>
+
+				<!-- <div class="setting-row">
+					<div class="setting-container">
+						<button class="setting-button rainbow" id="switch-p30" onclick="switchP30()">看看P30</button>
+					</div>
+				</div> -->
+			</div>
+
+		</div>
+		<div id="modify-window">
+			<div id="modify-window-background" onclick="displayWindow('modify-window')"></div>
+			<div id="modify-window-close" onclick="displayWindow('modify-window')">×</div>
+			<div id="modify-window-main">
+				<div id="modify-window-title">单曲信息（暂不支持修改）</div>
+				<div id="modify-window-content">
+
+					<input type="number" hidden="hidden" value="0" id="modify-current-index" />
+					<div class="modify-row" id="modify-illustration-container">
+						<img src="IllustrationMin/sayonarahatsukoi.jpg" />
+					</div>
+					<div class="modify-row" id="modify-song-name">
+						<label>显示的曲名</label>
+						<input placeholder="输入你想显示的曲名" />
+
+					</div>
+					<div class="modify-row" id="modify-song-id">
+						<label>曲目的songid</label>
+						<input placeholder="不知道是什么请不要修改" />
+
+					</div>
+					<div class="modify-row" id="modify-song-score">
+						<label>分数</label>
+						<input type="number" placeholder="0" />
+
+					</div>
+					<div class="modify-row" id="modify-song-item">
+						<label>物量</label><br />
+						<label>Pure数：</label>
+						<input type="number" id="modify-pure" /><br />
+						<label>大P数：</label>
+						<input type="number" id="modify-critical-pure" /><br />
+						<label>Far数:</label>
+						<input type="number" id="modify-far" /><br />
+						<label>Lost数:</label>
+						<input type="number" id="modify-lost" /><br />
+					</div>
+					<!-- <div class="modify-row">
+						<button class="modify-button" id="delete-result" onclick="deleteResult()">删除此条记录</button>
+					</div> -->
+				</div>
+				<div id="modify-window-buttons">
+					<!-- <div id="modify-window-accept" class="accept-btn" onclick="acceptModifyResult(currentArray)">√</div> -->
+					<div id="modify-window-refuse" class="refuse-btn" onclick="abortModifyResult()">X</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="ai-chan-dialog">
+			<div id="ai-chan-dialog-background" onclick="displayWindow('ai-chan-dialog')"></div>
+			<div id="ai-chan-dialog-close" onclick="displayWindow('ai-chan-dialog')">×</div>
+			<div id="ai-chan-dialog-main">
+				<div id="ai-chan-dialog-title">
+					<button id="ai-chan-roll" class="setting-button"
+						onclick="aiChanRoll()">再推荐一首给我吧！</button>
+				</div>
+				<div id="ai-chan-content">(=・ω・=)
+				</div>
+				<div id="ai-chan-dialog-buttons">
+					<div id="ai-chan-dialog-accept" onclick="displayWindow('ai-chan-dialog')">彳</div>
+					<div id="ai-chan-dialog-refuse" onclick="displayWindow('ai-chan-dialog')">亍</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ai-chan -->
+		<div id="ai-chan" onclick="displayWindow('ai-chan-dialog')">
+			<img src="img/ai-chan.png" />
+		</div>
+		<!-- 返回顶部 -->
+		<div id="back-to-top" onclick="scrollToElement('top-of-body')">
+			回到<br />顶部
+			<span></span>
+		</div>
+	</body>
+</html>

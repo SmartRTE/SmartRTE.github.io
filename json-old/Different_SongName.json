@@ -1,0 +1,35 @@
+{
+
+	"last": {
+		"Beyond": "Last|Moment"
+	},
+	"singularity": {
+		"Beyond": "Singularity VVVIP"
+	},
+	"ignotus": {
+		"Beyond": "Ignotus Afterburn"
+	},
+	"dropdead": {
+		"Beyond": "overdead."
+	},
+	"redandblue": {
+		"Beyond": "Red and Blue and Green"
+	},
+	"pragmatism": {
+		"Beyond": "PRAGMATISM -RESURRECTION-"
+	},
+	"infinitestrife": {
+		"Past": "Infinite Strife, ",
+		"Present": "Infinite Strife, ",
+		"Future": "Infinite Strife, ",
+		"Beyond": "Infinite Strife, "
+	},
+	"goodbyemerry": {
+		"Past": "Good bye, Merry-Go-Round",
+		"Present": "Good bye, Merry-Go-Round",
+		"Future": "Good bye, Merry-Go-Round"
+	},
+	"viciousheroism": {
+		"Beyond": "Vicious[ANTi]Heroism"
+	}
+}

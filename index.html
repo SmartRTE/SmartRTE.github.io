@@ -1,97 +1,303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>st3解析</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>新st3解析</title>
+		<link rel="stylesheet" href="css/index.css" type="text/css" />
+		<script src="js/jquery-3.6.1.min.js"></script>
+		<script src="js/CommonFunctions.js"></script>
 		<script src="js/sql-wasm.js"></script>
-		<script src="js/index.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/index.css" />
 		<link rel="icon" href="favicon.ico" />
 	</head>
 	<body>
-		<div id="bgimg">
-			<img src="bgs/bg_light.webp">
-		</div>
-		<div style="display: inline-block; width: 100%;">
-			<h1 id="noticeButton" onclick="switchNotices()">注意事项</h1>
-			<button id="constantSheet">查看定数表</button>
-			<div id="version">
-				<h2>更新于 2024/03/26</h2>
-				<h2>当前数据库版本：v5.5.8</h2>
-				<h2>曲绘文件版本：v5.5.8</h2>
-				<h2>当前模板表版本：v5.5.8</h2>
-				<h2>新页面绝赞开(gu)发(gu)中(gu)</h2>
-			</div>
-			
-		</div>
+		<input type="file" id="file-input" hidden="hidden" />
+		<div id="bg"></div>
+		<div id="main-container">
+			<div id="main-controller">
+				<label id="load-db" style="color: red;">数据库文件未加载</label>
+				<label id="load-il" style="color: red;">曲绘差分文件未加载</label>
+				<label id="load-sn" style="color: red;">曲名差分文件未加载</label>
+				<!-- <div id="help-me">
+					<a href="https://space.bilibili.com/171403897">给点三连呗😘</a>
+				</div> -->
+				<div id="func-container">
+					<button class="func-btn" onclick="inputFile()" id="select-file">选择st3或分数表文件</button>
+					<button class="func-btn" onclick="readSavedScore()">读取缓存的分数数据</button>
+				</div>
+				<div id="func-container2">
+					<!-- <button class="func-btn" onclick="inputFile()">选择st3或分数表文件</button>
+					<button class="func-btn">读取缓存的分数数据</button>
+					<button class="func-btn">下载手填分数表</button> -->
 
-		<ul id="notices">
-			<li style="color: firebrick;">!点上面的“注意事项”可以把这一段文字收起</li>
-			<li style="color: firebrick;">
-				!若打开本网页或跳转b30生成页面时弹出下载提示框，请取消掉，<br />因为页面需要从服务器下载所需的脚本等文件，<br />而有时这些文件会被下载软件的浏览器插件监听并接管下载。<br />若嫌麻烦可以设置默认屏蔽该网页的下载请求
-			</li>
-			<li style="color: firebrick; font-size: 60px;">!!请确定完全看完下面的视频<br />并了解了本页所有内容后再使用！!</li>
-
-			<li><a href="https://www.bilibili.com/video/BV1kp4y1F7Jw" target="_blank">查看原理、食用方法以及获取st3数据库文件的方法</a></li>
-			<iframe id="bili" src="//player.bilibili.com/player.html?aid=958967055&bvid=BV1kp4y1F7Jw&cid=1281665008&p=1"
-				scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-			<li style="color: rgba(255, 170, 127, 1.0); font-size: 22px;">我不要脸，给我三连(</li>
-			<li>1.点击 “上传st3文件” 上传你的st3文件，文件名可改可不改 </li>
-			<li>2.上传完之后如果不出意外会立马显示数据库内的全曲目游玩记录表格 </li><br />
-			<li>*若有字符显示“?”是因为我用了比较懒的方法进行数据库查询，字符集有点问题，<br />但是不影响会意以及后面的b30生成</li><br />
-			<li>3.点击 下载csv文件 可以把表格保存到本地 </li>
-			<li>4.获得csv文件后跳转b30生成页，将生成好的csv文件上传即可显示b39 </li>
-			<li>5.玩家名、好友码和显示ptt需要手动填写，可以手动指定显示曲目的数量 </li>
-			<li>6.保存图片用时和显示的曲目数量有关，保存图片时最好不超过100。<br />若数值填得过大，在某些设备上可能会导致严重卡顿</li>
-			<li style="color: darkred;">7.所有对文件的读写以及缓存都只在本地实现，不会上传到服务器(我也存不起) </li>
-			<li>8.如果遇到载图不全、或者缺失其他组件，多刷新几次页面</li>
-			<li>9.如果遇到bug或者其他问题请务必联系我！</li><br />
-			<li>*本意是方便自己查看分数表，免受手打成绩之苦，如果能帮到更多的人那就太好了</li>
-			<li>*水平有限，缝缝补补得到的这几个页面难免会有性能问题🙏</li><br />
-			<li>————RTE QQ: 2232194759</li><br />
-		</ul>
-
-
-		<input type="file" id="dbFileInput" style="display: none;"><br />
-		<div id="controller">
-			<div id="controllerRow1">
-				<button type="button" id="b30gen" onclick="window.open('b30gen.html')">点击跳转b30生成页</button>
-				<button type="button" id="difgen" onclick="window.open('divgen.html')">点击跳转定数查曲生成页</button>
-				<button type="button" id="dldbtn">
-					<a style="width: 100%; height: 100%; text-decoration: none; color: aliceblue;" download="模板.csv"
-						href="sample/模板.csv"
-						onclick="alert('请读完这条提示！\n 稍后下载的模板.csv内含有全部曲目的全部难度的分级条目，顺序是\n※游戏内全部歌曲的曲名序※\n尽量填写多于30条数据以保证B30计算正常。填写完成后请使用Excel或WPS表格的函数手动计算每首歌的单曲PTT（具体计算公式见Arcaea Wiki）\n 物量信息（p，f，l）可以不填，但是会影响B30图中理论值曲目的显示效果（缺少蓝色阴影，但是没有也不影响\n没有成绩的条目请手动删除，并最终把文件仍保存为csv格式。软件可能会提示丢失信息，请忽略！\n确认阅读完毕并理解之后，点击 确定')">下载模板.csv手动填入成绩</a>
-				</button>
-			</div>
-			<div id="controllerRow2">
-				<button type="button" id="uploadButton">上传st3数据库或分数表csv文件 </button>
-				<button type="button" id="download" onclick="exportCSV()" style="display: none;">下载分数表csv文件</button>
-				<button type="button" id="sendToB30" onclick="sendToB30()" style="display: none;">以下表生成b30</button>
-				<output id="queryResult"></output>
-			</div>
-			<div id="controllerRow3">
-				<button type="button" id="edit" onclick="showEdit()">读取缓存的分数表并修改</button>
+					<button class="func-btn" onclick="window.open('b30gen.html')">生成b30</button>
+					<button class="func-btn" onclick="window.open('completion.html')">查看完成表</button>
+				</div>
+				<div id="disp-container">
+					<br />
+					<label>共有 <span id="result-quantity">0</span> 条结果</label><br />
+					<label for="disp-ptt">当前ptt为</label>
+					<input id="disp-ptt" type="text" oninput="calculateR10()" />
+					<label for="disp-ptt">(点击修改)</label><br />
+					<label id="disp-b30">best30为<span>0.0000</span></label><br />
+					<label id="disp-max">maxptt为<span>0.0000</span></label><br />
+					<label id="disp-r10"><a>理论recent10为</a><span>0.0000</span></label>
+					<br /><br />
+				</div>
+				<div id="filter-btn-container">
+					<br />
+					<!-- <label for="filter-btn">显示曲目筛选</label><br /> -->
+					<button id="filter-btn" class="func-btn" onclick="displayWindow('filter-window')">筛选 / 排序</button>
+					<!-- <label for="switch-view">切换显示</label><br /> -->
+					<button id="switch-view" class="func-btn" onclick="switchView()">显示为卡片</button>
+				</div>
 
 			</div>
+
+			<div id="result-area">
+				<div id="notice">
+					<div id="version">
+						<label>当前曲目数据库版本：<span>5.5.8</span></label><br />
+						<label>当前曲绘文件库版本：<span>5.5.8</span></label><br />
+						<label>当前手填表文件版本：<span>5.5.8</span></label><br />
+						<button class="func-btn" style="left: 0; float: none;">点击下载手填表</button><br />
+						<label>更新于：<span>2024/04/21</span></label>
+					</div>
+					<div id="help">
+						<h1>看这里！</h1>
+						<ul>
+							<li style="color: firebrick;">
+								!若打开本网页或跳转b30生成页面时弹出下载提示框，请取消掉，<br />因为页面需要从服务器下载所需的脚本等文件，<br />而有时这些文件会被下载软件的浏览器插件监听并接管下载。<br />若嫌麻烦可以设置默认屏蔽该网页的下载请求
+							</li>
+							<li>!!请确定你看完并理解了下面的视频<br />并了解了本页所有内容后再使用！!</li>
+
+							<li><a href="https://www.bilibili.com/video/BV1kp4y1F7Jw"
+									target="_blank">查看原理、食用方法以及获取st3数据库文件的方法</a></li>
+							<iframe id="bili"
+								src="//player.bilibili.com/player.html?aid=958967055&bvid=BV1kp4y1F7Jw&cid=1281665008&p=1"
+								scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true">
+							</iframe>
+
+							<li><a href="https://www.bilibili.com/opus/922305683783680053" target="_blank"><h1>文字版使用说明点这里看！</h1></a></li>
+							<li style="color: rgba(255, 170, 127, 1.0); font-size: 22px;">我不要脸，给我三连!(</li>
+							<li>1.点击 “上传st3文件” 上传你的st3文件，文件名可改可不改 </li>
+							<li>2.上传完之后如果不出意外会立马显示数据库内的全曲目游玩记录表格 </li><br />
+							<li>3.点击 下载csv文件 可以把表格保存到本地，供后续修改使用 </li>
+							<li>4.表格正常生成之后点击跳转b30生成页，默认生成B39图片 </li>
+							<li>5.玩家名、好友码和显示的潜力值需要手动填写，可以手动指定显示曲目的数量 </li>
+							<li>6.保存图片用时和图片大小与显示的曲目数量有关，保存图片时显示的曲目成绩最好不超过800。(真的有人试吗（)<br />若数值填得过大，在某些设备上可能会导致严重卡顿</li>
+							<li style="color: darkred;">7.所有对文件的读写以及缓存都只在本地实现，不会上传到服务器(我也存不起) </li>
+							<li>8.如果遇到载图不全、或者缺失其他组件，多刷新几次页面</li>
+							<li>9.如果遇到bug或者其他问题请务必联系我！</li><br />
+							<li>*本意是方便自己查看分数表，免受手打成绩之苦，如果能帮到更多的人那就太好了</li>
+							<li>*水平有限，缝缝补补得到的这几个页面难免会有些许问题🙏</li><br />
+							<li>————RTE <a href="https://space.bilibili.com/171403897">我的B站空间</a></li><br />
+						</ul>
+					</div>
+				</div>
+				<div id="save-csv-btn-container" style="width: 100%; display: none;">
+					<button class="func-btn" id="save-table-csv" onclick="saveTableCSV()">保存分数表文件</button><br />
+					<label>点曲绘可以进行修改</label>
+				</div>
+				<div id="result-card" style="display: none;">
+
+					<!-- <div class="single-card beyond">
+						<div class="card-rank">#n</div>
+						<div class="card-ill-container">
+							<img class="card-ill" src="IllustrationMin/ii.jpg"/>
+						</div>
+						<div class="song-name">cybernacia catharasis</div>
+						<div class="song-score">10002221</div>
+						<div class="song-rating">12.8000</div>
+						<div class="song-percentage">99.1%</div>
+						<div class="song-achievement"></div>
+					</div> -->
+				</div>
+				<div id="result-table" style="display: none;">
+					<table id="result">
+						<thead>
+							<tr>
+								<td>NO.</td>
+								<td class="t-ill">曲绘</td>
+								<td class="t-song-name">曲名</td>
+								<td class="t-score">分数</td>
+								<td class="t-perfect">Pure</td>
+								<td class="t-critical-perfect">大P数</td>
+								<td class="t-normal-perfect">小P数</td>
+								<td class="t-far">far</td>
+								<td class="t-lost">lost</td>
+								<td class="t-constant">定数</td>
+								<td class="t-play-rating">单曲潜力值</td>
+							</tr>
+
+						</thead>
+						<tbody>
+							<!-- <tr>
+								<td><img src="IllustrationMin/ii.jpg" class="table-ill"/></td>
+								<td>Fracture Ray</td>
+								<td>10000000</td>
+								<td>1000</td>
+								<td>500</td>
+								<td>100</td>
+								<td>10</td>
+								<td>11.3</td>
+								<td>11.3</td>
+							</tr> -->
+						</tbody>
+					</table>
+				</div>
+
+
+			</div>
 		</div>
-		<!-- <div id="chartContainer" hidden="hidden">
-			<canvas id="chart" hidden="hidden"></canvas>
-		</div> -->
-		<div id="briefStatistic">
-			<a id="best30"></a>
-			<a id="top30"></a>
-			<a id="top39"></a>
+
+		<div id="filter-window" hidden="hidden">
+			<div id="filter-bg" onclick="displayWindow('filter-window')"></div>
+			<div id="filter-close" onclick="displayWindow('filter-window')">×</div>
+			<div id="filter-main">
+				<div class="filter-row">
+					<div class="filter-container">
+						<label for="range-lower-bound" class="filter-label">筛选定数从</label>
+						<input type="number" id="range-lower-bound" class="filter-input" value="1.0" />
+						<label for="range-upper-bound" class="filter-label">到</label>
+						<input type="number" id="range-upper-bound" class="filter-input" value="12.0" />
+					</div>
+
+				</div>
+				<!-- <br /> -->
+				<div class="filter-row">
+					<div class="filter-container">
+						<label for="sort-mode" class="filter-label">排序方式</label>
+						<select id="sort-mode" class="filter-select">
+							<option value="playRating">单曲ptt</option>
+							<option value="constant">定数</option>
+							<option value="score">分数</option>
+							<option value="criticalRate">大P率</option>
+							<option value="normalPerfect">小p数</option>
+							<option value="percentage">吃分率</option>
+						</select>
+						<label for="sort-order" class="filter-label">,</label>
+						<select id="sort-order" class="filter-select">
+							<option value="1">降序</option>
+							<option value="-1">升序</option>
+						</select>
+					</div>
+
+				</div>
+				<div class="filter-row">
+					<div class="filter-container">
+						<label for="search-song" class="filter-label">查找曲目</label>
+						<input id="search-song" class="filter-input" />
+						<select id="search-difficulty" class="filter-select">
+							<option value="Past">Past</option>
+							<option value="Present">Present</option>
+							<option value="Future" selected="selected">Future</option>
+							<option value="Eternal">Eternal</option>
+							<option value="Beyond">Beyond</option>
+						</select><br />
+
+					</div>
+				</div>
+				<div class="filter-row">
+					<div class="filter-container">
+						<button id="search-confirm" class="filter-button" onclick="searchSong()">查找</button>
+
+					</div>
+				</div>
+
+				<div class="filter-row">
+					<div class="filter-container">
+						<select id="search-result" class="filter-select">
+							<!-- <option style="background: url('../img/11.webp');"></option> -->
+							<option selected="selected"><img src="img/11.webp"
+									style="display: block; height: 1rem;" />结果会显示在这里</option>
+						</select>
+					</div>
+				</div>
+				<div class="filter-row">
+					<div class="filter-container">
+						<button class="filter-button" onclick="aiChanRoll(filteredArray,viewMode)">让Ai酱roll一首？</button>
+					</div>
+				</div>
+				<div id="ai-chan-content" class="filter-row">
+					(=・ω・= )
+				</div>
+				<div class="filter-row">
+					<div class="filter-container">
+						<button id="delete-local-storage" onclick="deleteLocalStorage()">⚠清空本地缓存⚠</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="modify-window">
+			<div id="modify-window-background" onclick="displayWindow('modify-window')"></div>
+			<div id="modify-window-close" onclick="displayWindow('modify-window')">×</div>
+			<div id="modify-window-main">
+				<div id="modify-window-title">修改<span></span>信息</div>
+				<div id="modify-window-content">
+
+					<input type="number" hidden="hidden" value="0" id="modify-current-index" />
+					<div class="modify-row" id="modify-illustration-container">
+						<img src="Processed_Illustration/sayonarahatsukoi.jpg" />
+					</div>
+					<div class="modify-row" id="modify-song-name">
+						<label>修改显示的曲名</label>
+						<input placeholder="输入你想显示的曲名" />
+
+					</div>
+					<div class="modify-row" id="modify-song-id">
+						<label>修改曲目的songid</label>
+						<input placeholder="不知道是什么请不要修改" />
+
+					</div>
+					<div class="modify-row" id="modify-song-score">
+						<label>修改分数</label>
+						<input type="number" placeholder="0" />
+
+					</div>
+					<div class="modify-row" id="modify-song-item">
+						<label>修改物量</label><br />
+						<label>Pure数：</label>
+						<input type="number" id="modify-pure" /><br />
+						<label>大P数：</label>
+						<input type="number" id="modify-critical-pure" /><br />
+						<label>Far数:</label>
+						<input type="number" id="modify-far" /><br />
+						<label>Lost数:</label>
+						<input type="number" id="modify-lost" /><br />
+					</div>
+					<div class="modify-row">
+						<button class="modify-button" id="delete-result" onclick="deleteResult()">删除此条记录</button>
+					</div>
+				</div>
+			</div>
+
+			<div id="modify-window-buttons">
+				<div id="modify-window-accept" class="accept-btn" onclick="acceptModifyResult(currentArray)">√</div>
+				<div id="modify-window-refuse" class="refuse-btn" onclick="abortModifyResult()">X</div>
+			</div>
 
 		</div>
-		<table id="queryTable">
-			<thead>
-				<tr></tr>
-			</thead>
-			<tbody>
 
-			</tbody>
-		</table>
+		<div id="confirm-dialog">
+			<div id="dialog-background"></div>
+			<div id="confirm-dialog-close">×</div>
+			<div id="confirm-dialog-main">
+				<div id="confirm-dialog-title">提示</div>
+				<div id="confirm-dialog-content">内容</div>
+				<div id="confirm-dialog-buttons">
+					<div id="confirm-dialog-accept">彳</div>
+					<div id="confirm-dialog-refuse">亍</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 返回顶部 -->
+		<div id="back-to-top" onclick="scrollToElement('load-db')">
+			回到<br />顶部
+			<span></span>
+		</div>
 	</body>
+	<script src="js/index.js"></script>
 </html>

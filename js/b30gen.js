@@ -1,1002 +1,1013 @@
-let displayAmount = 39;
-// const rowCount = localStorage.saved_csv_data.split('\n').length - 1;
-// displayAmount = rowCount >= 39 ? 39 : rowCount; //显示条目数量
+let db; //以上两条为sql.js相关
+let SQL; //以上两条为sql.js相关
 
-// window.onload = function() {
-// 	document.getElementById("displayAmount").value = displayAmount;
-// 	changeDisplayAmount();
-// 	// console.log("rowCount:"+rowCount+",displayAmount:"+displayAmount);
-// }
-let fetch_flag = 0; //是否上传了新csv
-let default_csv_name = "sample/default.csv"; //初始的默认csv路径
-let csv_name = null; //手动选择的新csv
-let csv_data = null; //储存csv内容到内存
-let flag = 0; //替换default.csv
-let flag_switch_controller = 0; //控件初始值赋值block
-let flag_reverse = 0; //没有什么用呢
-let flag_uid = 1; //显示/隐藏UID
-let imageMapping = null; //图片路径映射
-let titleMapping = null; //曲名映射
-let statistic_full_recall = 0; //fr数
-let statistic_pure_memory = 0; //pm数
-let statistic_theory = 0; //理论数
-let statistic_xing = 0; //1f/1l性数
-let statistic_1xiao = 0; //1小p性数
+let filteredArray = [];
+let currentArray = [];
+let rbm = [];
+let avatarList = [];
+let unitQuantity = 39;
+let uidFlag = true;
+let p30Flag = 0; //0=b 1=p 2=s
+let userCourseDanPath = 'img/course/';
+let illustrationPath = 'Processed_Illustration/';
+let defaultCSVPath = 'sample/default.csv'
+let songRankingPath = 'img/rank/';
+let backgoundImagePath = 'bgs/';
+let avatarPath = 'img/avatar/'
+let defaultCSV = '';
+let avatarListPath = 'sample/avatar.csv';
+let potentialFramePath = 'img/rating/rating_';
+let sqlWasmPath = "sql-wasm.wasm"; //sql.wasm路径
+let queryFilePath = "json/query.sql"; //sql查询代码文件路径
+let diffSongNameMapping = null; //差分曲名映射
+let diffIllMapping = null; //差分曲绘映射
 
-let avatarFolderPath = "img/avatar/"; //头像文件路径
-let illustration_path;//曲绘文件夹路径
-// let illustration_path = "Processed_Illustration/";	
-
-
-
-
-const R10Event = new Event("DOMContentLoaded");
-
-
-
-//读取csv文件
-async function fetchAndSaveCSV(csvName, csvdata) {
-	try {
-		if (fetch_flag == 0) {
-			fetch_flag = 1;
-			csvname = default_csv_name;
-		}
-		const response = await fetch(csvName);
-		const data = await response.text();
-		csvdata = data;
-		// console.log('CSV数据已保存:', csvdata);
-		localStorage.setItem("saved_csv_data", csvdata);
-		localStorage.setItem("saved_csv_name", csvName);
-		resizeWidth(); //重设页面缩放
-		clearStatistics();
-		displayB30Data(csvdata);
-		statisticBests();
-		displayB30Value(csvdata, 0);
-		displayPersonalPTT(csvdata);
-	} catch (error) {
-		console.error("Error loading CSV file:", error);
-	}
-}
-
-//刷新数据显示
-function refreshData(data) {
-	const b30DataContainer = document.getElementById("b30Data");
-	b30DataContainer.innerHTML = "";
-	// console.log("b30cleared");
-	const pttDisplay = document.getElementById("PTTDisplay");
-	pttDisplay.innerHTML = "";
-	// console.log("pttcleared");
-	//数据统计初始化
-	clearStatistics();
-	// console.log("statistics cleared");
-	displayB30Data(data); //显示新的csv数据
-	statisticBests();
-	displayB30Value(data, 1);
-	displayB30Value(data);
-	displayPersonalPTT(data);
-	// console.log("refreshdata called");
-	recalculateR10();
-	resizeWidth(); //重设页面缩放
-}
-
-//显示统计信息
-function statisticBests() {
-	// console.log("statisticBests called");
-	const fr = document.getElementById("statistic_FR");
-	const pm = document.getElementById("statistic_PM");
-	const th = document.getElementById("statistic_TH");
-	const xn = document.getElementById("statistic_XN");
-	const ox = document.getElementById("statistic_1X");
-	fr.value = "👍" + statistic_full_recall + "条" + "👍";
-	pm.value = "🎉" + statistic_pure_memory + "条" + "🎉";
-	th.value = "🎇" + statistic_theory + "条" + "🎇";
-	xn.value = "😭" + statistic_xing + "条" + "😭";
-	ox.value = "😱" + statistic_1xiao + "条" + "😱";
-}
-
-//清空统计信息
-function clearStatistics() {
-	statistic_full_recall = 0;
-	statistic_pure_memory = 0;
-	statistic_theory = 0;
-	statistic_xing = 0;
-	statistic_1xiao = 0;
-}
-
-//手动计算单曲ptt
-function calculateSinglePTT() {
-	// console.log("ezptt called");
-	const dif = document.getElementById("realDifficulty");
-	const scr = document.getElementById("score");
-	const spt = document.getElementById("singleptt");
-	let s = 0;
-	if (Number(scr.value) < 9800000) {
-		s = Number(dif.value) + (Number(scr.value) - 9500000) / 300000;
-	} else if (Number(scr.value) >= 9800000 && Number(scr.value) < 10000000) {
-		s = Number(dif.value) + 1 + (Number(scr.value) - 9800000) / 200000;
-	} else {
-		s = Number(dif.value) + 2;
-	}
-	spt.value = "👉" + "[ " + ((s > 0) ? parseFloat(s).toFixed(4) : 0) + " ]";
-}
-
-//不四舍五入的小数取舍
-function cutDecimal(a, pow) { //原数据，保留位数
-	return (Math.floor(a * Math.pow(10, pow)) / Math.pow(10, pow)).toFixed(pow);
-}
-
-//长数字三位分割
-function formatScore(score, symbol) {
-	var scoreStr = String(score);
-	if (symbol === " ") {
-		while (scoreStr.length < 9) {
-			scoreStr = "0" + scoreStr;
-		}
-		var formattedScore = scoreStr.replace(/(\d{3})(?=\d)/g, "$1" + symbol);
-		return formattedScore;
-	} else {
-		var formattedScore = String(Number(score).toLocaleString('en-US', {
-			useGrouping: true
-		}));
-
-		return formattedScore.replace(/,/g, symbol);
-	}
-}
-
-//判定PTT边框
-function judgeStars(personalPTT) {
-	const thresholds = [0, 3.5, 7, 10, 11, 12, 12.5, 13, 15];
-	const starRatings = ["0", "1", "2", "3", "4", "5", "6", "7"];
-	for (let i = 0; i < thresholds.length; i++) {
-		if (personalPTT < thresholds[i + 1]) {
-			return starRatings[i];
-		}
-	}
-	return starRatings[starRatings.length - 1];
-}
-
-//点击头像显示/隐藏控件
-function switchController() {
-	if (!flag_switch_controller) {
-		const controller = document.getElementById("controller");
-		const sheet = document.getElementById("sheet");
-		controller.style.display = "block";
-		sheet.style.display = "none";
-	}
-	flag_switch_controller = 1;
-	if (controller.style.display === "" || controller.style.display === "none") {
-		controller.style.display = "block";
-		setTimeout(function() {
-			controller.style.opacity = "100%";
-			controller.style.left = "150px";
-			controller.style.top = "300px";
-		}, 350);
-
-		// console.log("display!");
-	} else if (controller.style.display === "block") {
-		controller.style.opacity = "0";
-		controller.style.left = "0px";
-		controller.style.top = "0px";
-		setTimeout(function() {
-
-			controller.style.display = "none";
-		}, 350);
-		// console.log("hidden!");
-	}
-}
-//判定曲目分级
-function judgeLevel(singlePTTInfo) {
-	let dig = Math.floor(singlePTTInfo);
-	let isPlus = dig >= 7 && (singlePTTInfo - dig > 0.6);
-	return `${dig}${isPlus ? "+" : ""}`
-}
-
-//判定游玩等级
-function judgeRank(score, far, lost) {
-	if (Number(far) !== 0 && Number(lost) === 0) {
-		return "FR";
-	}
-	const ranges = [8599999, 8899999, 9199999, 9499999, 9799999, 9899999, 10000000,
-		10002222
-	];
-	const rankLabels = ["D", "C", "B", "A", "AA", "EX", "EX+", "PM"];
-	for (let i = 0; i < ranges.length; i++) {
-		if (score < ranges[i]) {
-			return (rankLabels[i]);
-		}
-	}
-}
-
-//计算显示b30
-//flag指是否需要输出到网页div中，为0时直接return给潜力值显示
-function displayB30Value(data, flag) {
-	const lines = data.split("\n");
-	const b30Data = lines.slice(1, 31);
-	const b10Data = lines.slice(1, 11);
-
-	let b30PTTTotal = 0;
-	let maxPTTTotal = 0;
-
-	b30Data.forEach(row => {
-		const cells = row.split(",");
-		const singlePTT = parseFloat(cells[9]);
-		b30PTTTotal += singlePTT;
+$(document).ready(function() {
+	//首次加载保证transition生效
+	displayWindow('modify-window');
+	displayWindow('setting-window');
+	displayWindow('ptt-p30');
+	displayWindow('ai-chan-dialog');
+	//初始化设置监听
+	initializeSettingListener();
+	//初始化缓存设置
+	initializeSettings();
+	//初始化头像列表
+	initializeAvatarList();
+	//初始化背景图片列表
+	initializeBackgroundList();
+	//初始化段位边框列表
+	initializeUserCourseDanList();
+	//初始化sqlite.js
+	initializeSqliteJs();
+	//读取查询语句文件
+	initializeQuery();
+	//初始化上传文件监听
+	initializeUploadListener();
+	//初始化曲名映射
+	diffSongNameMapping = getTitleMapping();
+	//初始化曲绘映射
+	diffIllMapping = getImageMapping();
+	//初始化二维码
+	initializeQRCode();
+	//初始化数据列表
+	initializeDataArray();
+	//初始化AI-chan推荐
+	initializeAiChan();
+	filteredArray = currentArray;
+	$(window).on('resize', function() {
+		resizeWidth(1);
 	});
+	resizeWidth(1);
+	// $('#main-capture').css('height', )
 
-	b10Data.forEach(row => {
-		const cells = row.split(",");
-		const singlePTT = parseFloat(cells[9]);
-		maxPTTTotal += singlePTT;
+	// 页面加载显示时间
+	showTime();
+	// 每秒更新时间显示
+	setInterval(showTime, 1000);
+});
+
+/**
+ * 初始化数据列表
+ * 当缓存内没有savedArrayData时，拉取默认default.csv生成数据
+ * 当缓存内有旧的saved_csv_data时，启动转换并删除旧数据
+ * 当缓存内有savedArrayData时，直接生成
+ */
+function initializeDataArray() {
+	if (localStorage.saved_csv_data) {
+		runConvert(localStorage.saved_csv_data);
+		localStorage.removeItem('saved_csv_data');
+	} else if (localStorage.savedArrayData) {
+		currentArray = getResultArray();
+		// console.log(currentArray)
+		unitQuantity = localStorage.unitQuantity;
+		unitQuantity = 39;
+		generateUnits(currentArray, unitQuantity);
+	} else {
+		let tempCSV = '';
+		fetch(defaultCSVPath)
+			.then(response => response.text())
+			.then(data => {
+				// console.log(data);
+				runConvert(data);
+			})
+			.catch(error => console.error('Error:', error));
+	}
+}
+
+/**
+ * 从localStorage中读取缓存的成绩信息，赋值给currentArray并返回一份
+ * @return {Array<PlayResult>} 缓存的分数数组
+ */
+function getResultArray() {
+	let tary = readLocalStorage();
+	// console.table(tary)
+	currentArray = tary;
+	return tary;
+}
+
+/**
+ * 为设置面板的：
+ * -玩家名
+ * -好友码
+ * -潜力值
+ * -自定义头像是否选用
+ * -自定义背景是否选用
+ * 设置监听
+ */
+function initializeSettingListener() {
+	$('#user-name-input').on('input', function() {
+		var val = $('#user-name-input').val();
+		$('#user-name').text(val);
+		localStorage.setItem('userName', val);
 	});
+	$('#user-id-input').on('input', function() {
+		var val = $('#user-id-input').val();
+		$('#user-id span').text(formatUserID(val));
+		localStorage.setItem('userId', val);
+	});
+	$('#potential-input').on('input', function() {
+		var val = $('#potential-input').val();
+		$('#potential-value').text(val);
+		changePotential(parseFloat(val));
+	})
 
-	const b30PTT = b30PTTTotal / 30;
-	const maxPTT = (b30PTTTotal + maxPTTTotal) / 40;
-	const r10PTT = (cutDecimal(maxPTT, 2) * 40 - b30PTT * 30) / 10;
-	const disPTT = maxPTT;
-
-	if (flag === 1) {
-		return cutDecimal(r10PTT, 2);
-	}
-	//Max，B30，R10划分区块容器
-	const maxPTTContainer = document.createElement("div");
-	maxPTTContainer.id = "maxPTTContainer";
-	maxPTTContainer.textContent = "Max :"
-	document.getElementById("PTTDisplay").appendChild(maxPTTContainer);
-
-	const Max = document.createElement("div");
-	Max.id = "Max";
-	Max.textContent = maxPTT.toFixed(4);
-	document.getElementById("maxPTTContainer").appendChild(Max);
-
-	const b30PTTContainer = document.createElement("div");
-	b30PTTContainer.id = "b30PTTContainer";
-	b30PTTContainer.textContent = "B30 :";
-	document.getElementById("PTTDisplay").appendChild(b30PTTContainer);
-
-	const B30 = document.createElement("div");
-	B30.id = "B30";
-	B30.textContent = b30PTT.toFixed(4);
-	document.getElementById("b30PTTContainer").appendChild(B30);
-
-	const r10PTTContainer = document.createElement("div");
-	r10PTTContainer.id = "r10PTTContainer";
-	r10PTTContainer.textContent = "R10 :";
-	document.getElementById("PTTDisplay").appendChild(r10PTTContainer);
-
-	const R10 = document.createElement("div");
-	R10.id = "R10";
-	R10.textContent = r10PTT.toFixed(4);
-	document.getElementById("r10PTTContainer").appendChild(R10);
-
-}
-
-//显示头像旁2位小数的PTT（不四舍五入）
-function displayPersonalPTT(data) {
-	personalPTT = displayB30Value(data, 1);
-	// const starImage = document.getElementById("starImg");
-	// starImage.src = "img/rating_" + judgeStars(personalPTT) + ".png";
-
-	//报错，明显不对，但是
-	//改了怎么就跑不对了呢o。O
-	const b30PTTContainer = null;
-	b30PTTContainer.textContent = personalPTT;
-};
-
-
-// 获取曲绘映射
-async function getImageMapping() {
-	try {
-		if (!imageMapping) {
-			const response = await fetch('json/Different_Illustration.json');
-			imageMapping = await response.json();
-		}
-		return imageMapping;
-	} catch (error) {
-		console.error('Error loading image mapping:', error);
-		// 处理加载错误，使用默认图片路径
-		return null;
-	}
-}
-
-// 获取曲名映射
-async function getTitleMapping() {
-	try {
-		if (!titleMapping) {
-			const response = await fetch('json/Different_SongName.json');
-			titleMapping = await response.json();
-		}
-		return titleMapping;
-	} catch (error) {
-		console.error('Error loading title mapping:', error);
-		// 处理加载错误，使用默认曲名
-		return null;
-	}
-}
-
-//图片单元生成部分
-
-function displayB30Data(data) {
-	//console.log("displayAmount:" + displayAmount);
-	const lines = data.split("\n");
-	const b30Data = lines.slice(1, Number(displayAmount) + 1);
-	var counter = 1;
-	// var spliter = 1;
-	var rowCounter = 0;
-
-
-	b30Data.forEach((row, index) => {
-		const cells = row.split(",");
-		const [songName, songId, Difficulty, score,
-			perfect, criticalPerfect, far,
-			lost, singlePTTInfo, singlePTT
-		] = cells;
-		rowCounter = rowCounter + 1;
-
-		//b39 overflow分割线生成
-		if (index === 30) {
-			const spliterGen = document.createElement("img");
-			spliterGen.src = "img/divider.png";
-			spliterGen.className = "spliter";
-			const overflow = document.createElement("img");
-			overflow.src = "img/overflow.png";
-			overflow.className = "besttext";
-			overflow.id = "overflow";
-			document.getElementById("b30Data").appendChild(spliterGen);
-			document.getElementById("b30Data").appendChild(overflow);
-		}
-		const singlePTTContainer = document.createElement("div");
-		singlePTTContainer.className = "singlePTT";
-		singlePTTContainer.id = songId + "_" + Difficulty;
-
-		singlePTTContainer.onclick = function() {
-			const url = `divgen.html?singlePTTInfo=${singlePTTInfo}`;
-			window.location.href = url;
-		};
-
-		// 曲绘
-		const songImageDiv = document.createElement("div");
-		songImageDiv.className = "songImageDiv";
-		const songImage = document.createElement("img");
-		songImage.className = "songImage";
-		songImage.id = songId + "_" + Difficulty;
-
-		//图像加载函数
-		function loadImage(imageUrl) {
-			songImage.src = imageUrl;
-		}
-
-		// 获取差分曲绘
-		getImageMapping().then(imageMapping => {
-			if (imageMapping) {
-				const diffSongId = imageMapping[songId];
-				if (diffSongId && diffSongId[Difficulty]) {
-					loadImage(illustration_path + songId + diffSongId[Difficulty] + ".jpg");
-				} else {
-					loadImage(illustration_path + songId + ".jpg");
-				}
+	$('#use-custom-avatar').on('change', function() {
+		let isChecked = $('#use-custom-avatar').is(':checked');
+		console.log(isChecked)
+		if (!isChecked) {
+			changeAvatar(localStorage.avatar);
+			displayWindow('avatar-select');
+			localStorage.useCustomAvatar = false;
+		} else {
+			if (localStorage.customAvatar) {
+				localStorage.useCustomAvatar = true;
+				$('#icon img').attr('src', localStorage.customAvatar);
 			} else {
-				loadImage(illustration_path + "sayonarahatsukoi.jpg");
-			}
-		});
-
-
-		//曲目信息
-		const songInfoContainer = document.createElement("div");
-		songInfoContainer.className = "songInformation";
-
-		const realDiffInfo = document.createElement("div");
-		realDiffInfo.className = "realDiffInfo";
-
-		const sPTTDiv = document.createElement("div");
-		sPTTDiv.className = "sPTT";
-		const sPTTLinkValue = document.createElement("a");
-
-		sPTTLinkValue.textContent = Difficulty + judgeLevel(singlePTTInfo) +
-			" [" + parseFloat(singlePTTInfo).toFixed(1) + "]";
-		sPTTDiv.appendChild(sPTTLinkValue);
-
-		const singlePTTInfoDiv = document.createElement("div");
-		singlePTTInfoDiv.className = "singlePTTInfo";
-		const singlePTTInfoLink = document.createElement("a");
-		singlePTTInfoLink.textContent = parseFloat(singlePTT).toFixed(4);
-		singlePTTInfoDiv.appendChild(singlePTTInfoLink);
-
-		switch (Difficulty) {
-			case "Beyond": {
-				singlePTTInfoDiv.style.backgroundColor = "rgba(191,41,65,1)";
-				realDiffInfo.style.backgroundColor = "rgba(150,35,54,1)";
-				break;
-			}
-			case "Future": {
-				singlePTTInfoDiv.style.backgroundColor = "rgba(138,72,117,1)";
-				realDiffInfo.style.backgroundColor = "rgba(110,58,96,1)";
-				break;
-			}
-			case "Present": {
-				singlePTTInfoDiv.style.backgroundColor = "rgba(0, 130, 0, 1.0)";
-				realDiffInfo.style.backgroundColor = "rgba(0, 90, 0, 1.0)";
-				break;
-			}
-			case "Past": {
-				singlePTTInfoDiv.style.backgroundColor = "rgba(0, 133, 200, 1.0)";
-				realDiffInfo.style.backgroundColor = "rgba(0, 66, 200, 1.0)";
-				break;
+				alert('还没有上传过自定义头像！\n点击右边可以手动上传~');
+				$('#use-custom-avatar').prop("checked", false);
 			}
 		}
+	});
 
-		// let newSongName;
-		const songNameDiv = document.createElement("div");
-		songNameDiv.className = "songName";
-
-		const songNameHeader = document.createElement("h2");
-		songNameHeader.className = "songNameHeader";
-
-		// 获取差分曲名
-		getTitleMapping().then(titleMapping => {
-			if (titleMapping) {
-				const diffSongId = titleMapping[songId];
-				if (diffSongId && diffSongId[Difficulty]) {
-					songNameHeader.textContent = diffSongId[Difficulty];
-				} else {
-					songNameHeader.textContent = songName;
-				}
+	$('#use-custom-background').on('change', function() {
+		let isChecked = $('#use-custom-background').is(':checked');
+		console.log(isChecked)
+		if (!isChecked) {
+			changeBackgroundImage(localStorage.backgroundImage);
+			displayWindow('background-select');
+			localStorage.useCustomBackground = false;
+		} else {
+			if (localStorage.customBackground) {
+				$('#background-image').attr('src', localStorage.customBackground);
+				localStorage.useCustomBackground = true;
 			} else {
-				songNameHeader.textContent = "Sayounara Hatsukoi";
+				alert('还没有上传过自定义背景！\n点击右边可以手动上传~');
+				$('#use-custom-background').prop("checked", false);
 			}
-			songNameDiv.appendChild(songNameHeader);
-		});
-
-		const scoreDiv = document.createElement("div");
-		scoreDiv.className = "score";
-
-		const scoreHeader = document.createElement("h3");
-		scoreHeader.textContent = formatScore(score, "'");
-		scoreDiv.appendChild(scoreHeader);
-
-		const itemsDiv = document.createElement("div");
-		itemsDiv.className = "items";
-
-		const pureDiv = document.createElement("div");
-		pureDiv.className = "pure";
-		const pureHeader = document.createElement("h4");
-		pureHeader.textContent = `P / ${perfect} (${criticalPerfect - perfect})`;
-		pureDiv.appendChild(pureHeader);
-
-		const farDiv = document.createElement("div");
-		farDiv.className = "far";
-		const farHeader = document.createElement("h4");
-		farHeader.textContent = `F / ${far}`;
-		farDiv.appendChild(farHeader);
-
-		const lostDiv = document.createElement("div");
-		lostDiv.className = "lost";
-		const lostHeader = document.createElement("h4");
-		lostHeader.textContent = `L / ${lost}`;
-		lostDiv.appendChild(lostHeader);
-
-		const rankDiv = document.createElement("div");
-		rankDiv.className = "rank";
-		const rankHeader = document.createElement("h4");
-		rankHeader.textContent = "#" + counter;
-		counter = counter + 1;
-
-		const songRank = document.createElement("img");
-		songRank.className = "songRank";
-		songRank.src = "img/rank/" + judgeRank(score, far, lost) + ".png";
-
-
-		const image = new Image();
-		image.src = songImage.src;
-		//理论值调整分数和sPTT颜色
-		//并给对应的计数器累加
-		if (Number(perfect) !== 0 && perfect === criticalPerfect && Number(far) === 0 && Number(lost) === 0) {
-			scoreHeader.style.color = "rgba(0, 12, 48, 1.0)";
-			scoreHeader.style.textShadow = "0px 0px 6px rgba(0, 210, 210, 1.0)";
-			sPTTLinkValue.style.textShadow = "0px 0px 6px rgba(0, 210, 210, 1.0)";
-			statistic_theory = statistic_theory + 1;
-		}
-		if (Number(perfect) !== 0 && Number(far) === 0 && Number(lost) === 0) {
-			statistic_pure_memory = statistic_pure_memory + 1;
-		}
-		if (Number(perfect) !== 0 && Number(far) !== 0 && Number(lost) === 0) {
-			statistic_full_recall = statistic_full_recall + 1;
-		}
-		if (Number(perfect) !== 0 && (Number(far) === 1 && Number(lost) === 0) || (Number(far) === 0 && Number(
-				lost) === 1)) {
-			statistic_xing = statistic_xing + 1;
-		}
-		if (Number(perfect) !== 0 && Number(perfect - 1) === Number(criticalPerfect) && Number(far) === 0 &&
-			Number(lost) === 0) {
-			statistic_1xiao = statistic_1xiao + 1;
-		}
-
-		realDiffInfo.appendChild(singlePTTInfoDiv);
-		realDiffInfo.appendChild(sPTTDiv);
-		songInfoContainer.appendChild(realDiffInfo);
-		singlePTTContainer.appendChild(songImageDiv);
-		songImageDiv.appendChild(songImage);
-		songInfoContainer.appendChild(songNameDiv);
-		songInfoContainer.appendChild(scoreDiv);
-		itemsDiv.appendChild(pureDiv);
-		itemsDiv.appendChild(farDiv);
-		itemsDiv.appendChild(lostDiv);
-		songInfoContainer.appendChild(itemsDiv);
-		rankDiv.appendChild(rankHeader);
-		scoreDiv.appendChild(songRank);
-		songInfoContainer.appendChild(rankDiv);
-		singlePTTContainer.appendChild(songInfoContainer);
-
-		document.getElementById("b30Data").appendChild(singlePTTContainer);
-		//console.log("fr:" + statistic_full_recall + ", pm:" + statistic_pure_memory + ", th:" +statistic_theory);
-	});
-}
-
-//用html2canvas进行截图
-document.addEventListener("DOMContentLoaded", function() {
-	//清除刷新提示notice
-	document.getElementById("notice").textContent = "";
-
-	//压缩
-	async function compressImage(dataURL, quality) {
-		return new Promise((resolve, reject) => {
-			const img = new Image();
-			img.onload = function() {
-				const canvas = document.createElement("canvas");
-				const ctx = canvas.getContext("2d");
-
-				// 设置canvas尺寸等于图像尺寸
-				canvas.width = img.width;
-				canvas.height = img.height;
-
-				// 在canvas上绘制图像
-				ctx.drawImage(img, 0, 0, img.width, img.height);
-
-				// 将图像数据压缩为指定质量的JPEG格式
-				const compressedDataURL = canvas.toDataURL("image/jpg", quality);
-
-				resolve(compressedDataURL);
-			};
-
-			img.src = dataURL;
-		});
-	}
-
-	async function savePageAsImage() {
-		const body = document.getElementById("mainCapture");
-		const bg = document.getElementById("bgImg");
-		const captureWidth = bg.width; //1700
-		const captureHeight = bg.height - 10; //3150
-		const saveButton = document.getElementById("saveButton");
-		const cover = document.getElementById("mainCover");
-		let vw = document.documentElement.clientWidth;
-		document.getElementById("loadingGif").style.left = vw / 2 - 32 + "px";
-		document.getElementById("loadingNotice").style.left = vw / 2 - 300 + "px";
-
-		switchController();
-		cover.style.display = "block";
-		setTimeout(function() {
-			cover.style.opacity = "1";
-			document.getElementById("mainCapture").style = "filter: blur(15px);"
-		}, 50);
-		document.body.style.zoom = 1;
-		document.body.style = "-moz-transform: scale(" + document.body.style.zoom +
-			"); -moz-transform-origin: 0 0;";
-		saveButton.disabled = true;
-		html2canvas(body, {
-			useCORS: true,
-			width: captureWidth,
-			height: captureHeight,
-			scale: 1.2,
-		}).then(async canvas => {
-			const dataURL = canvas.toDataURL("image/jpg");
-
-			const compressedDataURL = await compressImage(dataURL, 0.8);
-
-			const link = document.createElement("a");
-			// link.href = dataURL;
-			link.href = compressedDataURL;
-			let currentDateTime = new Date().toLocaleString();
-			const username = document.getElementById("userName").textContent;
-			link.download = "B30_" + username + "_" + currentDateTime + ".jpg";
-			link.textContent = "Download Image";
-
-			// 新标签页打开图片
-			const img = document.createElement("img");
-			img.src = compressedDataURL;
-
-			const newTab = window.open();
-			newTab.document.body.appendChild(img);
-
-			img.style.width = "100%";
-
-			document.body.appendChild(link);
-			link.click();
-
-			document.body.removeChild(link);
-
-
-			setTimeout(function() {
-				cover.style.opacity = "0";
-				cover.style.display = "none";
-				document.getElementById("mainCapture").style = "filter: blur(0px);"
-			}, 800);
-
-			saveButton.disabled = false;
-			setTimeout(function() {
-				switchController();
-				setTimeout(function() {
-					resizeWidth();
-				}, 80);
-			}, 800);
-		});
-	}
-	saveButton.addEventListener("click", savePageAsImage);
-
-	// 页脚显示 copyright 和当前时间
-	var currentDateTime = new Date().toLocaleString('zh-CN', {
-		year: 'numeric',
-		month: '2-digit',
-		day: '2-digit',
-		hour: '2-digit',
-		minute: '2-digit',
-		second: '2-digit',
-		hour12: false
-	});
-	document.getElementById("copyright").textContent = "Generated by RTE at http://SmartRTE.github.io @ " +
-		currentDateTime.replace(" ", "ㅤ");
-
-	// 页面加载时调用一次以显示初始内容
-	refreshData((flag === 1) ? (csv_data) : (localStorage.saved_csv_data));
-});
-//重新设定背景图高度
-function calculateBackgroundHeight(amount) {
-	var fixed = 450;
-	var height = 200 * (1 + Math.floor((amount - 1) / 3)) + fixed;
-	if (amount <= 30) {
-		return height;
-	} else {
-		return height + 95;
-	}
-}
-//修改显示单元个数
-function changeDisplayAmount() {
-	const displayAmountInput = document.getElementById("displayAmount");
-	const newDisplayAmount = parseInt(displayAmountInput.value);
-	const bgImg = document.getElementById("bgImg");
-	const mainCapture = document.getElementById("mainCapture");
-	if (!isNaN(newDisplayAmount)) {
-		displayAmount = newDisplayAmount;
-		bgImg.style.height = String(calculateBackgroundHeight(newDisplayAmount)) + "px";
-		document.body.style.height = bgImg.style.height;
-		mainCapture.style.height = bgImg.style.height;
-		refreshData((flag === 1) ? (csv_data) : (localStorage.saved_csv_data));
-	}
-};
-
-//输入个人潜力值重新计算R10
-function recalculateR10() {
-	// console.log("recalcR10 Called");
-	//const pPTTDiv = document.getElementById("personalPTT");
-	const inputElement = document.getElementById("pPTTInput");
-	const R10 = document.getElementById("R10");
-	//const starFrame = document.getElementById("starImg");
-	const starFrame = document.getElementById("b30Value"); //清空后重新append一个图img和文字div
-	const B30 = document.getElementById("B30");
-	const newPTT = parseFloat(inputElement.value);
-	localStorage.setItem('saved_ptt', newPTT);
-	const calculatedR10 = calculateR10(newPTT, parseFloat(B30.textContent));
-	if (isNaN(newPTT)) {
-		newPTT = 0.00;
-	} else if (newPTT > 13.13) {
-		newPTT = "🤔";
-		// console.log("🤔");
-	}
-	starFrame.style.opacity = "0%";
-	starFrame.innerHTML = "";
-
-	setTimeout(function() {
-		const starImg = document.createElement("img");
-		starImg.id = "starImg";
-		starImg.src = "img/rating/rating_" + judgeStars(newPTT) + ".png";
-		starFrame.appendChild(starImg);
-		starFrame.style.opacity = "100%"
-		const pPTTDiv = document.createElement("div");
-		pPTTDiv.id = "personalPTT";
-		pPTTDiv.textContent = newPTT.toFixed(2);
-		starFrame.appendChild(pPTTDiv);
-	}, 120);
-	R10.textContent = calculatedR10 <= 13.36 ? calculatedR10.toFixed(4) : "🤔";
-
-	function calculateR10(newPTT, B30Value) {
-		// console.log("reR10 Called");
-		const res = 4 * newPTT - 3 * B30Value;
-		return res <= 0 ? 0 : res;
-	}
-}
-
-
-//显示输入的玩家名
-function refreshUsername() {
-	const userNameDiv = document.getElementById("userName");
-	const input1 = document.getElementById("nameInput");
-	userNameDiv.textContent = input1.value;
-	localStorage.setItem('saved_username', input1.value);
-}
-//显示输入的好友码
-function refreshUID() {
-	if (flag_uid) {
-		const uidDiv = document.getElementById("uid");
-		const input2 = document.getElementById("uidInput");
-		uidDiv.textContent = formatScore(input2.value, " ");
-		localStorage.setItem('saved_uid', input2.value);
-	}
-
-}
-//上传使用的csv文件
-document.addEventListener("DOMContentLoaded", function() {
-	// 获取上传按钮和文件输入元素
-	const uploadButton = document.getElementById("uploadButton");
-	const fileInput = document.getElementById("fileInput");
-
-	// 添加上传按钮的点击事件处理程序
-	uploadButton.addEventListener("click", function() {
-		// 触发文件选择对话框
-		fileInput.click();
-	});
-
-	// 读取新csv文件逻辑
-	fileInput.addEventListener("change", function(event) {
-		const selectedFile = event.target.files[0];
-		if (selectedFile) {
-			const reader = new FileReader();
-			reader.onload = function(event) {
-				flag = 1;
-				csv_data = event.target.result;
-				csv_name = selectedFile.name; // 获取文件名
-
-				localStorage.setItem('saved_csv_name', csv_name);
-				localStorage.setItem('saved_csv_data', csv_data);
-
-				// console.log("new csv get");
-				// console.log(localStorage.saved_csv_data);
-
-				default_csv_name = csv_name;
-				refreshData(csv_data);
-				recalculateR10();
-				fileInput.dispatchEvent(R10Event);
-			};
-			reader.readAsText(selectedFile);
 		}
 	});
 
-});
+}
 
 
-//更换成选定的头像、id、好友码、ptt、背景图、曲绘列表
-document.addEventListener("DOMContentLoaded", function() {
-	resizeWidth();
-	if (localStorage.saved_icon != null) {
-		switchSelect(localStorage.saved_icon);
-	} else {
-		switchSelect("0");
-	}
-	if (localStorage.saved_ptt != null) {
-		document.getElementById("pPTTInput").value = localStorage.saved_ptt;
-		recalculateR10();
-	}
-	if (localStorage.saved_username != null) {
-		document.getElementById("nameInput").value = localStorage.saved_username;
-		refreshUsername();
-	}
-	if (localStorage.saved_uid != null) {
-		document.getElementById("uidInput").value = localStorage.saved_uid;
-		refreshUID();
-	}
-	if (localStorage.saved_csv_name && localStorage.saved_csv_data) {
-		// console.log("saved_bg:" + localStorage.saved_bg);
-		// console.log("try refilling b39 with localstorage");
-		document.getElementById("b30Data").innerHTML = "";
-		csv_data = localStorage.saved_csv_data;
-		//console.log(localStorage.saved_csv_data);
-		refreshData(localStorage.saved_csv_data);
-		recalculateR10();
-	} else {
-		fetchAndSaveCSV(default_csv_name, csv_data); //显示一次默认b39
-		localStorage.setItem("saved_csv_name", default_csv_name);
-		localStorage.setItem("saved_csv_data", csv_data);
-	}
+/**
+ * 用于规范输入的潜力值，防止溢出
+ */
+function formatPotential(ptt) {
+	let t = ptt + '000';
+	return t.substring(0, t.indexOf('.') + 3);
+}
 
-});
-
-
-document.addEventListener("DOMContentLoaded", function() {
+/**
+ * 页面加载时将缓存数据内的设置部分替换到页面内
+ */
+function initializeSettings() {
+	// let r10,b30,max;
+	if (localStorage.saved_username) {
+		localStorage.userName = localStorage.saved_username;
+		localStorage.removeItem('saved_username')
+	}
+	if (!localStorage.userName) {
+		localStorage.userName = 'Hikari';
+	}
+	if (localStorage.saved_user_id) {
+		localStorage.userId = localStorage.saved_uid;
+		localStorage.removeItem('saved_uid')
+	}
+	if (!localStorage.userId) {
+		localStorage.userId = '100000001';
+	}
 	if (localStorage.saved_bg) {
-		switchBg(0);
+		localStorage.backgroundImage = localStorage.saved_bg;
+		localStorage.removeItem('saved_bg');
 	}
-	
-	if (localStorage.illustration_type == 'hd'){
-		console.log("hd ILLS");
-		illustration_path = "illustration/";
-		document.getElementById("illustrationType").textContent = "切换标清曲绘(快，省流量)";
-		document.getElementById("switchIllustrationType").textContent = "切换到标清曲绘";
-	} else {
-		console.log("sd ILLS");
-		illustration_path = "Processed_Illustration/";
-		document.getElementById("illustrationType").textContent = "切换高清曲绘(慢，费流量)";
-		document.getElementById("switchIllustrationType").textContent = "切换到高清曲绘";
+	if (!localStorage.backgroundImage) {
+		localStorage.backgroundImage = '8';
 	}
-	//头像切换
+	if (!localStorage.courseDanFrame) {
+		localStorage.courseDanFrame = "1";
+	}
+	if (localStorage.saved_ptt) {
+		localStorage.potential = localStorage.saved_ptt;
+		localStorage.removeItem('saved_ptt');
+	}
+	if (!localStorage.potential) {
+		localStorage.potential = 6.16;
+	}
+	if (!localStorage.rbm) {
+		localStorage.rbm = [6.16, 6.16, 6.16];
+	}
+	if (!localStorage.potentialFrame) {
+		localStorage.potentialFrame = 1;
+	}
+	if (localStorage.saved_icon) {
+		localStorage.avatar = localStorage.saved_icon;
+		localStorage.removeItem('saved_icon')
+	}
+	if (!localStorage.avatar) {
+		localStorage.avatar = '34u';
+	}
+	if (localStorage.customAvatar) {
+		$('#custom-avatar img').attr('src', localStorage.customAvatar);
+	}
 
-	// 加载头像列表
-	fetch('sample/avatar.csv')
-		.then(response => response.text())
-		.then(data => {
-			const fileNames = data.trim().split('\n');
+	if (localStorage.customBackground) {
+		$('#custom-background img').attr('src', localStorage.customBackground);
+	}
 
-			const avatarTable = document.getElementById('avatarTable');
-			let row = document.createElement('tr');
+	$('#user-name-input').val(localStorage.userName);
+	$('#user-name').text(localStorage.userName);
+	$('#user-id-input').val(localStorage.userId);
+	$('#user-id span').text(formatUserID(localStorage.userId));
+	let t = localStorage.rbm.split(',');
+	rbm = t;
+	$('#ptt-max span').text(toFloor(parseFloat(t[2]), 4));
+	$('#ptt-b30 span').text(toFloor(parseFloat(t[1]), 4));
+	$('#ptt-r10 span').text(toFloor(parseFloat(t[0]), 4));
+	$('#potential-input').val(localStorage.potential);
+	$('#potential-value').text(toFloor(parseFloat(localStorage.potential), 2));
+	changePotential(localStorage.potential);
+	changePotentialFrame(localStorage.potentialFrame);
+	changeAvatar(localStorage.avatar);
+	changeCourseDanFrame(localStorage.courseDanFrame);
+	changeBackgroundImage(localStorage.backgroundImage);
 
-			for (const fileName of fileNames) {
-				if (row.childElementCount >= 4) {
-					avatarTable.appendChild(row);
-					row = document.createElement('tr');
-				}
+	if (localStorage.useCustomAvatar == 'true') {
+		$('#use-custom-avatar').prop("checked", true);
+		$('#icon img').attr('src', localStorage.customAvatar);
+	}
 
-				const cell = document.createElement('td');
-				cell.onclick = () => switchSelect(fileName.trim());
-				const img = document.createElement('img');
-				img.className = 'selectImage';
-				img.src = `img/avatar/${fileName.trim()}_icon.webp`;
-				cell.appendChild(img);
-				row.appendChild(cell);
+	if (localStorage.useCustomBackground == 'true') {
+		$('#use-custom-background').prop("checked", true);
+		$('#background-image').attr('src', localStorage.customBackground);
+	}
+}
+
+
+/**
+ * 通过button触发input的上传
+ */
+function inputFile(id) {
+	$(`#${id}`).click();
+}
+
+
+/**
+ * 初始化监听上传文件
+ */
+function initializeUploadListener() {
+	//监听上传st3或csv文件事件
+	$('#file-input').change(function() {
+		console.log("file-input active");
+		let selectedFile = this.files[0];
+		// console.log(selectedFile);
+		if (selectedFile) {
+			let fileName = selectedFile.name;
+			console.log("selectedFileName:" + fileName);
+			if (fileName.endsWith(".csv")) {
+				let reader = new FileReader();
+				reader.onload = function(e) {
+					csvContent = reader.result;
+					console.log("CSV Content:" + "success");
+					// console.log("CSV Content:" + csvContent);
+					runConvert(csvContent);
+				};
+				reader.readAsText(selectedFile);
+			} else {
+				runQuery(selectedFile);
+				console.log("Not a .csv file");
 			}
+		}
+		$('#file-input').val('');
+	});
+	//监听自定义头像上传事件
+	$('#custom-avatar-input').on('change', function(event) {
+		const file = event.target.files[0];
+		const reader = new FileReader();
+		if (file.size > 1048576) {
+			console.log("over 1MB");
+			alert("图片大小超过1MB，请尝试换一张或压缩质量后再试")
+		} else {
+			reader.readAsDataURL(file);
+			reader.onload = function() {
+				const base64Image = reader.result;
+				$('#temp-avatar').attr('src', base64Image);
+				// displayCachedImage(base64Image);
+				$('#temp-avatar').ready(function() {
+					clipDiamond();
+					// console.log(base64Image)
 
-			if (row.childElementCount > 0) {
-				avatarTable.appendChild(row);
+				})
+			};
+		}
+	});
+	//监听自定义背景图上传事件
+	$('#custom-background-input').on('change', function(event) {
+		const file = event.target.files[0];
+		const reader = new FileReader();
+		if (file.size > 3145728) {
+			console.log("over 3MB");
+			alert("图片大小超过3MB，请尝试换一张或压缩质量后再试")
+		} else {
+
+			reader.readAsDataURL(file);
+			reader.onload = function() {
+				const base64Image = reader.result;
+				$('#custom-background img').attr('src', base64Image);
+				localStorage.setItem('customBackground', base64Image);
+				if ($('#use-custom-background').is(':checked')) {
+					$('#background-image').attr('src', base64Image)
+					// $('#use-custom-background').prop('checked', false)
+				}
+			};
+		}
+	});
+
+}
+/**
+ * 运行查询语句
+ */
+async function runQuery(file) {
+	let buffer = await file.arrayBuffer();
+	let uInt8Array = new Uint8Array(buffer);
+	db = new SQL.Database(uInt8Array);
+
+	if (!db) {
+		console.error('Database not opened.');
+		alert("st3文件选取有误，请重试！");
+		return;
+	}
+	// console.log(query);
+	let result = db.exec(query);
+	if (result.length > 0) {
+		// console.log(result[0]);
+		saveQueryResult(result[0]);
+	} else {
+		alert("上传的数据库是空的！你是不是忘记把存档同步到本地辣？");
+	}
+}
+
+
+/**
+ * 通过sql查询结果生成成绩对象数组并生成新的页面内容，包括各种数值的计算和成绩单元生成
+ * @param result sql查询结果
+ */
+function saveQueryResult(result) {
+	// //保存表头
+	// columns = result.columns;
+	let temp = result.values;
+	// console.log(temp)
+	//置空
+	currentArray = [];
+	temp.forEach((singleResult, index) => {
+		// console.log(singleResult)
+		let single = new PlayResult(singleResult[0], singleResult[1], singleResult[2], singleResult[3],
+			singleResult[4], singleResult[5], singleResult[6], singleResult[7], singleResult[8],
+			singleResult[9], index);
+		currentArray.push(single);
+	});
+	filteredArray = currentArray;
+	// displayB30(currentArray);
+	// generateCard(currentArray);
+	// generateTable(currentArray);
+	// console.table(currentArray)
+	saveLocalStorage(currentArray);
+	// displayB30(filteredArray);
+	switchP30(0)
+}
+
+/**
+ * 将csv格式的分数表转换成为成绩对象数组
+ * @param csv 待转化怒的csv文件，必须是旧版或新版页面能生成和读取的对应格式
+ */
+function runConvert(csv) {
+	file = csv.trim();
+	const rows = file.split('\n');
+	tempArray = [];
+	for (i = 1; i < rows.length; i++) {
+		const row = rows[i].split(',');
+		single = new PlayResult(row[0], row[1], row[2],
+			parseFloat(row[3]), parseFloat(row[4]),
+			parseFloat(row[5]), parseFloat(row[6]),
+			parseFloat(row[7]), parseFloat(row[8]),
+			parseFloat(row[9]), i - 1);
+		tempArray.push(single);
+	}
+	filteredArray = tempArray;
+	currentArray = filteredArray;
+	saveLocalStorage(filteredArray);
+	// displayB30(filteredArray);
+	// generateCard(filteredArray);
+	// generateTable(filteredArray);
+	// console.log(currentArray);
+	// displayB30(filteredArray);
+	switchP30(0);
+}
+
+/**
+ * 计算显示B30数据
+ * @param array 成绩对象数组
+ */
+function displayB30(array) {
+	rbm = calculateMax(array);
+	localStorage.rbm = rbm;
+	// generateUnits(array, unitQuantity);
+	$('#ptt-max span').text(toFloor(parseFloat(rbm[2]), 4));
+	$('#ptt-b30 span').text(toFloor(parseFloat(rbm[1]), 4));
+	$('#ptt-r10 span').text(toFloor(parseFloat(rbm[0]), 4));
+}
+
+function displayAccuratePtt() {
+	alert(`精确数值（大概）：\n不推分可获得的最高PTT:${rbm[2]}\nBest30平均值：${rbm[1]}\nRecent10平均值：${rbm[0]}`)
+}
+
+/**
+ * 用于对输入的好友码自动规范化，每三位数用一位空格分隔，前补0补满9位数
+ * @param {string} id
+ * @return {string} 规范化后的好友码字符串
+ */
+function formatUserID(id) {
+	let t = ('000000000' + id).slice(-9);
+	let strArr = [];
+	for (i = 0; i < 9; i += 3) {
+		strArr.push(t.slice(i, i + 3));
+	}
+	let newID = strArr.join(' ');
+	return newID;
+}
+
+/**
+ * 计算并返回页面的高度，用于限制调整页面缩放前后以及生成图片时的高度表现
+ * @return 计算后的精确高度
+ */
+function getCaptureHeight() {
+	captureHeight = document.getElementById('container').offsetHeight +
+		document.getElementById('b30-data').offsetHeight +
+		document.getElementById('copyright').offsetHeight +
+		39; //固定margin
+	return captureHeight;
+}
+
+/**
+ * 生成游玩结果单元，生成结束后重新调整页面宽度和高度
+ * @param {Array<PlayResult>} array 待生成单元的成绩数组
+ * @param {number} unitQuantity 待生成单元的个数
+ */
+async function generateUnits(array, unitQuantity) {
+	console.log('generateUnits called')
+	let ary = array;
+	$('#b30-data').html('')
+	for (index = 0; index < ary.length; index++) {
+
+		if (index == unitQuantity) {
+			break;
+		}
+		if (index == 30) {
+			appendOverflowSpliter();
+		}
+		appendSongUnit(ary[index], index + 1);
+	}
+	$('body').css('height', getCaptureHeight());
+	$('#background').css('height', getCaptureHeight());
+	$('#background-image').css('height', getCaptureHeight());
+	resizeWidth();
+}
+/**
+ * 补齐时间显示部分的两位数字
+ * @param {string} value 原始数值
+ * @return {string} 补充过后的字符串
+ */
+function fillZero(value) {
+	return ('0' + value).slice(-2);
+}
+/**
+ * 自动更改页面底部显示的时间，频率为1s/次
+ */
+async function showTime() {
+	var now = new Date();
+	var year = now.getFullYear();
+	var month = fillZero(now.getMonth() + 1);
+	var day = fillZero(now.getDate());
+	var hours = fillZero(now.getHours());
+	var minutes = fillZero(now.getMinutes());
+	var seconds = fillZero(now.getSeconds());
+
+	var formattedTime = year + "/" + month + "/" + day + "\t" + hours + ":" + minutes + ":" + seconds;
+
+	$('#copyright span').text(formattedTime);
+}
+// async function loadDefaultCSV() {
+
+// };
+// async function loadLocalStorage() {
+
+// };
+
+
+/**
+ * 生成单个游玩成绩单元，由各种元素拼合而成
+ * @param {PlayResult} currentRow 从成绩对象数组中传入的一个成绩对象
+ * @param {number} index 该条成绩在数组中的下标，用来显示排名
+ * 
+ */
+function appendSongUnit(currentRow, index) {
+	let currentUnit = $('<div class="song-result-unit" id="' +
+		currentRow.songId + '-' + currentRow.difficulty +
+		'">').addClass(currentRow.difficulty.toLowerCase());
+	let ill = $('<div onclick="modifyPlayResult(' + currentRow.innerIndex + ')">').addClass(
+		'song-illustration-container');
+	ill.append($('<img>').addClass('song-illustration').attr('src', illustrationPath + currentRow.illustration));
+
+	let info = $('<div>').addClass('song-information');
+	info.append($('<div>').addClass('song-playrating')
+		.text(toFloor(currentRow.playRating, 4)));
+	let z = String(currentRow.constant).split('.');
+	// console.log(z);
+	info.append($('<div>').addClass('song-constant')
+		.text(currentRow.difficulty + z[0] + (z[1] >= 7 ? '+ ' : ' ') + '[' + currentRow.constant + ']'));
+	info.append($('<div>').addClass('song-rank').text('#' + index));
+	let sn = $('<div>').addClass('song-name').text(currentRow.songName);
+	let ss = $('<div>').addClass('song-score').text(scoreFormat(parseInt(currentRow.score)));
+	let si = $('<div>').addClass('song-items');
+	si.append($('<div>').addClass('item-pure').text('P/' + currentRow.perfect + '(-' + currentRow
+		.normalPerfect + ')'));
+	si.append($('<div>').addClass('item-far').text('F/' + currentRow.far));
+	si.append($('<div>').addClass('item-lost').text('L/' + currentRow.lost));
+
+	let rk = getSongRanking(currentRow.score, currentRow.far, currentRow.lost)
+	let ri = $('<img>').addClass('song-ranking-image').attr('src', songRankingPath + rk + '.png')
+
+	if (rk == 'PM' && (currentRow.perfect != 0) && (currentRow.criticalPerfect == currentRow.perfect)) {
+		currentUnit.addClass('theoretical');
+	}
+	currentUnit.append(ill);
+	currentUnit.append(info);
+	currentUnit.append(sn);
+	currentUnit.append(ss);
+	currentUnit.append(si);
+	currentUnit.append(ri);
+	$('#b30-data').append(currentUnit)
+}
+
+
+/**
+ * 通过潜力值返回对应的潜力值星框
+ * @param {number} max （最大）潜力值
+ * @return {number} 对应的潜力值星框对应的图片序号
+ */
+function getPotentialFrame(max) {
+	const ranges = [3.49, 6.99, 9.99, 10.99, 11.99, 12.49, 12.99, 13.5];
+	const frames = [0, 1, 2, 3, 4, 5, 6, 7];
+	for (let i = 0; i < ranges.length; i++) {
+		if (max <= ranges[i]) {
+			return frames[i];
+		}
+	}
+}
+
+
+/**
+ * 生成overflow的分隔线和分割文字图片
+ */
+function appendOverflowSpliter() {
+	let overflow = $('<div id="spliter-overflow">').addClass('spliter');
+	overflow.append($('<img id="spliter-image-overflow">').addClass('spliter-image').attr('src', 'img/divider.png'));
+	overflow.append($('<img id="spliter-text-overflow">').attr('src', 'img/overflow.png'));
+	$('#b30-data').append(overflow);
+	// console.log("spliter append")
+}
+
+/**
+ * 对分数进行规范化，每3位以角标'分隔
+ * @return {string} 加入了分隔符号后的分数字符串
+ */
+function scoreFormat(score) {
+	return score.toLocaleString().replaceAll(',', "'");
+}
+
+
+/**
+ * 对html2canvas生成的图片进行二次压缩减小体积
+ * @param {string} dataURL 压缩前图片对应的dataURL
+ * @param {number} quality 图片质量（0~1.0） 
+ * @return {string} 压缩后图片对应的dataURL
+ */
+async function compressImage(dataURL, quality) {
+	return new Promise((resolve, reject) => {
+		const img = new Image();
+		img.onload = function() {
+			const canvas = document.createElement('canvas');
+			const ctx = canvas.getContext('2d');
+
+			canvas.width = img.width;
+			canvas.height = img.height;
+
+			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+			const compressedDataURL = canvas.toDataURL('image/jpeg', quality);
+
+			resolve(compressedDataURL);
+		};
+		img.onerror = reject;
+		img.src = dataURL;
+	});
+}
+
+/**
+ * 使用html2canvas库，将页面主体部分捕获转换为canvas，再进一步转换成为图片保存
+ * @param {string} captureId 将捕获的容器元素的id，这个id的元素及子元素都会被捕获
+ * 
+ */
+async function saveAsImage(captureId) {
+	resizeWidth(0);
+	$('#mainCover').css({
+		'display': 'flex',
+	})
+	const id = document.getElementById(captureId);
+	const captureWidth = document.getElementById('mainCapture').offsetWidth;
+	const captureHeight = getCaptureHeight();
+	html2canvas(id, {
+		useCORS: true,
+		width: captureWidth,
+		height: captureHeight,
+		scale: 1.2
+	}).then(async canvas => {
+		const dataURL = canvas.toDataURL('image/jpg');
+		const compressedDataURL = await compressImage(dataURL, 0.6);
+		// const compressedDataURL = dataURL;
+		const link = document.createElement('a');
+		link.href = compressedDataURL;
+		link.download = 'B30_' + localStorage.userName +
+			"_" + $('#copyright span').text().replace('\t', '-') +
+			'.jpg';
+		const img = document.createElement('img');
+		img.src = compressedDataURL;
+
+		const newTab = window.open();
+		newTab.document.body.appendChild(img);
+
+		img.style.width = '100%';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		resizeWidth(1);
+		$('#mainCover').css({
+			'display': 'none',
+		})
+	});
+}
+
+/**
+ * 更换选择的头像并保存到localStorage
+ * @param {string} index 头像对应的文件序号
+ */
+function changeAvatar(index) {
+	console.log(index)
+	$('#icon img').attr('src', avatarPath + index + '_icon.webp');
+	$('#avatar-display img').attr('src', avatarPath + index + '_icon.webp');
+	localStorage.setItem('avatar', index)
+	displayWindow('avatar-select');
+	$('#use-custom-avatar').prop('checked', false)
+}
+/**
+ * 更换选择的段位框并保存到localStorage
+ * @param {string} index 段位框对应的文件序号
+ */
+function changeCourseDanFrame(index) {
+	$('#user-course-dan').attr('src', userCourseDanPath + index + '.png');
+
+	$('#id-course-dan').attr('src', userCourseDanPath + index + '.png');
+	$('#user-course-dan-display').css('background-image', 'url("' + userCourseDanPath + index + '.png")');
+	$('#user-course-dan-display').text(index + 'dan');
+	displayWindow('user-course-dan-select');
+	localStorage.setItem('courseDanFrame', index);
+}
+/**
+ * 更换选择的背景图并保存到localStorage
+ * @param {string} index 背景图对应的文件序号
+ */
+function changeBackgroundImage(index) {
+	$('#background-image').attr('src', backgoundImagePath + index + '.webp');
+	$('#background-display').attr('src', backgoundImagePath + index + '.webp')
+	displayWindow('background-select');
+	localStorage.setItem('backgroundImage', index);
+	$('#use-custom-background').prop('checked', false)
+}
+/**
+ * 修改潜力值显示，并同步计算新的recent10，替换新的潜力值星框
+ * @param {string} ptt 潜力值
+ */
+function changePotential(ptt) {
+	p = parseFloat(ptt).toFixed(2);
+	$('#potential-value').text(p);
+	changePotentialFrame(getPotentialFrame(ptt));
+	localStorage.setItem('potential', p);
+	console.log('ptt=' + p)
+	console.log(parseFloat(ptt))
+	$('#ptt-r10 span').text((parseFloat(ptt) * 4 - parseFloat($('#ptt-b30 span').text()) * 3).toFixed(4))
+}
+
+/**
+ * 替换新的潜力值星框
+ * @param {string} index 星框对应的图片序号
+ */
+function changePotentialFrame(index) {
+	$('#potential-frame').attr('src', potentialFramePath + index + '.png');
+	localStorage.setItem('potentialFrame', index);
+}
+
+/**
+ * 更改显示单元数
+ */
+function changeUnitQuantity() {
+	let q = $('#unit-quantity').val();
+	unitQuantity = q;
+	generateUnits(filteredArray, unitQuantity);
+}
+
+/**
+ * 切换为隐藏uid *** *** ***
+ */
+function hideUID() {
+	uidFlag = !uidFlag;
+	if (uidFlag == true) {
+		$('#user-id span').text(formatUserID(localStorage.userId));
+	} else {
+		$('#user-id span').text('✱✱✱ ✱✱✱ ✱✱✱');
+
+	}
+}
+
+/**
+ * 依照当前访问的网址（github/gitee）初始化页面下方二维码的显示
+ */
+function initializeQRCode() {
+	if (window.location.href.startsWith('https://smartrte.github.io')) {
+		$('#qrcode').attr('src', 'img/QRCODE-githubio.jpg');
+	}
+	// else if(window.location.href.startsWith('')){
+	// 	$('#qrcode').attr('src', 'img/QRCODE-githubio.jpg');
+	// }
+}
+/**
+ * 修改分数内容后重新计算分数、重新加载显示单元
+ * @param {Array<PlayResult>} array 要填入的分数对象数组
+ * 
+ */
+function reloadContent(array) {
+	array.sort(function(a, b) {
+		return resultSort(a, b, 'playRating', 1);
+	})
+	array.forEach(function(currentRow, index) {
+		currentRow.innerIndex = index;
+	})
+
+	saveLocalStorage(array);
+	rbm = calculateMax(currentArray);
+	localStorage.rbm = rbm;
+	switchP30(0)
+}
+
+/**
+ * 调整页面缩放
+ * @param {Number} flag 1=计算缩放 0=重置缩放到100%
+ */
+
+function resizeWidth(flag = 1) {
+	var scaleValue;
+	if (flag == 1) {
+		scaleValue = document.documentElement.clientWidth / 1700;
+	} else {
+		scaleValue = 1;
+	}
+	// console.log("resized" + document.documentElement.clientWidth + scaleValue)
+	$('#mainCapture').css({
+		'-moz-transform-origin': '0 0',
+		'-webkit-transform-origin': '0 0',
+		'-ms-transform-origin': '0 0',
+		'transform-origin': '0 0',
+		'-moz-transform': 'scale(' + scaleValue + ')',
+		'-webkit-transform': 'scale(' + scaleValue + ')',
+		'-ms-transform': 'scale(' + scaleValue + ')',
+		'transform': 'scale(' + scaleValue + ')',
+		'height': getCaptureHeight() * scaleValue + 'px',
+		// 'zoom': scaleValue
+	});
+	$('body').css({
+		'height': getCaptureHeight() * scaleValue + 'px',
+		'width': 1700 * scaleValue + 'px'
+	});
+	scaleValue = document.documentElement.clientWidth / 1700;
+	$('#mainCover').css({
+		'-moz-transform-origin': '0 0',
+		'-webkit-transform-origin': '0 0',
+		'-ms-transform-origin': '0 0',
+		'transform-origin': '0 0',
+		'-moz-transform': 'scale(' + scaleValue + ')',
+		'-webkit-transform': 'scale(' + scaleValue + ')',
+		'-ms-transform': 'scale(' + scaleValue + ')',
+		'transform': 'scale(' + scaleValue + ')',
+		'height': `calc(100vh/${scaleValue})`,
+		// 'zoom': scaleValue
+	})
+}
+
+/**
+ * 读取头像列表csv并生成头像选择部分
+ */
+async function initializeAvatarList() {
+	$.ajax({
+		url: avatarListPath,
+		dataType: "text",
+		success: function(resp) {
+			// console.log(resp)
+			avatarList = resp.trim().split('\r\n');
+			avatarList.forEach(function(avt) {
+				appendAvatarUnit(avt);
+			})
+		},
+		error: function(xhr, status, error) {
+			console.error("Error fetching data:", error);
+
+		}
+	});
+}
+/**
+ * 生成背景图片列表
+ * 我懒所以写死了
+ */
+async function initializeBackgroundList() {
+	let l = [
+		'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', 's1', 's2', 's3', 's4', 's5', 's6',
+		's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17', 's18', 's19', 's20', 's21',
+		's22', 's23', 's24', 's25', 's26'
+	];
+	let list = $('#background-list')
+	l.forEach(function(li) {
+		list.append(
+			$(`<li class="background-option" onclick="changeBackgroundImage(${String(li)})">`)
+			.append($(`<img src='bgs/${li}.webp'>`))
+		)
+	})
+}
+
+async function initializeUserCourseDanList() {
+	let l = [
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+	];
+	let list = $('#user-course-dan-list');
+	l.forEach(function(li) {
+		list.append(
+			$(`<li class="user-course-dan-option" value="${li}" onclick="changeCourseDanFrame(${li})">`)
+			.append($(`<img class="user-course-dan-image" src="img/course/${li}.png">`))
+		)
+	})
+}
+
+/**
+ * 生成头像单元
+ */
+function appendAvatarUnit(avt) {
+	let avtu = $('<li onclick="changeAvatar(' + "'" + avt + "'" + ')">').addClass('avatar-option');
+	let aimg = $('<img>').attr('src', avatarPath + avt + '_icon.webp');
+	avtu.append(aimg);
+	$('#avatar-list').append(avtu);
+}
+
+/**
+ * 切换Pure30/Sex30/Best30时，将符合条件的对象压入filteredArray中
+ * @param {Array<PlayResult} 要筛选的分数对象数组
+ * @param {number} type 0 = PM 1 = PM-1
+ */
+function filterP30S30(array, type) {
+	filteredArray = [];
+	if (type == 0) {
+		array.forEach(function(currentRow, index) {
+			if (currentRow.score >= 10000000) {
+				filteredArray.push(currentRow)
 			}
 		})
-		.catch(error => console.error(error));
-
-
-});
-
-function cln() {
-	if (confirm("确定要清空本地缓存吗？该操作不可撤销！")) {
-		localStorage.clear();
-		location.reload();
-	}
-
-}
-
-function switchIllustrationType(){
-	if(localStorage.illustration_type == 'hd'){
-		localStorage.illustration_type = 'sd';
-		location.reload();
 	} else {
-		localStorage.setItem("illustration_type", 'hd');
-		location.reload();
+		currentArray.forEach(function(currentRow, index) {
+			if ((currentRow.far == 1 && currentRow.lost == 0) ||
+				(currentRow.far == 0 && currentRow.lost == 1)) {
+				filteredArray.push(currentRow)
+			}
+		})
 	}
+	return filteredArray;
+
 }
-
-//显示头像选取框
-function showSelect() {
-	if (flag_switch_controller === 1) {
-		const sheet = document.getElementById("sheet");
-		sheet.style.display = "none";
-	}
-	flag_switch_controller = 0;
-	if (sheet.style.display === "" || sheet.style.display === "none") {
-		sheet.style.display = "inline-block";
-		setTimeout(function() {
-			sheet.style.opacity = "100%";
-			// sheet.style.left = "-480px";
-		}, 350);
-		// console.log("display!");
-	} else if (sheet.style.display === "inline-block") {
-		sheet.style.opacity = "0%";
-		// sheet.style.left = "0px";
-		setTimeout(function() {
-			sheet.style.display = "none";
-		}, 350);
-
-		// console.log("hidden!");
-	}
-}
-
-function switchSelect(path) {
-	let icn = document.getElementById("icon");
-	let icb = document.getElementById("iconblur");
-	let img1; //icon
-	let img2; //conblur
-	icn.style.opacity = "0";
-	icb.style.opacity = "0";
-	setTimeout(function() {
-		icn.innerHTML = "";
-		icb.innerHTML = "";
-		img1 = document.createElement("img");
-		img2 = document.createElement("img");
-		img1.src = "img/avatar/" + path + "_icon.webp";
-		img2.src = "img/avatar/" + path + "_icon.webp";
-		icn.appendChild(img1);
-		icb.appendChild(img2);
-		icn.style.opacity = "100%";
-		icb.style.opacity = "100%";
-	}, 320)
-	localStorage.setItem('saved_icon', path);
-	// console.log("localstorage:saved_icon:" + localStorage.saved_icon);
-}
-
-//切换背景图
-function switchBg(f) {
-	f = parseFloat(f);
-	if (!localStorage.saved_bg) {
-		localStorage.setItem("saved_bg", 8);
+/**
+ * 在best30/pure30/sex30之间循环切换，为了复用这段垃圾代码，使用一个变量add控制
+ * @param {number} add add=1时正常循环，add=0时只使用对应段落的代码重新生成页面内容，不进行切换
+ */
+function switchP30(add = 1) {
+	console.log(`currentP30Flag=${p30Flag},add=${add}`)
+	console.log(currentArray.length)
+	if (p30Flag + add - 1 == 0) { //b->p
+		$('#spliter-text-best30').attr('src', 'img/perfect30.png').css('left', '30.15rem');
+		let f = filterP30S30(currentArray, 0)
+		generateUnits(f, unitQuantity);
+		$('#ptt-p30').html("P30 : " + '<span>' + toFloor(calculateMax(f)[1], 4) + '</span>');
+		$('#switch-p30').text('看看S30');
+	} else if (p30Flag + add - 1 == 1) { //p->s
+		$('#spliter-text-best30').attr('src', 'img/sex30.png').css('left', '30.15rem');
+		let f = filterP30S30(currentArray, 1)
+		generateUnits(filteredArray, unitQuantity);
+		$('#ptt-p30').html("S30 : " + '<span>' + toFloor(calculateMax(f)[1], 4) + '</span>');
+		$('#switch-p30').text('回到B30');
+	} else if (p30Flag + add - 1 == 2 || (add == 0 && p30Flag == 0)) { //s->b
+		$('#spliter-text-best30').attr('src', 'img/best30.png').css('left', '31.25rem');
+		displayB30(currentArray);
+		filteredArray = currentArray;
+		generateUnits(currentArray, unitQuantity);
+		$('#switch-p30').text('看看P30');
 	}
 
-	const bg = document.getElementById("background");
-	localStorage.saved_bg = (parseFloat(localStorage.saved_bg) + parseFloat(f) + 12) % 12;
-	bg.style.opacity = 0;
-
-	setTimeout(function() {
-		bg.innerHTML = "";
-		let bgImg = document.createElement("img");
-		bgImg.id = "bgImg";
-		const bgIndex = localStorage.saved_bg % 12;
-		const bgUrl = "bgs/" + bgIndex + ".webp";
-
-		if (localStorage.getItem(bgUrl)) {
-			bgImg.src = localStorage.getItem(bgUrl);
-		} else {
-			bgImg.src = bgUrl;
-			bgImg.onload = function() {
-				localStorage.setItem(bgUrl, this.src);
-			};
-		}
-
-		bgImg.style.height = String(calculateBackgroundHeight(displayAmount)) + "px";
-		bg.appendChild(bgImg);
-		bg.style.opacity = "100%";
-	}, 250);
-	//显示当前序号
-	const index = document.getElementById("currentBgIndex");
-	index.textContent = parseFloat(localStorage.saved_bg) + 1 + "/12";
-}
-
-
-
-function hideUid() {
-	const f = document.getElementById("hideUID");
-	const uid = document.getElementById("uid");
-	if (f.value == 1) {
-		f.value = 0;
-		f.style.backgroundColor = "lightpink";
-		f.textContent = "显示";
-		uid.style.letterSpacing = "-3px";
-		uid.textContent = "✱✱✱ ✱✱✱ ✱✱✱";
-		flag_uid = 0;
-	} else {
-		f.value = 1;
-		f.style.backgroundColor = "cornflowerblue";
-		f.textContent = "隐藏";
-		uid.style.letterSpacing = "2px";
-		flag_uid = 1;
-		refreshUID();
+	if (add != 0 && (p30Flag == 0 || p30Flag == 2)) {
+		displayWindow('ptt-max');
+		displayWindow('ptt-b30');
+		displayWindow('ptt-r10');
+		displayWindow('ptt-p30');
 	}
+	p30Flag = (p30Flag + add) % 3;
 }
 
-//修改分数表
-function editScore() {
-	const url = `index.html?edit=1`;
-	window.location.href = url;
+/**
+ * 使用canvas对上传的头像图片进行重新绘制，并将其裁剪成菱形
+ * 否则 html2canvas不支持clip属性，会导致头像样式丢失，难看的一
+ */
+function clipDiamond() {
+	let tempImg = new Image();
+	tempImg.src = $('#temp-avatar')[0].src;
+	var canvas = document.createElement('canvas');
+	var ctx = canvas.getContext('2d');
+	canvas.width = tempImg.width || tempImg.naturalWidth;
+	canvas.height = tempImg.height || tempImg.naturalHeight;
+	canvas.height = Math.min(canvas.height, canvas.width);
+	canvas.width = canvas.height;
+	console.log(canvas.width, canvas.height)
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.drawImage(tempImg, 0, 0, canvas.width, canvas.height);
+	console.log(ctx)
+	// 裁剪为菱形
+	ctx.beginPath();
+	ctx.moveTo(0, 0);
+	ctx.lineTo(canvas.width / 2, 0)
+	ctx.lineTo(0, canvas.height / 2)
+	ctx.lineTo(canvas.width / 2, canvas.height)
+	ctx.lineTo(canvas.width, canvas.height / 2)
+	ctx.lineTo(canvas.width / 2, 0)
+	ctx.lineTo(canvas.width, 0)
+	ctx.lineTo(canvas.width, canvas.height)
+	ctx.lineTo(0, canvas.height)
+	ctx.closePath()
+	ctx.clip();
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.drawImage(tempImg, canvas.width / 2, 0, canvas.width, canvas.height / 2, canvas.width /
+		2, canvas.height, 0, canvas.height / 2);
+
+	// 将裁剪后的内容转换为data URL
+	var dataUrl = canvas.toDataURL('image/png');
+	// 显示在页面上
+	// var resultDiv = document.getElementById('result');
+	// resultDiv.innerHTML = '<img src="' + dataUrl + '" />';
+	$('#custom-avatar img').attr('src', dataUrl)
+
+	localStorage.setItem('customAvatar', dataUrl);
+	if ($('#use-custom-avatar').is(':checked')) {
+		$('#icon img').attr('src', dataUrl)
+	}
+};
+
+function handleScroll(unitid, index) {
+	if (index > unitQuantity) {
+		$('#unit-quantity').val(3 * parseInt((index + 3) / 3));
+		changeUnitQuantity();
+	}
+	$('#ai-chan-content').html(`<img id="ai-chan-ill" src="${illustrationPath+filteredArray[index].illustration}" />` +
+		$('#ai-chan-content').text())
+	scrollToElement(unitid);
 }
-
-//调整页面缩放
-function resizeWidth() {
-
-	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1700) +
-		"); -moz-transform-origin: 0 0; -moz-";
-	document.body.style.zoom = (document.documentElement.clientWidth / 1700);
-
-}
-
-window.addEventListener('resize', resizeWidth);

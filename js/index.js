@@ -1,559 +1,572 @@
-let db;
-let SQL;
-let csvContent; //用于保存生成的csv文件，便于传入localStorage
-let edit_flag = 0;
-// 加载sqlite组件
-let config = {
-	locateFile: () => "sql-wasm.wasm",
-};
+let db; //以上两条为sql.js相关
+let SQL; //以上两条为sql.js相关
+let csvContent; //读取和生成csv文件时暂存在csvContent中
+let isEdit; //是否为修改
 
-let myScatterChart;
+let illustrationPath = 'Processed_Illustration/';
+let queryFilePath = "json/query.sql"; //sql查询代码文件路径
+let query = '';
+let columns = ['SongName', 'SongId', 'Difficulty',
+	'Score', 'Perfect', 'Perfect+',
+	'Far', 'Lost', 'Constant',
+	'PlayRating'
+]; //表头
+let currentArray = []; //当前的全部成绩对象数组
+let tempArray = []; //转化csv时使用的中间数组
+let filteredArray = []; //启用筛选时被筛选出的成绩对象数组
+let rbm = []; //recent10 best30 maxptt
 
-//组件初始化
-initSqlJs(config).then(function(sqlModule) {
-	SQL = sqlModule;
-	resizeWidth();
-	console.log("sql.js initialized 🎉");
+// let illusPath = "IllustrationMin/"; //曲绘文件路径
+let sqlWasmPath = "sql-wasm.wasm"; //sql.wasm路径
+
+let diffSongNameMapping = null; //差分曲名映射
+let diffIllMapping = null; //差分曲绘映射
+let currentVersionMaxPotential = 13.12; //现版本最高理论潜力值
+let viewMode = 0; //成绩显示状态，0=table 1=card
+// let currentB30;//当前best30
+
+let rangeUpperBound = 12.0; //筛选中的最高定数边界
+let rangeLowerBound = 1.0; //筛选中的最低定数边界
+
+$(document).ready(function() {
+	displayWindow('filter-window');
+	displayWindow('modify-window');
+	//初始化sqlite.js
+	initializeSqliteJs();
+	//读取查询语句文件
+	initializeQuery();
+	//添加文件上传监听
+	initializeUploadListener();
+	//初始化随机曲目推荐
+	initializeAiChan();
+	//初始化曲名映射
+	diffSongNameMapping = getTitleMapping();
+	//初始化曲绘映射
+	diffIllMapping = getImageMapping();
+	//初始化ptt监听
+	// initializePotentialListener();
+	//初始化定数边界变更监听
+	initailizeConstantRangeListener();
+	//初始化排序方式监听
+	initializeSortListener();
+	//初始化查询结果选择监听
+	initailizeSearchResultListener();
+
 });
 
-function isEdit() {
-	const urlParams = new URLSearchParams(window.location.search);
-	if (urlParams.has("edit")) {
-		edit_flag = urlParams.get("edit");
-		// console.log("edit=" + urlParams.get("edit"));
-		if (edit_flag === "1") {
-			showCSV(localStorage.saved_csv_data);
+/**
+ * 查询结果点击跳转监听,用全局变量viewMode控制跳转位置（表格/卡片）
+ */
+function initailizeSearchResultListener() {
+	$('#search-result').change(function() {
+		let songId = $('#search-result').val();
+		let difficulty = $('#search-difficulty').val();
+		let mode = '';
+		if (viewMode == 0) {
+			mode = 't-'
 		}
+		let unit = mode + songId + '-' + difficulty
+		// console.log(unit)
+		scrollToElement(unit);
+
+	})
+}
+/**
+ * 初始化排序方式监听
+*/
+function initializeSortListener() {
+	$('#sort-mode').change(function() {
+		// console.log($('#sort-mode').val() + '  ' + $('#sort-order').val())
+		filterResult(filteredArray, $('#sort-mode').val(), $('#sort-order').val());
+	})
+	$('#sort-order').change(function() {
+		// console.log($('#sort-mode').val() + '  ' + $('#sort-order').val())
+		filterResult(filteredArray, $('#sort-mode').val(), $('#sort-order').val());
+	})
+}
+/**
+ * 初始化定数范围监听
+*/
+function initailizeConstantRangeListener() {
+	$('#range-lower-bound').on('input', function() {
+		let num = $('#range-lower-bound').val();
+		if (parseInt(num) > 12.0) {
+			$('#range-lower-bound').val("12.0");
+		} else if (parseInt(num) < 1.0) {
+			$('#range-lower-bound').val("1.0");
+		}
+		console.log("0-2:" + parseFloat(num.slice(0, 2)));
+		if (parseFloat(num.slice(0, 2)) < 10 && num.length > 3) {
+			$('#range-lower-bound').val(num.slice(0, 3));
+		} else if (parseFloat(num.slice(0, 2)) >= 10 && num.length > 4) {
+			$('#range-lower-bound').val(num.slice(0, 4));
+
+		}
+		console.log('range-lower-bound:'+$('#range-lower-bound').val())
+		filterByConstant();
+	});
+	$('#range-upper-bound').on('input', function() {
+		let num = $('#range-upper-bound').val();
+		if (parseInt(num) > 12.0) {
+			$('#range-upper-bound').val("12.0");
+		} else if (parseInt(num) < 1.0) {
+			$('#range-upper-bound').val("1.0");
+		}
+		console.log("0-2:" + parseFloat(num.slice(0, 2)));
+		if (parseFloat(num.slice(0, 2)) < 10 && num.length > 3) {
+			$('#range-upper-bound').val(num.slice(0, 3));
+		} else if (parseFloat(num.slice(0, 2)) >= 10 && num.length > 4) {
+			$('#range-upper-bound').val(num.slice(0, 4));
+		}
+		filterByConstant();
+
+	});
+}
+/**
+ * 根据选定的定数范围筛选显示的曲目成绩
+*/
+function filterByConstant() {
+	rangeUpperBound = parseFloat($('#range-upper-bound').val());
+	rangeLowerBound = parseFloat($('#range-lower-bound').val());
+	if(rangeUpperBound < rangeLowerBound){
+		[rangeUpperBound, rangeLowerBound] = [rangeLowerBound, rangeUpperBound];
 	}
+	console.log(rangeUpperBound, rangeLowerBound);
+	filteredArray = [];
+	currentArray.forEach(function(currentRow, index){
+		if(currentRow.constant>= rangeLowerBound && currentRow.constant <= rangeUpperBound){
+			filteredArray.push(currentRow)
+		}
+	});
+	console.log(filteredArray)
+	generateCard(filteredArray);
+	generateTable(filteredArray);
+
 }
 
-window.onload = function() {
-	isEdit();
+/**
+ * 触发上传
+ */
+function inputFile() {
+	$('#file-input').click();
 }
-
-function showEdit() {
-	const btn = document.getElementById("edit");
-	btn.style.display = "none";
-	showCSV(localStorage.saved_csv_data);
+/**
+ * 初始化监听上传文件
+ */
+function initializeUploadListener() {
+	//监听上传文件事件
+	$('#file-input').change(function() {
+		console.log("file-input active");
+		let selectedFile = this.files[0];
+		// console.log(selectedFile);
+		if (selectedFile) {
+			let fileName = selectedFile.name;
+			console.log("selectedFileName:" + fileName);
+			if (fileName.endsWith(".csv")) {
+				let reader = new FileReader();
+				reader.onload = function(e) {
+					csvContent = reader.result;
+					console.log("CSV Content:" + "success");
+					// console.log("CSV Content:" + csvContent);
+					runConvert(csvContent);
+				};
+				reader.readAsText(selectedFile);
+			} else {
+				runQuery(selectedFile);
+				console.log("Not a .csv file");
+			}
+		}
+		$('#file-input').val('');
+	});
 }
-
-//异步加载db文件
-async function openDatabase(file) {
-	const buffer = await file.arrayBuffer();
-	const uInt8Array = new Uint8Array(buffer);
+/**
+ * 运行查询
+ */
+async function runQuery(file) {
+	let buffer = await file.arrayBuffer();
+	let uInt8Array = new Uint8Array(buffer);
 	db = new SQL.Database(uInt8Array);
-	// console.log('Database opened successfully.');
 
-	//执行sql.json里的SQL语句
-	const queryFilePath = 'json/sql.json';
-	const queryResponse = await fetch(queryFilePath);
-	const query = await queryResponse.text();
-	executeQuery(query);
-}
-
-//修改表格事件监听
-addEventListener("DOMContentLoaded", function() {
-	let table = document.getElementById("queryTable");
-	// 添加删除行和添加行事件监听器
-	table.addEventListener("click", function(e) {
-		var target = e.target;
-
-		// 检查点击的是否是删除行按钮
-		if (target.classList.contains("deleteRow")) {
-			var row = target.closest("tr");
-			if (row) {
-				row.remove(); // 删除当前行
-			}
-			convertCSV();
-		}
-	});
-
-	table.addEventListener("click", function(e) {
-		var target = e.target;
-		// 检查点击的是否是添加行按钮
-		if (target.classList.contains("addRow")) {
-			var row = target.closest("tr");
-			if (row) {
-				var newRow = row.cloneNode(true); // 复制当前行
-				// newRow.textContent = '';
-				row.parentNode.insertBefore(newRow, row.nextSibling); // 在当前行的下一行插入新行
-			}
-			convertCSV();
-
-		}
-	});
-
-	table.addEventListener("click", function(e) {
-		var target = e.target;
-		// 检查点击的是否是表格单元格
-		if (target.tagName === "TD") {
-			// console.log("td clicked");
-			var rowIndex = target.parentNode.rowIndex; // 获取行索引
-			var cellIndex = target.cellIndex; // 获取列索引
-			var currentValue = target.textContent;
-			var input = document.createElement("input");
-			input.value = currentValue;
-
-			// 替换单元格内容为输入框
-			target.innerHTML = "";
-			target.appendChild(input);
-
-			// 添加失去焦点事件监听器
-			input.addEventListener("blur", function() {
-				// 当输入框失去焦点时，更新单元格内容为输入框的值
-				target.textContent = input.value;
-				if (cellIndex === 4 || cellIndex === 9) {
-					// console.log("score selected,current singlePTT=" + target.closest("tr")
-					// .cells[10].textContent);
-					target.closest("tr").cells[10].textContent = calculateSinglePTT(target
-						.closest("tr").cells[4].textContent, target.closest("tr").cells[9]
-						.textContent);
-				}
-
-				// console.log("td changed." + target.textContent);
-				sortTable(); // 调用函数来进行排序
-				convertCSV();
-				generateScatterChart('queryTable', 'chart', 9, 4, [1]);
-			});
-
-			// 使输入框获得焦点
-			input.focus();
-			convertCSV();
-
-		}
-
-	});
-
-});
-
-//表格按ptt排序
-function sortTable() {
-	var table = document.getElementById("queryTable");
-	var tbody = table.querySelector("tbody");
-	var rows = Array.from(tbody.rows);
-
-	rows.sort(function(a, b) {
-		var aValue = parseFloat(a.cells[10].textContent); // 第11列的值，这里假设是数值
-		var bValue = parseFloat(b.cells[10].textContent);
-		return bValue - aValue; // 降序排序
-	});
-
-	// 清空tbody内容
-	while (tbody.rows.length > 0) {
-		tbody.deleteRow(0);
-	}
-
-	// 重新插入排序后的行
-	rows.forEach(function(row) {
-		tbody.appendChild(row);
-	});
-}
-
-function executeQuery(query) {
 	if (!db) {
 		console.error('Database not opened.');
 		alert("st3文件选取有误，请重试！");
 		return;
 	}
-	const querytabel = document.getElementById("queryTable");
-	// querytabel.innerHTML = '';
-	//表格绘制
-	const table = document.getElementById('queryTable');
-	const resultArea = document.getElementById('queryResult');
-	resultArea.value = ''; //清除区域内容
-	if (localStorage.saved_notices_flag == "1") {
-		notices.style.opacity = "0";
-		setTimeout(function() {
-			notices.style.display = "none";
-		}, 300)
-		localStorage.setItem("saved_notices_flag", "0");
-	}
-
-	const result = db.exec(query);
-	// console.log(result);
-	let tempCSVData;
+	// console.log(query);
+	let result = db.exec(query);
 	if (result.length > 0) {
-		const rows = result[0].values;
-		const columns = result[0].columns;
-		tempCSVData = [columns.join(',')].concat(rows.map(row => row.join(','))).join('\n');
-		// console.log(tempCSVData);
-		showCSV(tempCSVData);
-		convertCSV();
+		// console.log(result[0]);
+		saveQueryResult(result[0]);
 	} else {
-		alert("上传的数据库是空的！你是不是忘记把存档同步到本地辣？")
+		alert("上传的数据库是空的！你是不是忘记把存档同步到本地辣？");
 	}
 }
 
 
-//监听上传
-document.addEventListener("DOMContentLoaded", function() {
-	const dbFileInput = document.getElementById('dbFileInput');
-	const uploadButton = document.getElementById("uploadButton");
-	const fileInput = document.getElementById("dbFileInput");
-
-	dbFileInput.addEventListener("change", () => {
-		const file = dbFileInput.files[0];
-		if (file) {
-			if (file.name.endsWith(".csv")) {
-				const reader = new FileReader();
-
-				reader.onload = function(event) {
-					const csvContent = event.target.result;
-					showCSV(csvContent);
-				}
-
-				reader.readAsText(file);
-			} else {
-				openDatabase(file);
-			}
-		}
+/**
+ * 通过sql查询结果生成表格/卡片
+ */
+function saveQueryResult(result) {
+	// //保存表头
+	// columns = result.columns;
+	let temp = result.values;
+	//置空
+	currentArray = [];
+	temp.forEach((singleResult, index) => {
+		let single = new PlayResult(singleResult[0], singleResult[1], singleResult[2], singleResult[3],
+			singleResult[4], singleResult[5], singleResult[6], singleResult[7], singleResult[8],
+			singleResult[9], index);
+		currentArray.push(single);
 	});
-
-	// 添加上传按钮的点击事件处理程序
-	uploadButton.addEventListener("click", function() {
-		// 触发文件选择对话框
-		fileInput.click();
-	});
-});
-
-
-//显示csv，绘制表格
-function showCSV(file) {
-	if (localStorage.saved_notices_flag == "1") {
-		notices.style.opacity = "0";
-		setTimeout(function() {
-			notices.style.display = "none";
-		}, 300)
-		localStorage.setItem("saved_notices_flag", "0");
-	}
-	file = file.trim(); //删除文件最后多余的回车
-	const rows = file.split('\n'); // 按行拆分CSV数据
-	const table = document.getElementById("queryTable");
-	table.innerHTML = ''; // 清空表格内容
-
-	// 创建表头
-	const thead = document.createElement('thead');
-	const headerRow = document.createElement('tr');
-	const columns = rows[0].split(',');
-
-	// 添加操作列
-	headerRow.innerHTML = '<th>操作</th>';
-
-	columns.forEach(column => {
-		const th = document.createElement('th');
-		th.textContent = column;
-		headerRow.appendChild(th);
-	});
-
-	thead.appendChild(headerRow);
-	table.appendChild(thead);
-
-	// 创建表格内容
-	const tbody = document.createElement('tbody');
-	tbody.id = "tbody";
-	for (let i = 1; i < rows.length; i++) {
+	filteredArray = currentArray;
+	displayB30(currentArray);
+	generateCard(currentArray);
+	generateTable(currentArray);
+	saveLocalStorage(currentArray);
+}
+/**
+ * 通过上传的csv文件生成表格/卡片
+ */
+function runConvert(csv) {
+	file = csv.trim();
+	const rows = file.split('\n');
+	tempArray = [];
+	for (i = 1; i < rows.length; i++) {
 		const row = rows[i].split(',');
+		if(row[3]!=''){
+		single = new PlayResult(row[0], row[1], row[2],
+			parseFloat(row[3]), parseFloat(row[4]),
+			parseFloat(row[5]), parseFloat(row[6]),
+			parseFloat(row[7]), parseFloat(row[8]),
+			parseFloat(row[9]), i - 1);
+		tempArray.push(single);}
+	}
+	console.log(tempArray)
+	tempArray.sort(function(a,b){
+		return resultSort(a,b,'playRating', 1)
+	})
+	reloadContent(tempArray)
+	filteredArray = tempArray;
+	currentArray = filteredArray;
+	
+	saveLocalStorage(currentArray);
+	displayB30(currentArray);
+	generateCard(currentArray);
+	generateTable(currentArray);
+}
+/**
+ * 读取本地缓存并生成
+ */
 
-		// 添加条件检查：如果第四列为空，跳过该行
-		if (row.length >= 4 && row[3].trim() === '') {
-			continue;
+function readSavedScore() {
+	currentArray = readLocalStorage();
+	if (currentArray == null) {
+		alert("缓存内似乎没有数据哦，可能是第一次使用或者被清除了！")
+	} else {
+		filteredArray = currentArray;
+		displayB30(currentArray);
+		generateCard(currentArray);
+		generateTable(currentArray);
+	}
+}
+
+/**
+ * 使用分数对象数组计算并显示maxptt，b30和r10
+ */
+function displayB30(array) {
+	$('#select-file').text("重新选择文件")
+	$('#notice').slideUp("slow");
+	$('#save-csv-btn-container').show("slow");
+	$('#result-table').show("slow");
+	$('#result-quantity').text(array.length);
+	rbm = calculateMax(array);
+	localStorage.setItem('rbm', rbm);
+	$('#disp-b30 span').text(rbm[1].toFixed(4));
+	$('#disp-max span').text(rbm[2].toFixed(4));
+	$("#disp-ptt").val(toFloor(rbm[2], 2));
+	$('#disp-r10 span').text(rbm[0].toFixed(4));
+}
+/**
+ * 转换为表格行
+ */
+function convertToTable(currentRow, index) {
+	let difColor;
+	switch (currentRow.difficulty) {
+		case ('Past'): {
+			difColor = "pst";
+			break;
+		};
+		case ('Present'): {
+			difColor = "prs";
+			break;
+		};
+		case ('Future'): {
+			difColor = "ftr";
+			break;
+		};
+		case ('Beyond'): {
+			difColor = "byd";
+			break;
+		};
+		case ('Eternal'): {
+			difColor = "etr";
 		}
-		row[9] = calculateSinglePTT(row[3], row[8]);
-		// console.log(row[3] + "," + row[8]);
-		// console.log(row[9].trim());
-		const tr = document.createElement('tr');
+	}
+	difColor += " t-song-name";
+	let $trElem = $('<tr id="t-' + currentRow.songId + "-" + currentRow.difficulty + '" class="' + difColor + '">')
+		.addClass('single-tr-' + currentRow.difficulty.toLowerCase());
+	$trElem.append($('<td>').text(index));
+	$trElem.append($('<td>').append($('<img onclick="modifyPlayResult(' + currentRow.innerIndex + ')">').addClass("table-ill").attr('src', illustrationPath + currentRow.illustration)));
+	$trElem.append($('<td>').addClass('t-song-name').text(currentRow.songName));
+	$trElem.append($('<td>').addClass('t-score').text(currentRow.score));
+	$trElem.append($('<td>').addClass('t-perfect').text(currentRow.perfect));
+	$trElem.append($('<td>').addClass('t-critical-perfect').text(currentRow.criticalPerfect));
+	$trElem.append($('<td>').addClass('t-normal-perfect').text(currentRow.normalPerfect));
+	$trElem.append($('<td>').addClass('t-far').text(currentRow.far));
+	$trElem.append($('<td>').addClass('t-lost').text(currentRow.lost));
+	$trElem.append($('<td>').addClass('t-constant').text(currentRow.constant.toFixed(1)));
+	let linearGradient;
+	// console.log("percentage="+typeof(currentRow.percentage))
 
-		// 添加操作列
-		const actButtons = document.createElement('td');
-		actButtons.className = "rowActions";
-		tr.appendChild(actButtons);
-		const deleteRow = document.createElement("button");
-		deleteRow.className = "deleteRow";
-		deleteRow.textContent = "删除本行";
-		const addRow = document.createElement("button");
-		addRow.className = "addRow";
-		addRow.textContent = "新增一行";
-		actButtons.appendChild(deleteRow);
-		actButtons.appendChild(addRow);
+	if ((currentRow.far != null && currentRow.lost != null) && (currentRow.far == 0 && currentRow.lost == 0)) {
+		// this.percentage = 100 + toFloor((this.criticalPerfect / this.perfect), 2);
+		linearGradient = "linear-gradient(90deg, #55aaff " + (currentRow.percentage - 100) * 100 + "%, #55ff00 " +
+			(currentRow.percentage - 100) * 100 + "%)";
+	} else {
+		// this.percentage = toFloor((this.playRating / (this.constant + 2) * 100), 2);
+		linearGradient = "linear-gradient(90deg, #55ff00 " + currentRow.percentage + "%, rgba(255, 0, 127, 1.0) " +
+			currentRow.percentage + "%)";
+	}
+	let rt = 0;
+	if ((String(currentRow.playRating).length - String(currentRow.playRating).indexOf('.') - 1) < 4) {
+		rt = currentRow.playRating.toFixed(4);
+	} else {
+		rt = toFloor(currentRow.playRating, 4)
+	}
+	$trElem.append($('<td>')
+		.addClass('t-play-rating')
+		.css("background", linearGradient)
+		.text(rt + "(" + toFloor(currentRow.percentage, 2) + "%)"));
+	if (currentRow.normalPerfect == 0 && currentRow.far == 0 && currentRow.lost == 0 && currentRow.perfect != 0) {
+		$trElem.addClass("theoretical");
+	}
+	return $trElem;
+	// $cardElem.append($('<div>').addClass('card-rank').text('#' + index));
+}
+/**
+ * 转换为卡片单元
+ */
+function convertToCard(currentRow, index) {
+	let $cardElem = $('<div id="' + currentRow.songId + "-" + currentRow.difficulty + '">').addClass('single-card ' +
+		currentRow
+		.difficulty.toLowerCase());
 
-		row.forEach(value => {
-			const td = document.createElement('td');
-			td.textContent = value;
+	$cardElem.append($('<div>').addClass('card-rank').text('#' + index));
 
-			tr.appendChild(td);
-			if (value === 'Future') {
-				tr.style.backgroundColor = 'rgba(128,0,128,0.35)';
-			} else if (value === 'Beyond') {
-				tr.style.backgroundColor = 'rgba(255,0,0,0.35)';
-			} else if (value === 'Past') {
-				tr.style.backgroundColor = 'rgba(0,0,255,0.35)';
-			} else if (value === 'Present') {
-				tr.style.backgroundColor = 'rgba(0,255,0,0.35)';
-			}
-		});
-
-		tbody.appendChild(tr);
+	let $illContainer = $('<div onclick="modifyPlayResult('+currentRow.innerIndex+')">').addClass('card-ill-container');
+	$illContainer.append($('<img>').addClass('card-ill').attr('src', illustrationPath + currentRow.illustration));
+	$cardElem.append($illContainer);
+	$cardElem.append($('<div>').addClass('song-name').text(currentRow.songName));
+	$cardElem.append($('<div>').addClass('song-score').text(currentRow.score));
+	let rt = 0;
+	if ((String(currentRow.playRating).length - String(currentRow.playRating).indexOf('.') - 1) < 4) {
+		rt = currentRow.playRating.toFixed(4);
+	} else {
+		rt = toFloor(currentRow.playRating, 4)
+	}
+	$cardElem.append($('<div>').addClass('song-rating').text(currentRow.constant.toFixed(1) + "→" + rt));
+	let linearGradient;
+	if ((currentRow.far != null && currentRow.lost != null) && (currentRow.far == 0 && currentRow.lost == 0)) {
+		// currentRow.percentage = 100 + toFloor((currentRow.criticalPerfect / currentRow.perfect), 2);
+		linearGradient = "linear-gradient(90deg, #55aaff " + (currentRow.percentage - 100) * 100 + "%, #55ff00 " +
+			(currentRow.percentage - 100) * 100 + "%)";
+	} else {
+		// currentRow.percentage = toFloor((currentRow.playRating / (currentRow.constant + 2) * 100), 2);
+		linearGradient = "linear-gradient(90deg, #55ff00 " + currentRow.percentage +
+			"%, rgba(255, 0, 127, 1.0) " +
+			currentRow.percentage + "%)";
 	}
 
-	table.appendChild(tbody);
-
-	//加载完表格显示csv下载按钮
-	const uploadButton = document.getElementById("uploadButton");
-	uploadButton.style.backgroundPosition = "center";
-	uploadButton.textContent = "重新上传文件";
-	const downloadButton = document.getElementById("download");
-	downloadButton.style.display = "inline-block";
-	const sendButton = document.getElementById("sendToB30");
-	sendButton.style.display = "inline-block";
-	sortTable();
-	convertCSV();
-
-	generateScatterChart('queryTable', 'chart', 9, 4, [1]);
+	$cardElem.append($('<div>').addClass('song-percentage')
+		.css("background", linearGradient)
+		.text("(" + toFloor(currentRow.percentage, 2) + "%)"));
+	if (currentRow.normalPerfect == 0 && currentRow.far == 0 && currentRow.lost == 0 && currentRow.perfect != 0) {
+		$cardElem.addClass("theoretical");
+	}
+	return $cardElem;
 }
 
-
-//表格转csv
-function convertCSV() {
-	// 获取表格元素
-	const table = document.getElementById('queryTable');
-
-	// 准备存储数据的数组
-	const data = [];
-
-	// 处理表格的标题行
-	const headerRow = table.querySelector('thead tr');
-	const headerData = [];
-	const headerCells = headerRow.querySelectorAll('th');
-	let headskip = true;
-	headerCells.forEach(cell => {
-		if (headskip) {
-			// 跳过第一列
-			headskip = false;
-		} else {
-			headerData.push(cell.textContent);
-		}
-		// headerData.push(cell.textContent);
-	});
-	data.push(headerData);
-
-	// 遍历表格行和列，提取数据
-	const rows = table.querySelectorAll('tbody tr');
-	rows.forEach(row => {
-		const rowData = [];
-		const cells = row.querySelectorAll('td');
-		//用于跳过第一列
-		let rowskip = true;
-
-		cells.forEach(cell => {
-			if (rowskip) {
-				// 跳过第一列
-				rowskip = false;
-			} else {
-				rowData.push(cell.textContent);
-			}
-		});
-
-		data.push(rowData);
-	});
-
-
-	// 将数据转换为CSV格式
-	csvContent = data.map(row => row.map(value => `${value}`).join(',')).join('\n');
+/**
+ * 生成卡片单元
+ */
+function generateCard(array, number = 40) {
+	console.log("generateCard");
+	$("#result-card").html('');
+	for (i = 0; i < array.length; i++) {
+		$("#result-card").append(convertToCard(array[i], i + 1));
+	}
+}
+/**
+ * 生成表格行
+ */
+function generateTable(array, number = 40) {
+	console.log("generateTable");
+	$('#result tbody').html('');
+	for (i = 0; i < array.length; i++) {
+		$('#result tbody').append(convertToTable(array[i], i + 1));
+	}
+}
+/**
+ * 计算recent10
+ * ptt为输入的潜力值
+ */
+function calculateR10() {
+	const ptt = $('#disp-ptt').val();
+	$('#disp-r10 a').text("逆推得到recent10约为");
+	console.log(ptt);
+	console.table(rbm)
+	let r10 = toFloor((ptt * 40 - rbm[1] * 30) / 10, 4);
+	$('#disp-r10 span').text(r10 >= 0 ? r10 : "🤨");
 }
 
-//输出csv开始下载
-function exportCSV() {
-	// 创建Blob对象，用于创建文件
-	const blob = new Blob([csvContent], {
+/**
+ * 用于在卡片模式和表格模式之间切换
+ * 本质是两个div的显示/隐藏切换
+ */
+function switchView() {
+	//0=card 1=table
+	if (viewMode == 1) {
+		viewMode = 0;
+		$('#result-card').slideUp("slow");
+		$('#result-table').show("slow");
+		$('#switch-view').text("显示为卡片");
+	} else {
+		viewMode = 1;
+		$('#result-table').slideUp("slow");
+		$('#result-card').show("slow");
+		$('#switch-view').text("显示为表格");
+	}
+}
+/**
+ * 下载分数表csv文件
+ * 由于字符集限制只好用utf-8和全英文
+ */
+function saveTableCSV() {
+	let temp = currentArray;
+	let csv = [columns.join(",")];
+	temp.forEach(function(row) {
+		let r = [row.songName, row.songId, row.difficulty, row.score, row.perfect, row.criticalPerfect, row.far,
+			row.lost, row.constant, row.playRating
+		].join(",");
+		csv.push(r);
+	});
+
+	const blob = new Blob([csv.join("\n")], {
 		type: 'text/csv;charset=utf-8'
 	});
 
-	// 创建一个下载链接
 	const link = document.createElement('a');
 	link.href = URL.createObjectURL(blob);
 	let currentDateTime = new Date().toLocaleString();
-	link.download = 'B30_' + currentDateTime + '.csv'; // 下载文件的文件名
+	link.download = 'B30_' + currentDateTime + '.csv';
 
-	// 添加链接到DOM中并触发点击以下载
 	document.body.appendChild(link);
 	link.click();
 
-	// 清理链接对象
 	document.body.removeChild(link);
 }
 
-//数据直接发送到生图页
-function sendToB30() {
-	let currentDateTime = new Date().toLocaleString();
-	localStorage.setItem("saved_csv_name", 'B30_' + currentDateTime + '.csv')
-	localStorage.setItem("saved_csv_data", csvContent);
-	window.open("b30gen.html", "_blank");
+
+/**
+ * 用于筛选出符合筛选条件的成绩存入一个临时数组中，以这个数组显示卡片和表格
+ */
+function filterResult(array, attr, order) {
+	tempArray = array;
+	tempArray.sort(function(a, b) {
+		return resultSort(a, b, attr, order);
+	})
+	generateCard(tempArray);
+	generateTable(tempArray);
 }
 
-//展开收起notices
-function switchNotices() {
-	// console.log("notices flag = " + localStorage.saved_notices_flag)
-	const notices = document.getElementById("notices");
-	if (localStorage.saved_notices_flag == "1") {
-		notices.style.opacity = "0";
-		setTimeout(function() {
-			notices.style.display = "none";
-		}, 300)
-		localStorage.setItem("saved_notices_flag", "0");
-	} else if (localStorage.saved_notices_flag == undefined || localStorage.saved_notices_flag == "0") {
-		notices.style.display = "block";
-		setTimeout(function() {
-			notices.style.opacity = "100%";
-		}, 300)
-		localStorage.setItem("saved_notices_flag", "1");
-	}
+function reloadContent(array){
+	array.sort(function(a, b) {
+		return resultSort(a, b, 'playRating', 1);
+	})
+	array.forEach(function(currentRow, index){
+		currentRow.innerIndex = index;
+	})
+	saveLocalStorage(array);
+	displayB30(array);
+	filterByConstant();
 }
 
-//显示注意事项
-document.addEventListener("DOMContentLoaded", function() {
-	if (localStorage.saved_notices_flag == undefined) {
-		notices.style.display = "block";
-		notices.style.opacity = "1";
-		localStorage.setItem("saved_notices_flag", "1");
-	} else if (localStorage.saved_notices_flag == "0") {
-		notices.style.display = "none";
-		notices.style.opacity = "0";
-		localStorage.setItem("saved_notices_flag", "0");
-	}
-	document.getElementById("chartContainer").style.display = "none";
-});
+function saveChange(array) {
+	currentArray = array;
+	saveLocalStorage(currentArray);
+}
 
-
-function calculateSinglePTT(score, constant) {
-	// console.log("ezptt called");
-	let s = 0;
-	if (Number(score) < 9800000) {
-		s = Number(constant) + (Number(score) - 9500000) / 300000;
-		s = s >= 0 ? s : 0;
-	} else if (Number(score) >= 9800000 && Number(score) < 10000000) {
-		s = Number(constant) + 1 + (Number(score) - 9800000) / 200000;
+function searchSong() {
+	let str = $('#search-song').val().toLowerCase();
+	let difficulty = $('#search-difficulty').val();
+	let optionList = generateOptionList(str, difficulty);
+	console.table(optionList);
+	let select = $('#search-result');
+	select.html('');
+	if (optionList.length == 0) {
+		select.html('<option selected="selected">无结果</option>')
 	} else {
-		s = Number(constant) + 2;
+		select.append($('<option selected="selected">').addClass('search-option').val("0").text("共有" + optionList
+			.length + "条结果"));
+		optionList.forEach(function(song, index) {
+			select.append($("<option>")
+				.addClass("search-result-option")
+				.val(song.songId)
+				.text(song.songName)
+				.css({
+					background: "url(\'../IllustrationMin/ii.jpg\')"
+				}));
+
+		})
 	}
-	return s.toFixed(6);
 }
-
-//定数-分数图表生成
-function generateScatterChart(tableId, canvasId, xColumnIndex, yColumnIndex, tooltipColumns) {
-	var table = document.getElementById(tableId);
-	var canvas = document.getElementById(canvasId);
-	var ctx = canvas.getContext('2d');
-	let tbody = document.getElementById("tbody");
-	let cst = getMinMaxValues("tbody", 9, 39);
-	let highx = cst.max;
-	let lowx = cst.min;
-	let scr = getMinMaxValues("tbody", 4, 39);
-	let highy = scr.max;
-	let lowy = scr.min;
-	document.getElementById("chartContainer").style.display = "block";
-	// if (window.scatterChart) {
-	// 	window.scatterChart.destroy();
-	// }
-
-	var tableData = [];
-	for (var i = 1; i < table.rows.length; i++) {
-		var row = table.rows[i];
-		var xValue = parseFloat(row.cells[xColumnIndex].textContent);
-		var yValue = parseInt(row.cells[yColumnIndex].textContent);
-
-		var dataObject = {
-			x: xValue,
-			y: yValue,
-			rowIndex: i
-		};
-		tooltipColumns.forEach(function(columnIndex) {
-			dataObject[`column${columnIndex}`] = row.cells[columnIndex].textContent;
-		});
-
-		tableData.push(dataObject);
-	}
-	if (!myScatterChart) {
-		myScatterChart = new Chart(ctx, {
-			type: 'scatter',
-			data: {
-				datasets: [{
-					label: '定数-分数分布图',
-					data: tableData,
-					backgroundColor: 'rgba(6, 218, 165, 1.0)',
-					radius: 8,
-					hoverRadius: 13,
-					borderWidth: 5,
-				}]
-			},
-			options: {
-				scales: {
-					x: {
-						type: 'linear',
-						position: 'bottom',
-						min: lowx - 0.5,
-						max: highx > 11.5 ? 12.1 : highx + 0.5,
-						step: 0.1,
-					},
-					y: {
-						min: parseInt(lowy / 10000) * 10000 - 10000,
-						max: parseInt(highy / 10000) * 10000 + 10000,
-						step: 50000,
-					}
-				},
-				plugins: {
-					tooltip: {
-						callbacks: {
-							label: function(context) {
-								var data = context.dataset.data[context.dataIndex];
-								var tooltipText = '';
-								tooltipColumns.forEach(function(columnIndex) {
-									tooltipText +=
-										`best${data.rowIndex}:${data[`column${columnIndex}`]}:[${data.x}]:(${data.y})`;
-								});
-								return tooltipText;
-							}
-						}
-					}
+function handleScroll(unitid, index){
+	// console.log(unitid)
+	scrollToElement(unitid);
+}
+function generateOptionList(str, difficulty) {
+	let searchResult = [];
+	let pair = {};
+	filteredArray.forEach(function(currentRow, index) {
+		if (currentRow.difficulty === difficulty) {
+			// console.log("currentRow:" + currentRow.songId + "-" + currentRow.difficulty);
+			if (currentRow.songName.toLowerCase().indexOf(str) !== -1) {
+				pair = {
+					songName: currentRow.songName,
+					songId: currentRow.songId
 				}
+				searchResult.push(pair);
 			}
-		});
-	} else {
-		// 如果已经存在，则直接更新数据
-		myScatterChart.data.datasets[0].data = tableData;
-		myScatterChart.update();
-	}
-}
-
-
-function getMinMaxValues(tableId, columnIndex, rowCount) {
-	var table = document.getElementById(tableId);
-
-	var maxValue = Number.MIN_VALUE;
-	var minValue = Number.MAX_VALUE;
-
-	for (var i = 1; i <= rowCount && i < table.rows.length; i++) {
-		var cellValue = parseFloat(table.rows[i].cells[columnIndex].textContent);
-
-		if (!isNaN(cellValue)) {
-			maxValue = Math.max(maxValue, cellValue);
-			minValue = Math.min(minValue, cellValue);
 		}
-	}
-
-	return {
-		min: minValue,
-		max: maxValue
-	};
+	})
+	return searchResult;
 }
 
+// function debounce(func, wait) {
+// 	let timeoutId; // 用于存储setTimeout的返回值
 
-//调整页面缩放
-function resizeWidth() {
+// 	return function(...args) {
+// 		clearTimeout(timeoutId); // 清除上一次延时任务
+// 		timeoutId = setTimeout(() => { // 设置新的延时任务
+// 			func.apply(this, args); // 在延时结束后执行原函数，并传递参数
+// 		}, wait);
+// 	};
+// }
 
-	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1500) +
-		"); -moz-transform-origin: 0 0; -moz-";
-	document.body.style.zoom = (document.documentElement.clientWidth / 1500);
+// function runFilter() {
+// 	console.log(rangeUpperBound + "-" + rangeLowerBound);
+// 	console.log($('#sort-mode').val() + "-" + $('#sort-order').val());
+// 	console.log($('#search-result').val());
+// }
 
-}
-
-window.addEventListener('resize', resizeWidth);
+// const debouncedFilter = debounce(runFilter, 300);

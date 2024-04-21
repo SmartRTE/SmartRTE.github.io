@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>aff变速</title>
+		<link href="css/AffSpeedChanger.css" type="text/css" rel="stylesheet" />
+		<!-- <script src="js/jquery-3.6.1.min.js"></script> -->
+		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+		<!-- <script src="js/AffSpeedChanger.js"></script> -->
+	</head>
+	<body>
+		<label for="time-factor">变速倍率</label>
+		<input type="number" value="1.00" id="time-factor" />
+		<input type="file" id="aff-upload" />
+		<button id="excecute" onclick="handleLines()">执行变速</button>
+		<button id="copy">复制到剪贴板</button>
+		<button id="save-aff" onclick="exportAff()">保存为aff</button><br />
+		<div style="display: block; height: 80vh;">
+			<textarea id="text-input" placeholder="在此粘贴aff内容(片段或全部)"
+				style="display: block; position: relative; float: left; left: 0; width: 48%; height: 80%;"></textarea>
+			<textarea id="res" placeholder="变速后的aff会显示在这里"
+				style="display: block; position: relative; float: left; width: 48%; height: 80%;"></textarea>
+		</div>
+		
+	</body>
+	<script>
+		let content = ''; //储存上传的aff
+		let slice = ''; //切分
+		let lines = ''; //切分得到的单行字符串数组
+		let timeFactor = 1.0; //变速时间倍率
+		let inTimingGroupCounter = 0; //tg内语句计数
+		let timingCounter = 0; //tg语句计数
+		let tapCounter = 0; //单点地键计数
+		let arcCounter = 0; //蛇/黑线语句计数
+		let sceneCounter = 0; //sc语句计数
+		let cameraCounter = 0; //camera语句计数
+		$(document).ready(function() {
+			console.log("ready");
+			//监听倍率输入/变更
+			$('#time-factor').on('input', function(e) {
+				timeFactor = $('#time-factor').val();
+				console.log(timeFactor);
+				// handleLines();
+			});
+			//监听输入
+			$('#text-input').on('change', function() {
+				if ($('#text-input').val() != null) {
+					// handleLines();
+				}
+			})
+			//监听aff上传
+			$('#aff-upload').on('change', function(event) {
+				const file = event.target.files[0];
+				if (file) {
+					let reader = new FileReader();
+					reader.onload = function(e) {
+						content = e.target.result;
+						$('#text-input').val(content);
+						// handleLines();
+					};
+					reader.readAsText(file, 'UTF-8');
+				}
+			});
+			//复制到剪贴板
+			$('#copy').click(async function() {
+				try {
+					// 复制内容到剪贴板
+					await navigator.clipboard.writeText($('#res').val());
+
+					// 提示用户复制成功（可选）
+					alert('已成功复制到剪贴板！');
+				} catch (err) {
+					console.error('Failed to copy: ', err);
+					alert('复制到剪贴板失败，请手动复制');
+				}
+			});
+
+		});
+
+		/**
+		 * 区分每行语句
+		 * @param {string} line 拆分出的一行aff语句
+		 * @returns {string} newline 返回一行除以时间系数的aff语句
+		 */
+
+		function handleLines() {
+			// content = $('#text-input').val();
+			let content = $('#text-input').val();
+			let originalLines = content.split("\n");
+			let lines = [];
+			let line='';
+			let newline='';
+			originalLines.forEach(function(l) {
+				line = l.replaceAll("\r", "");
+				newline = checkLine(line);
+				lines.push(newline);
+			});
+			// console.log(lines);
+			let newContent = lines.join("\r\n");
+			console.log("timingCounter:" + timingCounter);
+			console.log("inTimingGroupCounter:" + inTimingGroupCounter);
+			console.log("arcCounter:" + arcCounter);
+			$('#res').val(newContent);
+		}
+
+		function checkLine(line) {
+			// console.log("currentline=" + line);
+
+			// 在timinggroup中的语句前面带2个空格
+			if (line.startsWith("  ")) {
+				inTimingGroupCounter++;
+				let subline = line.substring(2);
+				let newline = "  " + checkLine(subline);
+				return newline;
+			} else if (line.startsWith("timing(")) {
+				// console.log(line);
+				// 处理timing语句
+				timingCounter++;
+				let newline = '';
+				let regex = /timing\((-?\d+),(-?\d+\.\d{2}),(-?\d+\.\d{2})\);/;
+				let match = line.match(regex);
+				if (match) {
+					let t = parseInt(match[1]) / timeFactor;
+					let bpm = parseFloat(match[2]) * timeFactor;
+					let newline = "timing(" + parseInt(t) + "," + bpm.toFixed(2) + "," + match[3] + ");";
+					// console.log("new:"+newline);
+					return newline;
+				}
+			} else if (line.startsWith("(")) {
+				// 处理地键
+				let regex = /\((\d+),(\d+)\);/;
+				let match = line.match(regex);
+				if (match) {
+					let t = parseInt(match[1]) / timeFactor;
+					let newline = "(" + parseInt(t) + "," + match[2] + ");";
+					return newline;
+				}
+			} else if (line.startsWith("hold(")) {
+				// 处理hold
+				let regex = /hold\((\d+),(\d+),(\d+)\);/;
+				let match = line.match(regex);
+				if (match) {
+					let t1 = parseInt(match[1]) / timeFactor;
+					let t2 = parseInt(match[2]) / timeFactor;
+					let newline = "hold(" + parseInt(t1) + "," + parseInt(t2) + "," + match[3] + ");";
+					return newline;
+				}
+			} else if (line.startsWith("arc(")) {
+				// 处理蛇/黑线/天键
+				// console.log("--arc");
+				arcCounter++;
+				let newline = handleArcTap(line);
+				return newline;
+			} else if (line.startsWith("scenecontrol(")) {
+				// 处理sc
+				sceneCounter++;
+				let newline = handleSceneControl(line);
+				return newline;
+			} else if (line.startsWith("camera(")) {
+				// 处理camera
+				cameraCounter++;
+				let newline = handleCamera(line);
+				return newline;
+			} else {
+				//不是物件语句的不处理
+				return line;
+			}
+		}
+		/**
+		 * 处理camera语句逻辑
+		 * @param {string} line 原始语句
+		 * @returns {string} newline 处理后的语句
+		 */
+		function handleCamera(line) {
+			let t = parseInt(line.substring(7, line.indexOf(",")));
+			let duration = parseFloat(line.substring(line.lastIndexOf(",") + 1, line.length - 2));
+
+			let newline = line.substring(0, 7) + parseInt(t / timeFactor) +
+				line.substring(line.indexOf(","), line.lastIndexOf(",") + 1) +
+				parseInt(duration / timeFactor) + ");";
+
+			return newline;
+		}
+
+		/**
+		 * 处理音弧、附着天键逻辑
+		 * @param {string} line 原始语句
+		 * @return {string} newline 处理后的语句
+		 */
+		function handleArcTap(line) {
+			// let inputStr = 'arc(126934,127913,0.00,1.00,b,1.00,1.00,0,none,true)[arctap(127235),arctap(127612)];';
+			let totalLength = line.length;
+			let idx = line.lastIndexOf("arctap");
+			/* 
+				递归从右向左逐个处理附着天键
+				处理完一个之后将"arctap("替换为"aaaaaaa"
+				把时间后的")"替换为"#" 防止重复
+				在下文会重新替换字符串
+			 */
+			while (idx !== -1) {
+				let p = line.substring(0, idx) + "aaaaaaa";
+				let t = parseInt(parseInt(line.substring(idx + 7, line.lastIndexOf(")"))) / timeFactor) + "#";
+				let r = line.substring(line.lastIndexOf(")") + 1, line.length);
+				line = p + t + r;
+				idx = line.lastIndexOf("arctap");
+				// console.log("currentARCline=" + line);
+			}
+			/*
+				处理完附着天键之后处理arc时间重新组装
+				把此前替换掉的字符重新替换回来
+				
+				jam retard
+			*/
+			let regex = /arc\((\d+),(\d+),/;
+			let match = line.match(regex);
+			if (match) {
+				let t1 = parseInt(match[1]) / timeFactor;
+				let t2 = parseInt(match[2]) / timeFactor;
+				let r = line.substring(4 + match[1].length + 1 + match[2].length, line.length);
+				// console.log("r="+r.replaceAll("aaaaaaa","arctap(").replaceAll("#",")"));
+				r = r.replaceAll("aaaaaaa", "arctap(").replaceAll("#", ")");
+				let newline = "arc(" + parseInt(t1) + "," + parseInt(t2) + r;
+				// console.log("newarcline="+newline);
+				return newline;
+			}
+
+			return line;
+		}
+		/**
+		 * 处理scenecontrol语句逻辑
+		 * @param {string} line 原始语句
+		 * @returns {string} newline 处理后的语句
+		 */
+		function handleSceneControl(line) {
+			/*
+				trackhide: 轨道隐藏
+				trackshow: 轨道显示
+				trackdisplay: 轨道透明度
+				redline: arcahv演出红线
+				arcahvdisort: arcahv演出
+				arcahvdebris: arcahv演出
+				hidegroup: hg隐藏组
+				enwidencamera: 6k视角切换
+				enwidenlanes: 6k轨道显示隐藏
+				
+			*/
+			if (line.indexOf("trackhide") !== -1 || line.indexOf("trackshow") !== -1) {
+				let p = line.substring(0, 13);
+				let r = line.substring(line.length - 12, line.length);
+				let t = parseInt(parseInt(line.substring(13, line.length - 12)) / timeFactor);
+				let newline = p + t + r;
+				return newline;
+			} else if (line.indexOf("trackdisplay") !== -1) {
+				let regex = /scenecontrol\((\d+),[^,]+,(-?\d+(\.\d+)?),(\d+)\);/;
+				let match = line.match(regex);
+
+				if (match) {
+					let t = parseInt(parseInt(match[1] / timeFactor));
+					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
+					let param2 = parseInt(match[4]);
+
+					let newline = "scenecontrol(" + t + ",trackdisplay," + param1 + "," + param2 + ");"
+					return newline;
+				}
+			} else if (line.indexOf("redline") !== -1) {
+				let regex = /scenecontrol\((\d+),[^,]+,(-?\d+(\.\d+)?),(\d+)\);/;
+				let match = line.match(regex);
+
+				if (match) {
+					let t = parseInt(parseInt(match[1] / timeFactor));
+					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
+					let param2 = parseInt(match[4]);
+
+					let newline = "scenecontrol(" + t + ",redline," + param1 + "," + param2 + ");"
+					return newline;
+				}
+			} else if (line.indexOf("arcahvdistort") !== -1) {
+				let regex = /scenecontrol\((\d+),[^,]+,(-?\d+(\.\d+)?),(\d+)\);/;
+				let match = line.match(regex);
+
+				if (match) {
+					let t = parseInt(parseInt(match[1] / timeFactor));
+					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
+					let param2 = parseInt(match[4]);
+
+					let newline = "scenecontrol(" + t + ",arcahvdistort," + param1 + "," + param2 + ");"
+					return newline;
+				}
+			} else if (line.indexOf("arcahvdebris") !== -1) {
+				let regex = /scenecontrol\((\d+),[^,]+,(-?\d+(\.\d+)?),(\d+)\);/;
+				let match = line.match(regex);
+
+				if (match) {
+					let t = parseInt(parseInt(match[1] / timeFactor));
+					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
+					let param2 = parseInt(match[4]);
+
+					let newline = "scenecontrol(" + t + ",arcahvdebris," + param1 + "," + param2 + ");"
+					return newline;
+				}
+			} else if (line.indexOf("hidegroup") !== -1) {
+				let t = line.substring(13, line.indexOf(","));
+				let newline = line.substring(0, 13) + parseInt(parseInt(t) / timeFactor) + line.substring(line.indexOf(","),
+					line.length);
+				return newline;
+			} else if (line.indexOf("enwidencamera") !== -1) {
+				let regex = /scenecontrol\((\d+),[^,]+,(-?\d+(\.\d+)?),(\d+)\);/;
+				let match = line.match(regex);
+
+				if (match) {
+					let t = parseInt(parseInt(match[1] / timeFactor));
+					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
+					let param2 = parseInt(match[4]);
+
+					let newline = "scenecontrol(" + t + ",enwidencamera," + param1 + "," + param2 + ");"
+					return newline;
+				}
+			} else if (line.indexOf("enwidenlanes") !== -1) {
+				let regex = /scenecontrol\((\d+),[^,]+,(-?\d+(\.\d+)?),(\d+)\);/;
+				let match = line.match(regex);
+
+				if (match) {
+					let t = parseInt(parseInt(match[1] / timeFactor));
+					let param1 = (parseFloat(match[2]) / timeFactor).toFixed(2);
+					let param2 = parseInt(match[4]);
+
+					let newline = "scenecontrol(" + t + ",enwidenlanes," + param1 + "," + param2 + ");"
+					return newline;
+				}
+			}
+		}
+
+		function toRound(number, decimal) {
+			// console.log(number);
+			let multiplier = Math.pow(10, decimal);
+			return Math.floor(number * multiplier) / multiplier;
+		}
+		
+		function exportAff() {
+			// 创建Blob对象，用于创建文件
+			const blob = new Blob([$('#res').val()], {
+				type: 'text/aff;charset=utf-8'
+			});
+		
+			// 创建一个下载链接
+			const link = document.createElement('a');
+			link.href = URL.createObjectURL(blob);
+			// let currentDateTime = new Date().toLocaleString();
+			link.download = timeFactor + 'x.aff'; // 下载文件的文件名
+		
+			// 添加链接到DOM中并触发点击以下载
+			document.body.appendChild(link);
+			link.click();
+		
+			// 清理链接对象
+			document.body.removeChild(link);
+		}
+		
+	</script>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>st3解析</title>
+		<script src="js/sql-wasm.js"></script>
+		<script src="js/index.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="icon" href="favicon.ico" />
+	</head>
+	<body>
+		<div id="bgimg">
+			<img src="bgs/bg_light.webp">
+		</div>
+		<div style="display: inline-block; width: 100%;">
+			<h1 id="noticeButton" onclick="switchNotices()">注意事项</h1>
+			<button id="constantSheet">查看定数表</button>
+			<div id="version">
+				<h2>更新于 2024/03/26</h2>
+				<h2>当前数据库版本：v5.5.8</h2>
+				<h2>曲绘文件版本：v5.5.8</h2>
+				<h2>当前模板表版本：v5.5.8</h2>
+				<h2>新页面绝赞开(gu)发(gu)中(gu)</h2>
+			</div>
+			
+		</div>
+
+		<ul id="notices">
+			<li style="color: firebrick;">!点上面的“注意事项”可以把这一段文字收起</li>
+			<li style="color: firebrick;">
+				!若打开本网页或跳转b30生成页面时弹出下载提示框，请取消掉，<br />因为页面需要从服务器下载所需的脚本等文件，<br />而有时这些文件会被下载软件的浏览器插件监听并接管下载。<br />若嫌麻烦可以设置默认屏蔽该网页的下载请求
+			</li>
+			<li style="color: firebrick; font-size: 60px;">!!请确定完全看完下面的视频<br />并了解了本页所有内容后再使用！!</li>
+
+			<li><a href="https://www.bilibili.com/video/BV1kp4y1F7Jw" target="_blank">查看原理、食用方法以及获取st3数据库文件的方法</a></li>
+			<iframe id="bili" src="//player.bilibili.com/player.html?aid=958967055&bvid=BV1kp4y1F7Jw&cid=1281665008&p=1"
+				scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+			<li style="color: rgba(255, 170, 127, 1.0); font-size: 22px;">我不要脸，给我三连(</li>
+			<li>1.点击 “上传st3文件” 上传你的st3文件，文件名可改可不改 </li>
+			<li>2.上传完之后如果不出意外会立马显示数据库内的全曲目游玩记录表格 </li><br />
+			<li>*若有字符显示“?”是因为我用了比较懒的方法进行数据库查询，字符集有点问题，<br />但是不影响会意以及后面的b30生成</li><br />
+			<li>3.点击 下载csv文件 可以把表格保存到本地 </li>
+			<li>4.获得csv文件后跳转b30生成页，将生成好的csv文件上传即可显示b39 </li>
+			<li>5.玩家名、好友码和显示ptt需要手动填写，可以手动指定显示曲目的数量 </li>
+			<li>6.保存图片用时和显示的曲目数量有关，保存图片时最好不超过100。<br />若数值填得过大，在某些设备上可能会导致严重卡顿</li>
+			<li style="color: darkred;">7.所有对文件的读写以及缓存都只在本地实现，不会上传到服务器(我也存不起) </li>
+			<li>8.如果遇到载图不全、或者缺失其他组件，多刷新几次页面</li>
+			<li>9.如果遇到bug或者其他问题请务必联系我！</li><br />
+			<li>*本意是方便自己查看分数表，免受手打成绩之苦，如果能帮到更多的人那就太好了</li>
+			<li>*水平有限，缝缝补补得到的这几个页面难免会有性能问题🙏</li><br />
+			<li>————RTE QQ: 2232194759</li><br />
+		</ul>
+
+
+		<input type="file" id="dbFileInput" style="display: none;"><br />
+		<div id="controller">
+			<div id="controllerRow1">
+				<button type="button" id="b30gen" onclick="window.open('b30gen.html')">点击跳转b30生成页</button>
+				<button type="button" id="difgen" onclick="window.open('divgen.html')">点击跳转定数查曲生成页</button>
+				<button type="button" id="dldbtn">
+					<a style="width: 100%; height: 100%; text-decoration: none; color: aliceblue;" download="模板.csv"
+						href="sample/模板.csv"
+						onclick="alert('请读完这条提示！\n 稍后下载的模板.csv内含有全部曲目的全部难度的分级条目，顺序是\n※游戏内全部歌曲的曲名序※\n尽量填写多于30条数据以保证B30计算正常。填写完成后请使用Excel或WPS表格的函数手动计算每首歌的单曲PTT（具体计算公式见Arcaea Wiki）\n 物量信息（p，f，l）可以不填，但是会影响B30图中理论值曲目的显示效果（缺少蓝色阴影，但是没有也不影响\n没有成绩的条目请手动删除，并最终把文件仍保存为csv格式。软件可能会提示丢失信息，请忽略！\n确认阅读完毕并理解之后，点击 确定')">下载模板.csv手动填入成绩</a>
+				</button>
+			</div>
+			<div id="controllerRow2">
+				<button type="button" id="uploadButton">上传st3数据库或分数表csv文件 </button>
+				<button type="button" id="download" onclick="exportCSV()" style="display: none;">下载分数表csv文件</button>
+				<button type="button" id="sendToB30" onclick="sendToB30()" style="display: none;">以下表生成b30</button>
+				<output id="queryResult"></output>
+			</div>
+			<div id="controllerRow3">
+				<button type="button" id="edit" onclick="showEdit()">读取缓存的分数表并修改</button>
+
+			</div>
+		</div>
+		<!-- <div id="chartContainer" hidden="hidden">
+			<canvas id="chart" hidden="hidden"></canvas>
+		</div> -->
+		<div id="briefStatistic">
+			<a id="best30"></a>
+			<a id="top30"></a>
+			<a id="top39"></a>
+
+		</div>
+		<table id="queryTable">
+			<thead>
+				<tr></tr>
+			</thead>
+			<tbody>
+
+			</tbody>
+		</table>
+	</body>
+</html>

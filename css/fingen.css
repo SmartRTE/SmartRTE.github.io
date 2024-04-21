@@ -1,0 +1,180 @@
+@font-face {
+	font-family: "geosans";
+	src: url("../Fonts/GeosansLight.ttf"),
+		url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.otf') format('opentype');
+}
+
+@font-face {
+	font-family: "Exo";
+	src: url("../Fonts/Exo-SemiBold.ttf");
+}
+@font-face {
+	font-family: "MiSans";
+	src: url("../Fonts/MiSans-Regular.ttf");
+}
+html{
+	background: black;
+}
+
+*{
+	margin: 0;
+	padding: 0;
+	font-family: "MiSans", sans-serif;
+}
+
+body{
+	width: 106.25rem;
+	height: 3150px;
+}
+
+#mainCapture{
+	width: 100%;
+	height: 100%;
+}
+
+#background,
+#background img{
+	position: absolute;
+	display: block;
+	width: 106.25rem;
+	height: 3150px;
+	z-index: -99;
+}
+
+#title{
+	position: relative;
+	top: 1rem;
+	text-align: center;
+	text-shadow: 0 0 2px aliceblue,
+				0 0 2px aliceblue,
+				0 0 2px aliceblue,
+				0 0 2px aliceblue,
+				0 0 2px aliceblue;
+}
+
+#title h1{
+	font-size: 5rem;
+	color: rebeccapurple;
+}
+
+#title span{
+	color: darkred;
+}
+
+.spliter{
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+#table-main{
+	width: 100%;
+	background: aqua;
+	height: 50rem;
+	display: flex;
+	justify-content: center;
+}
+
+.table-row{
+	position: relative;
+	background: red;
+	width: 100%;
+	float: left;
+}
+
+.table-constant-container{
+	position: relative;
+	width: 120px;
+	height: 100%;
+	background-color: purple;
+	left: 3%;
+	float: left;
+	display: flex;
+	align-items: center;
+	z-index: 99;
+}
+.table-constant{
+	float: left;
+	position: relative;
+	display: inline-block;
+	top: 0;
+	right: 50px;
+}
+.table-constant-image{
+	float: left;
+	position: relative;
+	height: 50px;
+	rotate: -90deg;
+	z-index: 99;
+	display: block;
+}
+/* .table-constant h1{
+	position: relative;
+	width: 100%;
+	rotate: -90deg;
+} */
+
+.table-spliter{
+	position: relative;
+	float: left;
+	display: inline-block;
+	left: -100px;
+	height: 100%;
+	
+}
+
+.table-spliter-image{
+	position: relative;
+	display: block;
+	height: 100%;
+	width: 40px;
+}
+
+.table-cells{
+	display: block;
+	position: relative;
+	width: 86%;
+	left: 5%;
+	float: left;
+	height: 100%;
+	background: blanchedalmond;
+}
+
+.cell-unit{
+	float: left;
+	position: relative;
+	border: solid 1rem black;
+	width: 10rem;
+	margin: 1rem 0.5rem;
+}
+.unit-ill{
+	width: 8rem;
+	height: 8rem;
+	margin: 0.25rem 1rem;
+}
+
+.unit-ill img{
+	height: 100%;
+	width: 100%;
+}
+
+.unit-ranking{
+	position: absolute;
+	height: 5rem;
+	width: 5rem;
+	top: -1rem;
+	right: -1rem;
+}
+
+.unit-name{
+	font-size: 1.2rem;
+	width: 100%;
+	text-align: center;
+}
+.unit-score{	
+	font-size: 1.5rem;
+	width: 100%;
+	text-align: center;
+}
