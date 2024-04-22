@@ -762,7 +762,7 @@ function hideUID() {
 /**
  * 依照当前访问的网址（github/gitee）初始化页面下方二维码的显示
  */
-function initializeQRCode() {
+async function initializeQRCode() {
 	if (window.location.href.startsWith('https://smartrte.github.io')) {
 		$('#qrcode').attr('src', 'img/QRCODE-githubio.png');
 	}
