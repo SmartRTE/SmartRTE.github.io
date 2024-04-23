@@ -990,14 +990,16 @@ function hideUID() {
 }
 
 /**
- * 依照当前访问的网址（github/gitee）初始化页面下方二维码的显示
+ * 依照当前访问的网址（github/gitee）初始化页面下方网址和二维码的显示
  */
 async function initializeQRCode() {
-	if (window.location.href.startsWith('https://smartrte.github.io')) {
-		$('#qrcode').attr('src', 'img/QRCODE-githubio.png');
-	}
-	// else if(window.location.href.startsWith('')){
-	// 	$('#qrcode').attr('src', 'img/QRCODE-githubio.jpg');
+	let url = window.location.href.substring(0,window.location.href.lastIndexOf('/'))
+	$('#copyright span:first').text(`Generated at ${url} @ `);
+	// if (url == 'https://smartrte.github.io') {
+	// 	$('#qrcode').attr('src', 'img/QRCODE-githubio.png');
+	// }
+	// else if(url == 'https://smartrte.github.io'){
+	// 	$('#qrcode').attr('src', 'img/QRCODE-giteeio.png');
 	// }
 }
 /**
