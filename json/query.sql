@@ -410,7 +410,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MIRINA
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('ultradiaxon-N3', 'ultradiaxon', 4.5, 8.5, 10.5, '', '');
 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Leave All Behind', 'leaveallbehind', 2.0, 5.5, 9.2, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Disorted Fate', 'disortedfate', 4.5, 7.8, 9.6, '', 10.9);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Distorted Fate', 'distortedfate', 4.5, 7.8, 9.6, '', 10.9);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Floating World', 'floatingworld', 3.0, 7.0, 9.3, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Chromafill', 'chromafill', 4.0, 7.0, 10.0, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Desive', 'desive', 5, 8, 9.9, '', 10.8);
