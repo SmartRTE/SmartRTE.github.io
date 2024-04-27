@@ -419,83 +419,46 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Desive
 COMMIT TRANSACTION;
 
 PRAGMA foreign_keys = on;
-
 		DROP VIEW IF EXISTS PTT2;
 		CREATE VIEW PTT2 AS
 		SELECT
-		allsongs.songname,
-		allsongs.songId,
-		CASE
-		WHEN songDifficulty = 0 THEN "Past"
-		WHEN songDifficulty = 1 THEN "Present"
-		WHEN songDifficulty = 2 THEN "Future"
-		WHEN songDifficulty = 3 THEN "Beyond"
-  		WHEN songDifficulty = 4 THEN "Eternal"
-		END AS Difficulty,
-		scores.score,
-		scores.perfectCount AS Perfect,
-		scores.shinyPerfectCount AS criticalPerfect,
-		scores.nearCount AS Far,
-		scores.missCount AS Lost,
-		CASE
-		WHEN songDifficulty = 0 THEN allsongs.PST
-		WHEN songDifficulty = 1 THEN allsongs.PRS
-		WHEN songDifficulty = 2 THEN allsongs.FTR
-		WHEN songDifficulty = 3 THEN allsongs.BYD
-  		WHEN songDifficulty = 4 THEN allsongs.ETR
-		END AS Constant,
-		CASE
-		WHEN score >= 10000000 THEN
-		CASE
-		WHEN songDifficulty = 0 THEN ROUND((allsongs.PST + 2.0), 6)
-		WHEN songDifficulty = 1 THEN ROUND((allsongs.PRS + 2.0), 6)
-		WHEN songDifficulty = 2 THEN ROUND((allsongs.FTR + 2.0), 6)
-		WHEN songDifficulty = 3 THEN ROUND((allsongs.BYD + 2.0), 6)
-  		WHEN songDifficulty = 4 THEN ROUND((allsongs.ETR + 2.0), 6)
-		END
-		WHEN score >= 9800000 AND score < 10000000 THEN
-		CASE
-		WHEN songDifficulty = 0 THEN ROUND((allsongs.PST + 1.0 + CAST((score - 9800000) AS REAL) / 200000), 6)
-		WHEN songDifficulty = 1 THEN ROUND((allsongs.PRS + 1.0 + CAST((score - 9800000) AS REAL) / 200000), 6)
-		WHEN songDifficulty = 2 THEN ROUND((allsongs.FTR + 1.0 + CAST((score - 9800000) AS REAL) / 200000), 6)
-		WHEN songDifficulty = 3 THEN ROUND((allsongs.BYD + 1.0 + CAST((score - 9800000) AS REAL) / 200000), 6)
-        WHEN songDifficulty = 4 THEN ROUND((allsongs.ETR + 1.0 + CAST((score - 9800000) AS REAL) / 200000), 6)
-		END
-		ELSE
-		CASE
-		WHEN songDifficulty = 0 THEN
-		CASE
-		WHEN allsongs.PST + CAST((score - 9500000) AS REAL) / 300000 < 0 THEN 0
-		ELSE ROUND((allsongs.PST + CAST((score - 9500000) AS REAL) / 300000), 6)
-		END
-		WHEN songDifficulty = 1 THEN
-		CASE
-		WHEN allsongs.PRS + CAST((score - 9500000) AS REAL) / 300000 < 0 THEN 0
-		ELSE ROUND((allsongs.PRS + CAST((score - 9500000) AS REAL) / 300000), 6)
-		END
-		WHEN songDifficulty = 2 THEN
-		CASE
-		WHEN allsongs.FTR + CAST((score - 9500000) AS REAL) / 300000 < 0 THEN 0
-		ELSE ROUND((allsongs.FTR + CAST((score - 9500000) AS REAL) / 300000), 6)
-		END
-		WHEN songDifficulty = 3 THEN
-		CASE
-		WHEN allsongs.BYD + CAST((score - 9500000) AS REAL) / 300000 < 0 THEN 0
-		ELSE ROUND((allsongs.BYD + CAST((score - 9500000) AS REAL) / 300000), 6)
-		END
-        WHEN songDifficulty = 4 THEN
-		CASE
-		WHEN allsongs.ETR + CAST((score - 9500000) AS REAL) / 300000 < 0 THEN 0
-		ELSE ROUND((allsongs.ETR + CAST((score - 9500000) AS REAL) / 300000), 6)
-		END
-		END
-		END AS singlePTT
-		FROM scores,
-		allsongs
-		WHERE
-		/*(scores.songDifficulty = 2 OR scores.songDifficulty = 3)
-			AND*/
-		scores.songId = allsongs.songId
+			allsongs.songname,
+			allsongs.songId,
+			CASE
+				WHEN songDifficulty = 0 THEN "Past"
+				WHEN songDifficulty = 1 THEN "Present"
+				WHEN songDifficulty = 2 THEN "Future"
+				WHEN songDifficulty = 3 THEN "Beyond"
+				WHEN songDifficulty = 4 THEN "Eternal"
+			END AS Difficulty,
+			scores.score,
+			scores.perfectCount AS Perfect,
+			scores.shinyPerfectCount AS criticalPerfect,
+			scores.nearCount AS Far,
+			scores.missCount AS Lost,
+			base_constant AS Constant,
+			CASE
+				WHEN score >= 10000000 THEN base_constant + 2.0
+				WHEN score >= 9800000 THEN base_constant + 1.0 + (score - 9800000) / 200000
+				ELSE 
+					COALESCE(
+						GREATEST(base_constant + (score - 9500000) / 300000, 0),
+						0
+					)
+			END AS singlePTT
+		FROM (
+			SELECT
+				songId,
+				CASE
+					WHEN songDifficulty = 0 THEN PST
+					WHEN songDifficulty = 1 THEN PRS
+					WHEN songDifficulty = 2 THEN FTR
+					WHEN songDifficulty = 3 THEN BYD
+					WHEN songDifficulty = 4 THEN ETR
+				END AS base_constant
+			FROM allsongs
+		) AS allsongs_base
+		JOIN scores ON scores.songId = allsongs_base.songId
 		ORDER BY singlePTT DESC;
 
 
