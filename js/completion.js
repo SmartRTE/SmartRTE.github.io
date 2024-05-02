@@ -40,8 +40,8 @@ $(document).ready(function() {
 	//初始化曲绘映射
 	diffIllMapping = getImageMapping();
 	// displayWindow('ai-chan');
-	initializeBound()
-	changeBound()
+	initializeBound();
+	changeBound();
 	getConstantSheet();
 	//初始化设置监听
 	initializeSettingListener();
@@ -69,7 +69,7 @@ $(document).ready(function() {
 		resizeWidth(1);
 	});
 	resizeWidth(1);
-	// $('#main-capture').css('height', )
+	// $('#main-capture').css('height', );
 
 	// 页面加载显示时间
 	showTime();
@@ -116,7 +116,7 @@ function initializeDataArray() {
  */
 function getResultArray() {
 	let tary = readLocalStorage();
-	// console.table(tary)
+	// console.table(tary);
 	currentArray = tary;
 	return tary;
 }
@@ -145,11 +145,11 @@ function initializeSettingListener() {
 		var val = $('#potential-input').val();
 		$('#potential-value').text(val);
 		changePotential(parseFloat(val));
-	})
+	});
 
 	$('#use-custom-avatar').on('change', function() {
 		let isChecked = $('#use-custom-avatar').is(':checked');
-		console.log(isChecked)
+		console.log(isChecked);
 		if (!isChecked) {
 			changeAvatar(localStorage.avatar);
 			displayWindow('avatar-select');
@@ -167,7 +167,7 @@ function initializeSettingListener() {
 
 	$('#use-custom-background').on('change', function() {
 		let isChecked = $('#use-custom-background').is(':checked');
-		console.log(isChecked)
+		console.log(isChecked);
 		if (!isChecked) {
 			changeBackgroundImage(localStorage.backgroundImage);
 			displayWindow('background-select');
@@ -186,13 +186,6 @@ function initializeSettingListener() {
 }
 
 
-/**
- * 用于规范输入的潜力值，防止溢出
- */
-function formatPotential(ptt) {
-	let t = ptt + '000';
-	return t.substring(0, t.indexOf('.') + 3);
-}
 
 /**
  * 页面加载时将缓存数据内的设置部分替换到页面内
@@ -201,14 +194,14 @@ function initializeSettings() {
 	// let r10,b30,max;
 	if (localStorage.saved_username) {
 		localStorage.userName = localStorage.saved_username;
-		localStorage.removeItem('saved_username')
+		localStorage.removeItem('saved_username');
 	}
 	if (!localStorage.userName) {
 		localStorage.userName = 'Hikari';
 	}
 	if (localStorage.saved_user_id) {
 		localStorage.userId = localStorage.saved_uid;
-		localStorage.removeItem('saved_uid')
+		localStorage.removeItem('saved_uid');
 	}
 	if (!localStorage.userId) {
 		localStorage.userId = '100000001';
@@ -238,7 +231,7 @@ function initializeSettings() {
 	}
 	if (localStorage.saved_icon) {
 		localStorage.avatar = localStorage.saved_icon;
-		localStorage.removeItem('saved_icon')
+		localStorage.removeItem('saved_icon');
 	}
 	if (!localStorage.avatar) {
 		localStorage.avatar = '34u';
@@ -321,7 +314,7 @@ function initializeUploadListener() {
 		const reader = new FileReader();
 		if (file.size > 1048576) {
 			console.log("over 1MB");
-			alert("图片大小超过1MB，请尝试换一张或压缩质量后再试")
+			alert("图片大小超过1MB，请尝试换一张或压缩质量后再试");
 		} else {
 			reader.readAsDataURL(file);
 			reader.onload = function() {
@@ -330,9 +323,9 @@ function initializeUploadListener() {
 				// displayCachedImage(base64Image);
 				$('#temp-avatar').ready(function() {
 					clipDiamond();
-					// console.log(base64Image)
+					// console.log(base64Image);
 
-				})
+				});
 			};
 		}
 	});
@@ -342,7 +335,7 @@ function initializeUploadListener() {
 		const reader = new FileReader();
 		if (file.size > 3145728) {
 			console.log("over 3MB");
-			alert("图片大小超过3MB，请尝试换一张或压缩质量后再试")
+			alert("图片大小超过3MB，请尝试换一张或压缩质量后再试");
 		} else {
 
 			reader.readAsDataURL(file);
@@ -351,8 +344,8 @@ function initializeUploadListener() {
 				$('#custom-background img').attr('src', base64Image);
 				localStorage.setItem('customBackground', base64Image);
 				if ($('#use-custom-background').is(':checked')) {
-					$('#background-image').attr('src', base64Image)
-					// $('#use-custom-background').prop('checked', false)
+					$('#background-image').attr('src', base64Image);
+					// $('#use-custom-background').prop('checked', false);
 				}
 			};
 		}
@@ -391,11 +384,11 @@ function saveQueryResult(result) {
 	// //保存表头
 	// columns = result.columns;
 	let temp = result.values;
-	// console.log(temp)
+	// console.log(temp);
 	//置空
 	currentArray = [];
 	temp.forEach((singleResult, index) => {
-		// console.log(singleResult)
+		// console.log(singleResult);
 		let single = new PlayResult(singleResult[0], singleResult[1], singleResult[2], singleResult[3],
 			singleResult[4], singleResult[5], singleResult[6], singleResult[7], singleResult[8],
 			singleResult[9], index);
@@ -405,12 +398,12 @@ function saveQueryResult(result) {
 	// displayB30(currentArray);
 	// generateCard(currentArray);
 	// generateTable(currentArray);
-	// console.table(currentArray)
+	// console.table(currentArray);
 	saveLocalStorage(currentArray);
 	refillCurrentArray();
 	displayB30(currentArray);
 	location.reload();
-	// switchP30(0)
+	// switchP30(0);
 }
 
 /**
@@ -431,12 +424,12 @@ function runConvert(csv) {
 		tempArray.push(single);
 	}
 	currentArray = tempArray;
-	console.log("runconvert over")
+	console.log("runconvert over");
 	saveLocalStorage(currentArray);
 	displayB30(currentArray);
 	refillCurrentArray();
 	location.reload();
-	// currentArray = readLocalStorage()
+	// currentArray = readLocalStorage();
 	// generateCard(filteredArray);
 	// generateTable(filteredArray);
 	// console.log(currentArray);
@@ -472,7 +465,7 @@ function getConstantSheet() {
 				rr['Beyond'] = byd;
 				rr['Eternal'] = etr;
 				cst[outerkey] = rr;
-			})
+			});
 
 			constant = cst;
 
@@ -512,21 +505,21 @@ function getConstantSheet() {
 						0, 0, 0, 0, c,
 						0, index--);
 					constant.push(single);
-				})
+				});
 			}
 			//按照定数递减-songId递减-
 			//difficulty按Present-Past-Future-Eternal-Beyond
 			constant.sort(function(a, b) {
 				return stringSort(a, b, -1);
-			})
+			});
 			constant.sort(function(a, b) {
-				return resultSort(a, b, 'constant', 1)
-			})
+				return resultSort(a, b, 'constant', 1);
+			});
 			constConstant = constant;
 			//初始化数据列表
 			initializeDataArray();
 		}
-	})
+	});
 }
 
 function refillCurrentArray(array = currentArray) {
@@ -536,16 +529,16 @@ function refillCurrentArray(array = currentArray) {
 	//difficulty按Present-Past-Future-Eternal-Beyond
 	ary.sort(function(a, b) {
 		return stringSort(a, b, -1);
-	})
+	});
 	ary.sort(function(a, b) {
-		return resultSort(a, b, 'constant', 1)
-	})
+		return resultSort(a, b, 'constant', 1);
+	});
 	let i = 0,
 		j = 0;
 	for (i; i < ary.length; i++) {
 		for (j; j < cst.length; j++) {
-			// console.log(i,' ',j)
-			// console.table(currentArray[i].songId,constant[j].songId,currentArray[i].difficulty,constant[j].difficulty)
+			// console.log(i,' ',j);
+			// console.table(currentArray[i].songId,constant[j].songId,currentArray[i].difficulty,constant[j].difficulty);
 			if (ary[i].songId == cst[j].songId && ary[i].difficulty == cst[j].difficulty) {
 				cst[j] = ary[i];
 				break;
@@ -553,30 +546,30 @@ function refillCurrentArray(array = currentArray) {
 		}
 	}
 	baseArray = cst;
-	console.log(baseArray)
+	console.log(baseArray);
 	cst.sort(function(a, b) {
 		return resultSort(a, b, 'playRating', 1);
-	})
+	});
 
 	cst.sort(function(a, b) {
 		return resultSort(a, b, 'innerIndex', -1);
-	})
+	});
 
 	cst.sort(function(a, b) {
 		return resultSort(a, b, 'constant', 1);
-	})
+	});
 
 	generateUnits(cst, constant.length);
 	// constant = cst;
 	baseArray.sort(function(a, b) {
 		return resultSort(a, b, 'innerIndex', -1);
-	})
+	});
 }
 
 function stringSort(a, b, order) {
 	if (a['songId'] !== b['songId']) {
 		// 使用字符串比较代替数值减法
-		// console.log(a[attr].localeCompare(b[attr]))
+		// console.log(a[attr].localeCompare(b[attr]));
 		return order * (a['songId'].localeCompare(b['songId'])); // 注意这里使用 localeCompare 方法
 	}
 	return order * (a['difficulty'].localeCompare(b['difficulty']));
@@ -590,9 +583,9 @@ function stringSort(a, b, order) {
 function displayB30(array) {
 	let ary = array;
 	ary.sort(function(a, b) {
-		return resultSort(a, b, 'playRating', 1)
-	})
-	console.log(ary)
+		return resultSort(a, b, 'playRating', 1);
+	});
+	console.log(ary);
 	rbm = calculateMax(ary);
 	localStorage.rbm = rbm;
 	// generateUnits(array, unitQuantity);
@@ -602,7 +595,7 @@ function displayB30(array) {
 }
 
 function displayAccuratePtt() {
-	alert(`精确数值（大概）：\n不推分可获得的最高PTT:${rbm[2]}\nBest30平均值：${rbm[1]}\nRecent10平均值：${rbm[0]}`)
+	alert(`精确数值（大概）：\n不推分可获得的最高PTT:${rbm[2]}\nBest30平均值：${rbm[1]}\nRecent10平均值：${rbm[0]}`);
 }
 
 /**
@@ -645,16 +638,16 @@ async function generateUnits(array, unitQuantity) {
 		"11.4": 1,
 		"11.5": 1,
 	}
-	console.log('generateUnits called')
+	console.log('generateUnits called');
 	let ary = array;
-	$('#b30-data').html('')
+	$('#b30-data').html('');
 	let index = 0;
 	for (index; index < ary.length; index++) {
 		if (parseFloat(ary[index].constant) <= rangeUpperBound) {
 			break;
 		}
 	}
-	console.log(breaker)
+	console.log(breaker);
 	let cst = -1;
 	for (index; index < ary.length; index++) {
 		if (ary[index].constant < rangeLowerBound) {
@@ -663,7 +656,7 @@ async function generateUnits(array, unitQuantity) {
 		if (cst != ary[index].constant) {
 			if (String(ary[index].constant) in breaker) {
 				cst = ary[index].constant;
-				console.log(cst)
+				console.log(cst);
 			} else {
 				cst = ary[index].constant;
 				appendSpliter(cst);
@@ -738,7 +731,7 @@ function appendSongUnit(currentRow, index) {
 		.text(currentRow.playRating ? toFloor(currentRow.playRating, 4) : ':D'));
 	// let z = String(currentRow.constant).split('.');
 	// console.log(z);
-	// info.append($('<div>').addClass('song-constant')
+	// info.append($('<div>').addClass('song-constant');
 	// 	.text(currentRow.difficulty + z[0] + (z[1] >= 7 ? '+ ' : ' ') + '[' + currentRow.constant + ']'));
 	// info.append($('<div>').addClass('song-rank').text('#' + index));
 	// let sn = $('<div>').addClass('song-name').text(currentRow.songName);
@@ -750,8 +743,8 @@ function appendSongUnit(currentRow, index) {
 	// si.append($('<div>').addClass('item-far').text('F/' + currentRow.far));
 	// si.append($('<div>').addClass('item-lost').text('L/' + currentRow.lost));
 
-	let rk = getSongRanking(currentRow.score, currentRow.far, currentRow.lost)
-	let ri = $('<img>').addClass('song-ranking-image').attr('src', songRankingPath + rk + '.png')
+	let rk = getSongRanking(currentRow.score, currentRow.far, currentRow.lost);
+	let ri = $('<img>').addClass('song-ranking-image').attr('src', songRankingPath + rk + '.png');
 
 	if (rk == 'PM' && (currentRow.perfect != 0) && (currentRow.criticalPerfect == currentRow.perfect)) {
 		currentUnit.addClass('theoretical');
@@ -762,7 +755,7 @@ function appendSongUnit(currentRow, index) {
 	currentUnit.append(ss);
 	// currentUnit.append(si);
 	currentUnit.append(ri);
-	$('#b30-data').append(currentUnit)
+	$('#b30-data').append(currentUnit);
 }
 
 
@@ -791,7 +784,7 @@ function appendSpliter(cst) {
 	overflow.append($('<img class="spliter-text-overflow">').attr('src',
 		`img/constant/${parseFloat(cst).toFixed(1)}.png`));
 	$('#b30-data').append(overflow);
-	// console.log("spliter append")
+	// console.log("spliter append");
 }
 
 /**
@@ -824,7 +817,7 @@ async function compressImage(dataURL, quality) {
 			const compressedDataURL = canvas.toDataURL('image/jpeg', quality);
 
 			resolve(compressedDataURL);
-		};
+		};	
 		img.onerror = reject;
 		img.src = dataURL;
 	});
@@ -839,7 +832,7 @@ async function saveAsImage(captureId) {
 	resizeWidth(0);
 	$('#mainCover').css({
 		'display': 'flex',
-	})
+	});
 	const id = document.getElementById(captureId);
 	const captureWidth = document.getElementById('mainCapture').offsetWidth;
 	const captureHeight = getCaptureHeight();
@@ -870,67 +863,8 @@ async function saveAsImage(captureId) {
 		resizeWidth(1);
 		$('#mainCover').css({
 			'display': 'none',
-		})
+		});
 	});
-}
-
-/**
- * 更换选择的头像并保存到localStorage
- * @param {string} index 头像对应的文件序号
- */
-function changeAvatar(index) {
-	console.log(index)
-	$('#icon img').attr('src', avatarPath + index + '_icon.webp');
-	$('#avatar-display img').attr('src', avatarPath + index + '_icon.webp');
-	localStorage.setItem('avatar', index)
-	displayWindow('avatar-select');
-	$('#use-custom-avatar').prop('checked', false)
-}
-/**
- * 更换选择的段位框并保存到localStorage
- * @param {string} index 段位框对应的文件序号
- */
-function changeCourseDanFrame(index) {
-	$('#user-course-dan').attr('src', userCourseDanPath + index + '.png');
-
-	$('#id-course-dan').attr('src', userCourseDanPath + index + '.png');
-	$('#user-course-dan-display').css('background-image', 'url("' + userCourseDanPath + index + '.png")');
-	$('#user-course-dan-display').text(index + 'dan');
-	displayWindow('user-course-dan-select');
-	localStorage.setItem('courseDanFrame', index);
-}
-/**
- * 更换选择的背景图并保存到localStorage
- * @param {string} index 背景图对应的文件序号
- */
-function changeBackgroundImage(index) {
-	$('#background-image').attr('src', backgoundImagePath + index + '.webp');
-	$('#background-display').attr('src', backgoundImagePath + index + '.webp')
-	displayWindow('background-select');
-	localStorage.setItem('backgroundImage', index);
-	$('#use-custom-background').prop('checked', false)
-}
-/**
- * 修改潜力值显示，并同步计算新的recent10，替换新的潜力值星框
- * @param {string} ptt 潜力值
- */
-function changePotential(ptt) {
-	p = parseFloat(ptt).toFixed(2);
-	$('#potential-value').text(p);
-	changePotentialFrame(getPotentialFrame(ptt));
-	localStorage.setItem('potential', p);
-	console.log('ptt=' + p)
-	console.log(parseFloat(ptt))
-	$('#ptt-r10 span').text((parseFloat(ptt) * 4 - parseFloat($('#ptt-b30 span').text()) * 3).toFixed(4))
-}
-
-/**
- * 替换新的潜力值星框
- * @param {string} index 星框对应的图片序号
- */
-function changePotentialFrame(index) {
-	$('#potential-frame').attr('src', potentialFramePath + index + '.png');
-	localStorage.setItem('potentialFrame', index);
 }
 
 /**
@@ -959,49 +893,22 @@ function changeBound() {
 	$('#range-lower-bound').val((rangeLowerBound).toFixed(1));
 	localStorage.rangeLowerBound = rangeLowerBound;
 	localStorage.rangeUpperBound = rangeUpperBound;
-	refillCurrentArray()
+	refillCurrentArray();
 }
 
 function displayNoRecord() {
 	if (!$('#no-record-hidden').is(':hidden')) {
 		$('#no-record-hidden').hide();
 		$('.no-record').hide();
-		$('#no-record-button').text('显示没有记录的成绩')
+		$('#no-record-button').text('显示没有记录的成绩');
 	} else {
 		$('#no-record-hidden').show();
 		$('.no-record').show();
-		$('#no-record-button').text('隐藏没有记录的成绩')
+		$('#no-record-button').text('隐藏没有记录的成绩');
 	}
-	resizeWidth()
+	resizeWidth();
 }
 
-
-/**
- * 切换为隐藏uid *** *** ***
- */
-function hideUID() {
-	uidFlag = !uidFlag;
-	if (uidFlag == true) {
-		$('#user-id span').text(formatUserID(localStorage.userId));
-	} else {
-		$('#user-id span').text('✱✱✱ ✱✱✱ ✱✱✱');
-
-	}
-}
-
-/**
- * 依照当前访问的网址（github/gitee）初始化页面下方网址和二维码的显示
- */
-async function initializeQRCode() {
-	let url = window.location.href.substring(0,window.location.href.lastIndexOf('/'))
-	$('#copyright span:first').text(`Generated at ${url} @ `);
-	// if (url == 'https://smartrte.github.io') {
-	// 	$('#qrcode').attr('src', 'img/QRCODE-githubio.png');
-	// }
-	// else if(url == 'https://smartrte.github.io'){
-	// 	$('#qrcode').attr('src', 'img/QRCODE-giteeio.png');
-	// }
-}
 /**
  * 修改分数内容后重新计算分数、重新加载显示单元
  * @param {Array<PlayResult>} array 要填入的分数对象数组
@@ -1010,37 +917,16 @@ async function initializeQRCode() {
 function reloadContent(array) {
 	array.sort(function(a, b) {
 		return resultSort(a, b, 'playRating', 1);
-	})
+	});
 	array.forEach(function(currentRow, index) {
 		currentRow.innerIndex = index;
-	})
+	});
 
 	saveLocalStorage(array);
 	rbm = calculateMax(currentArray);
 	localStorage.rbm = rbm;
-	// $('#ptt-max span').text(parseFloat(rbm[2]).toFixed(4))
-	// $('#ptt-b30 span').text(parseFloat(rbm[1]).toFixed(4))
-	// $('#ptt-r10 span').text(parseFloat(rbm[0]).toFixed(4))
-	// if(p30Flag > 0){
-	// 	$('#ptt-p30').html("P30 : " + '<span>' + calculateP30S30(currentArray, 0) + '</span>');
-	// }else{
-	// 	$('#ptt-p30').html("S30 : " + '<span>' + calculateP30S30(currentArray, 1) + '</span>');
-	// }
-	// generateUnits(currentArray, unitQuantity);
-	// displayWindow('modify-window');
-	switchP30(0)
+	switchP30(0);
 }
-
-// //调整页面缩放
-// function resizeWidth() {
-
-// 	document.body.style = "-moz-transform: scale(" + (document.documentElement.clientWidth / 1700) +
-// 		"); -moz-transform-origin: 0 0; -moz-";
-// 	document.body.style.zoom = (document.documentElement.clientWidth / 1700);
-
-// }
-
-// window.addEventListener('resize', resizeWidth);
 
 /**
  * 调整页面缩放
@@ -1054,7 +940,7 @@ function resizeWidth(flag = 1) {
 	} else {
 		scaleValue = 1;
 	}
-	// console.log("resized" + document.documentElement.clientWidth + scaleValue)
+	// console.log("resized" + document.documentElement.clientWidth + scaleValue);
 	$('#mainCapture').css({
 		'-moz-transform-origin': '0 0',
 		'-webkit-transform-origin': '0 0',
@@ -1076,7 +962,7 @@ function resizeWidth(flag = 1) {
 	});
 	$('#background-image').css({
 		'height': getCaptureHeight() + 'px'
-	})
+	});
 	scaleValue = document.documentElement.clientWidth / 1700;
 	$('#mainCover').css({
 		'-moz-transform-origin': '0 0',
@@ -1089,183 +975,10 @@ function resizeWidth(flag = 1) {
 		'transform': 'scale(' + scaleValue + ')',
 		'height': `calc(100vh/${scaleValue})`,
 		// 'zoom': scaleValue
-	})
-}
-
-/**
- * 读取头像列表csv并生成头像选择部分
- */
-async function initializeAvatarList() {
-	$.ajax({
-		url: avatarListPath,
-		dataType: "text",
-		success: function(resp) {
-			// console.log(resp)
-			avatarList = resp.trim().split('\n');
-			avatarList.forEach(function(avt) {
-				appendAvatarUnit(avt);
-			})
-		},
-		error: function(xhr, status, error) {
-			console.error("Error fetching data:", error);
-
-		}
 	});
 }
-/**
- * 生成背景图片列表
- * 我懒所以写死了
- */
-async function initializeBackgroundList() {
-	let l = [
-		'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', 's1', 's2', 's3', 's4', 's5', 's6',
-		's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17', 's18', 's19', 's20', 's21',
-		's22', 's23', 's24', 's25', 's26'
-	];
-	let list = $('#background-list')
-	l.forEach(function(li) {
-		list.append(
-			$(`<li class="background-option" onclick="changeBackgroundImage('${String(li)}')">`)
-			.append($(`<img src='bgs/${li}.webp'>`))
-		)
-	})
-}
-
-async function initializeUserCourseDanList() {
-	let l = [
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-	];
-	let list = $('#user-course-dan-list');
-	l.forEach(function(li) {
-		list.append(
-			$(`<li class="user-course-dan-option" value="${li}" onclick="changeCourseDanFrame(${li})">`)
-			.append($(`<img class="user-course-dan-image" src="img/course/${li}.png">`))
-		)
-	})
-}
-
-/**
- * 生成头像单元
- */
-function appendAvatarUnit(avt) {
-	let avtu = $('<li onclick="changeAvatar(' + "'" + avt + "'" + ')">').addClass('avatar-option');
-	let aimg = $('<img>').attr('src', avatarPath + avt + '_icon.webp');
-	avtu.append(aimg);
-	$('#avatar-list').append(avtu);
-}
-
-/**
- * 切换Pure30/Sex30/Best30时，将符合条件的对象压入filteredArray中
- * @param {Array<PlayResult} 要筛选的分数对象数组
- * @param {number} type 0 = PM 1 = PM-1
- */
-function filterP30S30(array, type) {
-	filteredArray = [];
-	if (type == 0) {
-		array.forEach(function(currentRow, index) {
-			if (currentRow.score >= 10000000) {
-				filteredArray.push(currentRow)
-			}
-		})
-	} else {
-		currentArray.forEach(function(currentRow, index) {
-			if ((currentRow.far == 1 && currentRow.lost == 0) ||
-				(currentRow.far == 0 && currentRow.lost == 1)) {
-				filteredArray.push(currentRow)
-			}
-		})
-	}
-	return filteredArray;
-
-}
-
-function filterNoRecord() {
-
-}
 
 
-/**
- * 在best30/pure30/sex30之间循环切换，为了复用这段垃圾代码，使用一个变量add控制
- * @param {number} add add=1时正常循环，add=0时只使用对应段落的代码重新生成页面内容，不进行切换
- */
-function switchP30(add = 1) {
-	console.log(`currentP30Flag=${p30Flag},add=${add}`)
-	console.log(currentArray.length)
-	if (p30Flag + add - 1 == 0) { //b->p
-		$('#spliter-text-best30').attr('src', 'img/perfect30.png').css('left', '30.15rem');
-		let f = filterP30S30(currentArray, 0)
-		generateUnits(f, unitQuantity);
-		$('#ptt-p30').html("P30 : " + '<span>' + toFloor(calculateMax(f)[1], 4) + '</span>');
-		$('#switch-p30').text('看看S30');
-	} else if (p30Flag + add - 1 == 1) { //p->s
-		$('#spliter-text-best30').attr('src', 'img/sex30.png').css('left', '30.15rem');
-		let f = filterP30S30(currentArray, 1)
-		generateUnits(filteredArray, unitQuantity);
-		$('#ptt-p30').html("S30 : " + '<span>' + toFloor(calculateMax(f)[1], 4) + '</span>');
-		$('#switch-p30').text('回到B30');
-	} else if (p30Flag + add - 1 == 2 || (add == 0 && p30Flag == 0)) { //s->b
-		$('#spliter-text-best30').attr('src', 'img/best30.png').css('left', '31.25rem');
-		displayB30(baseArray);
-		filteredArray = currentArray;
-		generateUnits(currentArray, unitQuantity);
-		$('#switch-p30').text('看看P30');
-	}
-
-	if (add != 0 && (p30Flag == 0 || p30Flag == 2)) {
-		displayWindow('ptt-max');
-		displayWindow('ptt-b30');
-		displayWindow('ptt-r10');
-		displayWindow('ptt-p30');
-	}
-	p30Flag = (p30Flag + add) % 3;
-}
-
-/**
- * 使用canvas对上传的头像图片进行重新绘制，并将其裁剪成菱形
- * 否则 html2canvas不支持clip属性，会导致头像样式丢失，难看的一
- */
-function clipDiamond() {
-	let tempImg = new Image();
-	tempImg.src = $('#temp-avatar')[0].src;
-	var canvas = document.createElement('canvas');
-	var ctx = canvas.getContext('2d');
-	canvas.width = tempImg.width || tempImg.naturalWidth;
-	canvas.height = tempImg.height || tempImg.naturalHeight;
-	canvas.height = Math.min(canvas.height, canvas.width);
-	canvas.width = canvas.height;
-	console.log(canvas.width, canvas.height)
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.drawImage(tempImg, 0, 0, canvas.width, canvas.height);
-	console.log(ctx)
-	// 裁剪为菱形
-	ctx.beginPath();
-	ctx.moveTo(0, 0);
-	ctx.lineTo(canvas.width / 2, 0)
-	ctx.lineTo(0, canvas.height / 2)
-	ctx.lineTo(canvas.width / 2, canvas.height)
-	ctx.lineTo(canvas.width, canvas.height / 2)
-	ctx.lineTo(canvas.width / 2, 0)
-	ctx.lineTo(canvas.width, 0)
-	ctx.lineTo(canvas.width, canvas.height)
-	ctx.lineTo(0, canvas.height)
-	ctx.closePath()
-	ctx.clip();
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.drawImage(tempImg, canvas.width / 2, 0, canvas.width, canvas.height / 2, canvas.width /
-		2, canvas.height, 0, canvas.height / 2);
-
-	// 将裁剪后的内容转换为data URL
-	var dataUrl = canvas.toDataURL('image/png');
-	// 显示在页面上
-	// var resultDiv = document.getElementById('result');
-	// resultDiv.innerHTML = '<img src="' + dataUrl + '" />';
-	$('#custom-avatar img').attr('src', dataUrl)
-
-	localStorage.setItem('customAvatar', dataUrl);
-	if ($('#use-custom-avatar').is(':checked')) {
-		$('#icon img').attr('src', dataUrl)
-	}
-};
 
 function handleScroll(unitid, index) {
 	// if (index > unitQuantity) {
@@ -1273,14 +986,14 @@ function handleScroll(unitid, index) {
 	// 	changeUnitQuantity();
 	// }
 	if (baseArray[index].constant > rangeUpperBound) {
-		$('#range-upper-bound').val(baseArray[index].constant)
+		$('#range-upper-bound').val(baseArray[index].constant);
 		changeBound();
 	} else if (baseArray[index].constant < rangeLowerBound) {
-		$('#range-lower-bound').val(baseArray[index].constant)
+		$('#range-lower-bound').val(baseArray[index].constant);
 		changeBound();
 	}
 
 	$('#ai-chan-content').html(`<img id="ai-chan-ill" src="${illustrationPath+baseArray[index].illustration}" />` +
-		$('#ai-chan-content').text())
+		$('#ai-chan-content').text());
 	scrollToElement(unitid);
 }

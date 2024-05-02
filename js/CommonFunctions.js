@@ -5,7 +5,8 @@ let aiChanPath = 'json/AiChan.json'
 let aiChanList = [];
 /**
  * 每条成绩存为一个对象，所有对象存在 currentArray 数组中
- * 属性按顺序为 曲名，曲目id，难度，分数，perfect总数，大p数，far数，lost数，定数，单曲潜力值
+ * 属性按顺序为 曲名，曲目id，难度，分数，perfect总数，大p数，far数，lost数，定数，单曲潜力值依次录入
+ * 缺失的属性设置为0或-1
  * 
  */
 class PlayResult {
@@ -25,12 +26,12 @@ class PlayResult {
 	constructor(songName, songId, difficulty, score,
 		perfect, criticalPerfect, far, lost,
 		constant, playRating, innerIndex) {
-			// console.log(arguments)
-		// console.log(difficulty)
+			// console.log(arguments);
+		// console.log(difficulty);
 		if (diffIllMapping) {
 			const diffSongId = diffIllMapping[songId];
 			if (diffSongId && diffSongId[difficulty]) {
-				console.log(diffSongId[difficulty])
+				console.log(diffSongId[difficulty]);
 				// this.illustration = (illusPath + songId + diffSongId[difficulty] + ".jpg");
 				this.illustration = (songId + diffSongId[difficulty] + ".jpg");
 			} else {
@@ -45,7 +46,7 @@ class PlayResult {
 			const diffSongId = diffSongNameMapping[songId];
 			if (diffSongId && diffSongId[difficulty]) {
 				this.songName = diffSongId[difficulty];
-				console.log(songId)
+				console.log(songId);
 			} else {
 				this.songName = songName;
 			}
@@ -68,7 +69,7 @@ class PlayResult {
 		this.playRating = playRating?playRating:calculateSingleRating(score,constant,5);
 		
 		if (score >= 10000000) {
-			// console.log(toFloor(this.criticalPerfect / this.perfect))
+			// console.log(toFloor(this.criticalPerfect / this.perfect));
 			this.percentage = 100 + parseFloat(toFloor(this.criticalPerfect / this.perfect, 2));
 		} else {
 			this.percentage = 100 * parseFloat(toFloor(this.playRating / (this.constant + 2), 4));
@@ -114,7 +115,9 @@ function initializeQuery() {
 		}
 	});
 }
-
+/**
+ * AI-Chan文案初始化
+*/
 function initializeAiChan() {
 	fetch(aiChanPath)
 		.then(response => response.json())
@@ -124,6 +127,10 @@ function initializeAiChan() {
 		.catch(error => console.error('Error:', error));
 }
 
+/**
+ * 随机返回一条AI-chan文案
+ * @return {String} 一条随机的AI-Chan文案，带有需要被替换的标识
+*/
 function getRandomAiChan() {
 	let randomIndex = Math.floor(Math.random() * aiChanList.length);
 	let randomItem = aiChanList[randomIndex];
@@ -143,34 +150,7 @@ function toFloor(number, decimal) {
 	return (Math.floor(number * multiplier) / multiplier).toFixed(decimal);
 }
 
-// /**
-//  * 不舍入的小数截断
-//  * @param number 原数
-//  * @param {number} decimal 截断位数
-//  * @return {string} 不经舍入的 decimal 位小数的字符串
-//  */
-// function toFloor(number, decimal) {
-//     let rs = number.toString();
-//     let hasDecimal = rs.indexOf(".") !== -1;
 
-//     if (!hasDecimal) {
-// 		console.log("donthavedecimal")
-//         rs += '.';
-//     }else{
-// 		console.log("havedecimal");
-// 	}
-
-//     // 获取或计算小数点后的位数
-//     let m = rs.length - rs.indexOf(".") - 1;
-
-//     // 当小数位不足时，用零填充
-//     while (m < (decimal - 1)) {
-//         rs += '0';
-//         m++;
-//     }
-
-//     return rs;
-// }
 /**
  * 用于以对象的某一属性对对象进行排序
  * @param {object} a 对象a
@@ -186,6 +166,14 @@ function resultSort(a, b, attr, order) {
 }
 
 
+/**
+ * 用于规范输入的潜力值，防止溢出
+ * @return {String} 返回留有两位小数的潜力值字符串
+ */
+function formatPotential(ptt) {
+	let t = ptt + '000';
+	return t.substring(0, t.indexOf('.') + 3);
+}
 
 /**
  * 计算单曲潜力值
@@ -208,7 +196,7 @@ function calculateSingleRating(score, constant, decimal) {
 /**
  * 计算best30，maxptt
  * @param array 传入游玩结果对象数组
- * @returns {Number} maxptt、best30、recent10理论值组成的数组
+ * @return {Number} maxptt、best30、recent10理论值组成的数组
  */
 function calculateMax(array) {
 	let sum = 0;
@@ -228,7 +216,9 @@ function calculateMax(array) {
 	return rbm;
 }
 
-// 获取曲绘映射
+/**
+ * 获取曲绘映射，应在页面加载初始阶段进行
+*/
 async function getImageMapping() {
 	try {
 		if (!diffIllMapping) {
@@ -247,7 +237,9 @@ async function getImageMapping() {
 	}
 }
 
-// 获取曲名映射
+/**
+ * 获取曲名映射，应在页面加载初始阶段进行
+*/
 async function getTitleMapping() {
 	try {
 		if (!diffSongNameMapping) {
@@ -266,13 +258,18 @@ async function getTitleMapping() {
 	}
 }
 /**
- * 保存到浏览器缓存
+ * 保存完整的成绩对象数组到浏览器缓存
+ * @param {Array<PlayResult>} currentArray 
  */
 function saveLocalStorage(currentArray) {
 	let strArray = JSON.stringify(currentArray);
 	localStorage.setItem("savedArrayData", strArray);
 }
 
+/**
+ * 从浏览器缓存读取保存的成绩对象数组
+ * @return {Array<PlayResult>} currentArray
+*/
 function readLocalStorage() {
 	if (localStorage.getItem("savedArrayData")) {
 		let savedArray = JSON.parse(localStorage.getItem("savedArrayData"));
@@ -286,7 +283,8 @@ function readLocalStorage() {
 
 
 /**
- * 滚动到指定id元素
+ * 滚动到指定id元素并突出显示，
+ * 滚动到页面顶端是通过定位到最顶端一个不可见的无宽高的元素实现的
  */
 function scrollToElement(id) {
 	window.scrollTo({
@@ -295,26 +293,26 @@ function scrollToElement(id) {
 	});
 	setTimeout(function() {
 		$('#' + id).addClass('stressed-unit');
-	}, 300)
+	}, 300);
 	setTimeout(function() {
 		$('#' + id).removeClass('stressed-unit');
-	}, 2000)
+	}, 2000);
 }
 
 
 
 /**
- * 显示/隐藏筛选选项窗口
+ * 显示/隐藏指定的元素/窗口
  */
 function displayWindow(windowId) {
 	if ($('#' + windowId).is(":hidden")) {
-		// console.log("window'shidden")
+		// console.log("window'shidden");
 		$('#' + windowId).css("display", "block");
 		setTimeout(function() {
 			$('#' + windowId).css("opacity", 1);
 		}, 100);
 	} else {
-		// console.log("window'sshown")
+		// console.log("window'sshown");
 		// $('#filter-window').fadeOut(800);
 		$('#' + windowId).css("opacity", 0);
 		setTimeout(function() {
@@ -323,7 +321,11 @@ function displayWindow(windowId) {
 	}
 }
 
-
+/**
+ * 唤起修改成绩弹窗
+ * @param {Number} idx 成绩在成绩对象数组中的下标
+ * @param {Array<PlayResult>} array 默认是currentArray
+*/
 function modifyPlayResult(idx, array = currentArray) {
 	console.table(array[idx]);
 	displayWindow('modify-window');
@@ -339,7 +341,9 @@ function modifyPlayResult(idx, array = currentArray) {
 	$('#modify-lost').val(array[idx].lost);
 	saveLocalStorage(array);
 }
-
+/**
+ * 重置修改成绩弹窗内容
+*/
 function resetModifyWindowContent() {
 	displayWindow('modify-window');
 	$('#modify-current-index').val('');
@@ -353,7 +357,10 @@ function resetModifyWindowContent() {
 	$('#modify-far').val('');
 	$('#modify-lost').val('');
 }
-
+/**
+ * 接受修改内容
+ * @param {Array<PlayResult>} array 默认是currentArray
+*/
 function acceptModifyResult(array) {
 	let index = $('#modify-current-index').val();
 	console.log("currentInnerIndex=" + index);
@@ -370,12 +377,16 @@ function acceptModifyResult(array) {
 	displayWindow('modify-window');
 	reloadContent(currentArray);
 }
-
+/**
+ * 放弃成绩的修改
+*/
 function abortModifyResult() {
 	resetModifyWindowContent();
 	displayWindow('modify-window');
 }
-
+/**
+ * 删除单条成绩
+*/
 function deleteResult() {
 	if (confirm("确定要删除这条记录吗？")) {
 		idx = $('#modify-current-index').val();
@@ -386,7 +397,10 @@ function deleteResult() {
 	}
 
 }
-
+/**
+ * 根据分数返回曲目评级
+ * 借助far和lost可以细分出Full Recall
+*/
 function getSongRanking(score, far, lost) {
 	if (far != 0 && lost == 0) {
 		return "FR";
@@ -402,11 +416,16 @@ function getSongRanking(score, far, lost) {
 	}
 }
 
-
+/**
+ * AI-Chan推荐文本生成
+ * 生成后自动滚动到对应曲目成绩单元
+ * @param {Array<PlayResult>} array 默认是currentArray
+ * @param {Number} viewMode 默认为1，不加前缀，加't-'前缀表示目标单元为表格中的一行
+*/
 function aiChanRoll(array = currentArray, viewMode = 1) {
 	let randomIndex = Math.floor(Math.random() * array.length);
 	let randomSong = array[randomIndex];
-	console.log(randomSong)
+	console.log(randomSong);
 	let randomAiChan = getRandomAiChan();
 	$('#ai-chan-content').text(randomAiChan.replace('songName', randomSong.songName)
 		.replace('difficulty', randomSong.difficulty)
@@ -417,13 +436,216 @@ function aiChanRoll(array = currentArray, viewMode = 1) {
 		mode = 't-'
 	}
 	let unitid = mode + randomSong.songId + '-' + randomSong.difficulty;
-	// console.log(unitid,randomSong.innerIndex)
+	// console.log(unitid,randomSong.innerIndex);
 	handleScroll(unitid, randomSong.innerIndex);
 }
-
+/**
+ * 清空浏览器缓存数据
+*/
 function deleteLocalStorage() {
 	if (confirm("确定要清空本地缓存吗？该操作不可撤销！")) {
 		localStorage.clear();
 		location.reload();
 	}
 }
+
+/**
+ * 修改潜力值显示，并同步计算新的recent10，替换新的潜力值星框
+ * @param {string} ptt 潜力值
+ */
+function changePotential(ptt) {
+	ptt = ptt ? ptt : '0.00';
+	p = parseFloat(ptt).toFixed(2);
+	$('#potential-value').text(p);
+	changePotentialFrame(getPotentialFrame(ptt));
+	localStorage.setItem('potential', p);
+	console.log('ptt=' + p);
+	console.log(parseFloat(ptt));
+	let t = parseFloat(ptt) * 4 - parseFloat($('#ptt-b30 span').text()) * 3;
+	$('#ptt-r10 span').text(t >= 0 ? t.toFixed(4) : '0.0000');
+}
+
+/**
+ * 更换选择的头像并保存到localStorage
+ * @param {string} index 头像对应的文件序号
+ */
+function changeAvatar(index) {
+	console.log(index);
+	$('#icon img').attr('src', avatarPath + index + '_icon.webp');
+	$('#avatar-display img').attr('src', avatarPath + index + '_icon.webp');
+	localStorage.setItem('avatar', index);
+	displayWindow('avatar-select');
+	$('#use-custom-avatar').prop('checked', false);
+}
+/**
+ * 更换选择的段位框并保存到localStorage
+ * @param {string} index 段位框对应的文件序号
+ */
+function changeCourseDanFrame(index) {
+	$('#user-course-dan').attr('src', userCourseDanPath + index + '.png');
+
+	$('#id-course-dan').attr('src', userCourseDanPath + index + '.png');
+	$('#user-course-dan-display').css('background-image', 'url("' + userCourseDanPath + index + '.png")');
+	$('#user-course-dan-display').text(index + 'dan');
+	displayWindow('user-course-dan-select');
+	localStorage.setItem('courseDanFrame', index);
+}
+/**
+ * 更换选择的背景图并保存到localStorage
+ * @param {string} index 背景图对应的文件序号
+ */
+function changeBackgroundImage(index) {
+	$('#background-image').attr('src', backgoundImagePath + index + '.webp');
+	$('#background-display').attr('src', backgoundImagePath + index + '.webp');
+	displayWindow('background-select');
+	localStorage.setItem('backgroundImage', index);
+	$('#use-custom-background').prop('checked', false);
+}
+
+/**
+ * 替换新的潜力值星框
+ * @param {string} index 星框对应的图片序号
+ */
+function changePotentialFrame(index) {
+	$('#potential-frame').attr('src', potentialFramePath + index + '.png');
+	localStorage.setItem('potentialFrame', index);
+}
+
+/**
+ * 切换为隐藏uid *** *** ***
+ */
+function hideUID() {
+	uidFlag = !uidFlag;
+	if (uidFlag == true) {
+		$('#user-id span').text(formatUserID(localStorage.userId));
+	} else {
+		$('#user-id span').text('✱✱✱ ✱✱✱ ✱✱✱');
+
+	}
+}
+
+/**
+ * 依照当前访问的网址（github/gitee）初始化页面下方网址和二维码的显示
+ */
+async function initializeQRCode() {
+	let url = window.location.href.substring(0,window.location.href.lastIndexOf('/'));
+	$('#copyright span:first').text(`Generated at ${url} @ `);
+	// if (url == 'https://smartrte.github.io') {
+	// 	$('#qrcode').attr('src', 'img/QRCODE-githubio.png');
+	// }
+	// else if(url == 'https://smartrte.github.io'){
+	// 	$('#qrcode').attr('src', 'img/QRCODE-giteeio.png');
+	// }
+}
+/**
+ * 读取头像列表csv并生成头像选择部分
+ */
+async function initializeAvatarList() {
+	$.ajax({
+		url: avatarListPath,
+		dataType: "text",
+		success: function(resp) {
+			// console.log(resp);
+			avatarList = resp.trim().split('\n');
+			avatarList.forEach(function(avt) {
+				appendAvatarUnit(avt);
+			});
+		},
+		error: function(xhr, status, error) {
+			console.error("Error fetching data:", error);
+
+		}
+	});
+}
+/**
+ * 生成背景图片列表
+ * 我懒所以写死了
+ */
+async function initializeBackgroundList() {
+	let l = [
+		'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', 's1', 's2', 's3', 's4', 's5', 's6',
+		's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17', 's18', 's19', 's20', 's21',
+		's22', 's23', 's24', 's25', 's26'
+	];
+	let list = $('#background-list');
+	l.forEach(function(li) {
+		list.append(
+			$(`<li class="background-option" onclick="changeBackgroundImage('${String(li)}')">`)
+			.append($(`<img src='bgs/${li}.webp'>`))
+		);
+	});
+}
+/**
+ * 生成段位背景列表
+ * 我懒所以写死了
+ */
+async function initializeUserCourseDanList() {
+	let l = [
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+	];
+	let list = $('#user-course-dan-list');
+	l.forEach(function(li) {
+		list.append(
+			$(`<li class="user-course-dan-option" value="${li}" onclick="changeCourseDanFrame(${li})">`)
+			.append($(`<img class="user-course-dan-image" src="img/course/${li}.png">`))
+		);
+	});
+}
+
+/**
+ * 生成头像列表
+ * 我懒所以写死了
+ */
+function appendAvatarUnit(avt) {
+	let avtu = $('<li onclick="changeAvatar(' + "'" + avt + "'" + ')">').addClass('avatar-option');
+	let aimg = $('<img>').attr('src', avatarPath + avt + '_icon.webp');
+	avtu.append(aimg);
+	$('#avatar-list').append(avtu);
+}
+
+/**
+ * 使用canvas对上传的头像图片进行重新绘制，并将其裁剪成菱形
+ * 否则 html2canvas不支持clip属性，会导致头像样式丢失，难看的一p
+ */
+function clipDiamond() {
+	let tempImg = new Image();
+	tempImg.src = $('#temp-avatar')[0].src;
+	var canvas = document.createElement('canvas');
+	var ctx = canvas.getContext('2d');
+	canvas.width = tempImg.width || tempImg.naturalWidth;
+	canvas.height = tempImg.height || tempImg.naturalHeight;
+	canvas.height = Math.min(canvas.height, canvas.width);
+	canvas.width = canvas.height;
+	console.log(canvas.width, canvas.height);
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.drawImage(tempImg, 0, 0, canvas.width, canvas.height);
+	console.log(ctx);
+	// 裁剪为菱形
+	ctx.beginPath();
+	ctx.moveTo(0, 0);
+	ctx.lineTo(canvas.width / 2, 0);
+	ctx.lineTo(0, canvas.height / 2);
+	ctx.lineTo(canvas.width / 2, canvas.height);
+	ctx.lineTo(canvas.width, canvas.height / 2);
+	ctx.lineTo(canvas.width / 2, 0);
+	ctx.lineTo(canvas.width, 0);
+	ctx.lineTo(canvas.width, canvas.height);
+	ctx.lineTo(0, canvas.height);
+	ctx.closePath();
+	ctx.clip();
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.drawImage(tempImg, canvas.width / 2, 0, canvas.width, canvas.height / 2, canvas.width /
+		2, canvas.height, 0, canvas.height / 2);
+
+	// 将裁剪后的内容转换为data URL
+	var dataUrl = canvas.toDataURL('image/png');
+	// 显示在页面上
+	// var resultDiv = document.getElementById('result');
+	// resultDiv.innerHTML = '<img src="' + dataUrl + '" />';
+	$('#custom-avatar img').attr('src', dataUrl);
+
+	localStorage.setItem('customAvatar', dataUrl);
+	if ($('#use-custom-avatar').is(':checked')) {
+		$('#icon img').attr('src', dataUrl);
+	}
+};
