@@ -39,7 +39,7 @@ $(document).ready(function() {
 	diffSongNameMapping = getTitleMapping();
 	//初始化曲绘映射
 	diffIllMapping = getImageMapping();
-	// displayWindow('ai-chan');
+	displayWindow('ai-chan');
 	initializeBound();
 	changeBound();
 	getConstantSheet();
@@ -69,7 +69,6 @@ $(document).ready(function() {
 		resizeWidth(1);
 	});
 	resizeWidth(1);
-	// $('#main-capture').css('height', );
 
 	// 页面加载显示时间
 	showTime();
@@ -621,7 +620,7 @@ function getCaptureHeight() {
 	captureHeight = document.getElementById('container').offsetHeight +
 		document.getElementById('b30-data').offsetHeight +
 		document.getElementById('copyright').offsetHeight +
-		39 - 100; //固定margin
+		39 - 80; //固定margin
 	return captureHeight;
 }
 
@@ -638,17 +637,21 @@ async function generateUnits(array, unitQuantity) {
 		"11.4": 1,
 		"11.5": 1,
 	}
-	console.log('generateUnits called');
+	// console.log('generateUnits called');
 	let ary = array;
 	$('#b30-data').html('');
 	let index = 0;
+	let indexSlicer = [0, 0];
+	let cst = -1;
+	let spliterCounter = 0;
+	// console.log(index)
 	for (index; index < ary.length; index++) {
 		if (parseFloat(ary[index].constant) <= rangeUpperBound) {
+			// console.log(index);
 			break;
 		}
 	}
-	console.log(breaker);
-	let cst = -1;
+	// console.log(breaker);
 	for (index; index < ary.length; index++) {
 		if (ary[index].constant < rangeLowerBound) {
 			break;
@@ -656,20 +659,26 @@ async function generateUnits(array, unitQuantity) {
 		if (cst != ary[index].constant) {
 			if (String(ary[index].constant) in breaker) {
 				cst = ary[index].constant;
-				console.log(cst);
+				// console.log(cst);
 			} else {
+				indexSlicer.shift();
+				indexSlicer.push(index);
+				console.log(indexSlicer)
+				let slicedArray = ary.slice(indexSlicer[0], indexSlicer[1]);
 				cst = ary[index].constant;
-				appendSpliter(cst);
+				// console.log('cst:', cst)
+				appendSpliter(cst, spliterCounter);
+				appendStatistics(spliterCounter - 1, slicedArray, indexSlicer[1] - indexSlicer[0]);
+				spliterCounter++;
 			}
 		}
-		// if (index == 30) {
-		// 	appendOverflowSpliter();
-		// }
 		appendSongUnit(ary[index], index + 1);
 	}
-	// $('body').css('height', getCaptureHeight());
-	// $('#background').css('height', getCaptureHeight());
-	// $('#background-image').css('height', getCaptureHeight());
+	let i = indexSlicer[1]; 
+	for(i;parseFloat(ary[i].constant) >= rangeLowerBound && (i < ary.length - 1);i++){
+	}
+	
+	appendStatistics(spliterCounter - 1, ary.slice(indexSlicer[1], i+1), i+1 - indexSlicer[1]);
 	resizeWidth();
 }
 /**
@@ -694,15 +703,8 @@ async function showTime() {
 
 	var formattedTime = year + "/" + month + "/" + day + "\t" + hours + ":" + minutes + ":" + seconds;
 
-	$('#copyright span').text(formattedTime);
+	$('#copyright span:last').text(formattedTime);
 }
-// async function loadDefaultCSV() {
-
-// };
-// async function loadLocalStorage() {
-
-// };
-
 
 /**
  * 生成单个游玩成绩单元，由各种元素拼合而成
@@ -776,15 +778,42 @@ function getPotentialFrame(max) {
 
 
 /**
- * 生成overflow的分隔线和分割文字图片
+ * 生成overflow的分隔线和分割文字图片，以及统计信息小字
+ * @param {Number} cst 分割线下对应的曲目定数
+ * @param {Number} cst 目前生成的是第几条分割线
  */
-function appendSpliter(cst) {
-	let overflow = $('<div class="spliter-overflow">').addClass('spliter');
+function appendSpliter(cst, spliterCounter) {
+	let overflow = $(`<div class="spliter-overflow" id="spliter${spliterCounter}">`).addClass('spliter');
 	overflow.append($('<img class="spliter-image-overflow">').addClass('spliter-image').attr('src', 'img/divider.png'));
 	overflow.append($('<img class="spliter-text-overflow">').attr('src',
 		`img/constant/${parseFloat(cst).toFixed(1)}.png`));
 	$('#b30-data').append(overflow);
-	// console.log("spliter append");
+
+}
+
+function appendStatistics(spliterCounter, slicedArray, count) {
+	console.log(spliterCounter)
+	let spliter = $(`#spliter${spliterCounter}`);
+	console.log(spliter.length > 0 ? true : false)
+	let ranks = ['PM', 'FR', 'EX+', 'EX', 'AA', 'A', 'B', 'C', 'D'];
+	let area = $(`<div class="spliter-statistics-area">`);
+
+	let temp = slicedArray;
+	let sts = getStatistics(temp);
+	// console.log(`cst:${cst},sts:${sts}`)
+	ranks.forEach(function(rank) {
+		area.append(
+			$(`<div class="spliter-statistics-unit">`)
+			.append(
+				$(`<img class="spliter-statistics-image" src="img/rank/${rank}.png">`)
+			)
+			.append(
+				$(`<p class=spliter-statistics-number>`).text((sts[rank] ? sts[rank].length : 0) + '/' +
+					count)
+			)
+		);
+	});
+	spliter.append(area);
 }
 
 /**
@@ -817,7 +846,7 @@ async function compressImage(dataURL, quality) {
 			const compressedDataURL = canvas.toDataURL('image/jpeg', quality);
 
 			resolve(compressedDataURL);
-		};	
+		};
 		img.onerror = reject;
 		img.src = dataURL;
 	});
@@ -875,21 +904,19 @@ function changeBound() {
 	let l = $('#range-lower-bound').val();
 	rangeUpperBound = Math.max(u, l);
 	rangeLowerBound = Math.min(u, l);
-	if(rangeUpperBound <=12.0 && rangeUpperBound >= 11.4){
+	if (rangeUpperBound <= 12.0 && rangeUpperBound >= 11.4) {
 		rangeUpperBound = 12.0
-	}
-	else if(rangeUpperBound <= 11.3 && rangeUpperBound >= 11.0){
+	} else if (rangeUpperBound <= 11.3 && rangeUpperBound >= 11.0) {
 		rangeUpperBound = 11.3
 	}
-	
-	if(rangeLowerBound <=12.0 && rangeLowerBound >= 11.4){
+
+	if (rangeLowerBound <= 12.0 && rangeLowerBound >= 11.4) {
 		rangeLowerBound = 11.4
-	}
-	else if(rangeLowerBound <= 11.3 && rangeLowerBound >= 11.0){
+	} else if (rangeLowerBound <= 11.3 && rangeLowerBound >= 11.0) {
 		rangeLowerBound = 11.0
 	}
 	$('#range-upper-bound').val((rangeUpperBound).toFixed(1));
-	
+
 	$('#range-lower-bound').val((rangeLowerBound).toFixed(1));
 	localStorage.rangeLowerBound = rangeLowerBound;
 	localStorage.rangeUpperBound = rangeUpperBound;

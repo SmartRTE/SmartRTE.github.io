@@ -570,3 +570,22 @@ function generateOptionList(str, difficulty) {
 // }
 
 // const debouncedFilter = debounce(runFilter, 300);
+
+function showStatistics(array = currentArray){
+	sts = getStatistics();
+	let list = ['PM', 'FR', 'EX+', 'EX', 'AA', 'A', 'B', 'C', 'D'];
+	let s = [];
+	let str = '';
+	let c = 0;
+	console.log(sts)
+	list.forEach(function(l){
+		let n = sts[l] ? sts[l].length : 0;
+		c += n;
+		str += `${l}: ${n}\n`
+		console.log(n)
+		s.push(n);
+	})
+	str = '在所有' + c + '条结果中，有: \n' + str;
+	console.log(str)
+	alert(str)
+}

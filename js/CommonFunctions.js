@@ -31,7 +31,7 @@ class PlayResult {
 		if (diffIllMapping) {
 			const diffSongId = diffIllMapping[songId];
 			if (diffSongId && diffSongId[difficulty]) {
-				console.log(diffSongId[difficulty]);
+				// console.log(diffSongId[difficulty]);
 				// this.illustration = (illusPath + songId + diffSongId[difficulty] + ".jpg");
 				this.illustration = (songId + diffSongId[difficulty] + ".jpg");
 			} else {
@@ -46,7 +46,7 @@ class PlayResult {
 			const diffSongId = diffSongNameMapping[songId];
 			if (diffSongId && diffSongId[difficulty]) {
 				this.songName = diffSongId[difficulty];
-				console.log(songId);
+				// console.log(songId);
 			} else {
 				this.songName = songName;
 			}
@@ -406,7 +406,7 @@ function getSongRanking(score, far, lost) {
 		return "FR";
 	}
 	const ranges = [8599999, 8899999, 9199999, 9499999, 9799999, 9899999, 10000000,
-		10002222
+		11000000
 	];
 	const rankLabels = ["D", "C", "B", "A", "AA", "EX", "EX+", "PM"];
 	for (let i = 0; i < ranges.length; i++) {
@@ -649,3 +649,23 @@ function clipDiamond() {
 		$('#icon img').attr('src', dataUrl);
 	}
 };
+
+/**
+ * 获取统计信息
+ * @param {Array<PlayResult>} array 传入统计的成绩对象数组
+ * @return {Object} sts 包含按照分数段分类的字典对象，使用时基本只用到length
+*/
+
+function getStatistics(array = currentArray){
+	let temp = array;
+	let sts = {};
+	temp.forEach(function(currentRow){
+		let ranking = getSongRanking(currentRow.score,currentRow.far,currentRow.lost);
+		if(!sts[ranking]){
+			sts[ranking] = [];
+		}
+		sts[ranking].push(currentRow);
+	});
+	// console.log(sts)
+	return sts;
+}

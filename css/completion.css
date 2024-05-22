@@ -473,7 +473,7 @@ button:active {
 #b30-data {
 	position: relative;
 	width: 106.25rem;
-	margin-top: -50px;
+	margin-top: -30px;
 	/* margin: 0; */
 	padding: 0;
 	display: block;
@@ -752,10 +752,42 @@ button:active {
 	top: 2.375rem;
 }
 
+.spliter-statistics-area{
+	position: absolute;
+	height: 7.5rem;
+	width: 44.0rem;
+	left: 57.0rem;
+	/* background-color: #008200; */
+}
+.spliter-statistics-unit{
+	float: left;
+	display: block;
+	
+}
+.spliter-statistics-image{
+	position: relative;
+	float: left;
+	height: 3.6rem;
+	
+}
+
+.spliter-statistics-number{
+	position: relative;
+	float: left;
+	height: 3.5rem;
+	line-height: 3.5rem;
+	font-size: 1.75rem;
+	color: aliceblue;
+	text-shadow: 0 0 1px black,
+				0 0 2px black,
+				0 0 3px black,
+				0 0 4px dimgray;
+}
+
 .spliter-text-overflow {
 	position: absolute;
 	display: block;
-	left: 41.4rem;
+	left: 22.75rem;
 	margin: 0 auto;
 	top: 1.25rem;
 	height: 5.625rem;
