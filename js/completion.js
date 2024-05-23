@@ -678,7 +678,7 @@ async function generateUnits(array, unitQuantity) {
 	for(i;parseFloat(ary[i].constant) >= rangeLowerBound && (i < ary.length - 1);i++){
 	}
 	
-	appendStatistics(spliterCounter - 1, ary.slice(indexSlicer[1], i+1), i+1 - indexSlicer[1]);
+	appendStatistics(spliterCounter - 1, ary.slice(indexSlicer[1], i), i - indexSlicer[1]);
 	resizeWidth();
 }
 /**
