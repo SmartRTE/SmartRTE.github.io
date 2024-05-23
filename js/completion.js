@@ -39,7 +39,7 @@ $(document).ready(function() {
 	diffSongNameMapping = getTitleMapping();
 	//初始化曲绘映射
 	diffIllMapping = getImageMapping();
-	displayWindow('ai-chan');
+	// displayWindow('ai-chan');
 	initializeBound();
 	changeBound();
 	getConstantSheet();

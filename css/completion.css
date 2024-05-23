@@ -773,6 +773,7 @@ button:active {
 
 .spliter-statistics-number{
 	position: relative;
+	font-family: 'Exo';
 	float: left;
 	height: 3.5rem;
 	line-height: 3.5rem;
