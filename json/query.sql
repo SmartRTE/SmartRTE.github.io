@@ -415,6 +415,11 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Floati
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Chromafill', 'chromafill', 4.0, 7.0, 10.0, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Desive', 'desive', 5, 8, 9.9, '', 10.8);
 
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Hidden Rainbows of Epicurus', 'epicurus', 2.5, 5.5, 7.5, '', 8.8);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Twilight Concerto', 'tasogare', 4.5, 7.8, 9.5, '', 10.4);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Old School Salvage', 'oldschoolsalvage', 4.0, 7.8, 9.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Beautiful Dreamer', 'beautifuldreamer', 4.0, 7.8, 9.9, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Back to Basics', 'backtobasics', 5.0, 8.7, 10.5, '', '');
 
 COMMIT TRANSACTION;
 
