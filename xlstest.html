@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>SheetJS Read XLS and Extract Columns</title>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="js/CommonFunctions.js"></script>
+		<!-- <script src="https://unpkg.com/xlsx@0.17.x/dist/xlsx.full.min.js"></script> -->
+		<script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+		<!-- <script src="https://unpkg.com/file-saver@2.0.5/dist/FileSaver.js"></script> -->
+	</head>
+	<body>
+
+		<input type="file" id="uploadExcel">
+		<script>
+			/*
+			过程应该是这样的：
+			上传st3生成了currentArray
+			但是曲名和difficulty都不一样，在表格里的顺序也不一样，这点就难搞
+			以表格为准，不能给表格的生成字典，否则顺序会错乱
+			要不就给currentArray生成一个字典，先按照songId和difficulty把表格里的曲目名称拿到
+			然后生成曲目名称+难度：对应分数的字典
+			拿表格的曲目名称+难度对应分数的值
+			拿不到就留空，拿到了就填入
+			可以试试
+			*/
+
+
+			let diffSongNameMapping = null; //差分曲名映射
+			let diffIllMapping = null; //差分曲绘映射
+			let currentVersionMaxPotential = 13.12; //现版本最高理论潜力值
+
+			var idData = {};
+			var title_id_mapping = null;
+			var id_title_mapping = null;
+			let tosongid = [];
+			let tosongname = [];
+			let songNameAndDifficulty = {};
+			let finalOutputScore = [];
+			
+			
+			let filteredArray = [];
+			let currentArray = [];
+			let tempArray = [];
+			let csv = '';
+
+			async function InitializeVH() {
+				try {
+					const response = await fetch('json/title-id-original.json');
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+					title_id_mapping = await response.json();
+				} catch (error) {
+					console.error('There was a problem loading the JSON file:', error);
+				}
+				try {
+					const response = await fetch('json/id-title-revised.json');
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+					id_title_mapping = await response.json();
+				} catch (error) {
+					console.error('There was a problem loading the JSON file:', error);
+				}
+				try {
+					const response = await fetch('sample/b30test.csv');
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+					csv = await response.text();
+				} catch (error) {
+					console.error('There was a problem loading the JSON file:', error);
+				}
+			}
+
+			function doMapping() {
+				idData["A"].forEach(function(cell, index) {
+					tosongid.push(title_id_mapping[cell]);
+				});
+
+				tosongid.forEach(function(cell, index) {
+					console.log(cell)
+					tosongname.push(id_title_mapping[cell][idData["E"][index]])
+				})
+			}
+
+			function runConvert(csv) {
+				file = csv.trim();
+				const rows = file.split('\n');
+				tempArray = [];
+				for (i = 1; i < rows.length; i++) {
+					const row = rows[i].split(',');
+					if (row[3] != '') {
+						single = new PlayResult(row[0], row[1], row[2],
+							parseFloat(row[3]), parseFloat(row[4]),
+							parseFloat(row[5]), parseFloat(row[6]),
+							parseFloat(row[7]), parseFloat(row[8]),
+							parseFloat(row[9]), i - 1);
+						tempArray.push(single);
+					}
+				}
+				console.log(tempArray)
+				tempArray.sort(function(a, b) {
+					return resultSort(a, b, 'playRating', 1)
+				})
+				// reloadContent(tempArray)
+				filteredArray = tempArray;
+				currentArray = filteredArray;
+
+				// saveLocalStorage(currentArray);
+				// displayB30(currentArray);
+				// generateCard(currentArray);
+				// generateTable(currentArray);
+			}
+
+			$(document).ready(function() {
+				//初始化曲名映射
+				diffSongNameMapping = getTitleMapping();
+				//初始化曲绘映射
+				diffIllMapping = getImageMapping();
+				InitializeVH();
+				$("#uploadExcel").on("change", function(e) {
+					var file = e.target.files[0];
+					if (!file) return;
+
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						var data = e.target.result;
+						var workbook = XLSX.read(data, {
+							type: 'binary'
+						});
+						var sheetName = workbook.SheetNames[0]; // 获取第一个工作表的名称
+						var sheet = workbook.Sheets[sheetName];
+
+						// 提取A列和E列数据
+						var columns = ['A', 'E'];
+
+						// 分别处理A列和E列
+						columns.forEach(column => {
+							var colArray = [];
+							var col = column + '2'; // 假设从第2行开始
+							while (sheet[col]) {
+								colArray.push(sheet[col].v);
+								col = column + (colArray.length + 1).toString();
+							}
+							idData[column] = colArray; // 存储到对象中，方便访问
+						});
+						idData['A'].shift();
+						idData['E'].shift();
+						// 打印A列和E列的数据
+
+						console.log("Column A Data:", idData[0]);
+						console.log("Column E Data:", idData[1]);
+						doMapping();
+
+						runConvert(csv);
+						tempArray = currentArray;
+						tempArray.forEach(function(cr, index) {
+							switch (cr.difficulty) {
+								case ("Past"):
+									cr.difficulty = "PST";
+									break;
+								case ("Present"):
+									cr.difficulty = "PRS";
+									break;
+								case ("Future"):
+									cr.difficulty = "FTR";
+									break;
+								case ("Beyond"):
+									cr.difficulty = "BYD";
+									break;
+								case ("Eternal"):
+									cr.difficulty = "ETR";
+									break;
+							}
+							console.log(cr.difficulty)
+							cr.songName = id_title_mapping[cr.songId][cr.difficulty]
+							songNameAndDifficulty[cr.songName+'-'+cr.difficulty] = cr.score;
+							
+						});
+						idData["A"].forEach(function(cell,index){
+							finalOutputScore.push(songNameAndDifficulty[cell+'-'+idData["E"][index]]?parseInt(songNameAndDifficulty[cell+'-'+idData["E"][index]]):0);
+							
+						})
+						
+						// 填充G列（第7列）为顺序数字
+						var rowIndex = 2; 
+						var maxRow = Object.keys(sheet).length; 
+						while (rowIndex <= maxRow) {
+							var cellRef = XLSX.utils.encode_cell({
+								r: rowIndex - 1,
+								c: 6
+							}); 
+							sheet[cellRef] = {
+								v: finalOutputScore[rowIndex-2]
+							}; 
+							rowIndex++;
+						}
+
+						// 准备下载
+
+						XLSX.writeFile(workbook, "测试用万能查分表xlsx格式.xlsx", { compression: true });
+
+					};
+					reader.readAsBinaryString(file);
+
+				});
+			});
+		</script>
+
+	</body>
+</html>

@@ -8,6 +8,7 @@
 		<script src="js/jquery-3.6.1.min.js"></script>
 		<script src="js/CommonFunctions.js"></script>
 		<script src="js/sql-wasm.js"></script>
+		<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 		<link rel="icon" href="favicon.ico" />
 	</head>
 	<body>
@@ -61,8 +62,8 @@
 						<label>当前曲目数据库版本：<span>5.7.0</span></label><br />
 						<label>当前曲绘文件库版本：<span>5.7.0</span></label><br />
 						<label>当前手填表文件版本：<span>5.6.0</span></label><br />
-						<a href="sample/模板.csv" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载手填分数表</button></button></a><br />
-						<h5>!手填表只填写分数即可，单曲潜力值会自动计算!</h2><br>
+						<a href="sample/模板.csv" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载手填分数表</button></a><br />
+						<h3>!手填表只填写分数即可，单曲潜力值会自动计算!</h3><br>
 						<label>更新于：<span>2024/04/26</span></label>
 					</div>
 					<!-- <a href="https://smartrte.gitee.io/" target="_blank"><h1>如果加载太慢可以尝试gitee page(点击这里)</h1></a> -->
@@ -99,7 +100,9 @@
 					</div>
 				</div>
 				<div id="save-csv-btn-container" style="width: 100%; display: none;">
-					<button class="func-btn" id="save-table-csv" onclick="saveTableCSV()">保存分数表文件</button><br />
+					<button class="func-btn" id="save-table-csv" onclick="saveTableCSV()">保存分数表文件</button>
+					<button class="func-btn" id="convert-to-VHZEK" onclick="saveVHZEK()">保存为VH版万能查分表</button><br />
+					<input type="file" id="uploadExcel" hidden="true">
 					<label>点曲绘可以进行修改</label>
 				</div>
 				<div id="result-card" style="display: none;">

@@ -11,16 +11,27 @@ let columns = ['SongName', 'SongId', 'Difficulty',
 	'Far', 'Lost', 'Constant',
 	'PlayRating'
 ]; //表头
+
+let csv = '';
+
 let currentArray = []; //当前的全部成绩对象数组
 let tempArray = []; //转化csv时使用的中间数组
 let filteredArray = []; //启用筛选时被筛选出的成绩对象数组
 let rbm = []; //recent10 best30 maxptt
+let idData = {};
+let tosongid = [];
+let tosongname = [];
+let songNameAndDifficulty = {};
+let finalOutputScore = [];
+
 
 // let illusPath = "IllustrationMin/"; //曲绘文件路径
 let sqlWasmPath = "sql-wasm.wasm"; //sql.wasm路径
 
 let diffSongNameMapping = null; //差分曲名映射
 let diffIllMapping = null; //差分曲绘映射
+let title_id_mapping = null; //VHZek佬的万能查分表相关，用来以曲名对应songId
+let id_title_mapping = null; //VHZek佬的万能查分表相关，用来以songId和difficulty对应曲名
 let currentVersionMaxPotential = 13.12; //现版本最高理论潜力值
 let viewMode = 0; //成绩显示状态，0=table 1=card
 // let currentB30;//当前best30
@@ -44,6 +55,7 @@ $(document).ready(function() {
 	//初始化曲绘映射
 	diffIllMapping = getImageMapping();
 	//初始化ptt监听
+	initializeVHZek();
 	// initializePotentialListener();
 	//初始化定数边界变更监听
 	initailizeConstantRangeListener();
@@ -73,7 +85,7 @@ function initailizeSearchResultListener() {
 }
 /**
  * 初始化排序方式监听
-*/
+ */
 function initializeSortListener() {
 	$('#sort-mode').change(function() {
 		// console.log($('#sort-mode').val() + '  ' + $('#sort-order').val())
@@ -86,7 +98,7 @@ function initializeSortListener() {
 }
 /**
  * 初始化定数范围监听
-*/
+ */
 function initailizeConstantRangeListener() {
 	$('#range-lower-bound').on('input', function() {
 		let num = $('#range-lower-bound').val();
@@ -102,7 +114,7 @@ function initailizeConstantRangeListener() {
 			$('#range-lower-bound').val(num.slice(0, 4));
 
 		}
-		console.log('range-lower-bound:'+$('#range-lower-bound').val())
+		console.log('range-lower-bound:' + $('#range-lower-bound').val())
 		filterByConstant();
 	});
 	$('#range-upper-bound').on('input', function() {
@@ -124,17 +136,17 @@ function initailizeConstantRangeListener() {
 }
 /**
  * 根据选定的定数范围筛选显示的曲目成绩
-*/
+ */
 function filterByConstant() {
 	rangeUpperBound = parseFloat($('#range-upper-bound').val());
 	rangeLowerBound = parseFloat($('#range-lower-bound').val());
-	if(rangeUpperBound < rangeLowerBound){
+	if (rangeUpperBound < rangeLowerBound) {
 		[rangeUpperBound, rangeLowerBound] = [rangeLowerBound, rangeUpperBound];
 	}
 	console.log(rangeUpperBound, rangeLowerBound);
 	filteredArray = [];
-	currentArray.forEach(function(currentRow, index){
-		if(currentRow.constant>= rangeLowerBound && currentRow.constant <= rangeUpperBound){
+	currentArray.forEach(function(currentRow, index) {
+		if (currentRow.constant >= rangeLowerBound && currentRow.constant <= rangeUpperBound) {
 			filteredArray.push(currentRow)
 		}
 	});
@@ -177,6 +189,92 @@ function initializeUploadListener() {
 			}
 		}
 		$('#file-input').val('');
+	});
+	$("#uploadExcel").on("change", function(e) {
+		var file = e.target.files[0];
+		if (!file) return;
+	
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			var data = e.target.result;
+			var workbook = XLSX.read(data, {
+				type: 'binary'
+			});
+			var sheetName = workbook.SheetNames[0]; // 获取第一个工作表的名称
+			var sheet = workbook.Sheets[sheetName];
+	
+			// 提取A列和E列数据
+			var columns = ['A', 'E'];
+	
+			// 分别处理A列和E列
+			columns.forEach(column => {
+				var colArray = [];
+				var col = column + '2'; // 假设从第2行开始
+				while (sheet[col]) {
+					colArray.push(sheet[col].v);
+					col = column + (colArray.length + 1).toString();
+				}
+				idData[column] = colArray; // 存储到对象中，方便访问
+			});
+			idData['A'].shift();
+			idData['E'].shift();
+			// 打印A列和E列的数据
+	
+			console.log("Column A Data:", idData[0]);
+			console.log("Column E Data:", idData[1]);
+			doMapping();
+	
+			// runConvert(csv);
+			tempArray = currentArray;
+			tempArray.forEach(function(cr, index) {
+				switch (cr.difficulty) {
+					case ("Past"):
+						cr.difficulty = "PST";
+						break;
+					case ("Present"):
+						cr.difficulty = "PRS";
+						break;
+					case ("Future"):
+						cr.difficulty = "FTR";
+						break;
+					case ("Beyond"):
+						cr.difficulty = "BYD";
+						break;
+					case ("Eternal"):
+						cr.difficulty = "ETR";
+						break;
+				}
+				console.log(cr.difficulty)
+				cr.songName = id_title_mapping[cr.songId][cr.difficulty]
+				songNameAndDifficulty[cr.songName+'-'+cr.difficulty] = cr.score;
+				
+			});
+			idData["A"].forEach(function(cell,index){
+				finalOutputScore.push(songNameAndDifficulty[cell+'-'+idData["E"][index]]?parseInt(songNameAndDifficulty[cell+'-'+idData["E"][index]]):null);
+				
+			})
+			
+			// 填充G列（第7列）为顺序数字
+			var rowIndex = 2; 
+			var maxRow = Object.keys(sheet).length; 
+			while (rowIndex <= maxRow) {
+				var cellRef = XLSX.utils.encode_cell({
+					r: rowIndex - 1,
+					c: 6
+				}); 
+				sheet[cellRef] = {
+					v: finalOutputScore[rowIndex-2]
+				}; 
+				rowIndex++;
+			}
+	
+			// 准备下载
+	
+			XLSX.writeFile(workbook, "测试用万能查分表xlsx格式.xlsx", { compression: true });
+	
+		};
+		reader.readAsBinaryString(file);
+	
 	});
 }
 /**
@@ -233,22 +331,23 @@ function runConvert(csv) {
 	tempArray = [];
 	for (i = 1; i < rows.length; i++) {
 		const row = rows[i].split(',');
-		if(row[3]!=''){
-		single = new PlayResult(row[0], row[1], row[2],
-			parseFloat(row[3]), parseFloat(row[4]),
-			parseFloat(row[5]), parseFloat(row[6]),
-			parseFloat(row[7]), parseFloat(row[8]),
-			parseFloat(row[9]), i - 1);
-		tempArray.push(single);}
+		if (row[3] != '') {
+			single = new PlayResult(row[0], row[1], row[2],
+				parseFloat(row[3]), parseFloat(row[4]),
+				parseFloat(row[5]), parseFloat(row[6]),
+				parseFloat(row[7]), parseFloat(row[8]),
+				parseFloat(row[9]), i - 1);
+			tempArray.push(single);
+		}
 	}
 	console.log(tempArray)
-	tempArray.sort(function(a,b){
-		return resultSort(a,b,'playRating', 1)
+	tempArray.sort(function(a, b) {
+		return resultSort(a, b, 'playRating', 1)
 	})
 	reloadContent(tempArray)
 	filteredArray = tempArray;
 	currentArray = filteredArray;
-	
+
 	saveLocalStorage(currentArray);
 	displayB30(currentArray);
 	generateCard(currentArray);
@@ -316,7 +415,8 @@ function convertToTable(currentRow, index) {
 	let $trElem = $('<tr id="t-' + currentRow.songId + "-" + currentRow.difficulty + '" class="' + difColor + '">')
 		.addClass('single-tr-' + currentRow.difficulty.toLowerCase());
 	$trElem.append($('<td>').text(index));
-	$trElem.append($('<td>').append($('<img onclick="modifyPlayResult(' + currentRow.innerIndex + ')">').addClass("table-ill").attr('src', illustrationPath + currentRow.illustration)));
+	$trElem.append($('<td>').append($('<img onclick="modifyPlayResult(' + currentRow.innerIndex + ')">').addClass(
+		"table-ill").attr('src', illustrationPath + currentRow.illustration)));
 	$trElem.append($('<td>').addClass('t-song-name').text(currentRow.songName));
 	$trElem.append($('<td>').addClass('t-score').text(currentRow.score));
 	$trElem.append($('<td>').addClass('t-perfect').text(currentRow.perfect));
@@ -363,7 +463,8 @@ function convertToCard(currentRow, index) {
 
 	$cardElem.append($('<div>').addClass('card-rank').text('#' + index));
 
-	let $illContainer = $('<div onclick="modifyPlayResult('+currentRow.innerIndex+')">').addClass('card-ill-container');
+	let $illContainer = $('<div onclick="modifyPlayResult(' + currentRow.innerIndex + ')">').addClass(
+		'card-ill-container');
 	$illContainer.append($('<img>').addClass('card-ill').attr('src', illustrationPath + currentRow.illustration));
 	$cardElem.append($illContainer);
 	$cardElem.append($('<div>').addClass('song-name').text(currentRow.songName));
@@ -489,11 +590,11 @@ function filterResult(array, attr, order) {
 	generateTable(tempArray);
 }
 
-function reloadContent(array){
+function reloadContent(array) {
 	array.sort(function(a, b) {
 		return resultSort(a, b, 'playRating', 1);
 	})
-	array.forEach(function(currentRow, index){
+	array.forEach(function(currentRow, index) {
 		currentRow.innerIndex = index;
 	})
 	saveLocalStorage(array);
@@ -530,10 +631,12 @@ function searchSong() {
 		})
 	}
 }
-function handleScroll(unitid, index){
+
+function handleScroll(unitid, index) {
 	// console.log(unitid)
 	scrollToElement(unitid);
 }
+
 function generateOptionList(str, difficulty) {
 	let searchResult = [];
 	let pair = {};
@@ -571,14 +674,14 @@ function generateOptionList(str, difficulty) {
 
 // const debouncedFilter = debounce(runFilter, 300);
 
-function showStatistics(array = currentArray){
+function showStatistics(array = currentArray) {
 	sts = getStatistics();
 	let list = ['PM', 'FR', 'EX+', 'EX', 'AA', 'A', 'B', 'C', 'D'];
 	let s = [];
 	let str = '';
 	let c = 0;
 	console.log(sts)
-	list.forEach(function(l){
+	list.forEach(function(l) {
 		let n = sts[l] ? sts[l].length : 0;
 		c += n;
 		str += `${l}: ${n}\n`
@@ -588,4 +691,67 @@ function showStatistics(array = currentArray){
 	str = '在所有' + c + '条结果中，有: \n' + str;
 	console.log(str)
 	alert(str)
+}
+
+async function initializeVHZek() {
+	try {
+		const response = await fetch('json/title-id-original.json');
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		title_id_mapping = await response.json();
+	} catch (error) {
+		console.error('There was a problem loading the JSON file:', error);
+	}
+	try {
+		const response = await fetch('json/id-title-revised.json');
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		id_title_mapping = await response.json();
+	} catch (error) {
+		console.error('There was a problem loading the JSON file:', error);
+	}
+	// try {
+	// 	const response = await fetch('sample/b30test.csv');
+	// 	if (!response.ok) {
+	// 		throw new Error(`HTTP error! status: ${response.status}`);
+	// 	}
+	// 	csv = await response.text();
+	// } catch (error) {
+	// 	console.error('There was a problem loading the JSON file:', error);
+	// }
+}
+
+function saveVHZEK() {
+	msg = "！注意！\n这个功能还在测试中，而且可能不会有持久的更新，"
+	+"请你自备一份'Arcaea 万能查分表5.7.1.xls'文档，（可以不为空但数据会被替换）在稍后弹出的文件选择界面选择它\n"
+	+"但是会丢失**全部的**单元格样式，推荐暂时只是把这个功能当成快速填入数据的工具，由于不强制排序，可以作为'\n\n'"
+	+"如果你不知道我在说什么，请关闭这个对话框";
+	if(confirm(msg)){
+		let temp = currentArray;
+		let csv = [columns.join(",")];
+		temp.forEach(function(row) {
+			let r = [row.songName, row.songId, row.difficulty, row.score, row.perfect, row.criticalPerfect, row.far,
+				row.lost, row.constant, row.playRating
+			].join(",");
+			csv.push(r);
+		});
+		csv = csv.join("\n");
+		
+		$("#uploadExcel").click();
+	} else {
+			
+	}
+}
+
+function doMapping() {
+	idData["A"].forEach(function(cell, index) {
+		tosongid.push(title_id_mapping[cell]);
+	});
+
+	tosongid.forEach(function(cell, index) {
+		console.log(cell)
+		tosongname.push(id_title_mapping[cell][idData["E"][index]])
+	})
 }

@@ -1,0 +1,2767 @@
+{
+    "sayonarahatsukoi": {
+        "PST": "Sayonara Hatsukoi",
+        "PRS": "Sayonara Hatsukoi",
+        "FTR": "Sayonara Hatsukoi",
+        "BYD": "Sayonara Hatsukoi",
+        "ETR": "Sayonara Hatsukoi"
+    },
+    "lostcivilization": {
+        "PST": "Lost Civilization",
+        "PRS": "Lost Civilization",
+        "FTR": "Lost Civilization",
+        "BYD": "Lost Civilization",
+        "ETR": "Lost Civilization"
+    },
+    "goodtek": {
+        "PST": "GOODTEK (Arcaea Edit)",
+        "PRS": "GOODTEK (Arcaea Edit)",
+        "FTR": "GOODTEK (Arcaea Edit)",
+        "BYD": "GOODTEK (Arcaea Edit)",
+        "ETR": "GOODTEK (Arcaea Edit)"
+    },
+    "viyella": {
+        "PST": "cry of viyella",
+        "PRS": "cry of viyella",
+        "FTR": "cry of viyella",
+        "BYD": "cry of viyella",
+        "ETR": "cry of viyella"
+    },
+    "rise": {
+        "PST": "Rise",
+        "PRS": "Rise",
+        "FTR": "Rise",
+        "BYD": "Rise",
+        "ETR": "Rise"
+    },
+    "lucifer": {
+        "PST": "Lucifer",
+        "PRS": "Lucifer",
+        "FTR": "Lucifer",
+        "BYD": "Lucifer",
+        "ETR": "Lucifer"
+    },
+    "fairytale": {
+        "PST": "Fairytale",
+        "PRS": "Fairytale",
+        "FTR": "Fairytale",
+        "BYD": "Fairytale",
+        "ETR": "Fairytale"
+    },
+    "hearditsaid": {
+        "PST": "I've heard it said",
+        "PRS": "I've heard it said",
+        "FTR": "I've heard it said",
+        "BYD": "I've heard it said",
+        "ETR": "I've heard it said"
+    },
+    "babaroque": {
+        "PST": "Babaroque",
+        "PRS": "Babaroque",
+        "FTR": "Babaroque",
+        "BYD": "Babaroque",
+        "ETR": "Babaroque"
+    },
+    "memoryfactory": {
+        "PST": "memoryfactory.lzh",
+        "PRS": "memoryfactory.lzh",
+        "FTR": "memoryfactory.lzh",
+        "BYD": "memoryfactory.lzh",
+        "ETR": "memoryfactory.lzh"
+    },
+    "snowwhite": {
+        "PST": "Snow White",
+        "PRS": "Snow White",
+        "FTR": "Snow White",
+        "BYD": "Snow White",
+        "ETR": "Snow White"
+    },
+    "relentless": {
+        "PST": "Relentless",
+        "PRS": "Relentless",
+        "FTR": "Relentless",
+        "BYD": "Relentless",
+        "ETR": "Relentless"
+    },
+    "shadesoflight": {
+        "PST": "Shades of Light in a Transcendent Realm",
+        "PRS": "Shades of Light in a Transcendent Realm",
+        "FTR": "Shades of Light in a Transcendent Realm",
+        "BYD": "Shades of Light in a Transcendent Realm",
+        "ETR": "Shades of Light in a Transcendent Realm"
+    },
+    "vexaria": {
+        "PST": "Vexaria",
+        "PRS": "Vexaria",
+        "FTR": "Vexaria",
+        "BYD": "Vexaria",
+        "ETR": "Vexaria"
+    },
+    "essenceoftwilight": {
+        "PST": "Essence of Twilight",
+        "PRS": "Essence of Twilight",
+        "FTR": "Essence of Twilight",
+        "BYD": "Essence of Twilight",
+        "ETR": "Essence of Twilight"
+    },
+    "qualia": {
+        "PST": "qualia -ideaesthesia-",
+        "PRS": "qualia -ideaesthesia-",
+        "FTR": "qualia -ideaesthesia-",
+        "BYD": "qualia -ideaesthesia-",
+        "ETR": "qualia -ideaesthesia-"
+    },
+    "pragmatism": {
+        "PST": "PRAGMATISM",
+        "PRS": "PRAGMATISM",
+        "FTR": "PRAGMATISM",
+        "BYD": "PRAGMATISM -RESURRECTION-",
+        "ETR": "PRAGMATISM"
+    },
+    "sheriruth": {
+        "PST": "Sheriruth",
+        "PRS": "Sheriruth",
+        "FTR": "Sheriruth",
+        "BYD": "Sheriruth",
+        "ETR": "Sheriruth"
+    },
+    "lumia": {
+        "PST": "Lumia",
+        "PRS": "Lumia",
+        "FTR": "Lumia",
+        "BYD": "Lumia",
+        "ETR": "Lumia"
+    },
+    "dement": {
+        "PST": "Dement ~after legend~",
+        "PRS": "Dement ~after legend~",
+        "FTR": "Dement ~after legend~",
+        "BYD": "Dement ~after legend~",
+        "ETR": "Dement ~after legend~"
+    },
+    "dandelion": {
+        "PST": "Dandelion",
+        "PRS": "Dandelion",
+        "FTR": "Dandelion",
+        "BYD": "Dandelion",
+        "ETR": "Dandelion"
+    },
+    "anokumene": {
+        "PST": "Anökumene",
+        "PRS": "Anökumene",
+        "FTR": "Anökumene",
+        "BYD": "Anökumene",
+        "ETR": "Anökumene"
+    },
+    "infinityheaven": {
+        "PST": "Infinity Heaven",
+        "PRS": "Infinity Heaven",
+        "FTR": "Infinity Heaven",
+        "BYD": "Infinity Heaven",
+        "ETR": "Infinity Heaven"
+    },
+    "partyvinyl": {
+        "PST": "Party Vinyl",
+        "PRS": "Party Vinyl",
+        "FTR": "Party Vinyl",
+        "BYD": "Party Vinyl",
+        "ETR": "Party Vinyl"
+    },
+    "flashback": {
+        "PST": "Flashback",
+        "PRS": "Flashback",
+        "FTR": "Flashback",
+        "BYD": "Flashback",
+        "ETR": "Flashback"
+    },
+    "flyburg": {
+        "PST": "フライブルクとエンドロウル",
+        "PRS": "フライブルクとエンドロウル",
+        "FTR": "フライブルクとエンドロウル",
+        "BYD": "フライブルクとエンドロウル",
+        "ETR": "フライブルクとエンドロウル"
+    },
+    "nirvluce": {
+        "PST": "Nirv lucE",
+        "PRS": "Nirv lucE",
+        "FTR": "Nirv lucE",
+        "BYD": "Nirv lucE",
+        "ETR": "Nirv lucE"
+    },
+    "paradise": {
+        "PST": "Paradise",
+        "PRS": "Paradise",
+        "FTR": "Paradise",
+        "BYD": "Paradise",
+        "ETR": "Paradise"
+    },
+    "brandnewworld": {
+        "PST": "Brand new world",
+        "PRS": "Brand new world",
+        "FTR": "Brand new world",
+        "BYD": "Brand new world",
+        "ETR": "Brand new world"
+    },
+    "dataerror": {
+        "PST": "DataErr0r",
+        "PRS": "DataErr0r",
+        "FTR": "DataErr0r",
+        "BYD": "DataErr0r",
+        "ETR": "DataErr0r"
+    },
+    "crosssoul": {
+        "PST": "CROSS†SOUL",
+        "PRS": "CROSS†SOUL",
+        "FTR": "CROSS†SOUL",
+        "BYD": "CROSS†SOUL",
+        "ETR": "CROSS†SOUL"
+    },
+    "yourvoiceso": {
+        "PST": "Your voice so... feat. Such",
+        "PRS": "Your voice so... feat. Such",
+        "FTR": "Your voice so... feat. Such",
+        "BYD": "Your voice so... feat. Such",
+        "ETR": "Your voice so... feat. Such"
+    },
+    "chronostasis": {
+        "PST": "Chronostasis",
+        "PRS": "Chronostasis",
+        "FTR": "Chronostasis",
+        "BYD": "Chronostasis",
+        "ETR": "Chronostasis"
+    },
+    "kanagawa": {
+        "PST": "神奈川電脳暗渠",
+        "PRS": "神奈川電脳暗渠",
+        "FTR": "神奈川電脳暗渠",
+        "BYD": "神奈川電脳暗渠",
+        "ETR": "神奈川電脳暗渠"
+    },
+    "moonlightofsandcastle": {
+        "PST": "Moonlight of Sand Castle",
+        "PRS": "Moonlight of Sand Castle",
+        "FTR": "Moonlight of Sand Castle",
+        "BYD": "Moonlight of Sand Castle",
+        "ETR": "Moonlight of Sand Castle"
+    },
+    "reconstruction": {
+        "PST": "REconstruction",
+        "PRS": "REconstruction",
+        "FTR": "REconstruction",
+        "BYD": "REconstruction",
+        "ETR": "REconstruction"
+    },
+    "evoltex": {
+        "PST": "Evoltex (poppi'n mix)",
+        "PRS": "Evoltex (poppi'n mix)",
+        "FTR": "Evoltex (poppi'n mix)",
+        "BYD": "Evoltex (poppi'n mix)",
+        "ETR": "Evoltex (poppi'n mix)"
+    },
+    "oracle": {
+        "PST": "Oracle",
+        "PRS": "Oracle",
+        "FTR": "Oracle",
+        "BYD": "Oracle",
+        "ETR": "Oracle"
+    },
+    "aterlbus": {
+        "PST": "αterlβus",
+        "PRS": "αterlβus",
+        "FTR": "αterlβus",
+        "BYD": "αterlβus",
+        "ETR": "αterlβus"
+    },
+    "clotho": {
+        "PST": "クロートーと星の観測者",
+        "PRS": "クロートーと星の観測者",
+        "FTR": "クロートーと星の観測者",
+        "BYD": "クロートーと星の観測者",
+        "ETR": "クロートーと星の観測者"
+    },
+    "impurebird": {
+        "PST": "不浄な白い鳥",
+        "PRS": "不浄な白い鳥",
+        "FTR": "不浄な白い鳥",
+        "BYD": "不浄な白い鳥",
+        "ETR": "不浄な白い鳥"
+    },
+    "ignotus": {
+        "PST": "Ignotus Afterburn",
+        "PRS": "Ignotus Afterburn",
+        "FTR": "Ignotus Afterburn",
+        "BYD": "Ignotus",
+        "ETR": "Ignotus Afterburn"
+    },
+    "lethaeus": {
+        "PST": "Lethaeus",
+        "PRS": "Lethaeus",
+        "FTR": "Lethaeus",
+        "BYD": "Lethaeus",
+        "ETR": "Lethaeus"
+    },
+    "romancewars": {
+        "PST": "Romance Wars",
+        "PRS": "Romance Wars",
+        "FTR": "Romance Wars",
+        "BYD": "Romance Wars",
+        "ETR": "Romance Wars"
+    },
+    "blossoms": {
+        "PST": "Blossoms",
+        "PRS": "Blossoms",
+        "FTR": "Blossoms",
+        "BYD": "Blossoms",
+        "ETR": "Blossoms"
+    },
+    "moonheart": {
+        "PST": "Moonheart",
+        "PRS": "Moonheart",
+        "FTR": "Moonheart",
+        "BYD": "Moonheart",
+        "ETR": "Moonheart"
+    },
+    "genesischunithm": {
+        "PST": "Genesis(CHUNITHM)",
+        "PRS": "Genesis(CHUNITHM)",
+        "FTR": "Genesis(CHUNITHM)",
+        "BYD": "Genesis(CHUNITHM)",
+        "ETR": "Genesis(CHUNITHM)"
+    },
+    "genesis": {
+        "PST": "Genesis",
+        "PRS": "Genesis",
+        "FTR": "Genesis",
+        "BYD": "Genesis",
+        "ETR": "Genesis"
+    },
+    "harutopia": {
+        "PST": "ハルトピア ~Utopia of Spring~",
+        "PRS": "ハルトピア ~Utopia of Spring~",
+        "FTR": "ハルトピア ~Utopia of Spring~",
+        "BYD": "ハルトピア ~Utopia of Spring~",
+        "ETR": "ハルトピア ~Utopia of Spring~"
+    },
+    "auxesia": {
+        "PST": "Auxesia",
+        "PRS": "Auxesia",
+        "FTR": "Auxesia",
+        "BYD": "Auxesia",
+        "ETR": "Auxesia"
+    },
+    "rabbitintheblackroom": {
+        "PST": "Rabbit In The Black Room",
+        "PRS": "Rabbit In The Black Room",
+        "FTR": "Rabbit In The Black Room",
+        "BYD": "Rabbit In The Black Room",
+        "ETR": "Rabbit In The Black Room"
+    },
+    "modelista": {
+        "PST": "Modelista",
+        "PRS": "Modelista",
+        "FTR": "Modelista",
+        "BYD": "Modelista",
+        "ETR": "Modelista"
+    },
+    "soundwitch": {
+        "PST": "SOUNDWiTCH",
+        "PRS": "SOUNDWiTCH",
+        "FTR": "SOUNDWiTCH",
+        "BYD": "SOUNDWiTCH",
+        "ETR": "SOUNDWiTCH"
+    },
+    "trappola": {
+        "PST": "妖艶魔女 -trappola bewitching-",
+        "PRS": "妖艶魔女 -trappola bewitching-",
+        "FTR": "妖艶魔女 -trappola bewitching-",
+        "BYD": "妖艶魔女 -trappola bewitching-",
+        "ETR": "妖艶魔女 -trappola bewitching-"
+    },
+    "iconoclast": {
+        "PST": "Iconoclast",
+        "PRS": "Iconoclast",
+        "FTR": "Iconoclast",
+        "BYD": "Iconoclast",
+        "ETR": "Iconoclast"
+    },
+    "conflict": {
+        "PST": "conflict",
+        "PRS": "conflict",
+        "FTR": "conflict",
+        "BYD": "conflict",
+        "ETR": "conflict"
+    },
+    "axiumcrisis": {
+        "PST": "Axium Crisis",
+        "PRS": "Axium Crisis",
+        "FTR": "Axium Crisis",
+        "BYD": "Axium Crisis",
+        "ETR": "Axium Crisis"
+    },
+    "grievouslady": {
+        "PST": "Grievous Lady",
+        "PRS": "Grievous Lady",
+        "FTR": "Grievous Lady",
+        "BYD": "Grievous Lady",
+        "ETR": "Grievous Lady"
+    },
+    "dreaminattraction": {
+        "PST": "Dreamin' Attraction!!",
+        "PRS": "Dreamin' Attraction!!",
+        "FTR": "Dreamin' Attraction!!",
+        "BYD": "Dreamin' Attraction!!",
+        "ETR": "Dreamin' Attraction!!"
+    },
+    "redandblue": {
+        "PST": "Red and Blue",
+        "PRS": "Red and Blue",
+        "FTR": "Red and Blue",
+        "BYD": "Red and Blue and Green",
+        "ETR": "Red and Blue"
+    },
+    "onelastdrive": {
+        "PST": "One Last Drive",
+        "PRS": "One Last Drive",
+        "FTR": "One Last Drive",
+        "BYD": "One Last Drive",
+        "ETR": "One Last Drive"
+    },
+    "surrender": {
+        "PST": "Surrender",
+        "PRS": "Surrender",
+        "FTR": "Surrender",
+        "BYD": "Surrender",
+        "ETR": "Surrender"
+    },
+    "yozakurafubuki": {
+        "PST": "夜桜吹雪",
+        "PRS": "夜桜吹雪",
+        "FTR": "夜桜吹雪",
+        "BYD": "夜桜吹雪",
+        "ETR": "夜桜吹雪"
+    },
+    "cyanine": {
+        "PST": "cyanine",
+        "PRS": "cyanine",
+        "FTR": "cyanine",
+        "BYD": "cyanine",
+        "ETR": "cyanine"
+    },
+    "dreamgoeson": {
+        "PST": "Dream goes on",
+        "PRS": "Dream goes on",
+        "FTR": "Dream goes on",
+        "BYD": "Dream goes on",
+        "ETR": "Dream goes on"
+    },
+    "journey": {
+        "PST": "Journey",
+        "PRS": "Journey",
+        "FTR": "Journey",
+        "BYD": "Journey",
+        "ETR": "Journey"
+    },
+    "specta": {
+        "PST": "Specta",
+        "PRS": "Specta",
+        "FTR": "Specta",
+        "BYD": "Specta",
+        "ETR": "Specta"
+    },
+    "quon": {
+        "PST": "Quon(lanota)",
+        "PRS": "Quon(lanota)",
+        "FTR": "Quon(lanota)",
+        "BYD": "Quon(lanota)",
+        "ETR": "Quon(lanota)"
+    },
+    "quonwacca": {
+        "PST": "Quon(wacca)",
+        "PRS": "Quon(wacca)",
+        "FTR": "Quon(wacca)",
+        "BYD": "Quon(wacca)",
+        "ETR": "Quon(wacca)"
+    },
+    "syro": {
+        "PST": "Syro",
+        "PRS": "Syro",
+        "FTR": "Syro",
+        "BYD": "Syro",
+        "ETR": "Syro"
+    },
+    "reinvent": {
+        "PST": "Reinvent",
+        "PRS": "Reinvent",
+        "FTR": "Reinvent",
+        "BYD": "Reinvent",
+        "ETR": "Reinvent"
+    },
+    "silentrush": {
+        "PST": "Silent Rush",
+        "PRS": "Silent Rush",
+        "FTR": "Silent Rush",
+        "BYD": "Silent Rush",
+        "ETR": "Silent Rush"
+    },
+    "singularity": {
+        "PST": "Singularity",
+        "PRS": "Singularity",
+        "FTR": "Singularity",
+        "BYD": "Singularity VVVIP",
+        "ETR": "Singularity"
+    },
+    "memoryforest": {
+        "PST": "Memory Forest",
+        "PRS": "Memory Forest",
+        "FTR": "Memory Forest",
+        "BYD": "Memory Forest",
+        "ETR": "Memory Forest"
+    },
+    "strongholds": {
+        "PST": "Strongholds",
+        "PRS": "Strongholds",
+        "FTR": "Strongholds",
+        "BYD": "Strongholds",
+        "ETR": "Strongholds"
+    },
+    "nexttoyou": {
+        "PST": "next to you",
+        "PRS": "next to you",
+        "FTR": "next to you",
+        "BYD": "next to you",
+        "ETR": "next to you"
+    },
+    "metallicpunisher": {
+        "PST": "Metallic Punisher",
+        "PRS": "Metallic Punisher",
+        "FTR": "Metallic Punisher",
+        "BYD": "Metallic Punisher",
+        "ETR": "Metallic Punisher"
+    },
+    "blaster": {
+        "PST": "Blaster",
+        "PRS": "Blaster",
+        "FTR": "Blaster",
+        "BYD": "Blaster",
+        "ETR": "Blaster"
+    },
+    "guardina": {
+        "PST": "γuarδina",
+        "PRS": "γuarδina",
+        "FTR": "γuarδina",
+        "BYD": "γuarδina",
+        "ETR": "γuarδina"
+    },
+    "carminescythe": {
+        "PST": "carmine:scythe",
+        "PRS": "carmine:scythe",
+        "FTR": "carmine:scythe",
+        "BYD": "carmine:scythe",
+        "ETR": "carmine:scythe"
+    },
+    "bethere": {
+        "PST": "Be There",
+        "PRS": "Be There",
+        "FTR": "Be There",
+        "BYD": "Be There",
+        "ETR": "Be There"
+    },
+    "cyberneciacatharsis": {
+        "PST": "Cybernecia Catharsis",
+        "PRS": "Cybernecia Catharsis",
+        "FTR": "Cybernecia Catharsis",
+        "BYD": "Cybernecia Catharsis",
+        "ETR": "Cybernecia Catharsis"
+    },
+    "callmyname": {
+        "PST": "Call My Name feat. Yukacco",
+        "PRS": "Call My Name feat. Yukacco",
+        "FTR": "Call My Name feat. Yukacco",
+        "BYD": "Call My Name feat. Yukacco",
+        "ETR": "Call My Name feat. Yukacco"
+    },
+    "inkarusi": {
+        "PST": "inkar-usi",
+        "PRS": "inkar-usi",
+        "FTR": "inkar-usi",
+        "BYD": "inkar-usi",
+        "ETR": "inkar-usi"
+    },
+    "mazenine": {
+        "PST": "Maze No.9",
+        "PRS": "Maze No.9",
+        "FTR": "Maze No.9",
+        "BYD": "Maze No.9",
+        "ETR": "Maze No.9"
+    },
+    "themessage": {
+        "PST": "The Message",
+        "PRS": "The Message",
+        "FTR": "The Message",
+        "BYD": "The Message",
+        "ETR": "The Message"
+    },
+    "sulfur": {
+        "PST": "Sulfur",
+        "PRS": "Sulfur",
+        "FTR": "Sulfur",
+        "BYD": "Sulfur",
+        "ETR": "Sulfur"
+    },
+    "halcyon": {
+        "PST": "Halcyon",
+        "PRS": "Halcyon",
+        "FTR": "Halcyon",
+        "BYD": "Halcyon",
+        "ETR": "Halcyon"
+    },
+    "etherstrike": {
+        "PST": "Ether Strike",
+        "PRS": "Ether Strike",
+        "FTR": "Ether Strike",
+        "BYD": "Ether Strike",
+        "ETR": "Ether Strike"
+    },
+    "fractureray": {
+        "PST": "Fracture Ray",
+        "PRS": "Fracture Ray",
+        "FTR": "Fracture Ray",
+        "BYD": "Fracture Ray",
+        "ETR": "Fracture Ray"
+    },
+    "suomi": {
+        "PST": "Suomi",
+        "PRS": "Suomi",
+        "FTR": "Suomi",
+        "BYD": "Suomi",
+        "ETR": "Suomi"
+    },
+    "bookmaker": {
+        "PST": "Bookmaker (2D Version)",
+        "PRS": "Bookmaker (2D Version)",
+        "FTR": "Bookmaker (2D Version)",
+        "BYD": "Bookmaker (2D Version)",
+        "ETR": "Bookmaker (2D Version)"
+    },
+    "darakunosono": {
+        "PST": "堕楽の園",
+        "PRS": "堕楽の園",
+        "FTR": "堕楽の園",
+        "BYD": "堕楽の園",
+        "ETR": "堕楽の園"
+    },
+    "dropdead": {
+        "PST": "dropdead",
+        "PRS": "dropdead",
+        "FTR": "dropdead",
+        "BYD": "overdead.",
+        "ETR": "dropdead"
+    },
+    "fallensquare": {
+        "PST": "Fallensquare",
+        "PRS": "Fallensquare",
+        "FTR": "Fallensquare",
+        "BYD": "Fallensquare",
+        "ETR": "Fallensquare"
+    },
+    "nhelv": {
+        "PST": "Nhelv",
+        "PRS": "Nhelv",
+        "FTR": "Nhelv",
+        "BYD": "Nhelv",
+        "ETR": "Nhelv"
+    },
+    "espebranch": {
+        "PST": "白道、多希望羊と信じありく。",
+        "PRS": "白道、多希望羊と信じありく。",
+        "FTR": "白道、多希望羊と信じありく。",
+        "BYD": "白道、多希望羊と信じありく。",
+        "ETR": "白道、多希望羊と信じありく。"
+    },
+    "purgatorium": {
+        "PST": "Purgatorium",
+        "PRS": "Purgatorium",
+        "FTR": "Purgatorium",
+        "BYD": "Purgatorium",
+        "ETR": "Purgatorium"
+    },
+    "hikari": {
+        "PST": "Hikari",
+        "PRS": "Hikari",
+        "FTR": "Hikari",
+        "BYD": "Hikari",
+        "ETR": "Hikari"
+    },
+    "stager": {
+        "PST": "STAGER (ALL STAGE CLEAR)",
+        "PRS": "STAGER (ALL STAGE CLEAR)",
+        "FTR": "STAGER (ALL STAGE CLEAR)",
+        "BYD": "STAGER (ALL STAGE CLEAR)",
+        "ETR": "STAGER (ALL STAGE CLEAR)"
+    },
+    "hallofmirrors": {
+        "PST": "Hall of Mirrors",
+        "PRS": "Hall of Mirrors",
+        "FTR": "Hall of Mirrors",
+        "BYD": "Hall of Mirrors",
+        "ETR": "Hall of Mirrors"
+    },
+    "linearaccelerator": {
+        "PST": "Linear Accelerator",
+        "PRS": "Linear Accelerator",
+        "FTR": "Linear Accelerator",
+        "BYD": "Linear Accelerator",
+        "ETR": "Linear Accelerator"
+    },
+    "tiferet": {
+        "PST": "Tiferet",
+        "PRS": "Tiferet",
+        "FTR": "Tiferet",
+        "BYD": "Tiferet",
+        "ETR": "Tiferet"
+    },
+    "alexandrite": {
+        "PST": "Alexandrite",
+        "PRS": "Alexandrite",
+        "FTR": "Alexandrite",
+        "BYD": "Alexandrite",
+        "ETR": "Alexandrite"
+    },
+    "rugie": {
+        "PST": "Rugie",
+        "PRS": "Rugie",
+        "FTR": "Rugie",
+        "BYD": "Rugie",
+        "ETR": "Rugie"
+    },
+    "astraltale": {
+        "PST": "Astral tale",
+        "PRS": "Astral tale",
+        "FTR": "Astral tale",
+        "BYD": "Astral tale",
+        "ETR": "Astral tale"
+    },
+    "phantasia": {
+        "PST": "Phantasia",
+        "PRS": "Phantasia",
+        "FTR": "Phantasia",
+        "BYD": "Phantasia",
+        "ETR": "Phantasia"
+    },
+    "empireofwinter": {
+        "PST": "Empire of Winter",
+        "PRS": "Empire of Winter",
+        "FTR": "Empire of Winter",
+        "BYD": "Empire of Winter",
+        "ETR": "Empire of Winter"
+    },
+    "merlin": {
+        "PST": "MERLIN",
+        "PRS": "MERLIN",
+        "FTR": "MERLIN",
+        "BYD": "MERLIN",
+        "ETR": "MERLIN"
+    },
+    "dxfullmetal": {
+        "PST": "DX超性能フルメタル少女",
+        "PRS": "DX超性能フルメタル少女",
+        "FTR": "DX超性能フルメタル少女",
+        "BYD": "DX超性能フルメタル少女",
+        "ETR": "DX超性能フルメタル少女"
+    },
+    "omakeno": {
+        "PST": "OMAKENO Stroke",
+        "PRS": "OMAKENO Stroke",
+        "FTR": "OMAKENO Stroke",
+        "BYD": "OMAKENO Stroke",
+        "ETR": "OMAKENO Stroke"
+    },
+    "scarletlance": {
+        "PST": "Scarlet Lance",
+        "PRS": "Scarlet Lance",
+        "FTR": "Scarlet Lance",
+        "BYD": "Scarlet Lance",
+        "ETR": "Scarlet Lance"
+    },
+    "ouroboros": {
+        "PST": "ouroboros -twin stroke of the end-",
+        "PRS": "ouroboros -twin stroke of the end-",
+        "FTR": "ouroboros -twin stroke of the end-",
+        "BYD": "ouroboros -twin stroke of the end-",
+        "ETR": "ouroboros -twin stroke of the end-"
+    },
+    "libertas": {
+        "PST": "Libertas",
+        "PRS": "Libertas",
+        "FTR": "Libertas",
+        "BYD": "Libertas",
+        "ETR": "Libertas"
+    },
+    "solitarydream": {
+        "PST": "虚空の夢",
+        "PRS": "虚空の夢",
+        "FTR": "虚空の夢",
+        "BYD": "虚空の夢",
+        "ETR": "虚空の夢"
+    },
+    "antithese": {
+        "PST": "Antithese",
+        "PRS": "Antithese",
+        "FTR": "Antithese",
+        "BYD": "Antithese",
+        "ETR": "Antithese"
+    },
+    "corruption": {
+        "PST": "Corruption",
+        "PRS": "Corruption",
+        "FTR": "Corruption",
+        "BYD": "Corruption",
+        "ETR": "Corruption"
+    },
+    "blackterritory": {
+        "PST": "Black Territory",
+        "PRS": "Black Territory",
+        "FTR": "Black Territory",
+        "BYD": "Black Territory",
+        "ETR": "Black Territory"
+    },
+    "viciousheroism": {
+        "PST": "Vicious Heroism",
+        "PRS": "Vicious Heroism",
+        "FTR": "Vicious Heroism",
+        "BYD": "Vicious [ANTi] Heroism",
+        "ETR": "Vicious Heroism"
+    },
+    "cyaegha": {
+        "PST": "Cyaegha",
+        "PRS": "Cyaegha",
+        "FTR": "Cyaegha",
+        "BYD": "Cyaegha",
+        "ETR": "Cyaegha"
+    },
+    "revixy": {
+        "PST": "ReviXy",
+        "PRS": "ReviXy",
+        "FTR": "ReviXy",
+        "BYD": "ReviXy",
+        "ETR": "ReviXy"
+    },
+    "grimheart": {
+        "PST": "Grimheart",
+        "PRS": "Grimheart",
+        "FTR": "Grimheart",
+        "BYD": "Grimheart",
+        "ETR": "Grimheart"
+    },
+    "vector": {
+        "PST": "VECTOЯ",
+        "PRS": "VECTOЯ",
+        "FTR": "VECTOЯ",
+        "BYD": "VECTOЯ",
+        "ETR": "VECTOЯ"
+    },
+    "supernova": {
+        "PST": "SUPERNOVA",
+        "PRS": "SUPERNOVA",
+        "FTR": "SUPERNOVA",
+        "BYD": "SUPERNOVA",
+        "ETR": "SUPERNOVA"
+    },
+    "dottodot": {
+        "PST": "Dot to Dot feat. shully",
+        "PRS": "Dot to Dot feat. shully",
+        "FTR": "Dot to Dot feat. shully",
+        "BYD": "Dot to Dot feat. shully",
+        "ETR": "Dot to Dot feat. shully"
+    },
+    "garakuta": {
+        "PST": "Garakuta Doll Play",
+        "PRS": "Garakuta Doll Play",
+        "FTR": "Garakuta Doll Play",
+        "BYD": "Garakuta Doll Play",
+        "ETR": "Garakuta Doll Play"
+    },
+    "ikazuchi": {
+        "PST": "怒槌",
+        "PRS": "怒槌",
+        "FTR": "怒槌",
+        "BYD": "怒槌",
+        "ETR": "怒槌"
+    },
+    "worldvanquisher": {
+        "PST": "World Vanquisher",
+        "PRS": "World Vanquisher",
+        "FTR": "World Vanquisher",
+        "BYD": "World Vanquisher",
+        "ETR": "World Vanquisher"
+    },
+    "dreadnought": {
+        "PST": "Dreadnought",
+        "PRS": "Dreadnought",
+        "FTR": "Dreadnought",
+        "BYD": "Dreadnought",
+        "ETR": "Dreadnought"
+    },
+    "particlearts": {
+        "PST": "Particle Arts",
+        "PRS": "Particle Arts",
+        "FTR": "Particle Arts",
+        "BYD": "Particle Arts",
+        "ETR": "Particle Arts"
+    },
+    "vindication": {
+        "PST": "Vindication",
+        "PRS": "Vindication",
+        "FTR": "Vindication",
+        "BYD": "Vindication",
+        "ETR": "Vindication"
+    },
+    "heavensdoor": {
+        "PST": "Heavensdoor",
+        "PRS": "Heavensdoor",
+        "FTR": "Heavensdoor",
+        "BYD": "Heavensdoor",
+        "ETR": "Heavensdoor"
+    },
+    "ringedgenesis": {
+        "PST": "Ringed Genesis",
+        "PRS": "Ringed Genesis",
+        "FTR": "Ringed Genesis",
+        "BYD": "Ringed Genesis",
+        "ETR": "Ringed Genesis"
+    },
+    "chelsea": {
+        "PST": "Chelsea",
+        "PRS": "Chelsea",
+        "FTR": "Chelsea",
+        "BYD": "Chelsea",
+        "ETR": "Chelsea"
+    },
+    "aiueoon": {
+        "PST": "AI[UE]OON",
+        "PRS": "AI[UE]OON",
+        "FTR": "AI[UE]OON",
+        "BYD": "AI[UE]OON",
+        "ETR": "AI[UE]OON"
+    },
+    "melodyoflove": {
+        "PST": "迷える音色は恋の唄",
+        "PRS": "迷える音色は恋の唄",
+        "FTR": "迷える音色は恋の唄",
+        "BYD": "迷える音色は恋の唄",
+        "ETR": "迷える音色は恋の唄"
+    },
+    "tiemedowngently": {
+        "PST": "Tie me down gently",
+        "PRS": "Tie me down gently",
+        "FTR": "Tie me down gently",
+        "BYD": "Tie me down gently",
+        "ETR": "Tie me down gently"
+    },
+    "valhallazero": {
+        "PST": "Valhalla:0",
+        "PRS": "Valhalla:0",
+        "FTR": "Valhalla:0",
+        "BYD": "Valhalla:0",
+        "ETR": "Valhalla:0"
+    },
+    "mirzam": {
+        "PST": "Mirzam",
+        "PRS": "Mirzam",
+        "FTR": "Mirzam",
+        "BYD": "Mirzam",
+        "ETR": "Mirzam"
+    },
+    "diode": {
+        "PST": "Diode",
+        "PRS": "Diode",
+        "FTR": "Diode",
+        "BYD": "Diode",
+        "ETR": "Diode"
+    },
+    "freefall": {
+        "PST": "FREEF4LL",
+        "PRS": "FREEF4LL",
+        "FTR": "FREEF4LL",
+        "BYD": "FREEF4LL",
+        "ETR": "FREEF4LL"
+    },
+    "gloryroad": {
+        "PST": "GLORY：ROAD",
+        "PRS": "GLORY：ROAD",
+        "FTR": "GLORY：ROAD",
+        "BYD": "GLORY：ROAD",
+        "ETR": "GLORY：ROAD"
+    },
+    "monochromeprincess": {
+        "PST": "Monochrome Princess",
+        "PRS": "Monochrome Princess",
+        "FTR": "Monochrome Princess",
+        "BYD": "Monochrome Princess",
+        "ETR": "Monochrome Princess"
+    },
+    "heavenlycaress": {
+        "PST": "Heavenly caress",
+        "PRS": "Heavenly caress",
+        "FTR": "Heavenly caress",
+        "BYD": "Heavenly caress",
+        "ETR": "Heavenly caress"
+    },
+    "senkyou": {
+        "PST": "Senkyou",
+        "PRS": "Senkyou",
+        "FTR": "Senkyou",
+        "BYD": "Senkyou",
+        "ETR": "Senkyou"
+    },
+    "filament": {
+        "PST": "Filament",
+        "PRS": "Filament",
+        "FTR": "Filament",
+        "BYD": "Filament",
+        "ETR": "Filament"
+    },
+    "avantraze": {
+        "PST": "Avant Raze",
+        "PRS": "Avant Raze",
+        "FTR": "Avant Raze",
+        "BYD": "Avant Raze",
+        "ETR": "Avant Raze"
+    },
+    "battlenoone": {
+        "PST": "BATTLE NO.1",
+        "PRS": "BATTLE NO.1",
+        "FTR": "BATTLE NO.1",
+        "BYD": "BATTLE NO.1",
+        "ETR": "BATTLE NO.1"
+    },
+    "laqryma": {
+        "PST": "La'qryma of the Wasteland",
+        "PRS": "La'qryma of the Wasteland",
+        "FTR": "La'qryma of the Wasteland",
+        "BYD": "La'qryma of the Wasteland",
+        "ETR": "La'qryma of the Wasteland"
+    },
+    "einherjar": {
+        "PST": "Einherjar Joker",
+        "PRS": "Einherjar Joker",
+        "FTR": "Einherjar Joker",
+        "BYD": "Einherjar Joker",
+        "ETR": "Einherjar Joker"
+    },
+    "izana": {
+        "PST": "IZANA",
+        "PRS": "IZANA",
+        "FTR": "IZANA",
+        "BYD": "IZANA",
+        "ETR": "IZANA"
+    },
+    "saikyostronger": {
+        "PST": "最強STRONGER",
+        "PRS": "最強STRONGER",
+        "FTR": "最強STRONGER",
+        "BYD": "最強STRONGER",
+        "ETR": "最強STRONGER"
+    },
+    "worldexecuteme": {
+        "PST": "world.execute(me);",
+        "PRS": "world.execute(me);",
+        "FTR": "world.execute(me);",
+        "BYD": "world.execute(me);",
+        "ETR": "world.execute(me);"
+    },
+    "blrink": {
+        "PST": "BLRINK",
+        "PRS": "BLRINK",
+        "FTR": "BLRINK",
+        "BYD": "BLRINK",
+        "ETR": "BLRINK"
+    },
+    "oblivia": {
+        "PST": "Oblivia",
+        "PRS": "Oblivia",
+        "FTR": "Oblivia",
+        "BYD": "Oblivia",
+        "ETR": "Oblivia"
+    },
+    "amygdata": {
+        "PST": "amygdata",
+        "PRS": "amygdata",
+        "FTR": "amygdata",
+        "BYD": "amygdata",
+        "ETR": "amygdata"
+    },
+    "corpssansorganes": {
+        "PST": "corps-sans-organes",
+        "PRS": "corps-sans-organes",
+        "FTR": "corps-sans-organes",
+        "BYD": "corps-sans-organes",
+        "ETR": "corps-sans-organes"
+    },
+    "equilibrium": {
+        "PST": "Equilibrium",
+        "PRS": "Equilibrium",
+        "FTR": "Equilibrium",
+        "BYD": "Equilibrium",
+        "ETR": "Equilibrium"
+    },
+    "antagonism": {
+        "PST": "Antagonism",
+        "PRS": "Antagonism",
+        "FTR": "Antagonism",
+        "BYD": "Antagonism",
+        "ETR": "Antagonism"
+    },
+    "lostdesire": {
+        "PST": "Lost Desire",
+        "PRS": "Lost Desire",
+        "FTR": "Lost Desire",
+        "BYD": "Lost Desire",
+        "ETR": "Lost Desire"
+    },
+    "dantalion": {
+        "PST": "Dantalion",
+        "PRS": "Dantalion",
+        "FTR": "Dantalion",
+        "BYD": "Dantalion",
+        "ETR": "Dantalion"
+    },
+    "ifi": {
+        "PST": "#1f1e33",
+        "PRS": "#1f1e33",
+        "FTR": "#1f1e33",
+        "BYD": "#1f1e33",
+        "ETR": "#1f1e33"
+    },
+    "tempestissimo": {
+        "PST": "Tempestissimo",
+        "PRS": "Tempestissimo",
+        "FTR": "Tempestissimo",
+        "BYD": "Tempestissimo",
+        "ETR": "Tempestissimo"
+    },
+    "arcahv": {
+        "PST": "Arcahv",
+        "PRS": "Arcahv",
+        "FTR": "Arcahv",
+        "BYD": "Arcahv",
+        "ETR": "Arcahv"
+    },
+    "altale": {
+        "PST": "Altale",
+        "PRS": "Altale",
+        "FTR": "Altale",
+        "BYD": "Altale",
+        "ETR": "Altale"
+    },
+    "givemeanightmare": {
+        "PST": "Give Me a Nightmare",
+        "PRS": "Give Me a Nightmare",
+        "FTR": "Give Me a Nightmare",
+        "BYD": "Give Me a Nightmare",
+        "ETR": "Give Me a Nightmare"
+    },
+    "blacklotus": {
+        "PST": "Black Lotus",
+        "PRS": "Black Lotus",
+        "FTR": "Black Lotus",
+        "BYD": "Black Lotus",
+        "ETR": "Black Lotus"
+    },
+    "gekka": {
+        "PST": "Gekka (Short Version)",
+        "PRS": "Gekka (Short Version)",
+        "FTR": "Gekka (Short Version)",
+        "BYD": "Gekka (Short Version)",
+        "ETR": "Gekka (Short Version)"
+    },
+    "vividtheory": {
+        "PST": "Vivid Theory",
+        "PRS": "Vivid Theory",
+        "FTR": "Vivid Theory",
+        "BYD": "Vivid Theory",
+        "ETR": "Vivid Theory"
+    },
+    "onefr": {
+        "PST": "1F√",
+        "PRS": "1F√",
+        "FTR": "1F√",
+        "BYD": "1F√",
+        "ETR": "1F√"
+    },
+    "scarletcage": {
+        "PST": "Scarlet Cage",
+        "PRS": "Scarlet Cage",
+        "FTR": "Scarlet Cage",
+        "BYD": "Scarlet Cage",
+        "ETR": "Scarlet Cage"
+    },
+    "faintlight": {
+        "PST": "Faint Light (Arcaea Edit)",
+        "PRS": "Faint Light (Arcaea Edit)",
+        "FTR": "Faint Light (Arcaea Edit)",
+        "BYD": "Faint Light (Arcaea Edit)",
+        "ETR": "Faint Light (Arcaea Edit)"
+    },
+    "feelssoright": {
+        "PST": "Feels So Right feat. Renko",
+        "PRS": "Feels So Right feat. Renko",
+        "FTR": "Feels So Right feat. Renko",
+        "BYD": "Feels So Right feat. Renko",
+        "ETR": "Feels So Right feat. Renko"
+    },
+    "teriqma": {
+        "PST": "Teriqma",
+        "PRS": "Teriqma",
+        "FTR": "Teriqma",
+        "BYD": "Teriqma",
+        "ETR": "Teriqma"
+    },
+    "mahoroba": {
+        "PST": "MAHOROBA",
+        "PRS": "MAHOROBA",
+        "FTR": "MAHOROBA",
+        "BYD": "MAHOROBA",
+        "ETR": "MAHOROBA"
+    },
+    "badtek": {
+        "PST": "BADTEK",
+        "PRS": "BADTEK",
+        "FTR": "BADTEK",
+        "BYD": "BADTEK",
+        "ETR": "BADTEK"
+    },
+    "maliciousmischance": {
+        "PST": "Malicious Mischance",
+        "PRS": "Malicious Mischance",
+        "FTR": "Malicious Mischance",
+        "BYD": "Malicious Mischance",
+        "ETR": "Malicious Mischance"
+    },
+    "gothiveofra": {
+        "PST": "Got hive of Ra",
+        "PRS": "Got hive of Ra",
+        "FTR": "Got hive of Ra",
+        "BYD": "Got hive of Ra",
+        "ETR": "Got hive of Ra"
+    },
+    "buchigireberserker": {
+        "PST": "BUCHiGiRE Berserker",
+        "PRS": "BUCHiGiRE Berserker",
+        "FTR": "BUCHiGiRE Berserker",
+        "BYD": "BUCHiGiRE Berserker",
+        "ETR": "BUCHiGiRE Berserker"
+    },
+    "galaxyfriends": {
+        "PST": "Galaxy Friends",
+        "PRS": "Galaxy Friends",
+        "FTR": "Galaxy Friends",
+        "BYD": "Galaxy Friends",
+        "ETR": "Galaxy Friends"
+    },
+    "crossover": {
+        "PST": "CROSS†OVER",
+        "PRS": "CROSS†OVER",
+        "FTR": "CROSS†OVER",
+        "BYD": "CROSS†OVER",
+        "ETR": "CROSS†OVER"
+    },
+    "xeraphinite": {
+        "PST": "Xeraphinite",
+        "PRS": "Xeraphinite",
+        "FTR": "Xeraphinite",
+        "BYD": "Xeraphinite",
+        "ETR": "Xeraphinite"
+    },
+    "lapis": {
+        "PST": "Lapis",
+        "PRS": "Lapis",
+        "FTR": "Lapis",
+        "BYD": "Lapis",
+        "ETR": "Lapis"
+    },
+    "xanatos": {
+        "PST": "Xanatos",
+        "PRS": "Xanatos",
+        "FTR": "Xanatos",
+        "BYD": "Xanatos",
+        "ETR": "Xanatos"
+    },
+    "purpleverse": {
+        "PST": "Purple Verse",
+        "PRS": "Purple Verse",
+        "FTR": "Purple Verse",
+        "BYD": "Purple Verse",
+        "ETR": "Purple Verse"
+    },
+    "alicealamode": {
+        "PST": "Alice à la mode",
+        "PRS": "Alice à la mode",
+        "FTR": "Alice à la mode",
+        "BYD": "Alice à la mode",
+        "ETR": "Alice à la mode"
+    },
+    "eccentrictale": {
+        "PST": "Eccentric Tale",
+        "PRS": "Eccentric Tale",
+        "FTR": "Eccentric Tale",
+        "BYD": "Eccentric Tale",
+        "ETR": "Eccentric Tale"
+    },
+    "alicessuitcase": {
+        "PST": "Alice's Suitcase",
+        "PRS": "Alice's Suitcase",
+        "FTR": "Alice's Suitcase",
+        "BYD": "Alice's Suitcase",
+        "ETR": "Alice's Suitcase"
+    },
+    "jump": {
+        "PST": "Jump",
+        "PRS": "Jump",
+        "FTR": "Jump",
+        "BYD": "Jump",
+        "ETR": "Jump"
+    },
+    "felis": {
+        "PST": "Felis",
+        "PRS": "Felis",
+        "FTR": "Felis",
+        "BYD": "Felis",
+        "ETR": "Felis"
+    },
+    "besideyou": {
+        "PST": "Beside You",
+        "PRS": "Beside You",
+        "FTR": "Beside You",
+        "BYD": "Beside You",
+        "ETR": "Beside You"
+    },
+    "heartjackin": {
+        "PST": "Heart Jackin'",
+        "PRS": "Heart Jackin'",
+        "FTR": "Heart Jackin'",
+        "BYD": "Heart Jackin'",
+        "ETR": "Heart Jackin'"
+    },
+    "toaliceliddell": {
+        "PST": "アリス・リデルに捧ぐ",
+        "PRS": "アリス・リデルに捧ぐ",
+        "FTR": "アリス・リデルに捧ぐ",
+        "BYD": "アリス・リデルに捧ぐ",
+        "ETR": "アリス・リデルに捧ぐ"
+    },
+    "lazyaddiction": {
+        "PST": "Lazy Addiction",
+        "PRS": "Lazy Addiction",
+        "FTR": "Lazy Addiction",
+        "BYD": "Lazy Addiction",
+        "ETR": "Lazy Addiction"
+    },
+    "dazzlehop": {
+        "PST": "Dazzle hop",
+        "PRS": "Dazzle hop",
+        "FTR": "Dazzle hop",
+        "BYD": "Dazzle hop",
+        "ETR": "Dazzle hop"
+    },
+    "viyellastears": {
+        "PST": "Viyella's Tears",
+        "PRS": "Viyella's Tears",
+        "FTR": "Viyella's Tears",
+        "BYD": "Viyella's Tears",
+        "ETR": "Viyella's Tears"
+    },
+    "omegafour": {
+        "PST": "ω4",
+        "PRS": "ω4",
+        "FTR": "ω4",
+        "BYD": "ω4",
+        "ETR": "ω4"
+    },
+    "aprilshowers": {
+        "PST": "四月の雨",
+        "PRS": "四月の雨",
+        "FTR": "四月の雨",
+        "BYD": "四月の雨",
+        "ETR": "四月の雨"
+    },
+    "seventhsense": {
+        "PST": "7thSense",
+        "PRS": "7thSense",
+        "FTR": "7thSense",
+        "BYD": "7thSense",
+        "ETR": "7thSense"
+    },
+    "oshamascramble": {
+        "PST": "Oshama Scramble!",
+        "PRS": "Oshama Scramble!",
+        "FTR": "Oshama Scramble!",
+        "BYD": "Oshama Scramble!",
+        "ETR": "Oshama Scramble!"
+    },
+    "amazingmightyyyy": {
+        "PST": "AMAZING MIGHTYYYY!!!!",
+        "PRS": "AMAZING MIGHTYYYY!!!!",
+        "FTR": "AMAZING MIGHTYYYY!!!!",
+        "BYD": "AMAZING MIGHTYYYY!!!!",
+        "ETR": "AMAZING MIGHTYYYY!!!!"
+    },
+    "climax": {
+        "PST": "Climax",
+        "PRS": "Climax",
+        "FTR": "Climax",
+        "BYD": "Climax",
+        "ETR": "Climax"
+    },
+    "lastcelebration": {
+        "PST": "Last Celebration",
+        "PRS": "Last Celebration",
+        "FTR": "Last Celebration",
+        "BYD": "Last Celebration",
+        "ETR": "Last Celebration"
+    },
+    "gou": {
+        "PST": "業 -善なる神とこの世の悪について-",
+        "PRS": "業 -善なる神とこの世の悪について-",
+        "FTR": "業 -善なる神とこの世の悪について-",
+        "BYD": "業 -善なる神とこの世の悪について-",
+        "ETR": "業 -善なる神とこの世の悪について-"
+    },
+    "glow": {
+        "PST": "Glow",
+        "PRS": "Glow",
+        "FTR": "Glow",
+        "BYD": "Glow",
+        "ETR": "Glow"
+    },
+    "attraqtia": {
+        "PST": "AttraqtiA",
+        "PRS": "AttraqtiA",
+        "FTR": "AttraqtiA",
+        "BYD": "AttraqtiA",
+        "ETR": "AttraqtiA"
+    },
+    "enchantedlove": {
+        "PST": "enchanted love",
+        "PRS": "enchanted love",
+        "FTR": "enchanted love",
+        "BYD": "enchanted love",
+        "ETR": "enchanted love"
+    },
+    "take": {
+        "PST": "竹",
+        "PRS": "竹",
+        "FTR": "竹",
+        "BYD": "竹",
+        "ETR": "竹"
+    },
+    "gimmedablood": {
+        "PST": "GIMME DA BLOOD",
+        "PRS": "GIMME DA BLOOD",
+        "FTR": "GIMME DA BLOOD",
+        "BYD": "GIMME DA BLOOD",
+        "ETR": "GIMME DA BLOOD"
+    },
+    "bassline": {
+        "PST": "ベースラインやってる？ｗ",
+        "PRS": "ベースラインやってる？ｗ",
+        "FTR": "ベースラインやってる？ｗ",
+        "BYD": "ベースラインやってる？ｗ",
+        "ETR": "ベースラインやってる？ｗ"
+    },
+    "lifeispiano": {
+        "PST": "Life is PIANO",
+        "PRS": "Life is PIANO",
+        "FTR": "Life is PIANO",
+        "BYD": "Life is PIANO",
+        "ETR": "Life is PIANO"
+    },
+    "paperwitch": {
+        "PST": "Paper Witch",
+        "PRS": "Paper Witch",
+        "FTR": "Paper Witch",
+        "BYD": "Paper Witch",
+        "ETR": "Paper Witch"
+    },
+    "crystalgravity": {
+        "PST": "Crystal Gravity",
+        "PRS": "Crystal Gravity",
+        "FTR": "Crystal Gravity",
+        "BYD": "Crystal Gravity",
+        "ETR": "Crystal Gravity"
+    },
+    "farawaylight": {
+        "PST": "Far Away Light",
+        "PRS": "Far Away Light",
+        "FTR": "Far Away Light",
+        "BYD": "Far Away Light",
+        "ETR": "Far Away Light"
+    },
+    "loschen": {
+        "PST": "Löschen",
+        "PRS": "Löschen",
+        "FTR": "Löschen",
+        "BYD": "Löschen",
+        "ETR": "Löschen"
+    },
+    "aegleseeker": {
+        "PST": "Aegleseeker",
+        "PRS": "Aegleseeker",
+        "FTR": "Aegleseeker",
+        "BYD": "Aegleseeker",
+        "ETR": "Aegleseeker"
+    },
+    "coastalhighway": {
+        "PST": "Coastal Highway",
+        "PRS": "Coastal Highway",
+        "FTR": "Coastal Highway",
+        "BYD": "Coastal Highway",
+        "ETR": "Coastal Highway"
+    },
+    "odysseia": {
+        "PST": "ΟΔΥΣΣΕΙΑ",
+        "PRS": "ΟΔΥΣΣΕΙΑ",
+        "FTR": "ΟΔΥΣΣΕΙΑ",
+        "BYD": "ΟΔΥΣΣΕΙΑ",
+        "ETR": "ΟΔΥΣΣΕΙΑ"
+    },
+    "overwhelm": {
+        "PST": "Overwhelm",
+        "PRS": "Overwhelm",
+        "FTR": "Overwhelm",
+        "BYD": "Overwhelm",
+        "ETR": "Overwhelm"
+    },
+    "vandalism": {
+        "PST": "Vandalism",
+        "PRS": "Vandalism",
+        "FTR": "Vandalism",
+        "BYD": "Vandalism",
+        "ETR": "Vandalism"
+    },
+    "turbocharger": {
+        "PST": "Turbocharger",
+        "PRS": "Turbocharger",
+        "FTR": "Turbocharger",
+        "BYD": "Turbocharger",
+        "ETR": "Turbocharger"
+    },
+    "theultimacy": {
+        "PST": "THE ULTIMACY",
+        "PRS": "THE ULTIMACY",
+        "FTR": "THE ULTIMACY",
+        "BYD": "THE ULTIMACY",
+        "ETR": "THE ULTIMACY"
+    },
+    "rekkaresonance": {
+        "PST": "烈華RESONANCE",
+        "PRS": "烈華RESONANCE",
+        "FTR": "烈華RESONANCE",
+        "BYD": "烈華RESONANCE",
+        "ETR": "烈華RESONANCE"
+    },
+    "kyogenkigo": {
+        "PST": "狂言綺語",
+        "PRS": "狂言綺語",
+        "FTR": "狂言綺語",
+        "BYD": "狂言綺語",
+        "ETR": "狂言綺語"
+    },
+    "hivemind": {
+        "PST": "HIVEMIND",
+        "PRS": "HIVEMIND",
+        "FTR": "HIVEMIND",
+        "BYD": "HIVEMIND",
+        "ETR": "HIVEMIND"
+    },
+    "seclusion": {
+        "PST": "Seclusion",
+        "PRS": "Seclusion",
+        "FTR": "Seclusion",
+        "BYD": "Seclusion",
+        "ETR": "Seclusion"
+    },
+    "smallcloud": {
+        "PST": "Small Cloud Sugar Candy",
+        "PRS": "Small Cloud Sugar Candy",
+        "FTR": "Small Cloud Sugar Candy",
+        "BYD": "Small Cloud Sugar Candy",
+        "ETR": "Small Cloud Sugar Candy"
+    },
+    "alterale": {
+        "PST": "AlterAle",
+        "PRS": "AlterAle",
+        "FTR": "AlterAle",
+        "BYD": "AlterAle",
+        "ETR": "AlterAle"
+    },
+    "divinelight": {
+        "PST": "光速神授说",
+        "PRS": "光速神授说",
+        "FTR": "光速神授说",
+        "BYD": "光速神授说",
+        "ETR": "光速神授说"
+    },
+    "mazymetroplex": {
+        "PST": "Mazy Metroplex",
+        "PRS": "Mazy Metroplex",
+        "FTR": "Mazy Metroplex",
+        "BYD": "Mazy Metroplex",
+        "ETR": "Mazy Metroplex"
+    },
+    "withu": {
+        "PST": "with U",
+        "PRS": "with U",
+        "FTR": "with U",
+        "BYD": "with U",
+        "ETR": "with U"
+    },
+    "genocider": {
+        "PST": "GENOCIDER",
+        "PRS": "GENOCIDER",
+        "FTR": "GENOCIDER",
+        "BYD": "GENOCIDER",
+        "ETR": "GENOCIDER"
+    },
+    "letyoudivermx": {
+        "PST": "Let you DIVE! (nitro rmx)",
+        "PRS": "Let you DIVE! (nitro rmx)",
+        "FTR": "Let you DIVE! (nitro rmx)",
+        "BYD": "Let you DIVE! (nitro rmx)",
+        "ETR": "Let you DIVE! (nitro rmx)"
+    },
+    "sheriruthrmx": {
+        "PST": "Sheriruth (Laur Remix)",
+        "PRS": "Sheriruth (Laur Remix)",
+        "FTR": "Sheriruth (Laur Remix)",
+        "BYD": "Sheriruth (Laur Remix)",
+        "ETR": "Sheriruth (Laur Remix)"
+    },
+    "eveninginscarlet": {
+        "PST": "緋纏いの宵",
+        "PRS": "緋纏いの宵",
+        "FTR": "緋纏いの宵",
+        "BYD": "緋纏いの宵",
+        "ETR": "緋纏いの宵"
+    },
+    "bluecomet": {
+        "PST": "blue comet",
+        "PRS": "blue comet",
+        "FTR": "blue comet",
+        "BYD": "blue comet",
+        "ETR": "blue comet"
+    },
+    "energysynergymatrix": {
+        "PST": "ENERGY SYNERGY MATRIX",
+        "PRS": "ENERGY SYNERGY MATRIX",
+        "FTR": "ENERGY SYNERGY MATRIX",
+        "BYD": "ENERGY SYNERGY MATRIX",
+        "ETR": "ENERGY SYNERGY MATRIX"
+    },
+    "gengaozo": {
+        "PST": "Ｇｅｎｇａｏｚｏ",
+        "PRS": "Ｇｅｎｇａｏｚｏ",
+        "FTR": "Ｇｅｎｇａｏｚｏ",
+        "BYD": "Ｇｅｎｇａｏｚｏ",
+        "ETR": "Ｇｅｎｇａｏｚｏ"
+    },
+    "goldenslaughterer": {
+        "PST": "goldenslaughterer",
+        "PRS": "goldenslaughterer",
+        "FTR": "goldenslaughterer",
+        "BYD": "goldenslaughterer",
+        "ETR": "goldenslaughterer"
+    },
+    "lastendconductor": {
+        "PST": "lastendconductor",
+        "PRS": "lastendconductor",
+        "FTR": "lastendconductor",
+        "BYD": "lastendconductor",
+        "ETR": "lastendconductor"
+    },
+    "redolentshape": {
+        "PST": "Redolent Shape",
+        "PRS": "Redolent Shape",
+        "FTR": "Redolent Shape",
+        "BYD": "Redolent Shape",
+        "ETR": "Redolent Shape"
+    },
+    "cosmica": {
+        "PST": "Cosmica",
+        "PRS": "Cosmica",
+        "FTR": "Cosmica",
+        "BYD": "Cosmica",
+        "ETR": "Cosmica"
+    },
+    "ascent": {
+        "PST": "Ascent",
+        "PRS": "Ascent",
+        "FTR": "Ascent",
+        "BYD": "Ascent",
+        "ETR": "Ascent"
+    },
+    "livefastdieyoung": {
+        "PST": "Live Fast Die Young",
+        "PRS": "Live Fast Die Young",
+        "FTR": "Live Fast Die Young",
+        "BYD": "Live Fast Die Young",
+        "ETR": "Live Fast Die Young"
+    },
+    "summerfireworks": {
+        "PST": "彩る夏の恋花火",
+        "PRS": "彩る夏の恋花火",
+        "FTR": "彩る夏の恋花火",
+        "BYD": "彩る夏の恋花火",
+        "ETR": "彩る夏の恋花火"
+    },
+    "firstsnow": {
+        "PST": "First Snow",
+        "PRS": "First Snow",
+        "FTR": "First Snow",
+        "BYD": "First Snow",
+        "ETR": "First Snow"
+    },
+    "bluerose": {
+        "PST": "Blue Rose",
+        "PRS": "Blue Rose",
+        "FTR": "Blue Rose",
+        "BYD": "Blue Rose",
+        "ETR": "Blue Rose"
+    },
+    "blockedlibrary": {
+        "PST": "Blocked Library",
+        "PRS": "Blocked Library",
+        "FTR": "Blocked Library",
+        "BYD": "Blocked Library",
+        "ETR": "Blocked Library"
+    },
+    "neokosmo": {
+        "PST": "nέο κόsmo",
+        "PRS": "nέο κόsmo",
+        "FTR": "nέο κόsmo",
+        "BYD": "nέο κόsmo",
+        "ETR": "nέο κόsmo"
+    },
+    "lightningscrew": {
+        "PST": "Lightning Screw",
+        "PRS": "Lightning Screw",
+        "FTR": "Lightning Screw",
+        "BYD": "Lightning Screw",
+        "ETR": "Lightning Screw"
+    },
+    "lightsofmuse": {
+        "PST": "Lights of Muse",
+        "PRS": "Lights of Muse",
+        "FTR": "Lights of Muse",
+        "BYD": "Lights of Muse",
+        "ETR": "Lights of Muse"
+    },
+    "finalstep": {
+        "PST": "Final Step!",
+        "PRS": "Final Step!",
+        "FTR": "Final Step!",
+        "BYD": "Final Step!",
+        "ETR": "Final Step!"
+    },
+    "akinokagerou": {
+        "PST": "秋の陽炎",
+        "PRS": "秋の陽炎",
+        "FTR": "秋の陽炎",
+        "BYD": "秋の陽炎",
+        "ETR": "秋の陽炎"
+    },
+    "medusa": {
+        "PST": "Medusa",
+        "PRS": "Medusa",
+        "FTR": "Medusa",
+        "BYD": "Medusa",
+        "ETR": "Medusa"
+    },
+    "init": {
+        "PST": "init()",
+        "PRS": "init()",
+        "FTR": "init()",
+        "BYD": "init()",
+        "ETR": "init()"
+    },
+    "internetoverdose": {
+        "PST": "INTERNET OVERDOSE",
+        "PRS": "INTERNET OVERDOSE",
+        "FTR": "INTERNET OVERDOSE",
+        "BYD": "INTERNET OVERDOSE",
+        "ETR": "INTERNET OVERDOSE"
+    },
+    "sakurafubuki": {
+        "PST": "Sakura Fubuki",
+        "PRS": "Sakura Fubuki",
+        "FTR": "Sakura Fubuki",
+        "BYD": "Sakura Fubuki",
+        "ETR": "Sakura Fubuki"
+    },
+    "nulctrl": {
+        "PST": "NULCTRL",
+        "PRS": "NULCTRL",
+        "FTR": "NULCTRL",
+        "BYD": "NULCTRL",
+        "ETR": "NULCTRL"
+    },
+    "macromod": {
+        "PST": "Macrocosmic Modulation",
+        "PRS": "Macrocosmic Modulation",
+        "FTR": "Macrocosmic Modulation",
+        "BYD": "Macrocosmic Modulation",
+        "ETR": "Macrocosmic Modulation"
+    },
+    "neowings": {
+        "PST": "NEO WINGS",
+        "PRS": "NEO WINGS",
+        "FTR": "NEO WINGS",
+        "BYD": "NEO WINGS",
+        "ETR": "NEO WINGS"
+    },
+    "kissinglucifer": {
+        "PST": "Kissing Lucifer",
+        "PRS": "Kissing Lucifer",
+        "FTR": "Kissing Lucifer",
+        "BYD": "Kissing Lucifer",
+        "ETR": "Kissing Lucifer"
+    },
+    "avril": {
+        "PST": "Ävril -Flicka i krans-",
+        "PRS": "Ävril -Flicka i krans-",
+        "FTR": "Ävril -Flicka i krans-",
+        "BYD": "Ävril -Flicka i krans-",
+        "ETR": "Ävril -Flicka i krans-"
+    },
+    "aurgelmir": {
+        "PST": "Aurgelmir",
+        "PRS": "Aurgelmir",
+        "FTR": "Aurgelmir",
+        "BYD": "Aurgelmir",
+        "ETR": "Aurgelmir"
+    },
+    "headbonkache": {
+        "PST": "Head BONK ache",
+        "PRS": "Head BONK ache",
+        "FTR": "Head BONK ache",
+        "BYD": "Head BONK ache",
+        "ETR": "Head BONK ache"
+    },
+    "ddd": {
+        "PST": "DDD",
+        "PRS": "DDD",
+        "FTR": "DDD",
+        "BYD": "DDD",
+        "ETR": "DDD"
+    },
+    "picopicotranslation": {
+        "PST": "PICO-Pico-Translation!",
+        "PRS": "PICO-Pico-Translation!",
+        "FTR": "PICO-Pico-Translation!",
+        "BYD": "ピコPico*とらんすれーしょんっ！",
+        "ETR": "PICO-Pico-Translation!"
+    },
+    "prism": {
+        "PST": "Prism",
+        "PRS": "Prism",
+        "FTR": "Prism",
+        "BYD": "Prism",
+        "ETR": "Prism"
+    },
+    "protoflicker": {
+        "PST": "Protoflicker",
+        "PRS": "Protoflicker",
+        "FTR": "Protoflicker",
+        "BYD": "Protoflicker",
+        "ETR": "Protoflicker"
+    },
+    "stasis": {
+        "PST": "Stasis",
+        "PRS": "Stasis",
+        "FTR": "Stasis",
+        "BYD": "Stasis",
+        "ETR": "Stasis"
+    },
+    "nekonote": {
+        "PST": "ネコノテ・カリタガール",
+        "PRS": "ネコノテ・カリタガール",
+        "FTR": "ネコノテ・カリタガール",
+        "BYD": "ネコノテ・カリタガール",
+        "ETR": "ネコノテ・カリタガール"
+    },
+    "mu": {
+        "PST": "μ",
+        "PRS": "μ",
+        "FTR": "μ",
+        "BYD": "μ",
+        "ETR": "μ"
+    },
+    "sanskia": {
+        "PST": "san skia",
+        "PRS": "san skia",
+        "FTR": "san skia",
+        "BYD": "san skia",
+        "ETR": "san skia"
+    },
+    "altair": {
+        "PST": "Altair (feat.*spiLa*)",
+        "PRS": "Altair (feat.*spiLa*)",
+        "FTR": "Altair (feat.*spiLa*)",
+        "BYD": "Altair (feat.*spiLa*)",
+        "ETR": "Altair (feat.*spiLa*)"
+    },
+    "mukishitsu": {
+        "PST": "無機質世界に彩を",
+        "PRS": "無機質世界に彩を",
+        "FTR": "無機質世界に彩を",
+        "BYD": "無機質世界に彩を",
+        "ETR": "無機質世界に彩を"
+    },
+    "trapcrow": {
+        "PST": "Trap Crow",
+        "PRS": "Trap Crow",
+        "FTR": "Trap Crow",
+        "BYD": "Trap Crow",
+        "ETR": "Trap Crow"
+    },
+    "pupa": {
+        "PST": "PUPA",
+        "PRS": "PUPA",
+        "FTR": "PUPA",
+        "BYD": "PUPA",
+        "ETR": "PUPA"
+    },
+    "defection": {
+        "PST": "Defection",
+        "PRS": "Defection",
+        "FTR": "Defection",
+        "BYD": "Defection",
+        "ETR": "Defection"
+    },
+    "infinitestrife": {
+        "PST": "Infinite Strife,",
+        "PRS": "Infinite Strife,",
+        "FTR": "Infinite Strife,",
+        "BYD": "Infinite Strife,",
+        "ETR": "Infinite Strife,"
+    },
+    "worldender": {
+        "PST": "魔王",
+        "PRS": "魔王",
+        "FTR": "魔王",
+        "BYD": "魔王",
+        "ETR": "魔王"
+    },
+    "pentiment": {
+        "PST": "Pentiment",
+        "PRS": "Pentiment",
+        "FTR": "Pentiment",
+        "BYD": "Pentiment",
+        "ETR": "Pentiment"
+    },
+    "arcanaeden": {
+        "PST": "Arcana Eden",
+        "PRS": "Arcana Eden",
+        "FTR": "Arcana Eden",
+        "BYD": "Arcana Eden",
+        "ETR": "Arcana Eden"
+    },
+    "testify": {
+        "PST": "Testify",
+        "PRS": "Testify",
+        "FTR": "Testify",
+        "BYD": "Testify",
+        "ETR": "Testify"
+    },
+    "lovelessdress": {
+        "PST": "Loveless Dress",
+        "PRS": "Loveless Dress",
+        "FTR": "Loveless Dress",
+        "BYD": "Loveless Dress",
+        "ETR": "Loveless Dress"
+    },
+    "last": {
+        "PST": "Last",
+        "PRS": "Last",
+        "FTR": "Last",
+        "BYD": "Last|Moment",
+        "ETR": "Last"
+    },
+    "lasteternity": {
+        "PST": "Last|Eternity",
+        "PRS": "Last|Eternity",
+        "FTR": "Last|Eternity",
+        "BYD": "Last|Eternity",
+        "ETR": "Last|Eternity"
+    },
+    "callimakarma": {
+        "PST": "Callima Karma",
+        "PRS": "Callima Karma",
+        "FTR": "Callima Karma",
+        "BYD": "Callima Karma",
+        "ETR": "Callima Karma"
+    },
+    "kokoro": {
+        "PST": "心",
+        "PRS": "心",
+        "FTR": "心",
+        "BYD": "心",
+        "ETR": "心"
+    },
+    "aidrew": {
+        "PST": "Ai Drew",
+        "PRS": "Ai Drew",
+        "FTR": "Ai Drew",
+        "BYD": "Ai Drew",
+        "ETR": "Ai Drew"
+    },
+    "fluffyflash": {
+        "PST": "FLUFFY FLASH",
+        "PRS": "FLUFFY FLASH",
+        "FTR": "FLUFFY FLASH",
+        "BYD": "FLUFFY FLASH",
+        "ETR": "FLUFFY FLASH"
+    },
+    "goodbyemerry": {
+        "PST": "Good bye,Merry-Go-Round.",
+        "PRS": "Good bye,Merry-Go-Round.",
+        "FTR": "Good bye,Merry-Go-Round.",
+        "BYD": "Good bye,Merry-Go-Round.",
+        "ETR": "Good bye,Merry-Go-Round."
+    },
+    "lamia": {
+        "PST": "LAMIA",
+        "PRS": "LAMIA",
+        "FTR": "LAMIA",
+        "BYD": "LAMIA",
+        "ETR": "LAMIA"
+    },
+    "freemyself": {
+        "PST": "Free Myself",
+        "PRS": "Free Myself",
+        "FTR": "Free Myself",
+        "BYD": "Free Myself",
+        "ETR": "Free Myself"
+    },
+    "cocorocosmetic": {
+        "PST": "cocoro*cosmetic",
+        "PRS": "cocoro*cosmetic",
+        "FTR": "cocoro*cosmetic",
+        "BYD": "cocoro*cosmetic",
+        "ETR": "cocoro*cosmetic"
+    },
+    "capella": {
+        "PST": "Capella",
+        "PRS": "Capella",
+        "FTR": "Capella",
+        "BYD": "Capella",
+        "ETR": "Capella"
+    },
+    "dialnote": {
+        "PST": "Dialnote",
+        "PRS": "Dialnote",
+        "FTR": "Dialnote",
+        "BYD": "Dialnote",
+        "ETR": "Dialnote"
+    },
+    "tsukinimurakumo": {
+        "PST": "月に叢雲華に風",
+        "PRS": "月に叢雲華に風",
+        "FTR": "月に叢雲華に風",
+        "BYD": "月に叢雲華に風",
+        "ETR": "月に叢雲華に風"
+    },
+    "mantis": {
+        "PST": "MANTIS (Arcaea Ultra-Bloodrush VIP)",
+        "PRS": "MANTIS (Arcaea Ultra-Bloodrush VIP)",
+        "FTR": "MANTIS (Arcaea Ultra-Bloodrush VIP)",
+        "BYD": "MANTIS (Arcaea Ultra-Bloodrush VIP)",
+        "ETR": "MANTIS (Arcaea Ultra-Bloodrush VIP)"
+    },
+    "worldfragments": {
+        "PST": "World Fragments III(radio edit)",
+        "PRS": "World Fragments III(radio edit)",
+        "FTR": "World Fragments III(radio edit)",
+        "BYD": "World Fragments III(radio edit)",
+        "ETR": "World Fragments III(radio edit)"
+    },
+    "astrawalkthrough": {
+        "PST": "Astra walkthrough",
+        "PRS": "Astra walkthrough",
+        "FTR": "Astra walkthrough",
+        "BYD": "Astra walkthrough",
+        "ETR": "Astra walkthrough"
+    },
+    "chronicle": {
+        "PST": "Chronicle",
+        "PRS": "Chronicle",
+        "FTR": "Chronicle",
+        "BYD": "Chronicle",
+        "ETR": "Chronicle"
+    },
+    "nullapophenia": {
+        "PST": "NULL APOPHENIA",
+        "PRS": "NULL APOPHENIA",
+        "FTR": "NULL APOPHENIA",
+        "BYD": "NULL APOPHENIA",
+        "ETR": "NULL APOPHENIA"
+    },
+    "crimsonthrone": {
+        "PST": "Crimson Throne",
+        "PRS": "Crimson Throne",
+        "FTR": "Crimson Throne",
+        "BYD": "Crimson Throne",
+        "ETR": "Crimson Throne"
+    },
+    "manicjeer": {
+        "PST": "Manic Jeer",
+        "PRS": "Manic Jeer",
+        "FTR": "Manic Jeer",
+        "BYD": "Manic Jeer",
+        "ETR": "Manic Jeer"
+    },
+    "hiirogekka": {
+        "PST": "緋色月下、狂咲ノ絶 (nayuta 2017 ver.)",
+        "PRS": "緋色月下、狂咲ノ絶 (nayuta 2017 ver.)",
+        "FTR": "緋色月下、狂咲ノ絶 (nayuta 2017 ver.)",
+        "BYD": "緋色月下、狂咲ノ絶 (nayuta 2017 ver.)",
+        "ETR": "緋色月下、狂咲ノ絶 (nayuta 2017 ver.)"
+    },
+    "letsrock": {
+        "PST": "Let's Rock (Arcaea mix)",
+        "PRS": "Let's Rock (Arcaea mix)",
+        "FTR": "Let's Rock (Arcaea mix)",
+        "BYD": "Let's Rock (Arcaea mix)",
+        "ETR": "Let's Rock (Arcaea mix)"
+    },
+    "cycles": {
+        "PST": "CYCLES",
+        "PRS": "CYCLES",
+        "FTR": "CYCLES",
+        "BYD": "CYCLES",
+        "ETR": "CYCLES"
+    },
+    "maxrage": {
+        "PST": "MAXRAGE",
+        "PRS": "MAXRAGE",
+        "FTR": "MAXRAGE",
+        "BYD": "MAXRAGE",
+        "ETR": "MAXRAGE"
+    },
+    "infinity": {
+        "PST": "[X]",
+        "PRS": "[X]",
+        "FTR": "[X]",
+        "BYD": "[X]",
+        "ETR": "[X]"
+    },
+    "temptation": {
+        "PST": "TEmPTaTiON",
+        "PRS": "TEmPTaTiON",
+        "FTR": "TEmPTaTiON",
+        "BYD": "TEmPTaTiON",
+        "ETR": "TEmPTaTiON"
+    },
+    "primitivelights": {
+        "PST": "PRIMITIVE LIGHTS",
+        "PRS": "PRIMITIVE LIGHTS",
+        "FTR": "PRIMITIVE LIGHTS",
+        "BYD": "PRIMITIVE LIGHTS",
+        "ETR": "PRIMITIVE LIGHTS"
+    },
+    "cosmopop": {
+        "PST": "コスモポップファンクラブ",
+        "PRS": "コスモポップファンクラブ",
+        "FTR": "コスモポップファンクラブ",
+        "BYD": "コスモポップファンクラブ",
+        "ETR": "コスモポップファンクラブ"
+    },
+    "impact": {
+        "PST": "IMPACT",
+        "PRS": "IMPACT",
+        "FTR": "IMPACT",
+        "BYD": "IMPACT",
+        "ETR": "IMPACT"
+    },
+    "trrricksters": {
+        "PST": "Trrricksters!!",
+        "PRS": "Trrricksters!!",
+        "FTR": "Trrricksters!!",
+        "BYD": "Trrricksters!!",
+        "ETR": "Trrricksters!!"
+    },
+    "spidersthread": {
+        "PST": "蜘蛛の糸",
+        "PRS": "蜘蛛の糸",
+        "FTR": "蜘蛛の糸",
+        "BYD": "蜘蛛の糸",
+        "ETR": "蜘蛛の糸"
+    },
+    "lostemotion": {
+        "PST": "Lost Emotion feat.nomico",
+        "PRS": "Lost Emotion feat.nomico",
+        "FTR": "Lost Emotion feat.nomico",
+        "BYD": "Lost Emotion feat.nomico",
+        "ETR": "Lost Emotion feat.nomico"
+    },
+    "gimmick": {
+        "PST": "GIMMICK",
+        "PRS": "GIMMICK",
+        "FTR": "GIMMICK",
+        "BYD": "GIMMICK",
+        "ETR": "GIMMICK"
+    },
+    "thesurvivor": {
+        "PST": "The Survivor(Game Edit)",
+        "PRS": "The Survivor(Game Edit)",
+        "FTR": "The Survivor(Game Edit)",
+        "BYD": "The Survivor(Game Edit)",
+        "ETR": "The Survivor(Game Edit)"
+    },
+    "newyorkbackraise": {
+        "PST": "New York Back Raise",
+        "PRS": "New York Back Raise",
+        "FTR": "New York Back Raise",
+        "BYD": "New York Back Raise",
+        "ETR": "New York Back Raise"
+    },
+    "galacticlove": {
+        "PST": "Galatic Love",
+        "PRS": "Galatic Love",
+        "FTR": "Galatic Love",
+        "BYD": "Galatic Love",
+        "ETR": "Galatic Love"
+    },
+    "lawlesspoint": {
+        "PST": "無法地点",
+        "PRS": "無法地点",
+        "FTR": "無法地点",
+        "BYD": "無法地点",
+        "ETR": "無法地点"
+    },
+    "lostintheabyss": {
+        "PST": "Lost in the Abyss",
+        "PRS": "Lost in the Abyss",
+        "FTR": "Lost in the Abyss",
+        "BYD": "Lost in the Abyss",
+        "ETR": "Lost in the Abyss"
+    },
+    "hybris": {
+        "PST": "ヒュブリスの頂に聳えるのは",
+        "PRS": "ヒュブリスの頂に聳えるのは",
+        "FTR": "ヒュブリスの頂に聳えるのは",
+        "BYD": "ヒュブリスの頂に聳えるのは",
+        "ETR": "ヒュブリスの頂に聳えるのは"
+    },
+    "tothemilkyway": {
+        "PST": "To the Milky Way",
+        "PRS": "To the Milky Way",
+        "FTR": "To the Milky Way",
+        "BYD": "To the Milky Way",
+        "ETR": "To the Milky Way"
+    },
+    "internetyamero": {
+        "PST": "INTERNET YAMERO",
+        "PRS": "INTERNET YAMERO",
+        "FTR": "INTERNET YAMERO",
+        "BYD": "INTERNET YAMERO",
+        "ETR": "INTERNET YAMERO"
+    },
+    "bulletwaiting": {
+        "PST": "Bullet Waiting for Me",
+        "PRS": "Bullet Waiting for Me",
+        "FTR": "Bullet Waiting for Me",
+        "BYD": "Bullet Waiting for Me",
+        "ETR": "Bullet Waiting for Me"
+    },
+    "devillicsphere": {
+        "PST": "Devillic Sphere",
+        "PRS": "Devillic Sphere",
+        "FTR": "Devillic Sphere",
+        "BYD": "Devillic Sphere",
+        "ETR": "Devillic Sphere"
+    },
+    "lucidtraveler": {
+        "PST": "Lucid Traveller",
+        "PRS": "Lucid Traveller",
+        "FTR": "Lucid Traveller",
+        "BYD": "Lucid Traveller",
+        "ETR": "Lucid Traveller"
+    },
+    "chaos": {
+        "PST": "CHAOS",
+        "PRS": "CHAOS",
+        "FTR": "CHAOS",
+        "BYD": "CHAOS",
+        "ETR": "CHAOS"
+    },
+    "usedtobe": {
+        "PST": "Used to be",
+        "PRS": "Used to be",
+        "FTR": "Used to be",
+        "BYD": "Used to be",
+        "ETR": "Used to be"
+    },
+    "ultimatetaste": {
+        "PST": "Ultimate taste",
+        "PRS": "Ultimate taste",
+        "FTR": "Ultimate taste",
+        "BYD": "Ultimate taste",
+        "ETR": "Ultimate taste"
+    },
+    "syuten": {
+        "PST": "Syūten",
+        "PRS": "Syūten",
+        "FTR": "Syūten",
+        "BYD": "Syūten",
+        "ETR": "Syūten"
+    },
+    "drg": {
+        "PST": "DRG",
+        "PRS": "DRG",
+        "FTR": "DRG",
+        "BYD": "DRG",
+        "ETR": "DRG"
+    },
+    "nnglooms": {
+        "PST": "99 Glooms",
+        "PRS": "99 Glooms",
+        "FTR": "99 Glooms",
+        "BYD": "99 Glooms",
+        "ETR": "99 Glooms"
+    },
+    "ii": {
+        "PST": "͟͝͞Ⅱ́̕",
+        "PRS": "͟͝͞Ⅱ́̕",
+        "FTR": "͟͝͞Ⅱ́̕",
+        "BYD": "͟͝͞Ⅱ́̕",
+        "ETR": "͟͝͞Ⅱ́̕"
+    },
+    "magnolia": {
+        "PST": "Magnolia",
+        "PRS": "Magnolia",
+        "FTR": "Magnolia",
+        "BYD": "Magnolia",
+        "ETR": "Magnolia"
+    },
+    "sacrifice": {
+        "PST": "SACRIFICE feat.ayame",
+        "PRS": "SACRIFICE feat.ayame",
+        "FTR": "SACRIFICE feat.ayame",
+        "BYD": "SACRIFICE feat.ayame",
+        "ETR": "SACRIFICE feat.ayame"
+    },
+    "rgb": {
+        "PST": "RGB",
+        "PRS": "RGB",
+        "FTR": "RGB",
+        "BYD": "RGB",
+        "ETR": "RGB"
+    },
+    "waitfordawn": {
+        "PST": "WAIT FOR DAWN",
+        "PRS": "WAIT FOR DAWN",
+        "FTR": "WAIT FOR DAWN",
+        "BYD": "WAIT FOR DAWN",
+        "ETR": "WAIT FOR DAWN"
+    },
+    "ravenspride": {
+        "PST": "レイヴンズ・プライド",
+        "PRS": "レイヴンズ・プライド",
+        "FTR": "レイヴンズ・プライド",
+        "BYD": "レイヴンズ・プライド",
+        "ETR": "レイヴンズ・プライド"
+    },
+    "riseoftheworld": {
+        "PST": "Rise of the World",
+        "PRS": "Rise of the World",
+        "FTR": "Rise of the World",
+        "BYD": "Rise of the World",
+        "ETR": "Rise of the World"
+    },
+    "unknownlevels": {
+        "PST": "UNKNOWN LEVELS",
+        "PRS": "UNKNOWN LEVELS",
+        "FTR": "UNKNOWN LEVELS",
+        "BYD": "UNKNOWN LEVELS",
+        "ETR": "UNKNOWN LEVELS"
+    },
+    "abstrusedilemma": {
+        "PST": "Abstruse Dilemma",
+        "PRS": "Abstruse Dilemma",
+        "FTR": "Abstruse Dilemma",
+        "BYD": "Abstruse Dilemma",
+        "ETR": "Abstruse Dilemma"
+    },
+    "matenrou": {
+        "PST": "感情の摩天楼 ～Arr.Demetori",
+        "PRS": "感情の摩天楼 ～Arr.Demetori",
+        "FTR": "感情の摩天楼 ～Arr.Demetori",
+        "BYD": "感情の摩天楼 ～Arr.Demetori",
+        "ETR": "感情の摩天楼 ～Arr.Demetori"
+    },
+    "tothefurthestdream": {
+        "PST": "彼方の夢へと",
+        "PRS": "彼方の夢へと",
+        "FTR": "彼方の夢へと",
+        "BYD": "彼方の夢へと",
+        "ETR": "彼方の夢へと"
+    },
+    "remindthesouls": {
+        "PST": "Remind the Souls (Short Version)",
+        "PRS": "Remind the Souls (Short Version)",
+        "FTR": "Remind the Souls (Short Version)",
+        "BYD": "Remind the Souls (Short Version)",
+        "ETR": "Remind the Souls (Short Version)"
+    },
+    "dynitikos": {
+        "PST": "Dynitikós",
+        "PRS": "Dynitikós",
+        "FTR": "Dynitikós",
+        "BYD": "Dynitikós",
+        "ETR": "Dynitikós"
+    },
+    "amekagura": {
+        "PST": "雨神楽",
+        "PRS": "雨神楽",
+        "FTR": "雨神楽",
+        "BYD": "雨神楽",
+        "ETR": "雨神楽"
+    },
+    "bbkkbkk": {
+        "PST": "B.B.K.K.B.K.K.",
+        "PRS": "B.B.K.K.B.K.K.",
+        "FTR": "B.B.K.K.B.K.K.",
+        "BYD": "B.B.K.K.B.K.K.",
+        "ETR": "B.B.K.K.B.K.K."
+    },
+    "primevaltexture": {
+        "PST": "Primeval Texture",
+        "PRS": "Primeval Texture",
+        "FTR": "Primeval Texture",
+        "BYD": "Primeval Texture",
+        "ETR": "Primeval Texture"
+    },
+    "technicolour": {
+        "PST": "Technicolour",
+        "PRS": "Technicolour",
+        "FTR": "Technicolour",
+        "BYD": "Technicolour",
+        "ETR": "Technicolour"
+    },
+    "logos": {
+        "PST": "Logos",
+        "PRS": "Logos",
+        "FTR": "Logos",
+        "BYD": "Logos",
+        "ETR": "Logos"
+    },
+    "egoeimi": {
+        "PST": "Ego Eimi",
+        "PRS": "Ego Eimi",
+        "FTR": "Ego Eimi",
+        "BYD": "Ego Eimi",
+        "ETR": "Ego Eimi"
+    },
+    "arghena": {
+        "PST": "Arghena",
+        "PRS": "Arghena",
+        "FTR": "Arghena",
+        "BYD": "Arghena",
+        "ETR": "Arghena"
+    },
+    "fantasy": {
+        "PST": "FANTA5Y",
+        "PRS": "FANTA5Y",
+        "FTR": "FANTA5Y",
+        "BYD": "FANTA5Y",
+        "ETR": "FANTA5Y"
+    },
+    "transientspace": {
+        "PST": "Transient Space",
+        "PRS": "Transient Space",
+        "FTR": "Transient Space",
+        "BYD": "Transient Space",
+        "ETR": "Transient Space"
+    },
+    "namelesspassion": {
+        "PST": "Nameless Passion",
+        "PRS": "Nameless Passion",
+        "FTR": "Nameless Passion",
+        "BYD": "Nameless Passion",
+        "ETR": "Nameless Passion"
+    },
+    "teravolt": {
+        "PST": "TeraVolt",
+        "PRS": "TeraVolt",
+        "FTR": "TeraVolt",
+        "BYD": "TeraVolt",
+        "ETR": "TeraVolt"
+    },
+    "stratoliner": {
+        "PST": "Stratoliner",
+        "PRS": "Stratoliner",
+        "FTR": "Stratoliner",
+        "BYD": "Stratoliner",
+        "ETR": "Stratoliner"
+    },
+    "ouverture": {
+        "PST": "Ouvertüre",
+        "PRS": "Ouvertüre",
+        "FTR": "Ouvertüre",
+        "BYD": "Ouvertüre",
+        "ETR": "Ouvertüre"
+    },
+    "xtreme": {
+        "PST": "XTREME",
+        "PRS": "XTREME",
+        "FTR": "XTREME",
+        "BYD": "XTREME",
+        "ETR": "XTREME"
+    },
+    "edenwacca": {
+        "PST": "eden",
+        "PRS": "eden",
+        "FTR": "eden",
+        "BYD": "eden",
+        "ETR": "eden"
+    },
+    "metamysteria": {
+        "PST": "Meta-Mysteria",
+        "PRS": "Meta-Mysteria",
+        "FTR": "Meta-Mysteria",
+        "BYD": "Meta-Mysteria",
+        "ETR": "Meta-Mysteria"
+    },
+    "aloneandlorn": {
+        "PST": "アローンアンドローン",
+        "PRS": "アローンアンドローン",
+        "FTR": "アローンアンドローン",
+        "BYD": "アローンアンドローン",
+        "ETR": "アローンアンドローン"
+    },
+    "wishuponasnow": {
+        "PST": "Wish Upon a Snow",
+        "PRS": "Wish Upon a Snow",
+        "FTR": "Wish Upon a Snow",
+        "BYD": "Wish Upon a Snow",
+        "ETR": "Wish Upon a Snow"
+    },
+    "overdrive": {
+        "PST": "患部で止まってすぐ溶ける　〜 狂気の優曇華院",
+        "PRS": "患部で止まってすぐ溶ける　〜 狂気の優曇華院",
+        "FTR": "患部で止まってすぐ溶ける　〜 狂気の優曇華院",
+        "BYD": "患部で止まってすぐ溶ける　〜 狂気の優曇華院",
+        "ETR": "患部で止まってすぐ溶ける　〜 狂気の優曇華院"
+    },
+    "felys": {
+        "PST": "felys final remix",
+        "PRS": "felys final remix",
+        "FTR": "felys final remix",
+        "BYD": "felys final remix",
+        "ETR": "felys final remix"
+    },
+    "onandon": {
+        "PST": "On And On!! feat. Jenga",
+        "PRS": "On And On!! feat. Jenga",
+        "FTR": "On And On!! feat. Jenga",
+        "BYD": "On And On!! feat. Jenga",
+        "ETR": "On And On!! feat. Jenga"
+    },
+    "lightmyway": {
+        "PST": "LIVHT MY WΔY",
+        "PRS": "LIVHT MY WΔY",
+        "FTR": "LIVHT MY WΔY",
+        "BYD": "LIVHT MY WΔY",
+        "ETR": "LIVHT MY WΔY"
+    },
+    "hotarubinoyuki": {
+        "PST": "蛍火の雪",
+        "PRS": "蛍火の雪",
+        "FTR": "蛍火の雪",
+        "BYD": "蛍火の雪",
+        "ETR": "蛍火の雪"
+    },
+    "theformula": {
+        "PST": "The Formula",
+        "PRS": "The Formula",
+        "FTR": "The Formula",
+        "BYD": "The Formula",
+        "ETR": "The Formula"
+    },
+    "lunarossa": {
+        "PST": "Luna Rossa",
+        "PRS": "Luna Rossa",
+        "FTR": "Luna Rossa",
+        "BYD": "Luna Rossa",
+        "ETR": "Luna Rossa"
+    },
+    "jingle": {
+        "PST": "Jingle",
+        "PRS": "Jingle",
+        "FTR": "Jingle",
+        "BYD": "Jingle",
+        "ETR": "Jingle"
+    },
+    "innocence": {
+        "PST": "Innocence",
+        "PRS": "Innocence",
+        "FTR": "Innocence",
+        "BYD": "Innocence",
+        "ETR": "Innocence"
+    },
+    "ionostream": {
+        "PST": "IONOSTREAM",
+        "PRS": "IONOSTREAM",
+        "FTR": "IONOSTREAM",
+        "BYD": "IONOSTREAM",
+        "ETR": "IONOSTREAM"
+    },
+    "alephzero": {
+        "PST": "Aleph-0",
+        "PRS": "Aleph-0",
+        "FTR": "Aleph-0",
+        "BYD": "Aleph-0",
+        "ETR": "Aleph-0"
+    },
+    "masqueradelegion": {
+        "PST": "Masquerade Legion",
+        "PRS": "Masquerade Legion",
+        "FTR": "Masquerade Legion",
+        "BYD": "Masquerade Legion",
+        "ETR": "Masquerade Legion"
+    },
+    "kyorenromance": {
+        "PST": "狂恋ROMANCE",
+        "PRS": "狂恋ROMANCE",
+        "FTR": "狂恋ROMANCE",
+        "BYD": "狂恋ROMANCE",
+        "ETR": "狂恋ROMANCE"
+    },
+    "qovat": {
+        "PST": "Qovat",
+        "PRS": "Qovat",
+        "FTR": "Qovat",
+        "BYD": "Qovat",
+        "ETR": "Qovat"
+    },
+    "hellohell": {
+        "PST": "HELLOHELL",
+        "PRS": "HELLOHELL",
+        "FTR": "HELLOHELL",
+        "BYD": "HELLOHELL",
+        "ETR": "HELLOHELL"
+    },
+    "ichirin": {
+        "PST": "〇、",
+        "PRS": "〇、",
+        "FTR": "〇、",
+        "BYD": "〇、",
+        "ETR": "〇、"
+    },
+    "awakeninruins": {
+        "PST": "Awaken In Ruins",
+        "PRS": "Awaken In Ruins",
+        "FTR": "Awaken In Ruins",
+        "BYD": "Awaken In Ruins",
+        "ETR": "Awaken In Ruins"
+    },
+    "morningloom": {
+        "PST": "MORNINGLOOM",
+        "PRS": "MORNINGLOOM",
+        "FTR": "MORNINGLOOM",
+        "BYD": "MORNINGLOOM",
+        "ETR": "MORNINGLOOM"
+    },
+    "lethalvoltage": {
+        "PST": "Lethal Voltage",
+        "PRS": "Lethal Voltage",
+        "FTR": "Lethal Voltage",
+        "BYD": "Lethal Voltage",
+        "ETR": "Lethal Voltage"
+    },
+    "mirinae": {
+        "PST": "MIRINAE",
+        "PRS": "MIRINAE",
+        "FTR": "MIRINAE",
+        "BYD": "MIRINAE",
+        "ETR": "MIRINAE"
+    },
+    "ultradiaxon": {
+        "PST": "ultradiaxon-N3",
+        "PRS": "ultradiaxon-N3",
+        "FTR": "ultradiaxon-N3",
+        "BYD": "ultradiaxon-N3",
+        "ETR": "ultradiaxon-N3"
+    },
+    "leaveallbehind": {
+        "PST": "Leave All Behind",
+        "PRS": "Leave All Behind",
+        "FTR": "Leave All Behind",
+        "BYD": "Leave All Behind",
+        "ETR": "Leave All Behind"
+    },
+    "distortedfate": {
+        "PST": "Distorted Fate",
+        "PRS": "Distorted Fate",
+        "FTR": "Distorted Fate",
+        "BYD": "Distorted Fate",
+        "ETR": "Distorted Fate"
+    },
+    "floatingworld": {
+        "PST": "Floating World",
+        "PRS": "Floating World",
+        "FTR": "Floating World",
+        "BYD": "Floating World",
+        "ETR": "Floating World"
+    },
+    "chromafill": {
+        "PST": "Chromafill",
+        "PRS": "Chromafill",
+        "FTR": "Chromafill",
+        "BYD": "Chromafill",
+        "ETR": "Chromafill"
+    },
+    "desive": {
+        "PST": "Désive",
+        "PRS": "Désive",
+        "FTR": "Désive",
+        "BYD": "Désive",
+        "ETR": "Désive"
+    },
+    "epicurus": {
+        "PST": "エピクロスの虹はもう見えない",
+        "PRS": "エピクロスの虹はもう見えない",
+        "FTR": "エピクロスの虹はもう見えない",
+        "BYD": "エピクロスの虹はもう見えない",
+        "ETR": "エピクロスの虹はもう見えない"
+    },
+    "tasogare": {
+        "PST": "黄昏の協奏曲",
+        "PRS": "黄昏の協奏曲",
+        "FTR": "黄昏の協奏曲",
+        "BYD": "黄昏の協奏曲",
+        "ETR": "黄昏の協奏曲"
+    },
+    "oldschoolsalvage": {
+        "PST": "Old School Salvage",
+        "PRS": "Old School Salvage",
+        "FTR": "Old School Salvage",
+        "BYD": "Old School Salvage",
+        "ETR": "Old School Salvage"
+    },
+    "beautifuldreamer": {
+        "PST": "Beautiful Dreamer",
+        "PRS": "Beautiful Dreamer",
+        "FTR": "Beautiful Dreamer",
+        "BYD": "Beautiful Dreamer",
+        "ETR": "Beautiful Dreamer"
+    },
+    "backtobasics": {
+        "PST": "Back to Basics",
+        "PRS": "Back to Basics",
+        "FTR": "Back to Basics",
+        "BYD": "Back to Basics",
+        "ETR": "Back to Basics"
+    }
+}
