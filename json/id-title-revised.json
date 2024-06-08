@@ -287,11 +287,11 @@
         "ETR": "不浄な白い鳥"
     },
     "ignotus": {
-        "PST": "Ignotus Afterburn",
-        "PRS": "Ignotus Afterburn",
-        "FTR": "Ignotus Afterburn",
-        "BYD": "Ignotus",
-        "ETR": "Ignotus Afterburn"
+        "PST": "Ignotus",
+        "PRS": "Ignotus",
+        "FTR": "Ignotus",
+        "BYD": "Ignotus Afterburn",
+        "ETR": "Ignotus"
     },
     "lethaeus": {
         "PST": "Lethaeus",
