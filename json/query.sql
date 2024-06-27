@@ -421,6 +421,14 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Old Sc
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Beautiful Dreamer', 'beautifuldreamer', 4.0, 7.8, 9.9, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Back to Basics', 'backtobasics', 5.0, 8.7, 10.5, '', '');
 
+--未完成PST PRS定数
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('STARGATE EXTREME', 'stargateextreme', 4, 6, 9.3, '', 10.0);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Sign of "10.5km"', 'signof', 3, 6, 9.2, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('10pt8ion', 'temptationgc', 4, 7.8, 9.7, '', 10.4);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Black MInD', 'blackmind', 5, 8, 10.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('HYPER VISION', 'hypervision', 4, 7, 9.8, '', '');
+
+
 COMMIT TRANSACTION;
 
 PRAGMA foreign_keys = on;

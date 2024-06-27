@@ -43,13 +43,13 @@
 			console.log("ready");
 			//监听输入/变更
 			$('#begin-time').on('input', function(e) {
-				beginTime = $('#begin-time').val();
-				console.log(beginTime);
+				beginTime = parseInt($('#begin-time').val());
+				// console.log(beginTime);
 				// handleLines();
 			});
 			$('#end-time').on("input", function(e){
-				endTime = $('#begin-time').val();
-				console.log(endTime);
+				endTime = parseInt($('#end-time').val());
+				// console.log(endTime);
 			})
 			//监听输入
 			$('#text-input').on('change', function() {
@@ -93,6 +93,9 @@
 		 */
 
 		function handleLines() {
+			// beginTime = $('#begin-time').val();
+			// endTime = $('#end-time').val();
+			console.log(`${beginTime}---${endTime}`)
 			firstTimingFlag = 0;
 			// content = $('#text-input').val();
 			let content = $('#text-input').val();
@@ -124,6 +127,7 @@
 				let newline = "  " + checkLine(subline);
 				return newline;
 			} else if (line.startsWith("timing(")) {
+				console.log('timing')
 				// console.log(line);
 				// 处理timing语句
 				timingCounter++;
@@ -134,9 +138,12 @@
 					let t = parseInt(match[1]);
 					let bpm = match[2];
 					let newline;
-					if ((t >= beginTime && t <= endTime) || (t == 0 && firstTimingFlag == 1)) {
+					if ((t >= beginTime && t <= endTime) || (t == 0 && firstTimingFlag == 0)) {
 						if (t == 0) {
+							console.log('firts timing line:')
 							firstTimingFlag = 1;
+							newline = "timing(" + 0 + "," + bpm + "," + match[3] + ");";
+							return newline;
 						}
 						newline = "timing(" + (t - beginTime) + "," + bpm + "," + match[3] + ");";
 					} else {
@@ -146,6 +153,7 @@
 					return newline;
 				}
 			} else if (line.startsWith("(")) {
+				console.log('tap')
 				// 处理地键
 				let regex = /\((\d+),(\d+)\);/;
 				let match = line.match(regex);

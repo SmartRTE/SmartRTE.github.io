@@ -140,9 +140,9 @@ function getRandomAiChan() {
 
 /**
  * 不舍入的小数截断
- * @param number 原数
- * @param decimal 截断位数
- * @return {string} 不经舍入的 decimal 位小数
+ * @param {number} number 原数
+ * @param {number} decimal 截断位数
+ * @return {String} 不经舍入的 decimal 位小数
  */
 function toFloor(number, decimal) {
 	// console.log(number);
