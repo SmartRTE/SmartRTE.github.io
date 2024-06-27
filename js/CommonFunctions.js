@@ -546,7 +546,7 @@ async function initializeAvatarList() {
 		dataType: "text",
 		success: function(resp) {
 			// console.log(resp);
-			avatarList = resp.trim().split('\n');
+			avatarList = resp.trim().replaceAll('\r\n', '\n').split('\n');
 			avatarList.forEach(function(avt) {
 				appendAvatarUnit(avt);
 			});
@@ -581,7 +581,7 @@ async function initializeBackgroundList() {
  */
 async function initializeUserCourseDanList() {
 	let l = [
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 	];
 	let list = $('#user-course-dan-list');
 	l.forEach(function(li) {
