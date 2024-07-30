@@ -122,16 +122,16 @@ li {
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	opacity: 90%;
+	opacity: 0.9;
 	background: #9eeaf9;
 	background: url("../img/11.webp") top/cover fixed no-repeat;
 }
 
-#help-me a {
+/* #help-me a {
 	text-decoration: none;
 	color: aquamarine;
 	animation: linear 1s rainbow-text infinite;
-}
+} */
 
 #main-container {
 	position: relative;
@@ -234,6 +234,9 @@ li {
 	font-weight: 800;
 }
 
+#try-to-rotate {
+	display: none;
+}
 
 #result-card {
 	position: relative;
@@ -503,11 +506,48 @@ li {
 }
 
 #result {
-	border: 1px solid gray;
-	border-radius: 5px;
+	border: 0.5px solid #7f006350;
+	border-radius: 10px;
 	width: 96%;
 	text-align: center;
 }
+
+#result tbody td{
+	border: none;
+}
+
+#result thead {
+	background-color: #9eeaf920;
+}
+
+#result thead tr td:first-of-type {
+	border-top-left-radius: 8px;
+}
+
+
+#result thead tr td:last-of-type {
+	border-top-right-radius: 8px;
+}
+
+#result tbody tr td:first-child{
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+}
+
+#result tbody tr td:last-child{
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+}
+
+#result tbody tr:last-of-type td:first-of-type {
+	border-bottom-left-radius: 8px;
+}
+
+#result tbody tr:last-of-type td:last-of-type {
+	border-bottom-right-radius: 8px;
+}
+
+
 
 .table-ill {
 	display: block;
@@ -1022,19 +1062,20 @@ li {
 	#func-container {
 		width: 50%;
 		float: left;
-		display: inline-block;
-		border-right: solid 1px darkgray;
+		display: block;
+		border-right: solid 1px transparent;
 	}
 
 	#func-container2 {
 		width: 50%;
 		float: left;
-		display: inline-block;
+		display: block;
 		border-left: solid 1px darkgray;
 	}
 
 	#disp-container {
 		border-top: 2px dashed gray;
+		border-left: 1px solid darkgray;
 		margin: 0;
 		display: inline-block;
 		float: none;
@@ -1043,9 +1084,10 @@ li {
 
 	#filter-btn-container {
 		margin: 0;
-		display: inline-block;
+		display: block;
 		float: left;
 		width: 50%;
+		border-right: 1px solid transparent;
 	}
 
 	.func-btn {
@@ -1076,6 +1118,10 @@ li {
 	.single-card {
 		transform: scale(0.8);
 		margin-bottom: -2rem;
+	}
+
+	#try-to-rotate {
+		display: block;
 	}
 
 	#result-card {

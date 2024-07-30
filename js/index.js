@@ -411,7 +411,7 @@ function convertToTable(currentRow, index) {
 			difColor = "etr";
 		}
 	}
-	difColor += " t-song-name";
+	// difColor += " t-song-name";
 	let $trElem = $('<tr id="t-' + currentRow.songId + "-" + currentRow.difficulty + '" class="' + difColor + '">')
 		.addClass('single-tr-' + currentRow.difficulty.toLowerCase());
 	$trElem.append($('<td>').text(index));

@@ -428,6 +428,16 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('10pt8i
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Black MInD', 'blackmind', 5, 8, 10.8, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('HYPER VISION', 'hypervision', 4, 7, 9.8, '', '');
 
+--未完成PST PRS定数
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Distortion Human', 'distortionhuman', 3, 6, 9.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('shrink', 'shrink', 3, 7, 9.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('In Vain', 'invain', 3.5, 6.5, 9.5, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Hypnotize', 'hypnotize', 3.5, 7.0, 8.9, '', 9.9);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Ashen 6oundary', 'ashenboundary', 4.5, 7.8, 9.9, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Judgement', 'judgement', 5.5, 8.6, 10.4, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('ALTER EGO', 'alterego', 6.5, 9.2, 10.5, '', 11.2);
+
+
 
 COMMIT TRANSACTION;
 

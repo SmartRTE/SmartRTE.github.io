@@ -539,7 +539,7 @@ function appendSongUnit(currentRow, index) {
 	let z = String(currentRow.constant).split('.');
 	// console.log(z);
 	info.append($('<div>').addClass('song-constant')
-		.text(currentRow.difficulty + z[0] + (z[1] >= 7 ? '+ ' : ' ') + '[' + currentRow.constant + ']'));
+		.text(currentRow.difficulty + z[0] + (z[1] >= 7 ? '+ ' : ' ') + '[' + currentRow.constant.toFixed(1) + ']'));
 	info.append($('<div>').addClass('song-rank').text('#' + index));
 	let sn = $('<div>').addClass('song-name').text(currentRow.songName);
 	let ss = $('<div>').addClass('song-score').text(scoreFormat(parseInt(currentRow.score)));
