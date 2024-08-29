@@ -113,6 +113,15 @@ body {
 	font-family: "Exo";
 }
 
+#sticker {
+	position: relative;
+	margin: 0 auto;
+	height: 20vw;
+	max-height: 150px;
+	width: 20vw;
+	max-width: 150px;
+}
+
 li {
 	list-style: none;
 }

@@ -413,7 +413,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Leave 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Distorted Fate', 'distortedfate', 4.5, 7.8, 9.6, '', 10.9);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Floating World', 'floatingworld', 3.0, 7.0, 9.3, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Chromafill', 'chromafill', 4.0, 7.0, 10.0, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Desive', 'desive', 5, 8, 9.9, '', 10.8);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Desive', 'desive', 5.0, 8.0, 9.9, '', 10.8);
 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Hidden Rainbows of Epicurus', 'epicurus', 2.5, 5.5, 7.5, '', 8.8);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Twilight Concerto', 'tasogare', 4.5, 7.8, 9.5, '', 10.4);
@@ -422,20 +422,28 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Beauti
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Back to Basics', 'backtobasics', 5.0, 8.7, 10.5, '', '');
 
 --未完成PST PRS定数
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('STARGATE EXTREME', 'stargateextreme', 4, 6, 9.3, '', 10.0);
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Sign of "10.5km"', 'signof', 3, 6, 9.2, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('10pt8ion', 'temptationgc', 4, 7.8, 9.7, '', 10.4);
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Black MInD', 'blackmind', 5, 8, 10.8, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('HYPER VISION', 'hypervision', 4, 7, 9.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('STARGATE EXTREME', 'stargateextreme', 4.0, 6.0, 9.3, '', 10.0);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Sign of "10.5km"', 'signof', 3.0, 6.5, 9.2, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('10pt8ion', 'temptationgc', 4.0, 7.8, 9.7, '', 10.4);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Black MInD', 'blackmind', 5.0, 8.0, 10.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('HYPER VISION', 'hypervision', 4.5, 7.5, 9.8, '', '');
 
 --未完成PST PRS定数
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Distortion Human', 'distortionhuman', 3, 6, 9.8, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('shrink', 'shrink', 3, 7, 9.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Distortion Human', 'distortionhuman', 3.0, 6.5, 9.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('shrink', 'shrink', 3.5, 7.0, 9.8, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('In Vain', 'invain', 3.5, 6.5, 9.5, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Hypnotize', 'hypnotize', 3.5, 7.0, 8.9, '', 9.9);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Ashen 6oundary', 'ashenboundary', 4.5, 7.8, 9.9, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Judgement', 'judgement', 5.5, 8.6, 10.4, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('ALTER EGO', 'alterego', 6.5, 9.2, 10.5, '', 11.2);
+
+-- 5.10
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('epitaxy', 'epitaxy', 3.0, 6.0, 8.6, '', 9.6);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Waltz for Lorelei', 'waltzforlorelei', 2.5, 5.5, 8.8, '', 9.8);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Dual Doom Deathmatch', 'dualdoom', 3.5, 6.5, 8.9, '', 10.3);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Inverted World', 'invertedworld', 3.0, 7.0, 9.5, '', 10.7);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MVURBD', 'mvurbd', 4.5, 7.8, 10.6, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Vulcanus', 'vulcanus', 5.2, 8.2, 10.9, '', '');
 
 
 

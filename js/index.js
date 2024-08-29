@@ -5,6 +5,7 @@ let isEdit; //是否为修改
 
 let illustrationPath = 'Processed_Illustration/';
 let queryFilePath = "json/query.sql"; //sql查询代码文件路径
+let stickerPath = "img/stickers/"; //表情包路径
 let query = '';
 let columns = ['SongName', 'SongId', 'Difficulty',
 	'Score', 'Perfect', 'Perfect+',
@@ -64,6 +65,7 @@ $(document).ready(function() {
 	//初始化查询结果选择监听
 	initailizeSearchResultListener();
 
+	initializeSticker();
 });
 
 /**
@@ -754,4 +756,12 @@ function doMapping() {
 		console.log(cell)
 		tosongname.push(id_title_mapping[cell][idData["E"][index]])
 	})
+}
+
+	
+function initializeSticker(){
+	let randomIndex = Math.floor(Math.random() * 12);
+	$('#sticker').css('background-image', 'url(' + stickerPath + randomIndex + '.webp');
+	$('#sticker').css('background-size', 'contain');
+
 }
