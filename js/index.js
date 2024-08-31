@@ -445,10 +445,15 @@ function convertToTable(currentRow, index) {
 	} else {
 		rt = toFloor(currentRow.playRating, 4)
 	}
-	$trElem.append($('<td>')
-		.addClass('t-play-rating')
-		.css("background", linearGradient)
-		.text(rt + "(" + toFloor(currentRow.percentage, 2) + "%)"));
+	
+	
+	// $trElem	.append($('<td>').addClass('t-play-rating').css("background", linearGradient)
+	// 		.text(rt + "(" + toFloor(currentRow.percentage, 2) + "%)"));
+	
+	
+	$trElem	.append($('<td>').addClass('t-play-rating').css("background", linearGradient)
+			.text(rt + "(" + currentRow.loseScore.toFixed(2) * (-1) + ")"));
+	// $trElem.append($$('<td>').addClass('t-lose-score'));
 	if (currentRow.normalPerfect == 0 && currentRow.far == 0 && currentRow.lost == 0 && currentRow.perfect != 0) {
 		$trElem.addClass("theoretical");
 	}

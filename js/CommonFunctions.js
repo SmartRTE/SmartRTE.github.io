@@ -11,42 +11,37 @@ let aiChanList = [];
  */
 class PlayResult {
 	/**
-	 * @param {String} songName
-	 * @param {String} songId
-	 * @param {String} difficulty
-	 * @param {String} score
-	 * @param {Number} perfect	
-	 * @param {Number} criticalPerfect
-	 * @param {Number} far
-	 * @param {Number} lost
-	 * @param {Number} constant
-	 * @param {Number} playRating
-	 * @param {Number} innerIndex
+	 * @param {String} songName	曲名
+	 * @param {String} songId	曲目ID
+	 * @param {String} difficulty	难度
+	 * @param {String} score	分数
+	 * @param {Number} perfect	pure数
+	 * @param {Number} criticalPerfect	大P数
+	 * @param {Number} far	far数
+	 * @param {Number} lost	lost数
+	 * @param {Number} constant	定数
+	 * @param {Number} playRating	单曲潜力值
+	 * @param {Number} innerIndex	内部排序索引
 	 */
 	constructor(songName, songId, difficulty, score,
 		perfect, criticalPerfect, far, lost,
 		constant, playRating, innerIndex) {
-			// console.log(arguments);
-		// console.log(difficulty);
+
 		if (diffIllMapping) {
 			const diffSongId = diffIllMapping[songId];
 			if (diffSongId && diffSongId[difficulty]) {
-				// console.log(diffSongId[difficulty]);
-				// this.illustration = (illusPath + songId + diffSongId[difficulty] + ".jpg");
 				this.illustration = (songId + diffSongId[difficulty] + ".jpg");
 			} else {
 				// this.illustration = (illusPath + songId + ".jpg");
 				this.illustration = (songId + ".jpg");
 			}
 		} else {
-			// this.illustration = (illusPath + "sayonarahatsukoi.jpg");
 			this.illustration = ("sayonarahatsukoi.jpg");
 		}
 		if (diffSongNameMapping) {
 			const diffSongId = diffSongNameMapping[songId];
 			if (diffSongId && diffSongId[difficulty]) {
 				this.songName = diffSongId[difficulty];
-				// console.log(songId);
 			} else {
 				this.songName = songName;
 			}
@@ -67,7 +62,12 @@ class PlayResult {
 		this.lost = lost?lost:0;
 		this.constant = constant;
 		this.playRating = playRating?playRating:calculateSingleRating(score,constant,5);
-		
+		if(perfect==0 && lost==0)
+		{
+			this.loseScore = 0;
+		}else{
+			this.loseScore = getLoseScore(constant, score, perfect + far + lost, criticalPerfect);
+		}
 		if (score >= 10000000) {
 			// console.log(toFloor(this.criticalPerfect / this.perfect));
 			this.percentage = 100 + parseFloat(toFloor(this.criticalPerfect / this.perfect, 2));
@@ -75,6 +75,8 @@ class PlayResult {
 			this.percentage = 100 * parseFloat(toFloor(this.playRating / (this.constant + 2), 4));
 		}
 		
+		
+		console.log(this.loseScore);
 	}
 }
 
@@ -668,4 +670,16 @@ function getStatistics(array = currentArray){
 	});
 	// console.log(sts)
 	return sts;
+}
+
+
+/**
+ * 计算单曲失分数
+ * @param {Number} constant 定数
+ * @param {Number} score 分数
+ * @param {Number} amount 物量
+ * @param {Number} criticalPerfect 大P数
+*/
+function getLoseScore(constant, score, amount, criticalPerfect){
+	return (constant * 38 - constant * 100 * (Math.max(0, Math.min((criticalPerfect/amount - 0.9), 0.095))  +  28.5 * (Math.max(0, Math.min((score/10000000 - 0.99), 0.01)))));
 }
