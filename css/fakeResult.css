@@ -1,16 +1,16 @@
 @font-face {
 	font-family: "NotoSans";
-	src: url('Fonts/NotoSansCJKsc-Bold.otf');
+	src: url('../Fonts/NotoSansCJKsc-Bold.otf');
 }
 
 @font-face {
 	font-family: "Exo";
-	src: url('Fonts/Exo-SemiBold.ttf');
+	src: url('../Fonts/Exo-SemiBold.ttf');
 }
 
 @font-face {
 	font-family: "GeosansLight";
-	src: url('Fonts/GeosansLight.ttf');
+	src: url('../Fonts/GeosansLight.ttf');
 }
 
 @keyframes floating-character {
