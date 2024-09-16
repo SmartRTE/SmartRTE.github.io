@@ -4,6 +4,11 @@
 }
 
 @font-face {
+	font-family: "NotoSansRegular";
+	src: url('../Fonts/NotoSansCJKsc-Regular.otf');
+}
+
+@font-face {
 	font-family: "Exo";
 	src: url('../Fonts/Exo-SemiBold.ttf');
 }
@@ -121,7 +126,7 @@ body {
 	top: 20px;
 	left: 45px;
 	color: #25141C;
-	font-family: "NotoSans";
+	font-family: "NotoSansRegular";
 	font-weight: 200;
 	z-index: 999;
 	font-size: 3.8rem;
@@ -378,7 +383,7 @@ body {
 	position: absolute;
 	width: 100%;
 	height: 8rem;
-	font-family: "NotoSans";
+	font-family: "NotoSansRegular";
 	color: white;
 	text-shadow: 0px 0px 2px white, 6px 6px 3px black;
 	text-align: center;
@@ -394,7 +399,7 @@ body {
 	position: absolute;
 	width: 100%;
 	height: 8rem;
-	font-family: "NotoSans";
+	font-family: "NotoSansRegular";
 	color: white;
 	text-shadow: 0px 0px 2px white, 5px 5px 3px black;
 	text-align: center;
@@ -490,7 +495,7 @@ body {
     left: 241px;
     top: 32px;
     font-size: 3.1rem;
-    font-family: "NotoSans";
+    font-family: "NotoSansRegular";
     letter-spacing: 0.5px;
     font-weight: bold;
     color: #463858;
@@ -513,7 +518,7 @@ body {
 	left: 241px;
 	top: 99px;
 	font-size: 3.1rem;
-	font-family: "NotoSans";
+	font-family: "NotoSansRegular";
 	letter-spacing: 1.1px;
     color: #40374b;
 	text-shadow: 0 0 2px white,
@@ -535,7 +540,7 @@ body {
     left: 577px;
     top: 99px;
     font-size: 3rem;
-    font-family: "NotoSans";
+    font-family: "NotoSansRegular";
     letter-spacing: 1.5px;
     font-weight: 800;
     color: #40374b;
@@ -722,7 +727,7 @@ body {
 	display: block;
 	width: 180px;
 	text-align: center;
-	font-family: "NotoSans";
+	font-family: "NotoSansRegular";
 	color: white;
 	letter-spacing: 3px;
 }
@@ -731,7 +736,7 @@ body {
 	float: none;
 	position: absolute;
 	font-size: 3rem;
-	font-family: "NotoSans";
+	font-family: "NotoSansRegular";
 	left: 262px;
 	top: 1px;
 	color: white;
@@ -897,7 +902,7 @@ body {
 	width: inherit;
 	text-align: center;
 	top: 27px;
-	font-family: "NotoSans";
+	font-family: "NotoSansRegular";
 	font-weight: bold;
 	letter-spacing: 4px;
 	color: #514662;
