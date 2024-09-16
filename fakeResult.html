@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>自定义成绩图</title>
+		<script src="js/jquery-3.6.1.min.js"></script>
+		<link rel="stylesheet" href="css/fakeResult.css" type="text/css" />
+		<!-- <script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script> -->
+		<script src="js/fakeResult.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<div id="main-capture">
+			<div id="background-image">
+				<!-- 以背景图形式显示 宽高固定 -->
+				<img id="reference" src="img/res_bg.png" />
+			</div>
+			<div id="top-bar">
+				<span id="result">结果</span>
+				<img id="top-bar-background" src="img/topbar/top_bar_bg.png" />
+				<!-- <img id=""/> -->
+				<div id="sync-button">
+					<img id="sync-background" src="img/layout/top_button_settings.png" />
+					<img id="sync-icon" src="img/topbar/cloud_sync.png" />
+					<span id="sync-text">同步</span>
+				</div>
+				<div id="username">
+					<img id="course-banner" src="img/banner/11.png" />
+					<span id="username-text">PlayerName</span>
+				</div>
+				<div id="avatar">
+					<img id="character-border" src="img/topbar/char_icon_border.png" />
+					<img id="avatar-icon" src="img/avatar/2u_icon.webp" onclick="switchDisplay('#setting')"/>
+					<div id="potential">
+						<img id="potential-border" src="img/rating/rating_6.png" />
+						<div id="potential-value">
+
+							<span id="potential-value-left">12.</span>
+							<span id="potential-value-right">99</span>
+						</div>
+					</div>
+				</div>
+				<div id="potential-change">
+					<img id="potential-change-border" src="img/layout/rating_keep.png" />
+					<img id="potential-change-text" src="img/layout/potentialtext.png" />
+					<img id="potential-change-keep" src="img/layout/keeptext.png" />
+					<span id="potential-change-message"></span>
+				</div>
+				<div id="fragment">
+					<span id="fragment-text">残片</span>
+					<img id="fragment-background" src="img/layout/frag_diamond_top.png" />
+					<img id="fragment-overflow" src="img/layout/fragstack-double.png" />
+					<span id="fragment-value">9999</span>
+				</div>
+				<div id="memory">
+					<span id="memory-text">记忆源点</span>
+					<img id="memory-background" src="img/layout/memory_diamond.png" />
+					<span id="memory-value">9999</span>
+				</div>
+			</div>
+			<div id="main-body">
+				<img id="main-background" src="img/layout/res_banner.png" />
+
+				<span id="song-name">Inverted World</span>
+				<span id="artist">ARForest</span>
+				<img id="clear-type" src="img/clearType/clear_pure.png" />
+				<div id="difficulty-and-maxrecall">
+					<img id="maxrecall-background" src="img/layout/max-recall-eternal.png" />
+					<h1 id="constant">10</h1>
+					<span id="plus-mark">+</span>
+					<span id="difficulty">ETERNAL</span>
+					<span id="maxrecall-text">MAX RECALL</span>
+					<span id="maxrecall">1065</span>
+				</div>
+				<img id="illustration" src="illustration/invertedworld.jpg" />
+				<img id="hp-bar" src="img/hpBar/hp_bar_clear.png" />
+				<img id="hp-bar-grid" src="img/hpBar/hp_grid.png" />
+				<img id="hp-bar-top" src="img/hpbar/hp_top.png" />
+				<img id="hp-base" src="img/hpBar/hp_base.png" />
+				<span id="hp-value">100</span>
+				<div id="score-panel">
+					<img id="score-panel-background" src="img/layout/res_scoresection_high.png" />
+					<h1 id="score-current">10'001'039</h1>
+					<h2 id="score-personal-best">09'986'940</h2>
+					<h3 id="score-differnce">+00'014'099</h3>
+					<img id="grade" src="img/grade/EX+.png" />
+				</div>
+				<div id="item-panel">
+					<div id="pure">
+						<img src="img/layout/pure-count.png" />
+						<a class="item-text" id="item-pure">PURE</a>
+						<span class="item-count" id="pure-count">1065</span>
+						<span class="item-count-addition" id="c-pure-count">+1039</span>
+					</div>
+					<div id="far">
+						<img src="img/layout/far-count.png" />
+						<a class="item-text" id="item-far">FAR</a>
+						<span class="item-count" id="far-count">0</span>
+						<span class="item-count-addition" id="far-detail">L0(P5) E0(P21)</span>
+					</div>
+					<div id="lost">
+						<img src="img/layout/lost-count.png" />
+						<a class="item-text" id="item-lost">LOST</a>
+						<span class="item-count" id="lost-count">0</span>
+					</div>
+				</div>
+			</div>
+			<div id="bottombar">
+				<div id="back">
+					<img id="back-background" src="img/layout/back.png" />
+					<span id="back-text" class="bottombar-text">返回</span>
+				</div>
+
+				<div id="share">
+					<img id="share-background" src="img/layout/mid_button.png" />
+					<span id="share-text" class="bottombar-text">分享</span>
+				</div>
+
+				<div id="retry">
+					<img id="retry-background" src="img/layout/retry.png" />
+					<span id="retry-text" class="bottombar-text">重试</span>
+				</div>
+			</div>
+			<img id="character" src="img/character/2u.png" />
+		</div>
+		
+		<div id="setting">
+			<div id="setting-background">
+				
+			</div>
+			<div id="setting-window">
+				<div class="container">
+					<div class="setting-row">
+						<label for="input-username">用户名</label>
+						<input id="input-username"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-frame">ID框</label>
+						<input id="input-frame"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-potential">潜力值</label>
+						<input id="input-potential"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-character">搭档id</label>
+						<input id="input-character"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-fragment">残片数</label>
+						<input id="input-fragment"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-memory">源点数</label>
+						<input id="input-memory"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-songname">曲名</label>
+						<input id="input-songname"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-artist">曲师</label>
+						<input id="input-artist"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-difficulty">难度</label>
+						<input id="input-difficulty"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-constant">定数</label>
+						<input id="input-constant"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-maxrecall">连击数</label>
+						<input id="input-maxrecall"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-illustration">曲绘id</label>
+						<input id="input-illustration"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-hp">血量</label>
+						<input id="input-hp" type="number"/>
+					</div>
+					<div class="setting-row">
+						<label style="float: left;">强制TrackLost</label>
+						<input type="checkbox" id="track-lost" style="height: 4rem; width: 4rem; float: left;"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-current-score">分数</label>
+						<input id="input-current-score"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-best-score">最高分</label>
+						<input id="input-best-score"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-pure-count">Pure数</label>
+						<input id="input-pure-count"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-critical-pure-count">大P数</label>
+						<input id="input-critical-pure-count"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-far-count">far数</label>
+						<input id="input-far-count"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-lost-count">lost数</label>
+						<input id="input-lost-count"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-pure-late">小p-late数</label>
+						<input id="input-pure-late"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-pure-early">小p-early数</label>
+						<input id="input-pure-early"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-far-late">far-late数</label>
+						<input id="input-far-late"/>
+					</div>
+					<div class="setting-row">
+						<label for="input-far-early">far-early数</label>
+						<input id="input-far-early"/>
+					</div>
+					<div class="setting-row">
+						<button id="switch-addition" onclick="switchDisplay('.item-count-addition')">显示/隐藏小P和far</button>
+					</div>
+					<div class="setting-row">
+						<button id="confirm" onclick="applySettings(getSettingValues())">确认修改</button>
+					</div>
+					<div class="setting-row">
+						<label style="margin-right: 6rem;">手动调整搭档位置：</label>
+						<button onclick="adjustCharacterPosition(0)" style="width: 5rem; margin: 0 10px;">←</button>
+						<button onclick="adjustCharacterPosition(2)" style="width: 5rem; margin: 0 10px;">↑</button>
+						<button onclick="adjustCharacterPosition(1)" style="width: 5rem; margin: 0 10px;">→</button>
+						<button onclick="adjustCharacterPosition(3)" style="width: 5rem; margin: 0 10px;">↓</button>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+
+	</body>
+</html>
