@@ -317,3 +317,58 @@ function adjustCharacterPosition(d){
 		$('#character').css("top", top + 10 + "px");
 	}
 }
+
+async function compressImage(dataURL, quality) {
+	return new Promise((resolve, reject) => {
+		const img = new Image();
+		img.onload = function() {
+			const canvas = document.createElement('canvas');
+			const ctx = canvas.getContext('2d');
+
+			canvas.width = img.width;
+			canvas.height = img.height;
+
+			ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+			const compressedDataURL = canvas.toDataURL('image/jpeg', quality);
+
+			resolve(compressedDataURL);
+		};
+		img.onerror = reject;
+		img.src = dataURL;
+	});
+}
+
+
+async function saveAsImage(captureId) {
+	// resizeWidth(0);
+	switchDisplay('#setting');
+	const id = document.getElementById(captureId);
+	const captureWidth = 3200;
+	const captureHeight = 2000;
+	html2canvas(id, {
+		useCORS: true,
+		width: captureWidth,
+		height: captureHeight,
+		scale: 1.2
+	}).then(async canvas => {
+		const dataURL = canvas.toDataURL('image/jpg');
+		const compressedDataURL = await compressImage(dataURL, 0.6);
+		// const compressedDataURL = dataURL;
+		const link = document.createElement('a');
+		link.href = compressedDataURL;
+		link.download = 'FakeResult.jpg';
+		const img = document.createElement('img');
+		img.src = compressedDataURL;
+
+		const newTab = window.open();
+		newTab.document.body.appendChild(img);
+
+		img.style.width = '100%';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		// resizeWidth(1);
+		switchDisplay('#setting');
+	});
+}
