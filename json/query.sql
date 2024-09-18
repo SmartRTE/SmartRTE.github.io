@@ -443,9 +443,9 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Waltz 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Dual Doom Deathmatch', 'dualdoom', 3.5, 6.5, 8.9, '', 10.3);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Inverted World', 'invertedworld', 3.0, 7.0, 9.5, '', 10.7);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MVURBD', 'mvurbd', 4.5, 7.8, 10.6, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Vulcanus', 'vulcanus', 5.2, 8.2, 10.9, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Vulcanus', 'vulcanus', 5.5, 8.2, 10.9, '', '');
 
-
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Rain of Conflict in a Radiant Abyss', 'rainofconflict', 5.0, 7.8, 9.5, '', 10.5);
 
 COMMIT TRANSACTION;
 

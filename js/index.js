@@ -40,6 +40,8 @@ let viewMode = 0; //成绩显示状态，0=table 1=card
 let rangeUpperBound = 12.0; //筛选中的最高定数边界
 let rangeLowerBound = 1.0; //筛选中的最低定数边界
 
+let fakeCounter = 0; //嘻嘻
+
 $(document).ready(function() {
 	displayWindow('filter-window');
 	displayWindow('modify-window');
@@ -768,5 +770,11 @@ function initializeSticker(){
 	let randomIndex = Math.floor(Math.random() * 12);
 	$('#sticker').css('background-image', 'url(' + stickerPath + randomIndex + '.webp');
 	$('#sticker').css('background-size', 'contain');
-
+	$('#sticker').click(function(){
+		if(fakeCounter == 20){
+			window.open('fakeResult.html');
+			fakeCounter = 0;
+		}
+	})
 }
+
