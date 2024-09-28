@@ -282,7 +282,9 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Coasta
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Cosmo Pop Funclub', 'cosmopop', 2.5, 6.0, 8.8, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Flashback', 'flashback', 2.0, 5.0, 8.9, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Journey', 'journey', 3.0, 6.0, 9.1, '', '');
+-- v5.10.4删除曲目Particle Arts, 此处不做删除处理
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Particle Arts', 'particlearts', 3.5, 6.0, 8.8, '', '');
+
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Solitary Dream', 'solitarydream', 4.0, 7.0, 8.8, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Surrender', 'surrender', 3.0, 6.5, 8.8, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Vivid Theory', 'vividtheory', 2.0, 5.0, 8.8, '', '');
@@ -446,6 +448,13 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MVURBD
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Vulcanus', 'vulcanus', 5.5, 8.2, 10.9, '', '');
 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Rain of Conflict in a Radiant Abyss', 'rainofconflict', 5.0, 7.8, 9.5, '', 10.5);
+
+--5.10.4
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Saint or Sinner', 'saintorsinner', 3.0, 6.0, 8.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Hailstone', 'hailstone', 3.5, 7.0, 9.7, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('FURETE-MITAI', 'furetemitai', 2.5, 6.0, 8.4, '', 9.4);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Gensou no Satellite', 'gensounosatellite', 2.5, 6.5, 8.7, '', 10.1);
+
 
 COMMIT TRANSACTION;
 

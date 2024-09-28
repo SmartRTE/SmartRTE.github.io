@@ -771,6 +771,7 @@ function initializeSticker(){
 	$('#sticker').css('background-image', 'url(' + stickerPath + randomIndex + '.webp');
 	$('#sticker').css('background-size', 'contain');
 	$('#sticker').click(function(){
+		fakeCounter++;
 		if(fakeCounter == 20){
 			window.open('fakeResult.html');
 			fakeCounter = 0;
