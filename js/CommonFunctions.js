@@ -1,8 +1,9 @@
 let diffIllPath = 'json/Different_Illustration.json';
 let diffSongNamePath = 'json/Different_SongName.json';
 let aiChanPath = 'json/AiChan.json'
-
+// let difficultyPair = {'Past': 'PST', 'Present': 'PRS', 'Future': 'FTR', 'Beyond': 'BYD', 'Eternal': 'ETR'};
 let aiChanList = [];
+
 /**
  * 每条成绩存为一个对象，所有对象存在 currentArray 数组中
  * 属性按顺序为 曲名，曲目id，难度，分数，perfect总数，大p数，far数，lost数，定数，单曲潜力值依次录入
@@ -48,24 +49,23 @@ class PlayResult {
 		} else {
 			this.songName = "Sayounara Hatsukoi";
 		}
-		
+
 		this.innerIndex = innerIndex;
 		// this.percentage = 0;
 		this.songId = songId;
 		this.difficulty = difficulty;
-		this.score = score?score:0;
-		this.perfect = perfect?perfect:0;
-		this.criticalPerfect = criticalPerfect?criticalPerfect:0;
+		this.score = score ? score : 0;
+		this.perfect = perfect ? perfect : 0;
+		this.criticalPerfect = criticalPerfect ? criticalPerfect : 0;
 		this.normalPerfect = this.perfect - this.criticalPerfect;
 		this.criticalRate = this.criticalPerfect / this.perfect;
-		this.far = far?far:0;
-		this.lost = lost?lost:0;
+		this.far = far ? far : 0;
+		this.lost = lost ? lost : 0;
 		this.constant = constant;
-		this.playRating = playRating?playRating:calculateSingleRating(score,constant,5);
-		if(perfect==0 && lost==0)
-		{
+		this.playRating = playRating ? playRating : calculateSingleRating(score, constant, 5);
+		if (perfect == 0 && lost == 0) {
 			this.loseScore = 0;
-		}else{
+		} else {
 			this.loseScore = getLoseScore(constant, score, perfect + far + lost, criticalPerfect);
 		}
 		if (score >= 10000000) {
@@ -74,9 +74,9 @@ class PlayResult {
 		} else {
 			this.percentage = 100 * parseFloat(toFloor(this.playRating / (this.constant + 2), 4));
 		}
-		
-		
-		console.log(this.loseScore);
+
+
+		// console.log(this.loseScore);
 	}
 }
 
@@ -119,7 +119,7 @@ function initializeQuery() {
 }
 /**
  * AI-Chan文案初始化
-*/
+ */
 function initializeAiChan() {
 	fetch(aiChanPath)
 		.then(response => response.json())
@@ -132,7 +132,7 @@ function initializeAiChan() {
 /**
  * 随机返回一条AI-chan文案
  * @return {String} 一条随机的AI-Chan文案，带有需要被替换的标识
-*/
+ */
 function getRandomAiChan() {
 	let randomIndex = Math.floor(Math.random() * aiChanList.length);
 	let randomItem = aiChanList[randomIndex];
@@ -204,6 +204,7 @@ function calculateMax(array) {
 	let sum = 0;
 	let rbm = []; //best max recent
 	for (i = 0; i < (array.length > 30 ? 30 : array.length); i++) {
+		// console.log(array[i])
 		sum += parseFloat(array[i].playRating);
 		if (i == 9) {
 			rbm.push(sum / 10); //recent10
@@ -220,7 +221,7 @@ function calculateMax(array) {
 
 /**
  * 获取曲绘映射，应在页面加载初始阶段进行
-*/
+ */
 async function getImageMapping() {
 	try {
 		if (!diffIllMapping) {
@@ -241,7 +242,7 @@ async function getImageMapping() {
 
 /**
  * 获取曲名映射，应在页面加载初始阶段进行
-*/
+ */
 async function getTitleMapping() {
 	try {
 		if (!diffSongNameMapping) {
@@ -263,15 +264,15 @@ async function getTitleMapping() {
  * 保存完整的成绩对象数组到浏览器缓存
  * @param {Array<PlayResult>} currentArray 
  */
-function saveLocalStorage(currentArray) {
-	let strArray = JSON.stringify(currentArray);
+function saveLocalStorage(array) {
+	let strArray = JSON.stringify(array);
 	localStorage.setItem("savedArrayData", strArray);
 }
 
 /**
  * 从浏览器缓存读取保存的成绩对象数组
  * @return {Array<PlayResult>} currentArray
-*/
+ */
 function readLocalStorage() {
 	if (localStorage.getItem("savedArrayData")) {
 		let savedArray = JSON.parse(localStorage.getItem("savedArrayData"));
@@ -282,6 +283,66 @@ function readLocalStorage() {
 		}
 	}
 }
+
+/**
+ * 读取VHZek制作的万能查分表xls / xlsx文件
+ */
+function readVHZek(file) {
+	var reader = new FileReader();
+	let tarray = [];
+	reader.onload = function(e) {
+		var data = e.target.result;
+		var workbook = XLSX.read(data, {
+			type: 'binary'
+		});
+		var sheetName = workbook.SheetNames[0]; // 获取第一个工作表的名称
+		var sheet = workbook.Sheets[sheetName];
+
+		var columns = ['A', 'B', 'G', 'H'];
+		let rows = [];
+
+		columns.forEach(column => {
+			var colArray = [];
+			var col = column + '2';
+			while (sheet[col]) {
+				colArray.push(sheet[col].v);
+				col = column + (colArray.length + 1).toString();
+			}
+			rows[column] = colArray;
+		});
+		rows['A'].shift();//idx
+		rows['B'].shift();//songName
+		rows['G'].shift();//constant
+		rows['H'].shift();//score
+		console.log(rows);
+		
+		let innerIndex = 0;
+		for (i = 0; i < rows['A'].length; i++) {
+			if(rows['H'][i] != ''){
+				console.log(rows['A'][i],rows['B'][i],rows['G'][i],rows['H'][i])
+				let pr = new PlayResult(
+					rows['B'][i], 
+					idx_constant[rows['A'][i]].songId, 
+					findDifficulty(rows['A'][i],rows['G'][i], idx_constant), 
+					rows['H'][i], 0, 0, 0, 0, parseFloat(rows['G'][i]), 0, i);
+				tarray.push(pr)
+			}
+		}
+		console.log(tarray)
+		reloadContent(tarray)
+		filteredArray = tarray;
+		currentArray = filteredArray;
+		
+		saveLocalStorage(currentArray);
+		// displayB30(currentArray);
+		generateCard(currentArray);
+		generateTable(currentArray);
+		
+	}
+	reader.readAsBinaryString(file);
+	
+}
+
 
 
 /**
@@ -327,7 +388,7 @@ function displayWindow(windowId) {
  * 唤起修改成绩弹窗
  * @param {Number} idx 成绩在成绩对象数组中的下标
  * @param {Array<PlayResult>} array 默认是currentArray
-*/
+ */
 function modifyPlayResult(idx, array = currentArray) {
 	console.table(array[idx]);
 	displayWindow('modify-window');
@@ -345,7 +406,7 @@ function modifyPlayResult(idx, array = currentArray) {
 }
 /**
  * 重置修改成绩弹窗内容
-*/
+ */
 function resetModifyWindowContent() {
 	displayWindow('modify-window');
 	$('#modify-current-index').val('');
@@ -362,7 +423,7 @@ function resetModifyWindowContent() {
 /**
  * 接受修改内容
  * @param {Array<PlayResult>} array 默认是currentArray
-*/
+ */
 function acceptModifyResult(array) {
 	let index = $('#modify-current-index').val();
 	console.log("currentInnerIndex=" + index);
@@ -381,14 +442,14 @@ function acceptModifyResult(array) {
 }
 /**
  * 放弃成绩的修改
-*/
+ */
 function abortModifyResult() {
 	resetModifyWindowContent();
 	displayWindow('modify-window');
 }
 /**
  * 删除单条成绩
-*/
+ */
 function deleteResult() {
 	if (confirm("确定要删除这条记录吗？")) {
 		idx = $('#modify-current-index').val();
@@ -402,7 +463,7 @@ function deleteResult() {
 /**
  * 根据分数返回曲目评级
  * 借助far和lost可以细分出Full Recall
-*/
+ */
 function getSongRanking(score, far, lost) {
 	if (far != 0 && lost == 0) {
 		return "FR";
@@ -423,7 +484,7 @@ function getSongRanking(score, far, lost) {
  * 生成后自动滚动到对应曲目成绩单元
  * @param {Array<PlayResult>} array 默认是currentArray
  * @param {Number} viewMode 默认为1，不加前缀，加't-'前缀表示目标单元为表格中的一行
-*/
+ */
 function aiChanRoll(array = currentArray, viewMode = 1) {
 	let randomIndex = Math.floor(Math.random() * array.length);
 	let randomSong = array[randomIndex];
@@ -443,7 +504,7 @@ function aiChanRoll(array = currentArray, viewMode = 1) {
 }
 /**
  * 清空浏览器缓存数据
-*/
+ */
 function deleteLocalStorage() {
 	if (confirm("确定要清空本地缓存吗？该操作不可撤销！")) {
 		localStorage.clear();
@@ -530,7 +591,7 @@ function hideUID() {
  * 依照当前访问的网址（github/gitee）初始化页面下方网址和二维码的显示
  */
 async function initializeQRCode() {
-	let url = window.location.href.substring(0,window.location.href.lastIndexOf('/'));
+	let url = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
 	$('#copyright span:first').text(`Generated at ${url} @ `);
 	// if (url == 'https://smartrte.github.io') {
 	// 	$('#qrcode').attr('src', 'img/QRCODE-githubio.png');
@@ -656,14 +717,14 @@ function clipDiamond() {
  * 获取统计信息
  * @param {Array<PlayResult>} array 传入统计的成绩对象数组
  * @return {Object} sts 包含按照分数段分类的字典对象，使用时基本只用到length
-*/
+ */
 
-function getStatistics(array = currentArray){
+function getStatistics(array = currentArray) {
 	let temp = array;
 	let sts = {};
-	temp.forEach(function(currentRow){
-		let ranking = getSongRanking(currentRow.score,currentRow.far,currentRow.lost);
-		if(!sts[ranking]){
+	temp.forEach(function(currentRow) {
+		let ranking = getSongRanking(currentRow.score, currentRow.far, currentRow.lost);
+		if (!sts[ranking]) {
 			sts[ranking] = [];
 		}
 		sts[ranking].push(currentRow);
@@ -679,7 +740,99 @@ function getStatistics(array = currentArray){
  * @param {Number} score 分数
  * @param {Number} amount 物量
  * @param {Number} criticalPerfect 大P数
-*/
-function getLoseScore(constant, score, amount, criticalPerfect){
-	return (constant * 38 - constant * 100 * (Math.max(0, Math.min((criticalPerfect/amount - 0.9), 0.095))  +  28.5 * (Math.max(0, Math.min((score/10000000 - 0.99), 0.01)))));
+ */
+function getLoseScore(constant, score, amount, criticalPerfect) {
+	return (constant * 38 - constant * 100 * (Math.max(0, Math.min((criticalPerfect / amount - 0.9), 0.095)) + 28.5 * (
+		Math.max(0, Math.min((score / 10000000 - 0.99), 0.01)))));
+}
+
+
+function findInArray(array, songId, difficulty) {
+	let keysValues = [{
+		key: 'songId',
+		value: songId
+	}, {
+		key: 'difficulty',
+		value: difficulty
+	}]
+	return array.findIndex(function(obj) {
+		return keysValues.every(function(kv) {
+			return obj[kv.key] === kv.value;
+		});
+	});
+}
+
+function findDifficulty(idx, constant, idx_constant) {
+	console.log(idx, constant, idx_constant)
+	let i = idx_constant[idx].constant.indexOf(String(constant));
+	if (i == '') {
+		return '';
+	}
+	switch (i) {
+		case 0:
+			return "Past";
+		case 1:
+			return "Present";
+		case 2:
+			return "Future";
+		case 3:
+			return "Beyond";
+		case 4:
+			return "Eternal";
+	}
+	return '';
+}
+
+function findIndex(songId, songlist) {
+	return Object.values(songlist).indexOf(songId);
+}
+
+async function initializeSonglist() {
+	// try {
+	// 	const response = await fetch('json/title-id-original.json');
+	// 	if (!response.ok) {
+	// 		throw new Error(`HTTP error! status: ${response.status}`);
+	// 	}
+	// 	title_id_mapping = await response.json();
+	// } catch (error) {
+	// 	console.error('There was a problem loading the JSON file:', error);
+	// }
+	// try {
+	// 	const response = await fetch('json/id-title-revised.json');
+	// 	if (!response.ok) {
+	// 		throw new Error(`HTTP error! status: ${response.status}`);
+	// 	}
+	// 	id_title_mapping = await response.json();
+	// } catch (error) {
+	// 	console.error('There was a problem loading the JSON file:', error);
+	// }
+
+
+	// try {
+	// 	const response = await fetch('sample/b30test.csv');
+	// 	if (!response.ok) {
+	// 		throw new Error(`HTTP error! status: ${response.status}`);
+	// 	}
+	// 	csv = await response.text();
+	// } catch (error) {
+	// 	console.error('There was a problem loading the JSON file:', error);
+	// }
+
+
+	/**
+	 * 新版更新了index，直接用吧
+	 */
+	try {
+		const response = await fetch('json/simplified_songlist.json');
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		songlist = await response.json();
+		return songlist;
+	} catch (error) {
+		console.error('There was a problem loading the JSON file:', error);
+		alert("出现了预料之外的错误！万能查分表可能无法使用！")
+		return NULL;
+	}
+
 }

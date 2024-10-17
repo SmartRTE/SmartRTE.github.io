@@ -61,13 +61,16 @@
 					<div id="version">
 						<label>当前曲目数据库版本：<span>5.10.4</span></label><br />
 						<label>当前曲绘文件库版本：<span>5.10.4</span></label><br />
-						<label>当前手填表文件版本：<span>5.6.0</span></label><br />
-						<a href="sample/模板.csv" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载手填分数表</button></a><br />
+						<label style="text-decoration: line-through;opacity: 0.3;">当前手填表文件版本：<span>5.6.0</span></label><br />
+						<label>当前万能查分表版本：<span>5.10.4</span></label>
+						<!-- <a href="sample/模板.csv" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载手填分数表</button></a><br /> -->
+						<a href="sample/Arcaea 万能查分表5.10.4空白.xlsx" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载万能查分表</button></a><br />
 						<h3>!手填表只填写分数即可，单曲潜力值会自动计算!</h3><br>
 						<label>更新于：<span>2024/09/28</span></label>
-						<h3>由于个人原因，手填表更新将推迟，非常抱歉！</h3><br>
+						<h3 style="text-decoration: line-through; opacity: 0.3;">由于个人原因，手填表更新将推迟，非常抱歉！</h3><br>
+						<h3>推荐使用<a href="https://space.bilibili.com/18710009" target="_blank">V.H.Zek</a>制作的查分表进行手填更新！（点击上方按钮下载）</h3><br>
 						<!-- <img id="sticker"/> -->
-						<div id="sticker"></div>
+						<div id="sticker" onclick="initializeSticker()"></div>
 					</div>
 					<!-- <a href="https://smartrte.gitee.io/" target="_blank"><h1>如果加载太慢可以尝试gitee page(点击这里)</h1></a> -->
 					<div id="help">
@@ -89,7 +92,8 @@
 							<li style="color: rgba(255, 170, 127, 1.0); font-size: 22px;">我不要脸，给我三连!(</li>
 							<li>1.点击 “上传st3文件” 上传你的st3文件，文件名可改可不改 </li>
 							<li>2.上传完之后如果不出意外会立马显示数据库内的全曲目游玩记录表格 </li><br />
-							<li>3.点击 下载csv文件 可以把表格保存到本地，供后续修改使用 </li>
+							<!-- <li>3.点击 下载csv文件 可以把表格保存到本地，供后续修改使用 </li> -->
+							<li>3.点击 下载万能查分表	文件 可以把表格保存到本地，供后续修改使用 </li>
 							<li>4.表格正常生成之后点击跳转b30生成页，默认生成B39图片 </li>
 							<li>5.玩家名、好友码和显示的潜力值需要手动填写，可以手动指定显示曲目的数量 </li>
 							<li>6.保存图片用时和图片大小与显示的曲目数量有关，保存图片时显示的曲目成绩最好不超过800。(真的有人试吗（)<br />若数值填得过大，在某些设备上可能会导致严重卡顿</li>
@@ -104,9 +108,9 @@
 				</div>
 				<div id="save-csv-btn-container" style="width: 100%; display: none;">
 					<button class="func-btn" id="save-table-csv" onclick="saveTableCSV()">保存分数表文件</button>
-					<!-- <button class="func-btn" id="convert-to-VHZEK" onclick="saveVHZEK()">保存为VH版万能查分表</button> -->
+					<button class="func-btn" id="convert-to-VHZEK" onclick="saveVHZEK()">保存为VH版万能查分表</button>
 					<br />
-					<input type="file" id="uploadExcel" hidden="true">
+					<input type="file" id="uploadExcel" hidden>
 					<label>点曲绘可以对曲目信息进行修改🖼</label><br />
 					<label id="try-to-rotate">横屏可以显示更多信息！♻</label>
 				</div>

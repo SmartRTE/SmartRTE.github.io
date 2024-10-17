@@ -5,6 +5,10 @@ let filteredArray = [];
 let currentArray = [];
 let rbm = [];
 let avatarList = [];
+let idx_constant = [];
+let finalOutputScore = [];
+let songlist = {}; //idx - songId 键值对
+let idData = {};
 let unitQuantity = 39;
 let uidFlag = true;
 let p30Flag = 0; //0=b 1=p 2=s
@@ -40,6 +44,8 @@ $(document).ready(function() {
 	//初始化曲绘映射
 	diffIllMapping = getImageMapping();
 	// displayWindow('ai-chan');
+	songlist = initializeSonglist();
+	initializeVHZEK();
 	initializeBound();
 	changeBound();
 	getConstantSheet();
@@ -297,9 +303,13 @@ function initializeUploadListener() {
 				reader.onload = function(e) {
 					csvContent = reader.result;
 					console.log("CSV Content:" + "success");
+					// console.log("CSV Content:" + csvContent);
 					runConvert(csvContent);
 				};
 				reader.readAsText(selectedFile);
+			} else if(fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
+				console.log("VHZek");
+				readVHZek(selectedFile);
 			} else {
 				runQuery(selectedFile);
 				console.log("Not a .csv file");
@@ -663,7 +673,7 @@ async function generateUnits(array, unitQuantity) {
 			} else {
 				indexSlicer.shift();
 				indexSlicer.push(index);
-				console.log(indexSlicer)
+				// console.log(indexSlicer)
 				let slicedArray = ary.slice(indexSlicer[0], indexSlicer[1]);
 				cst = ary[index].constant;
 				// console.log('cst:', cst)
@@ -792,9 +802,9 @@ function appendSpliter(cst, spliterCounter) {
 }
 
 function appendStatistics(spliterCounter, slicedArray, count) {
-	console.log(spliterCounter)
+	// console.log(spliterCounter)
 	let spliter = $(`#spliter${spliterCounter}`);
-	console.log(spliter.length > 0 ? true : false)
+	// console.log(spliter.length > 0 ? true : false)
 	let ranks = ['PM', 'FR', 'EX+', 'EX', 'AA', 'A', 'B', 'C', 'D'];
 	let area = $(`<div class="spliter-statistics-area">`);
 
@@ -952,7 +962,7 @@ function reloadContent(array) {
 	saveLocalStorage(array);
 	rbm = calculateMax(currentArray);
 	localStorage.rbm = rbm;
-	switchP30(0);
+	// switchP30(0);
 }
 
 /**
@@ -1023,4 +1033,104 @@ function handleScroll(unitid, index) {
 	$('#ai-chan-content').html(`<img id="ai-chan-ill" src="${illustrationPath+baseArray[index].illustration}" />` +
 		$('#ai-chan-content').text());
 	scrollToElement(unitid);
+}
+
+async function initializeVHZEK() {
+	try {
+		const response = await fetch('sample/constantChart.csv');
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		let file = await response.text();
+		let temp = file.trim();
+		let rows = temp.split('\r\n');
+		// console.log(rows)
+		let single;
+		tempArray = [];
+		for (i = 1; i < rows.length; i++) {
+			single = {};
+			const row = rows[i].split(',');
+			single = {
+				idx: findIndex(row[1], songlist),
+				songId: row[1],
+				constant: [row[2], row[3], row[4], row[5], row[6]]
+			}
+			tempArray.push(single);
+		}
+		idx_constant = tempArray;
+		idx_constant.push({
+			idx: 283,
+			songId: 'lasteternity',
+			constant: ['', '', '', '9.7', '']
+		})
+		idx_constant = idx_constant.sort(function(a, b) {
+			return resultSort(a, b, 'idx', -1);
+		})
+
+		// idx_constant.shift();
+		// console.log(idx_constant)
+		// return idx_constant;
+	} catch (error) {
+		console.error('There was a problem loading the CSV file:', error);
+	}
+}
+
+function generateCard(array){
+	//
+	generateUnits(array, unitQuantity)
+}
+
+function generateTable(array){
+	//
+	displayB30(array);
+}
+
+async function initializeVHZEK() {
+	try {
+		const response = await fetch('sample/constantChart.csv');
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		let file = await response.text();
+		let temp = file.trim();
+		let rows = temp.split('\r\n');
+		// console.log(rows)
+		let single;
+		tempArray = [];
+		for (i = 1; i < rows.length; i++) {
+			single = {};
+			const row = rows[i].split(',');
+			single = {
+				idx: findIndex(row[1], songlist),
+				songId: row[1],
+				constant: [row[2], row[3], row[4], row[5], row[6]]
+			}
+			tempArray.push(single);
+		}
+		idx_constant = tempArray;
+		idx_constant.push({
+			idx: 283,
+			songId: 'lasteternity',
+			constant: ['', '', '', '9.7', '']
+		})
+		idx_constant = idx_constant.sort(function(a, b) {
+			return resultSort(a, b, 'idx', -1);
+		})
+
+		// idx_constant.shift();
+		// console.log(idx_constant)
+		// return idx_constant;
+	} catch (error) {
+		console.error('There was a problem loading the CSV file:', error);
+	}
+}
+
+function generateCard(array){
+	//
+	generateUnits(array, unitQuantity)
+}
+
+function generateTable(array){
+	//
+	displayB30(array);
 }

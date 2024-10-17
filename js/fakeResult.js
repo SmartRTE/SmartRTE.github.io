@@ -3,8 +3,8 @@ $(document).ready(function() {
 	console.log(getAllValues());
 	showSettingValues(getAllValues());
 	applySettings(getSettingValues());
-	$('#track-lost').change(function(){
-		if($(this).is(":checked")){
+	$('#track-lost').change(function() {
+		if ($(this).is(":checked")) {
 			$('#clear-type').attr('src', 'img/clearType/clear_' + 'fail' + '.png');
 			adjustClearType('fail');
 		} else {
@@ -85,7 +85,7 @@ function getAllValues() {
 	currentValues['username'] = $('#username-text').text();
 	/*ID框*/
 	let cb = $('#course-banner').attr('src')
-	currentValues['frame'] = cb.substring(cb.lastIndexOf('/')+1,cb.indexOf('.'));
+	currentValues['frame'] = cb.substring(cb.lastIndexOf('/') + 1, cb.indexOf('.'));
 	/*潜力值*/
 	currentValues['potential'] = parseInt($('#potential-value-left').text()) + (parseInt($("#potential-value-right")
 		.text()) * 0.01);
@@ -189,10 +189,11 @@ function switchDisplay(element) {
 
 function applySettings(values) {
 	$('#username-text').text(values['username']);
-	$('#course-banner').attr('src',"img/banner/" + values['frame'] + ".png")
-	
+	$('#course-banner').attr('src', "img/banner/" + values['frame'] + ".png")
+
 	$('#potential-value-left').text(values['potential'].substring(0, values['potential'].indexOf('.') + 1));
-	$('#potential-value-right').text(values['potential'].substring(values['potential'].indexOf('.')+1, values['potential']
+	$('#potential-value-right').text(values['potential'].substring(values['potential'].indexOf('.') + 1, values[
+			'potential']
 		.length));
 	$('#fragment-value').text(values['fragment']);
 	$('#memory-value').text(values['memory']);
@@ -225,33 +226,33 @@ function applySettings(values) {
 	adjustFragment(parseInt(values['fragment']));
 }
 
-function adjustFragment(fragment){
-	let stack = fragment/10000|0;
+function adjustFragment(fragment) {
+	let stack = fragment / 10000 | 0;
 	stack = stack > 2 ? 2 : stack;
-	let overflow = fragment%10000;
+	let overflow = fragment % 10000;
 	$('#fragment-value').text(overflow)
-	if(stack==0 && overflow<9999){
-		$('#fragment-background').attr('src','img/layout/frag_diamond_top.png')
-		$('#fragment-overflow').attr('src','img/layout/white-trans.png')
-	} else if (stack==0 && overflow==9999){
-		$('#fragment-background').attr('src','img/layout/frag_diamond_topplus.png')
-		$('#fragment-overflow').attr('src','img/layout/white-trans.png')
-	} else if (stack==1 && overflow<9999){
-		$('#fragment-background').attr('src','img/layout/frag_diamond_top.png')
-		$('#fragment-overflow').attr('src','img/layout/fragstack-single.png')
-	} else if (stack==1 && overflow==9999){
-		$('#fragment-background').attr('src','img/layout/frag_diamond_topplus.png')
-		$('#fragment-overflow').attr('src','img/layout/fragstack-singleplus.png')
-	} else if (stack==2 && overflow<9999){
-		$('#fragment-background').attr('src','img/layout/frag_diamond_top.png')
-		$('#fragment-overflow').attr('src','img/layout/fragstack-double.png')
-	} else if (stack==2 && overflow==9999){
-		$('#fragment-background').attr('src','img/layout/frag_diamond_topplus.png')
-		$('#fragment-overflow').attr('src','img/layout/fragstack-doubleplus.png')
+	if (stack == 0 && overflow < 9999) {
+		$('#fragment-background').attr('src', 'img/layout/frag_diamond_top.png')
+		$('#fragment-overflow').attr('src', 'img/layout/white-trans.png')
+	} else if (stack == 0 && overflow == 9999) {
+		$('#fragment-background').attr('src', 'img/layout/frag_diamond_topplus.png')
+		$('#fragment-overflow').attr('src', 'img/layout/white-trans.png')
+	} else if (stack == 1 && overflow < 9999) {
+		$('#fragment-background').attr('src', 'img/layout/frag_diamond_top.png')
+		$('#fragment-overflow').attr('src', 'img/layout/fragstack-single.png')
+	} else if (stack == 1 && overflow == 9999) {
+		$('#fragment-background').attr('src', 'img/layout/frag_diamond_topplus.png')
+		$('#fragment-overflow').attr('src', 'img/layout/fragstack-singleplus.png')
+	} else if (stack == 2 && overflow < 9999) {
+		$('#fragment-background').attr('src', 'img/layout/frag_diamond_top.png')
+		$('#fragment-overflow').attr('src', 'img/layout/fragstack-double.png')
+	} else if (stack == 2 && overflow == 9999) {
+		$('#fragment-background').attr('src', 'img/layout/frag_diamond_topplus.png')
+		$('#fragment-overflow').attr('src', 'img/layout/fragstack-doubleplus.png')
 	}
 }
 
-function changePotentialFrame(potential){
+function changePotentialFrame(potential) {
 	const ranges = [3.49, 6.99, 9.99, 10.99, 11.99, 12.49, 12.99, 13.5];
 	const frames = [0, 1, 2, 3, 4, 5, 6, 8];
 	let idx = 0;
@@ -264,13 +265,13 @@ function changePotentialFrame(potential){
 	}
 }
 
-function adjustClearType(clearType){
-	if(clearType=="normal" || clearType=="fail"){
+function adjustClearType(clearType) {
+	if (clearType == "normal" || clearType == "fail") {
 		$('#clear-type').css({
 			"height": "135px",
 			"top": "590px"
 		})
-	} else if(clearType=="pure" || clearType=="full"){
+	} else if (clearType == "pure" || clearType == "full") {
 		$('#clear-type').css({
 			"height": "180px",
 			"top": "570px"
@@ -304,16 +305,16 @@ function showSettingValues(values) {
 	$('#input-far-early').val(values['farEarly']);
 }
 
-function adjustCharacterPosition(d){
-	let left = parseFloat(($('#character').css("left")).substring(0,($('#character').css("left")).indexOf('px')));
-	let top = parseFloat(($('#character').css("top")).substring(0,($('#character').css("top")).indexOf('px')));
-	if(d==0){
+function adjustCharacterPosition(d) {
+	let left = parseFloat(($('#character').css("left")).substring(0, ($('#character').css("left")).indexOf('px')));
+	let top = parseFloat(($('#character').css("top")).substring(0, ($('#character').css("top")).indexOf('px')));
+	if (d == 0) {
 		$('#character').css("left", left - 10 + "px");
-	}else if(d==1){
+	} else if (d == 1) {
 		$('#character').css("left", left + 10 + "px");
-	}else if(d==2){
+	} else if (d == 2) {
 		$('#character').css("top", top - 10 + "px");
-	}else if(d==3){
+	} else if (d == 3) {
 		$('#character').css("top", top + 10 + "px");
 	}
 }
@@ -371,4 +372,21 @@ async function saveAsImage(captureId) {
 		// resizeWidth(1);
 		switchDisplay('#setting');
 	});
+}
+
+function insert(string) {
+	let s = [];
+	s = string.split('\t');
+	$('#input-songname').val(s[0]);
+	$('#input-artist').val(s[1]);
+	$('#input-current-score').val(s[2]);
+	$('#input-pure-count').val(s[3]);
+	$('#input-critical-pure-count').val(s[4]);
+	$('#input-far-count').val(s[5]);
+	$('#input-lost-count').val(s[6]);
+	$('#input-illustration').val(s[7]);
+	$('#input-constant').val(s[8]);
+	$('#input-maxrecall').val(parseInt(s[3]) + parseInt(s[5]));
+	$('#input-best-score').val(parseInt(s[3]) + parseInt(s[5]) + parseInt(s[6]) + 10000000);
+	$('#input-pure-early').val(parseInt(s[3]) - parseInt(s[4]));
 }

@@ -12,7 +12,7 @@ let columns = ['SongName', 'SongId', 'Difficulty',
 	'Far', 'Lost', 'Constant',
 	'PlayRating'
 ]; //表头
-
+let dif = ['Past', 'Present', 'Future', 'Beyond', 'Eternal'];
 let csv = '';
 
 let currentArray = []; //当前的全部成绩对象数组
@@ -20,19 +20,20 @@ let tempArray = []; //转化csv时使用的中间数组
 let filteredArray = []; //启用筛选时被筛选出的成绩对象数组
 let rbm = []; //recent10 best30 maxptt
 let idData = {};
-let tosongid = [];
-let tosongname = [];
+// let tosongid = [];
+// let tosongname = [];
 let songNameAndDifficulty = {};
 let finalOutputScore = [];
-
+let songlist = {}; //idx - songId 键值对
+let idx_constant = [];
 
 // let illusPath = "IllustrationMin/"; //曲绘文件路径
 let sqlWasmPath = "sql-wasm.wasm"; //sql.wasm路径
 
 let diffSongNameMapping = null; //差分曲名映射
 let diffIllMapping = null; //差分曲绘映射
-let title_id_mapping = null; //VHZek佬的万能查分表相关，用来以曲名对应songId
-let id_title_mapping = null; //VHZek佬的万能查分表相关，用来以songId和difficulty对应曲名
+// let title_id_mapping = null; //VHZek佬的万能查分表相关，用来以曲名对应songId
+// let id_title_mapping = null; //VHZek佬的万能查分表相关，用来以songId和difficulty对应曲名
 let currentVersionMaxPotential = 13.12; //现版本最高理论潜力值
 let viewMode = 0; //成绩显示状态，0=table 1=card
 // let currentB30;//当前best30
@@ -58,7 +59,8 @@ $(document).ready(function() {
 	//初始化曲绘映射
 	diffIllMapping = getImageMapping();
 	//初始化ptt监听
-	initializeVHZek();
+	songlist = initializeSonglist();
+	initializeVHZEK();
 	// initializePotentialListener();
 	//初始化定数边界变更监听
 	initailizeConstantRangeListener();
@@ -68,6 +70,13 @@ $(document).ready(function() {
 	initailizeSearchResultListener();
 
 	initializeSticker();
+	$('#sticker').click(function() {
+		fakeCounter++;
+		if (fakeCounter == 100) {
+			window.open('fakeResult.html');
+			fakeCounter = 0;
+		}
+	})
 });
 
 /**
@@ -187,6 +196,9 @@ function initializeUploadListener() {
 					runConvert(csvContent);
 				};
 				reader.readAsText(selectedFile);
+			} else if(fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
+				console.log("VHZek");
+				readVHZek(selectedFile);
 			} else {
 				runQuery(selectedFile);
 				console.log("Not a .csv file");
@@ -197,7 +209,11 @@ function initializeUploadListener() {
 	$("#uploadExcel").on("change", function(e) {
 		var file = e.target.files[0];
 		if (!file) return;
-	
+		// if ((!file.name.endsWith('xls')) || (!file.name.endsWith('xlsx'))) {
+		// 	alert("不是正确的文件！");
+		// 	return;
+		// }
+
 		var reader = new FileReader();
 		reader.onload = function(e) {
 			var data = e.target.result;
@@ -206,14 +222,14 @@ function initializeUploadListener() {
 			});
 			var sheetName = workbook.SheetNames[0]; // 获取第一个工作表的名称
 			var sheet = workbook.Sheets[sheetName];
-	
-			// 提取A列和E列数据
-			var columns = ['A', 'E'];
-	
-			// 分别处理A列和E列
+
+			// 提取A列idx和G列constant
+			var columns = ['A', 'G'];
+			idData = {};
+			// 分别处理A列和G列
 			columns.forEach(column => {
 				var colArray = [];
-				var col = column + '2'; // 假设从第2行开始
+				var col = column + '2';
 				while (sheet[col]) {
 					colArray.push(sheet[col].v);
 					col = column + (colArray.length + 1).toString();
@@ -221,64 +237,50 @@ function initializeUploadListener() {
 				idData[column] = colArray; // 存储到对象中，方便访问
 			});
 			idData['A'].shift();
-			idData['E'].shift();
-			// 打印A列和E列的数据
-	
-			console.log("Column A Data:", idData[0]);
-			console.log("Column E Data:", idData[1]);
-			doMapping();
-	
+			idData['G'].shift();
+			console.log(idData)
 			// runConvert(csv);
+
 			tempArray = currentArray;
-			tempArray.forEach(function(cr, index) {
-				switch (cr.difficulty) {
-					case ("Past"):
-						cr.difficulty = "PST";
-						break;
-					case ("Present"):
-						cr.difficulty = "PRS";
-						break;
-					case ("Future"):
-						cr.difficulty = "FTR";
-						break;
-					case ("Beyond"):
-						cr.difficulty = "BYD";
-						break;
-					case ("Eternal"):
-						cr.difficulty = "ETR";
-						break;
+
+			idData["A"].forEach(function(cell, index) {
+				if (cell == 127) {
+					//永远怀念Particle Arts
+					console.log("particle arts😭")
 				}
-				console.log(cr.difficulty)
-				cr.songName = id_title_mapping[cr.songId][cr.difficulty]
-				songNameAndDifficulty[cr.songName+'-'+cr.difficulty] = cr.score;
-				
-			});
-			idData["A"].forEach(function(cell,index){
-				finalOutputScore.push(songNameAndDifficulty[cell+'-'+idData["E"][index]]?parseInt(songNameAndDifficulty[cell+'-'+idData["E"][index]]):null);
-				
+				let d = '';
+				let i = '';
+				d = findDifficulty(cell, idData['G'][index], idx_difficulty);
+				i = findInArray(currentArray, idx_constant[cell].songId, d);
+				// i = (i == -1 ? null : i)
+				// console.log(index, cell, d, i)
+				finalOutputScore.push(i == -1 ? '' : currentArray[i].score);
 			})
-			
-			// 填充G列（第7列）为顺序数字
-			var rowIndex = 2; 
-			var maxRow = Object.keys(sheet).length; 
+			// console.log(finalOutputScore)
+
+			// 填充score
+			var rowIndex = 2;
+			var maxRow = Object.keys(sheet).length;
 			while (rowIndex <= maxRow) {
 				var cellRef = XLSX.utils.encode_cell({
 					r: rowIndex - 1,
-					c: 6
-				}); 
+					c: 7
+				});
 				sheet[cellRef] = {
-					v: finalOutputScore[rowIndex-2]
-				}; 
+					v: finalOutputScore[rowIndex - 2]
+				};
 				rowIndex++;
 			}
-	
+
 			// 准备下载
-	
-			XLSX.writeFile(workbook, "测试用万能查分表xlsx格式.xlsx", { compression: true });
-	
+
+			XLSX.writeFile(workbook, "万能查分表xlsx格式（已填充）.xlsx", {
+				compression: true
+			});
+
 		};
 		reader.readAsBinaryString(file);
-	
+
 	});
 }
 /**
@@ -447,14 +449,14 @@ function convertToTable(currentRow, index) {
 	} else {
 		rt = toFloor(currentRow.playRating, 4)
 	}
-	
-	
+
+
 	// $trElem	.append($('<td>').addClass('t-play-rating').css("background", linearGradient)
 	// 		.text(rt + "(" + toFloor(currentRow.percentage, 2) + "%)"));
-	
-	
-	$trElem	.append($('<td>').addClass('t-play-rating').css("background", linearGradient)
-			.text(rt + "(" + currentRow.loseScore.toFixed(2) * (-1) + ")"));
+
+
+	$trElem.append($('<td>').addClass('t-play-rating').css("background", linearGradient)
+		.text(rt + "(" + currentRow.loseScore.toFixed(2) * (-1) + ")"));
 	// $trElem.append($$('<td>').addClass('t-lose-score'));
 	if (currentRow.normalPerfect == 0 && currentRow.far == 0 && currentRow.lost == 0 && currentRow.perfect != 0) {
 		$trElem.addClass("theoretical");
@@ -609,7 +611,20 @@ function reloadContent(array) {
 	saveLocalStorage(array);
 	displayB30(array);
 	filterByConstant();
+	
 }
+
+// function reloadContentVHZek(array) {
+// 	array.sort(function(a, b) {
+// 		return resultSort(a, b, 'playRating', 1);
+// 	})
+// 	array.forEach(function(currentRow, index) {
+// 		currentRow.innerIndex = index;
+// 	})
+// 	saveLocalStorage(array);
+// 	// displayB30(array);
+// 	filterByConstant();
+// }
 
 function saveChange(array) {
 	currentArray = array;
@@ -702,80 +717,80 @@ function showStatistics(array = currentArray) {
 	alert(str)
 }
 
-async function initializeVHZek() {
-	try {
-		const response = await fetch('json/title-id-original.json');
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		title_id_mapping = await response.json();
-	} catch (error) {
-		console.error('There was a problem loading the JSON file:', error);
-	}
-	try {
-		const response = await fetch('json/id-title-revised.json');
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		id_title_mapping = await response.json();
-	} catch (error) {
-		console.error('There was a problem loading the JSON file:', error);
-	}
-	// try {
-	// 	const response = await fetch('sample/b30test.csv');
-	// 	if (!response.ok) {
-	// 		throw new Error(`HTTP error! status: ${response.status}`);
-	// 	}
-	// 	csv = await response.text();
-	// } catch (error) {
-	// 	console.error('There was a problem loading the JSON file:', error);
-	// }
-}
+
 
 function saveVHZEK() {
-	msg = "！注意！\n这个功能还在测试中，而且可能不会有持久的更新，"
-	+"请你自备一份'Arcaea 万能查分表5.7.1.xls'文档，（可以不为空但数据会被替换）在稍后弹出的文件选择界面选择它\n"
-	+"但是会丢失**全部的**单元格样式，推荐暂时只是把这个功能当成快速填入数据的工具'\n\n'"
-	+"如果你不知道我在说什么，请关闭这个对话框";
-	if(confirm(msg)){
+	msg = "！注意！\n" +
+		"请你自备一份'Arcaea 万能查分表.xls'文档，（可以不为空但数据会被替换）在稍后弹出的文件选择界面选择它\n" +
+		"手动复制分数列然后粘贴到原有的工作表中，不用重新排序\n"+
+		"如果没有，请到首页下载一份。不用担心，目前的数据都已经被缓存\n" +
+		"新的表格xslx文件会丢失**全部的**单元格样式，推荐只是把这个功能当成快速填入数据的工具，'\n\n'" +
+		"如果你不知道我在说什么，请关闭这个对话框\n\n"+
+		"感谢表格作者V.H.Zek";
+	if (confirm(msg)) {
 		let temp = currentArray;
 		let csv = [columns.join(",")];
 		temp.forEach(function(row) {
-			let r = [row.songName, row.songId, row.difficulty, row.score, row.perfect, row.criticalPerfect, row.far,
+			let r = [row.songName, row.songId, row.difficulty, row.score, row.perfect, row.criticalPerfect, row
+				.far,
 				row.lost, row.constant, row.playRating
 			].join(",");
 			csv.push(r);
 		});
 		csv = csv.join("\n");
-		
+
 		$("#uploadExcel").click();
 	} else {
-			
+		//T T
 	}
 }
 
-function doMapping() {
-	idData["A"].forEach(function(cell, index) {
-		tosongid.push(title_id_mapping[cell]);
-	});
+async function initializeVHZEK() {
+	try {
+		const response = await fetch('sample/constantChart.csv');
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		let file = await response.text();
+		let temp = file.trim();
+		let rows = temp.split('\r\n');
+		// console.log(rows)
+		let single;
+		tempArray = [];
+		for (i = 1; i < rows.length; i++) {
+			single = {};
+			const row = rows[i].split(',');
+			single = {
+				idx: findIndex(row[1], songlist),
+				songId: row[1],
+				constant: [row[2], row[3], row[4], row[5], row[6]]
+			}
+			tempArray.push(single);
+		}
+		idx_constant = tempArray;
+		idx_constant.push({
+			idx: 283,
+			songId: 'lasteternity',
+			constant: ['', '', '', '9.7', '']
+		})
+		idx_constant = idx_constant.sort(function(a, b) {
+			return resultSort(a, b, 'idx', -1);
+		})
 
-	tosongid.forEach(function(cell, index) {
-		console.log(cell)
-		tosongname.push(id_title_mapping[cell][idData["E"][index]])
-	})
+		// idx_constant.shift();
+		// console.log(idx_constant)
+		// return idx_constant;
+	} catch (error) {
+		console.error('There was a problem loading the CSV file:', error);
+	}
 }
 
-	
-function initializeSticker(){
+
+
+
+function initializeSticker() {
 	let randomIndex = Math.floor(Math.random() * 12);
 	$('#sticker').css('background-image', 'url(' + stickerPath + randomIndex + '.webp');
 	$('#sticker').css('background-size', 'contain');
-	$('#sticker').click(function(){
-		fakeCounter++;
-		if(fakeCounter == 20){
-			window.open('fakeResult.html');
-			fakeCounter = 0;
-		}
-	})
-}
 
+}

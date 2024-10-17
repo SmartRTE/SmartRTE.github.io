@@ -9,7 +9,15 @@
 	src: url("../Fonts/Exo-SemiBold.ttf");
 }
 
-
+@keyframes shake{
+	from{
+		rotate: -15deg;
+	}
+	
+	to{
+		rotate: 0;
+	}
+}
 
 @keyframes rotate-1-round {
 	from {
@@ -113,14 +121,7 @@ body {
 	font-family: "Exo";
 }
 
-#sticker {
-	position: relative;
-	margin: 0 auto;
-	height: 20vw;
-	max-height: 150px;
-	width: 20vw;
-	max-width: 150px;
-}
+
 
 li {
 	list-style: none;
@@ -242,6 +243,26 @@ li {
 	width: 80%;
 	font-weight: 800;
 }
+
+#sticker {
+    position: relative;
+    margin: 0 auto;
+    height: 20vw;
+    max-height: 150px;
+    width: 20vw;
+    max-width: 150px;
+    transition-duration: 0.1s;
+    scale: 1.01;
+}
+
+#sticker:hover{
+	scale: 1.08;
+}
+
+#sticker:active {
+    scale: 0.9;
+}
+
 
 #try-to-rotate {
 	display: none;

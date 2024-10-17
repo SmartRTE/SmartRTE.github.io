@@ -5,6 +5,10 @@ let filteredArray = [];
 let currentArray = [];
 let rbm = [];
 let avatarList = [];
+let idx_constant = [];
+let finalOutputScore = [];
+let songlist = {}; //idx - songId 键值对
+let idData = {};
 let unitQuantity = 39;
 let uidFlag = true;
 let p30Flag = 0; //0=b 1=p 2=s
@@ -48,12 +52,16 @@ $(document).ready(function() {
 	diffSongNameMapping = getTitleMapping();
 	//初始化曲绘映射
 	diffIllMapping = getImageMapping();
+	
+	songlist = initializeSonglist();
 	//初始化二维码
 	initializeQRCode();
 	//初始化数据列表
 	initializeDataArray();
 	//初始化AI-chan推荐
 	initializeAiChan();
+	
+	initializeVHZEK();
 	filteredArray = currentArray;
 	$(window).on('resize', function() {
 		resizeWidth(1);
@@ -287,6 +295,9 @@ function initializeUploadListener() {
 					runConvert(csvContent);
 				};
 				reader.readAsText(selectedFile);
+			} else if(fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
+				console.log("VHZek");
+				readVHZek(selectedFile);
 			} else {
 				runQuery(selectedFile);
 				console.log("Not a .csv file");
@@ -812,4 +823,54 @@ function handleScroll(unitid, index) {
 	$('#ai-chan-content').html(`<img id="ai-chan-ill" src="${illustrationPath+filteredArray[index].illustration}" />` +
 		$('#ai-chan-content').text());
 	scrollToElement(unitid);
+}
+
+async function initializeVHZEK() {
+	try {
+		const response = await fetch('sample/constantChart.csv');
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+		let file = await response.text();
+		let temp = file.trim();
+		let rows = temp.split('\r\n');
+		// console.log(rows)
+		let single;
+		tempArray = [];
+		for (i = 1; i < rows.length; i++) {
+			single = {};
+			const row = rows[i].split(',');
+			single = {
+				idx: findIndex(row[1], songlist),
+				songId: row[1],
+				constant: [row[2], row[3], row[4], row[5], row[6]]
+			}
+			tempArray.push(single);
+		}
+		idx_constant = tempArray;
+		idx_constant.push({
+			idx: 283,
+			songId: 'lasteternity',
+			constant: ['', '', '', '9.7', '']
+		})
+		idx_constant = idx_constant.sort(function(a, b) {
+			return resultSort(a, b, 'idx', -1);
+		})
+
+		// idx_constant.shift();
+		// console.log(idx_constant)
+		// return idx_constant;
+	} catch (error) {
+		console.error('There was a problem loading the CSV file:', error);
+	}
+}
+
+function generateCard(array){
+	//
+	generateUnits(array, unitQuantity)
+}
+
+function generateTable(array){
+	//
+	displayB30(array);
 }
