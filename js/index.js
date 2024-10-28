@@ -611,7 +611,6 @@ function reloadContent(array) {
 	saveLocalStorage(array);
 	displayB30(array);
 	filterByConstant();
-	
 }
 
 // function reloadContentVHZek(array) {

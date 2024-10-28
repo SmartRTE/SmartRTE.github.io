@@ -188,6 +188,7 @@ function switchDisplay(element) {
 }
 
 function applySettings(values) {
+	console.log(values)
 	$('#username-text').text(values['username']);
 	$('#course-banner').attr('src', "img/banner/" + values['frame'] + ".png")
 
@@ -195,6 +196,9 @@ function applySettings(values) {
 	$('#potential-value-right').text(values['potential'].substring(values['potential'].indexOf('.') + 1, values[
 			'potential']
 		.length));
+	console.log(values['potential'].substring(values['potential'].indexOf('.') + 1, values[
+			'potential']
+		.length))
 	$('#fragment-value').text(values['fragment']);
 	$('#memory-value').text(values['memory']);
 	$('#song-name').text(values['songname']);

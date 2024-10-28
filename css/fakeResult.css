@@ -11,6 +11,12 @@
 }
 
 @font-face {
+	font-family: "NotoSansLight";
+	src: url('../Fonts/NotoSansCJKsc-Light.otf');
+	unicode-range: U+0020-007E; /* ASCII range */
+}
+
+@font-face {
 	font-family: "Nanum";
 	src: url('../Fonts/NanumBarunGothic-Bold.otf');
 }
@@ -21,12 +27,12 @@
 }
 
 @font-face {
-	font-family: "Exo";
+	font-family: "ExoBold";
 	src: url('../Fonts/Exo-SemiBold.ttf');
 }
 
 @font-face {
-	font-family: "ExoLight";
+	font-family: "ExoRegular";
 	src: url('../Fonts/Exo-Regular.ttf');
 }
 
@@ -43,7 +49,10 @@
 	font-family: "GeosansLight";
 	src: url('../Fonts/GeosansLight.ttf');
 }
-
+@font-face {
+	font-family: "GeosansLightModified";
+	src: url('../Fonts/GeosansLight-Modified.otf');
+}
 @keyframes floating-character {
 	from {
 		transform: translateY(10px);
@@ -208,6 +217,7 @@ body {
 	top: 0;
 	left: 50%;
 	margin: 0 auto;
+	cursor: pointer;
 }
 
 #character-border {
@@ -220,15 +230,15 @@ body {
 }
 
 #avatar-icon {
-	top: -40px;
-	position: absolute;
-	display: block;
-	z-index: 9;
-	/* top: 0; */
-	left: -112px;
-	width: 225px;
-	height: 225px;
-	/* display: none; */
+    /* top: -40px; */
+    position: absolute;
+    display: block;
+    z-index: 9;
+    top: -42px;
+    left: -114px;
+    width: 230px;
+    height: 230px;
+    /* display: none; */
 }
 
 #potential-border {
@@ -248,7 +258,7 @@ body {
     z-index: 9999;
     left: 25px;
     top: 95px;
-    font-family: 'Exo';
+    font-family: 'ExoBold';
     font-size: 3rem;
     color: white;
     font-weight: bolder;
@@ -360,7 +370,7 @@ body {
 	text-align: center;
 	margin: 0 auto;
 	width: 250px;
-	font-family: "Exo";
+	font-family: "ExoBold";
 	font-weight: bolder;
 	top: 10px;
 }
@@ -393,7 +403,7 @@ body {
 	text-align: center;
 	margin: 0 auto;
 	width: 250px;
-	font-family: "Exo";
+	font-family: "ExoBold";
 	font-weight: bolder;
 	top: 10px;
 }
@@ -423,19 +433,19 @@ body {
 }
 
 #artist {
-	position: absolute;
-	width: 100%;
-	height: 8rem;
-	font-family: "NotoSansRegular";
-	color: white;
-	text-shadow: 0px 0px 2px white, 5px 5px 3px black;
-	text-align: center;
-	font-size: 4.54rem;
-	top: 399px;
-	left: 0;
-	line-height: 8rem;
-	/* letter-spacing: 0px; */
-	z-index: 1;
+    position: absolute;
+    width: 100%;
+    height: 8rem;
+    font-family: "NotoSansRegular", "L2Regular", sans-serif;
+    color: white;
+    text-shadow: 0px 0px 2px white, 5px 5px 3px black;
+    text-align: center;
+    font-size: 4.54rem;
+    top: 399px;
+    left: 0;
+    line-height: 8rem;
+    /* letter-spacing: 0px; */
+    z-index: 1;
 }
 
 #clear-type {
@@ -477,7 +487,7 @@ body {
     left: 88px;
     top: 43px;
     font-size: 5.4rem;
-    font-family: "ExoLight";
+    font-family: "ExoRegular";
     font-weight: 300;
     /* display: none; */
     color: white;
@@ -491,7 +501,7 @@ body {
 	left: 170px;
 	top: 35px;
 	font-size: 3.7rem;
-	font-family: "Exo";
+	font-family: "ExoBold";
 	color: white;
 	text-shadow: 0 0 3.5px #5a437c,
 		0 3.5px 2px #5a437c,
@@ -616,7 +626,7 @@ body {
     /* border: solid 1px red; */
     font-size: 2.1rem;
     text-align: center;
-    font-family: "Exo";
+    font-family: "ExoBold";
     color: white;
     text-shadow: 0 0 1px black, 0 1.5px 1px black, 1px 1px 1px black, 1.5px 0 1px black, 1px -1px 1px black, 0 -1.5px 1px black, -1px -1px 1px black, -1.5px 0 1px black, -1px 1px 1px black, 1px 1px black, -1px 1px black, 1px -1px black, -1px -1px black;
     font-weight: bold;
@@ -637,22 +647,22 @@ body {
 }
 
 #score-current {
-	/* border: solid 1px red; */
-	float: none;
-	position: absolute;
-	width: 1020px;
-	left: 1094px;
-	top: 805px;
-	font-size: 9.5rem;
-	font-family: "GeosansLight";
-	box-sizing: border-box;
-	text-align: center;
-	height: 150px;
-	line-height: 160px;
-	font-weight: 400;
-	letter-spacing: -0.8px;
-	color: white;
-	text-shadow: 7px 7px 3px black;
+    /* border: solid 1px red; */
+    float: none;
+    position: absolute;
+    width: 1020px;
+    left: 1090px;
+    top: 805px;
+    font-size: 9.5rem;
+    font-family: "GeosansLightModified";
+    box-sizing: border-box;
+    text-align: center;
+    height: 150px;
+    line-height: 160px;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    color: white;
+    text-shadow: 7px 7px 3px black;
 }
 
 #score-personal-best {
@@ -662,7 +672,7 @@ body {
 	width: 430px;
 	height: 85px;
 	font-size: 4.1rem;
-	font-family: "GeosansLight";
+	font-family: "GeosansLightModified";
 	box-sizing: border-box;
 	/* border: 1px solid red; */
 	text-align: center;
@@ -681,7 +691,7 @@ body {
     width: 300px;
     text-align: right;
     font-weight: bolder;
-    font-family: "GeosansLight";
+    font-family: "GeosansLightModified";
     letter-spacing: -1.9px;
     color: white;
     text-shadow: 0 0 2px white, 5px 5px 2px black;

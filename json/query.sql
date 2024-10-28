@@ -455,6 +455,12 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Hailst
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('FURETE-MITAI', 'furetemitai', 2.5, 6.0, 8.4, '', 9.4);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Gensou no Satellite', 'gensounosatellite', 2.5, 6.5, 8.7, '', 10.1);
 
+--5.10.6
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Prayer', 'prayer', 2.5, 5.5, 8.2, '', 9.1);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Crimson Quartz', 'crimsonquartz', 3.0, 6.0, 8.8, '', 9.8);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Third Sun', 'thirdsun', 3.5, 7.0, 9.4, '', 10.0);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Spirit of the Dauntless', 'spiritdauntless', 4.5, 7.8, 10.5, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Dies irae', 'diesirae', 4.5, 7.5, 9.5, '', 10.6);
 
 COMMIT TRANSACTION;
 
