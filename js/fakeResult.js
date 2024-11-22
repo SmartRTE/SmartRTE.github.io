@@ -1,8 +1,12 @@
+let songlist = null;
+let quickSelectionGenerationFlag = false;
 $(document).ready(function() {
 	console.log("ready");
-	console.log(getAllValues());
-	showSettingValues(getAllValues());
-	applySettings(getSettingValues());
+	// console.log(getAllValues());
+	showSettingValues(readLocalStorage() ? readLocalStorage() : getAllValues());
+	// console.log(readLocalStorage())
+	applySettings(readLocalStorage() ? readLocalStorage() : getSettingValues());
+	readSongList();
 	$('#track-lost').change(function() {
 		if ($(this).is(":checked")) {
 			$('#clear-type').attr('src', 'img/clearType/clear_' + 'fail' + '.png');
@@ -12,7 +16,14 @@ $(document).ready(function() {
 			$('#clear-type').attr('src', 'img/clearType/clear_' + clearType + '.png');
 			adjustClearType(clearType);
 		}
-	})
+	});
+	$('#hash').change(function() {
+		if ($(this).is(":checked")) {
+			adjustPotentialPosition(true);
+		} else {
+			adjustPotentialPosition(false);
+		}
+	});
 })
 
 function getSettingValues() {
@@ -76,6 +87,9 @@ function getSettingValues() {
 	/*搭档大图*/
 	settingValues['character'] = $('#input-character').val();
 	settingValues['clearType'] = getClearType(settingValues);
+	settingValues['isRanked'] = $('#hash').is(":checked") ? 1 : 0;
+	settingValues['rank'] = $('#world-rank').val();
+	settingValues['isTrackLost'] = $('#track-lost').is(':checked') ? 1 : 0;
 	return settingValues;
 }
 
@@ -111,7 +125,7 @@ function getAllValues() {
 	/*分数变动*/
 	currentValues['scoreChange'] = currentValues['currentScore'] - currentValues['bestScore'];
 	/*曲绘*/
-	let il = $('#illustration').attr("src")
+	let il = $('#illustration').css("background-image");
 	currentValues['illustration'] = il.substring(il.lastIndexOf('/') + 1, il.indexOf('.jpg'));
 	// currentValues['hpBar'] //血条样式搁置
 	/*pure数*/
@@ -141,7 +155,7 @@ function getAllValues() {
 	/*结算等级*/
 	let ct = $('#clear-type').attr('src');
 	currentValues['clearType'] = ct.substring(ct.lastIndexOf('/') + 1, ct.indexOf('.png'));
-	console.log(currentValues)
+	// console.log(currentValues)
 	return currentValues;
 }
 
@@ -162,11 +176,18 @@ function getGrade(currentValues) {
 
 function getClearType(values) {
 	if (values['pure'] != 0 && values['far'] != 0 && values['lost'] == 0) {
+		$('#score-current').css("text-shadow", "7px 7px 3px black");
 		return "full";
 	}
 	if (values['pure'] != 0 && values['far'] == 0 && values['lost'] == 0 && values['hp'] != 0) {
+		// console.log(values['pure'], values['criticalPure'])
+		if(values['pure'] == values['criticalPure']){
+			$('#score-current').css("text-shadow", "7px 7px 3px rgb(0 160 206 / 88%)");
+			// console.log("max score")
+		}
 		return 'pure';
 	}
+	$('#score-current').css("text-shadow", "7px 7px 3px black");
 	return 'normal';
 }
 
@@ -183,12 +204,11 @@ function formatScore(score) {
 
 function switchDisplay(element) {
 	let d = $(element).css("display");
-	// console.log(d)
 	$(element).css("display", d == 'block' ? 'none' : 'block')
 }
 
 function applySettings(values) {
-	console.log(values)
+	// console.log(values)
 	$('#username-text').text(values['username']);
 	$('#course-banner').attr('src', "img/banner/" + values['frame'] + ".png")
 
@@ -196,9 +216,9 @@ function applySettings(values) {
 	$('#potential-value-right').text(values['potential'].substring(values['potential'].indexOf('.') + 1, values[
 			'potential']
 		.length));
-	console.log(values['potential'].substring(values['potential'].indexOf('.') + 1, values[
+	/* console.log(values['potential'].substring(values['potential'].indexOf('.') + 1, values[
 			'potential']
-		.length))
+		.length)) */
 	$('#fragment-value').text(values['fragment']);
 	$('#memory-value').text(values['memory']);
 	$('#song-name').text(values['songname']);
@@ -222,12 +242,25 @@ function applySettings(values) {
 		`L${values['farLate']}(P${values['pureLate']}) E${values['farEarly']}(P${values['pureEarly']})`);
 	$("#avatar-icon").attr('src', "img/avatar/" + values['character'] + "_icon.webp");
 	$('#character').attr('src', "img/character/" + values['character'] + ".png");
-	$('#illustration').attr('src', "illustration/" + values['illustration'] + ".jpg");
+	$('#illustration').css({
+	    'background': `url(illustration/${values['illustration']}.jpg) center center / cover`
+	});
 	let clearType = getClearType(values);
 	$('#clear-type').attr('src', 'img/clearType/clear_' + clearType + '.png');
+	$('#hash-number').text(parseInt(values['rank']));
+	if(values['isRanked'] && !$('#hash').is(":checked")){
+		$('#rank').click();
+	}
+	$('#rank').val(values['rank']);
+	if(values['isTrackLost'] && !$('#track-lost').is(":checked")){
+		$('#track-lost').click();
+	}
 	adjustClearType(clearType);
 	changePotentialFrame(parseFloat(values['potential']));
 	adjustFragment(parseInt(values['fragment']));
+	// adjustPotentialPosition();
+	
+	saveLocalStorage(values);
 }
 
 function adjustFragment(fragment) {
@@ -260,7 +293,7 @@ function changePotentialFrame(potential) {
 	const ranges = [3.49, 6.99, 9.99, 10.99, 11.99, 12.49, 12.99, 13.5];
 	const frames = [0, 1, 2, 3, 4, 5, 6, 8];
 	let idx = 0;
-	console.log(potential)
+	// console.log(potential)
 	for (let i = 0; i < ranges.length; i++) {
 		if (potential <= ranges[i]) {
 			idx = $('#potential-border').attr('src', 'img/rating/rating_' + frames[i] + '.png');
@@ -307,6 +340,13 @@ function showSettingValues(values) {
 	$('#input-pure-early').val(values['pureEarly']);
 	$('#input-far-late').val(values['farLate']);
 	$('#input-far-early').val(values['farEarly']);
+	if(values['isRanked'] && !$('#hash').is(":checked")){
+		$('#rank').click();
+	}
+	$('#world-rank').val(values['rank']);
+	if(values['isTrackLost'] && !$('#track-lost').is(":checked")){
+		$('#track-lost').click();
+	}
 }
 
 function adjustCharacterPosition(d) {
@@ -322,6 +362,24 @@ function adjustCharacterPosition(d) {
 		$('#character').css("top", top + 10 + "px");
 	}
 }
+
+
+function adjustPotentialPosition(hashFlag){
+	if(!hashFlag){
+		$('#hash-mark').css("display", 'none');
+		$('#hash-number').css("display", 'none');
+		$("#fragment-text").css("display", 'block');
+		$('#avatar-border').attr("src", 'img/topbar/char_icon_border.png').removeClass('character-border-hash').addClass('character-border');
+		$('#potential-change').css("left", "50%");
+	} else{
+		$('#hash-mark').css("display", 'block');
+		$('#hash-number').css("display", 'block');
+		$("#fragment-text").css("display", 'none');
+		$('#avatar-border').attr("src", 'img/topbar/usercell_shape_bg.png').removeClass('character-border').addClass('character-border-hash');
+		$('#potential-change').css("left", "51.5%");
+	}
+}
+
 
 async function compressImage(dataURL, quality) {
 	return new Promise((resolve, reject) => {
@@ -378,19 +436,110 @@ async function saveAsImage(captureId) {
 	});
 }
 
-function insert(string) {
-	let s = [];
-	s = string.split('\t');
-	$('#input-songname').val(s[0]);
-	$('#input-artist').val(s[1]);
-	$('#input-current-score').val(s[2]);
-	$('#input-pure-count').val(s[3]);
-	$('#input-critical-pure-count').val(s[4]);
-	$('#input-far-count').val(s[5]);
-	$('#input-lost-count').val(s[6]);
-	$('#input-illustration').val(s[7]);
-	$('#input-constant').val(s[8]);
-	$('#input-maxrecall').val(parseInt(s[3]) + parseInt(s[5]));
-	$('#input-best-score').val(parseInt(s[3]) + parseInt(s[5]) + parseInt(s[6]) + 10000000);
-	$('#input-pure-early').val(parseInt(s[3]) - parseInt(s[4]));
+// function insert(string) {
+// 	let s = [];
+// 	s = string.split('\t');
+// 	$('#input-songname').val(s[0]);
+// 	$('#input-artist').val(s[1]);
+// 	$('#input-current-score').val(s[2]);
+// 	$('#input-pure-count').val(s[3]);
+// 	$('#input-critical-pure-count').val(s[4]);
+// 	$('#input-far-count').val(s[5]);
+// 	$('#input-lost-count').val(s[6]);
+// 	$('#input-illustration').val(s[7]);
+// 	$('#input-constant').val(s[8]);
+// 	$('#input-maxrecall').val(parseInt(s[3]) + parseInt(s[5]));
+// 	$('#input-best-score').val(parseInt(s[3]) + parseInt(s[5]) + parseInt(s[6]) + 10000000);
+// 	$('#input-pure-early').val(parseInt(s[3]) - parseInt(s[4]));
+// }
+
+function saveLocalStorage(values) {
+	let vls = JSON.stringify(values);
+	localStorage.setItem("fakeResult", vls);
+}
+
+function readLocalStorage() {
+	if (localStorage.getItem("fakeResult")) {
+		let savedArray = JSON.parse(localStorage.getItem("fakeResult"));
+		if (savedArray) {
+			return savedArray;
+		} else {
+			return null;
+		}
+	}
+}
+
+async function readSongList(){
+	try{
+		const sl = await fetch('json/songlist');
+		let slst = await sl.json();
+		console.log(slst)
+		songlist = slst.songs.sort(function(a,b){
+			return resultSort(a, b, 'idx', -1)
+		});
+	} catch(error){
+		console.log("failed loading songlist")
+	}
+}
+
+function resultSort(a, b, attr, order) {
+	if (a[attr] !== b[attr]) {
+		return order * (b[attr] - a[attr]);
+	}
+	return 0;
+}
+
+async function generateSongListSelection(songlist){
+	switchDisplay('#quick-select-options');
+	if(quickSelectionGenerationFlag){
+		return ;
+	}
+	let sls = $('#quick-select-options');
+	songlist.forEach(function(song, index){
+		if(index != 127){
+			console.log(song);
+			let opt = $(`<li id="${song.id}" onclick="applyQuickSelection(songlist, ${index})">`).append($('<img>').attr('src', `Illustration/${song.id}.jpg`)).append($('<span>').text(Object.values(song.title_localized)[0]));
+			sls.append(opt);
+		}
+	});
+	quickSelectionGenerationFlag = true;
+}
+
+function applyQuickSelection(songlist, idx){
+	let song = songlist[idx];
+	$('#input-songname').val(songlist[idx].title_localized['en']);
+	$('#input-artist').val(songlist[idx].artist);
+	let difficulty = 2;
+	switch($('#input-difficulty').val().toLowerCase()){
+		case 'past': {
+			difficulty = 0;
+			break;
+		} case 'present': {
+			difficulty = 1;
+			break;
+		} case 'future': {
+			difficulty = 2;
+			break;
+		} case 'beyond': {
+			difficulty = 3;
+			break;
+		} case 'eternal': {
+			difficulty = 4;
+			break;
+		} default: {
+			difficulty = 2;
+			break;
+		}
+		
+	}
+	let constant = 9.9;
+	song['difficulties'].forEach(function(dif){
+		if(dif.ratingClass == difficulty){
+			constant = dif.ratingPlus ? dif.rating + dif.ratingPlus : dif.rating;
+		}
+	});
+	$('#input-constant').val(constant);
+	$('#input-illustration').val(song.id);
+	applySettings(getSettingValues());
+	$('#quick-select button').click();
 }

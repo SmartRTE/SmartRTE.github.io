@@ -5,8 +5,10 @@
 		<title>自定义成绩图</title>
 		<script src="js/jquery-3.6.1.min.js"></script>
 		<link rel="stylesheet" href="css/fakeResult.css" type="text/css" />
-		<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+		<!-- <script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script> -->
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script> -->
+		<script src="js/html2canvas0.5.0.js" type="text/javascript"></script>
+		<script src="js/html2canvas_min.js" type="text/javascript"></script>
 		<script src="js/fakeResult.js" type="text/javascript"></script>
 	</head>
 	<body>
@@ -28,9 +30,12 @@
 					<img id="course-banner" src="img/banner/11.png" />
 					<span id="username-text">PlayerName</span>
 				</div>
+				
 				<div id="avatar">
-					<img id="character-border" src="img/topbar/char_icon_border.png" />
+					<img id="avatar-border" class="character-border" src="img/topbar/char_icon_border.png" />
 					<img id="avatar-icon" src="img/avatar/2u_icon.webp" onclick="switchDisplay('#setting')"/>
+					<img id="hash-mark" src="img/topbar/hash.png">
+					<span id="hash-number">200</span>
 					<div id="potential">
 						<img id="potential-border" src="img/rating/rating_6.png" />
 						<div id="potential-value">
@@ -72,7 +77,7 @@
 					<span id="maxrecall-text">MAX RECALL</span>
 					<span id="maxrecall">1065</span>
 				</div>
-				<img id="illustration" src="illustration/invertedworld.jpg" />
+				<div id="illustration"> </div>
 				<img id="hp-base" src="img/hpBar/hp_base.png" />
 				<img id="hp-bar" src="img/hpBar/hp_bar_clear.png" />
 				<img id="hp-bar-grid" src="img/hpBar/hp_grid.png" />
@@ -138,6 +143,9 @@
 						<label for="input-frame">ID框</label>
 						<input id="input-frame"/>
 					</div>
+					
+					<div class="setting-margin"></div>
+					
 					<div class="setting-row">
 						<label for="input-potential">潜力值</label>
 						<input id="input-potential"/>
@@ -147,6 +155,19 @@
 						<input id="input-character"/>
 					</div>
 					<div class="setting-row">
+						<label>排名框</label>
+						<input type="checkbox" id="hash" class="setting-checkbox"/>
+					</div>
+					<div class="setting-row">
+						<label>排名#</label>
+						<input type="number" id="world-rank" value="200"/>
+					</div>
+					
+					
+					<div class="setting-margin"></div>
+					
+					
+					<div class="setting-row">
 						<label for="input-fragment">残片数</label>
 						<input id="input-fragment"/>
 					</div>
@@ -154,6 +175,11 @@
 						<label for="input-memory">源点数</label>
 						<input id="input-memory"/>
 					</div>
+					
+					
+					<div class="setting-margin"></div>
+					
+					
 					<div class="setting-row">
 						<label for="input-songname">曲名</label>
 						<input id="input-songname"/>
@@ -162,6 +188,11 @@
 						<label for="input-artist">曲师</label>
 						<input id="input-artist"/>
 					</div>
+					
+					
+					<div class="setting-margin"></div>
+					
+					
 					<div class="setting-row">
 						<label for="input-difficulty">难度</label>
 						<input id="input-difficulty"/>
@@ -178,14 +209,24 @@
 						<label for="input-illustration">曲绘id</label>
 						<input id="input-illustration"/>
 					</div>
+					
+					
+					<div class="setting-margin"></div>
+					
+					
 					<div class="setting-row">
 						<label for="input-hp">血量</label>
 						<input id="input-hp" type="number"/>
 					</div>
 					<div class="setting-row">
 						<label style="float: left;">强制TrackLost</label>
-						<input type="checkbox" id="track-lost" style="height: 4rem; width: 4rem; float: left;"/>
+						<input type="checkbox" id="track-lost" class="setting-checkbox"/>
 					</div>
+					
+					
+					<div class="setting-margin"></div>
+					
+					
 					<div class="setting-row">
 						<label for="input-current-score">分数</label>
 						<input id="input-current-score"/>
@@ -194,6 +235,11 @@
 						<label for="input-best-score">最高分</label>
 						<input id="input-best-score"/>
 					</div>
+					
+					
+					<div class="setting-margin"></div>
+					
+					
 					<div class="setting-row">
 						<label for="input-pure-count">Pure数</label>
 						<input id="input-pure-count"/>
@@ -226,14 +272,18 @@
 						<label for="input-far-early">far-early数</label>
 						<input id="input-far-early"/>
 					</div>
+					
+					<div class="setting-margin"></div>
+					
+					
 					<div class="setting-row">
-						<button id="switch-addition" onclick="switchDisplay('.item-count-addition')">显示/隐藏小P和far</button>
+						<button id="switch-addition" onclick="switchDisplay('.item-count-addition')" style="margin-left: 5rem;">显示/隐藏小P和far</button>
 					</div>
 					<div class="setting-row">
-						<button id="confirm" onclick="applySettings(getSettingValues())" style="margin-left: 5rem;">确认修改</button>
+						<button id="confirm" onclick="applySettings(getSettingValues())" style="margin-left: 5rem;">确认修改并应用</button>
 					</div>
 					<div class="setting-row">
-						<label style="margin-right: 6rem;">手动调整搭档位置：</label>
+						<label style="margin-right: 6rem;">搭档位置</label>
 						<button onclick="adjustCharacterPosition(0)" style="width: 5rem; margin: 0 10px;">←</button>
 						<button onclick="adjustCharacterPosition(2)" style="width: 5rem; margin: 0 10px;">↑</button>
 						<button onclick="adjustCharacterPosition(1)" style="width: 5rem; margin: 0 10px;">→</button>
@@ -241,6 +291,41 @@
 					</div>
 					<div class="setting-row">
 						<button id="generate" onclick="saveAsImage('main-capture')" style="margin-left: 5rem;">保存为图片</button>
+					</div>
+					<div class="setting-margin"></div>
+					<div class="setting-margin"></div>
+					<div class="setting-row" id="quick-select">
+						<label>快速选曲</label>
+						<button onclick="generateSongListSelection(songlist)">
+							<img src="processed_Illustration/ii.jpg">
+							<span>Sayonara Hatsukoi</span>
+						</button>
+						<ul id="quick-select-options" style="display: none;">
+							<li>
+								<img src="processed_Illustration/ii.jpg">
+								<span>Sayonara Hatsukoi</span>
+							</li>
+							<li>
+								<img src="processed_Illustration/ii.jpg">
+								<span>Sayonara Hatsukoi</span>
+							</li>
+							<li>
+								<img src="processed_Illustration/ii.jpg">
+								<span>Sayonara Hatsukoi</span>
+							</li>
+							<li>
+								<img src="processed_Illustration/ii.jpg">
+								<span>Sayonara Hatsukoi</span>
+							</li>
+							<li>
+								<img src="processed_Illustration/ii.jpg">
+								<span>Sayonara Hatsukoi</span>
+							</li>
+							<li>
+								<img src="processed_Illustration/ii.jpg">
+								<span>Sayonara Hatsukoi</span>
+							</li>
+						</ul>
 					</div>
 				</div>
 				
