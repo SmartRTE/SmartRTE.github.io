@@ -81,7 +81,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Hiiro 
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('IZANA', 'izana', 5.0, 8.3, 10.3, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Metallic Punisher', 'metallicpunisher', 3.0, 7.0, 10.3, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Nirv lucE', 'nirvluce', 2.5, 7.0, 10.2, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Pentiment', 'pentiment', 7.0, 8.7, 10.3, 11.5, '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Pentiment', 'pentiment', 7.0, 8.7, 10.4, 11.5, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('To: Alice Liddell', 'toaliceliddell', 4.0, 7.8, 10.3, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Viyella''s Tears', 'viyellastears', 4.0, 7.8, 10.3, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Capella', 'capella', 4.5, 7.8, 10.2, '', '');

@@ -646,6 +646,10 @@ async function generateUnits(array, unitQuantity) {
 		"11.2": 1,
 		"11.4": 1,
 		"11.5": 1,
+		"11.6": 1,
+		"11.7": 1,
+		"11.8": 1,
+		"11.9": 1
 	}
 	// console.log('generateUnits called');
 	let ary = array;

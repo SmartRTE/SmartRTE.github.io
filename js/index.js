@@ -250,7 +250,7 @@ function initializeUploadListener() {
 				}
 				let d = '';
 				let i = '';
-				d = findDifficulty(cell, idData['G'][index], idx_difficulty);
+				d = findDifficulty(cell, idData['G'][index], idx_constant);
 				i = findInArray(currentArray, idx_constant[cell].songId, d);
 				// i = (i == -1 ? null : i)
 				// console.log(index, cell, d, i)
@@ -468,6 +468,7 @@ function convertToTable(currentRow, index) {
  * 转换为卡片单元
  */
 function convertToCard(currentRow, index) {
+	// console.log(currentRow)
 	let $cardElem = $('<div id="' + currentRow.songId + "-" + currentRow.difficulty + '">').addClass('single-card ' +
 		currentRow
 		.difficulty.toLowerCase());
