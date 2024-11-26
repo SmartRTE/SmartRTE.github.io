@@ -1,6 +1,7 @@
 let db; //以上两条为sql.js相关
 let SQL; //以上两条为sql.js相关
 
+let difficultyList = ['Past', 'Present', 'Future', 'Beyond', 'Eternal'];
 let filteredArray = [];
 let currentArray = [];
 let rbm = [];
@@ -26,9 +27,12 @@ let queryFilePath = "json/query.sql"; //sql查询代码文件路径
 let diffSongNameMapping = null; //差分曲名映射
 let diffIllMapping = null; //差分曲绘映射
 
+let testDataArray = [];
+
 let constant = []; //定数表
 let constConstant = [];
 let baseArray = []; //用于详情和Aichan推荐的固定组
+let tempcstArray = [];
 let completionTable = {}; //完成表
 let rangeUpperBound = 11.0; //筛选中的最高定数边界
 let rangeLowerBound = 10.0; //筛选中的最低定数边界
@@ -45,6 +49,7 @@ $(document).ready(function() {
 	diffIllMapping = getImageMapping();
 	// displayWindow('ai-chan');
 	songlist = initializeSonglist();
+	// readConstantChart();
 	initializeVHZEK();
 	initializeBound();
 	changeBound();
@@ -65,7 +70,6 @@ $(document).ready(function() {
 	initializeQuery();
 	//初始化上传文件监听
 	initializeUploadListener();
-
 	//初始化二维码
 	initializeQRCode();
 	//初始化AI-chan推荐
@@ -307,7 +311,7 @@ function initializeUploadListener() {
 					runConvert(csvContent);
 				};
 				reader.readAsText(selectedFile);
-			} else if(fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
+			} else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
 				console.log("VHZek");
 				readVHZek(selectedFile);
 			} else {
@@ -409,7 +413,7 @@ function saveQueryResult(result) {
 	// generateTable(currentArray);
 	// console.table(currentArray);
 	saveLocalStorage(currentArray);
-	refillCurrentArray();
+	refillCurrentArray(currentArray);
 	displayB30(currentArray);
 	location.reload();
 	// switchP30(0);
@@ -417,7 +421,7 @@ function saveQueryResult(result) {
 
 /**
  * 将csv格式的分数表转换成为成绩对象数组
- * @param csv 待转化怒的csv文件，必须是旧版或新版页面能生成和读取的对应格式
+ * @param csv 待转化的csv文件，必须是旧版或新版页面能生成和读取的对应格式
  */
 function runConvert(csv) {
 	file = csv.trim();
@@ -436,102 +440,11 @@ function runConvert(csv) {
 	console.log("runconvert over");
 	saveLocalStorage(currentArray);
 	displayB30(currentArray);
-	refillCurrentArray();
+	refillCurrentArray(currentArray);
 	location.reload();
-	// currentArray = readLocalStorage();
-	// generateCard(filteredArray);
-	// generateTable(filteredArray);
-	// console.log(currentArray);
-	// displayB30(filteredArray);
-	// switchP30(0);
 }
 
-/**
- * 准备：
- * 先把全部的生成
- * 把有数据的替换进去，没有数据的保持原状
- * 没有数据的用一个cover类样式覆盖一下
- */
-function getConstantSheet() {
-	$.ajax({
-		url: 'sample/constantChart.csv',
-		dataType: 'text',
-		success: function(resp) {
-			let cst = {};
-			let t = resp.trim().split('\n');
-			t.forEach(function(row, index) {
-				let r = row.split(',');
-				outerkey = r[1];
-				pst = parseFloat(r[2]) || -1;
-				prs = parseFloat(r[3]) || -1;
-				ftr = parseFloat(r[4]) || -1;
-				byd = parseFloat(r[5]) || -1;
-				etr = parseFloat(r[6]) || -1;
-				rr = {};
-				rr['Past'] = pst;
-				rr['Present'] = prs;
-				rr['Future'] = ftr;
-				rr['Beyond'] = byd;
-				rr['Eternal'] = etr;
-				cst[outerkey] = rr;
-			});
-
-			constant = cst;
-
-			for (const song in constant) {
-				if (!completionTable[[constant[song]['Past']]]) {
-					completionTable[[constant[song]['Past']]] = [];
-				}
-				completionTable[[constant[song]['Past']]].push(song + '-Past');
-
-				if (!completionTable[[constant[song]['Present']]]) {
-					completionTable[[constant[song]['Present']]] = [];
-				}
-				completionTable[[constant[song]['Present']]].push(song + '-Present');
-
-				if (!completionTable[[constant[song]['Future']]]) {
-					completionTable[[constant[song]['Future']]] = [];
-				}
-				completionTable[[constant[song]['Future']]].push(song + '-Future');
-
-				if (!completionTable[[constant[song]['Beyond']]]) {
-					completionTable[[constant[song]['Beyond']]] = [];
-				}
-				completionTable[[constant[song]['Beyond']]].push(song + '-Beyond');
-
-				if (!completionTable[[constant[song]['Eternal']]]) {
-					completionTable[[constant[song]['Eternal']]] = [];
-				}
-				completionTable[[constant[song]['Eternal']]].push(song + '-Eternal');
-
-			}
-			delete completionTable['-1'];
-			constant = [];
-			let index = 99999;
-			for (const c in completionTable) {
-				completionTable[c].forEach(function(row) {
-					let single = new PlayResult('', row.split('-')[0], row.split('-')[1], -1,
-						0, 0, 0, 0, c,
-						0, index--);
-					constant.push(single);
-				});
-			}
-			//按照定数递减-songId递减-
-			//difficulty按Present-Past-Future-Eternal-Beyond
-			constant.sort(function(a, b) {
-				return stringSort(a, b, -1);
-			});
-			constant.sort(function(a, b) {
-				return resultSort(a, b, 'constant', 1);
-			});
-			constConstant = constant;
-			//初始化数据列表
-			initializeDataArray();
-		}
-	});
-}
-
-function refillCurrentArray(array = currentArray) {
+function refillCurrentArray(array) {
 	let ary = array;
 	let cst = constConstant;
 	//按照定数递减-songId递减-
@@ -542,13 +455,9 @@ function refillCurrentArray(array = currentArray) {
 	ary.sort(function(a, b) {
 		return resultSort(a, b, 'constant', 1);
 	});
-	let i = 0,
-		j = 0;
-	for (i; i < ary.length; i++) {
-		for (j; j < cst.length; j++) {
-			// console.log(i,' ',j);
-			// console.table(currentArray[i].songId,constant[j].songId,currentArray[i].difficulty,constant[j].difficulty);
-			if (ary[i].songId == cst[j].songId && ary[i].difficulty == cst[j].difficulty) {
+	for (i = 0; i < ary.length; i++) {
+		for (j = 0; j < cst.length; j++) {;
+			if ((ary[i].songId == cst[j].songId) && (ary[i].difficulty == cst[j].difficulty)) {
 				cst[j] = ary[i];
 				break;
 			}
@@ -569,10 +478,10 @@ function refillCurrentArray(array = currentArray) {
 	});
 
 	generateUnits(cst, constant.length);
-	// constant = cst;
 	baseArray.sort(function(a, b) {
 		return resultSort(a, b, 'innerIndex', -1);
 	});
+
 }
 
 function stringSort(a, b, order) {
@@ -686,12 +595,13 @@ async function generateUnits(array, unitQuantity) {
 				spliterCounter++;
 			}
 		}
+		// console.log(ary[index]);
 		appendSongUnit(ary[index], index + 1);
 	}
-	let i = indexSlicer[1]; 
-	for(i;parseFloat(ary[i].constant) >= rangeLowerBound && (i < ary.length - 1);i++){
-	}
-	
+	let i = indexSlicer[1];
+	for (i;
+		(parseFloat(ary[i].constant) >= rangeLowerBound && (i < ary.length - 1)); i++) {}
+
 	appendStatistics(spliterCounter - 1, ary.slice(indexSlicer[1], i), i - indexSlicer[1]);
 	resizeWidth();
 }
@@ -727,6 +637,7 @@ async function showTime() {
  * 
  */
 function appendSongUnit(currentRow, index) {
+	// console.log(currentRow.songName)
 	let currentUnit = $('<div class="song-result-unit" id="' +
 		currentRow.songId + '-' + currentRow.difficulty +
 		'">').addClass(currentRow.difficulty.toLowerCase());
@@ -934,7 +845,7 @@ function changeBound() {
 	$('#range-lower-bound').val((rangeLowerBound).toFixed(1));
 	localStorage.rangeLowerBound = rangeLowerBound;
 	localStorage.rangeUpperBound = rangeUpperBound;
-	refillCurrentArray();
+	refillCurrentArray(currentArray);
 }
 
 function displayNoRecord() {
@@ -1079,17 +990,20 @@ async function initializeVHZEK() {
 	}
 }
 
-function generateCard(array){
+function generateCard(array) {
 	//
 	generateUnits(array, unitQuantity)
 }
 
-function generateTable(array){
+function generateTable(array) {
 	//
 	displayB30(array);
 }
 
-async function initializeVHZEK() {
+// async function readConstantChart() {
+async function getConstantSheet() {
+	let originalConstantChart = [];
+	let tempArray = [];
 	try {
 		const response = await fetch('sample/constantChart.csv');
 		if (!response.ok) {
@@ -1098,43 +1012,72 @@ async function initializeVHZEK() {
 		let file = await response.text();
 		let temp = file.trim();
 		let rows = temp.split('\r\n');
-		// console.log(rows)
-		let single;
-		tempArray = [];
-		for (i = 1; i < rows.length; i++) {
-			single = {};
+		for (i = 0; i < rows.length; i++) {
 			const row = rows[i].split(',');
-			single = {
-				idx: findIndex(row[1], songlist),
-				songId: row[1],
-				constant: [row[2], row[3], row[4], row[5], row[6]]
+			for (j = 2; j <= 6; j++) {
+				if (row[j]) {
+					tempArray.push([row[1], difficultyList[j - 2], parseFloat(row[j])])
+				}
 			}
-			tempArray.push(single);
 		}
-		idx_constant = tempArray;
-		idx_constant.push({
-			idx: 283,
-			songId: 'lasteternity',
-			constant: ['', '', '', '9.7', '']
-		})
-		idx_constant = idx_constant.sort(function(a, b) {
-			return resultSort(a, b, 'idx', -1);
-		})
 
-		// idx_constant.shift();
-		// console.log(idx_constant)
-		// return idx_constant;
+		try {
+			const response2 = await fetch('json/simplified_songlist.json');
+			if (!response2.ok) {
+				throw new Error(`HTTP error! status: ${response2.status}`);
+			}
+			let indexToSongIdMapper = await response2.json();
+			let idx2songId = {};
+			Object.keys(indexToSongIdMapper).forEach(index => {
+				const songId = indexToSongIdMapper[index];
+				idx2songId[songId] = parseInt(index, 10); // 将字符串索引转换为整数
+			});
+			tempArray.sort((a, b) => {
+				const indexA = idx2songId[a[0]];
+				const indexB = idx2songId[b[0]];
+				if (indexA < indexB) return -1;
+				if (indexA > indexB) return 1;
+				return 0;
+			});
+			tempArray.sort((a, b) => {
+				const constantA = a[2];
+				const constantB = b[2];
+				if (constantA < constantB) return 1;
+				if (constantA > constantB) return -1;
+				return 0;
+			})
+			testDataArray = tempArray;
+
+
+			constant = [];
+			let index = 99999;
+			tempArray.forEach(function(row) {
+				let single = new PlayResult('', row[0], row[1], -1,
+					0, 0, 0, 0, row[2],
+					0, index--);
+				constant.push(single);
+			})
+
+			//按照定数递减-songId递减-
+			//difficulty按Present-Past-Future-Eternal-Beyond
+			constant.sort(function(a, b) {
+				return stringSort(a, b, -1);
+			});
+			constant.sort(function(a, b) {
+				return resultSort(a, b, 'constant', 1);
+			});
+			constConstant = constant;
+			//初始化数据列表
+			initializeDataArray();
+
+
+
+		} catch (error) {
+			console.error('There was a problem loading the Json file:', error);
+		}
+
+
 	} catch (error) {
 		console.error('There was a problem loading the CSV file:', error);
 	}
-}
-
-function generateCard(array){
-	//
-	generateUnits(array, unitQuantity)
-}
-
-function generateTable(array){
-	//
-	displayB30(array);
 }
