@@ -167,7 +167,7 @@ function initializeSettingListener() {
 			localStorage.useCustomBackground = false;
 		} else {
 			if (localStorage.customBackground) {
-				$('#background-image').attr('src', localStorage.customBackground);
+				$('#background').css('background-image', `url(${localStorage.customBackground})`);
 				localStorage.useCustomBackground = true;
 			} else {
 				alert('还没有上传过自定义背景！\n点击右边可以手动上传~');
@@ -261,7 +261,7 @@ function initializeSettings() {
 
 	if (localStorage.useCustomBackground == 'true') {
 		$('#use-custom-background').prop("checked", true);
-		$('#background-image').attr('src', localStorage.customBackground);
+		$('#background').css('background-image', `url(${localStorage.customBackground})`);;
 	}
 }
 
@@ -341,7 +341,7 @@ function initializeUploadListener() {
 				$('#custom-background img').attr('src', base64Image);
 				localStorage.setItem('customBackground', base64Image);
 				if ($('#use-custom-background').is(':checked')) {
-					$('#background-image').attr('src', base64Image);
+					$('#background').css('background-image', `url(${base64Image})`);;
 					// $('#use-custom-background').prop('checked', false);
 				}
 			};

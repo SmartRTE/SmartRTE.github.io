@@ -558,7 +558,7 @@ function changeCourseDanFrame(index) {
  * @param {string} index 背景图对应的文件序号
  */
 function changeBackgroundImage(index) {
-	$('#background-image').attr('src', backgoundImagePath + index + '.webp');
+	$('#background').css('background-image', `url(${backgoundImagePath}${index}.webp)`);
 	$('#background-display').attr('src', backgoundImagePath + index + '.webp');
 	displayWindow('background-select');
 	localStorage.setItem('backgroundImage', index);

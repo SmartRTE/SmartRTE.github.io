@@ -192,16 +192,20 @@ button:active {
 	height: 18.75rem;
 }
 
-#background,
+#background{
+    width: 106.25rem;
+    height: 196.875rem;
+    position: absolute;
+    z-index: -999;
+    transition-duration: 0.3s;
+    /* opacity: 0.5; */
+    background: url(https://smartrte.github.io/bgs/5.webp);
+    background-size: cover;
+    background-position: center top;
+}
+
 #background-image {
-	width: 106.25rem;
-	/* 1700px */
-	height: 196.875rem;
-	/* 3150px */
-	position: absolute;
-	z-index: -999;
-	transition-duration: 0.3s;
-	/* opacity: 0.5; */
+	display: none;
 }
 
 #info-display {
