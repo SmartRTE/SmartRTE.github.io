@@ -37,7 +37,7 @@ let completionTable = {}; //完成表
 let rangeUpperBound = 11.0; //筛选中的最高定数边界
 let rangeLowerBound = 10.0; //筛选中的最低定数边界
 
-$(document).ready(function() {
+$(document).ready(function () {
 	//首次加载保证transition生效
 	displayWindow('modify-window');
 	displayWindow('setting-window');
@@ -75,7 +75,7 @@ $(document).ready(function() {
 	//初始化AI-chan推荐
 	initializeAiChan();
 	filteredArray = currentArray;
-	$(window).on('resize', function() {
+	$(window).on('resize', function () {
 		resizeWidth(1);
 	});
 	resizeWidth(1);
@@ -140,23 +140,23 @@ function getResultArray() {
  * 设置监听
  */
 function initializeSettingListener() {
-	$('#user-name-input').on('input', function() {
+	$('#user-name-input').on('input', function () {
 		var val = $('#user-name-input').val();
 		$('#user-name').text(val);
 		localStorage.setItem('userName', val);
 	});
-	$('#user-id-input').on('input', function() {
+	$('#user-id-input').on('input', function () {
 		var val = $('#user-id-input').val();
 		$('#user-id span').text(formatUserID(val));
 		localStorage.setItem('userId', val);
 	});
-	$('#potential-input').on('input', function() {
+	$('#potential-input').on('input', function () {
 		var val = $('#potential-input').val();
 		$('#potential-value').text(val);
 		changePotential(parseFloat(val));
 	});
 
-	$('#use-custom-avatar').on('change', function() {
+	$('#use-custom-avatar').on('change', function () {
 		let isChecked = $('#use-custom-avatar').is(':checked');
 		console.log(isChecked);
 		if (!isChecked) {
@@ -174,7 +174,7 @@ function initializeSettingListener() {
 		}
 	});
 
-	$('#use-custom-background').on('change', function() {
+	$('#use-custom-background').on('change', function () {
 		let isChecked = $('#use-custom-background').is(':checked');
 		console.log(isChecked);
 		if (!isChecked) {
@@ -295,7 +295,7 @@ function inputFile(id) {
  */
 function initializeUploadListener() {
 	//监听上传st3或csv文件事件
-	$('#file-input').change(function() {
+	$('#file-input').change(function () {
 		console.log("file-input active");
 		let selectedFile = this.files[0];
 		// console.log(selectedFile);
@@ -304,7 +304,7 @@ function initializeUploadListener() {
 			console.log("selectedFileName:" + fileName);
 			if (fileName.endsWith(".csv")) {
 				let reader = new FileReader();
-				reader.onload = function(e) {
+				reader.onload = function (e) {
 					csvContent = reader.result;
 					console.log("CSV Content:" + "success");
 					// console.log("CSV Content:" + csvContent);
@@ -322,7 +322,7 @@ function initializeUploadListener() {
 		$('#file-input').val('');
 	});
 	//监听自定义头像上传事件
-	$('#custom-avatar-input').on('change', function(event) {
+	$('#custom-avatar-input').on('change', function (event) {
 		const file = event.target.files[0];
 		const reader = new FileReader();
 		if (file.size > 1048576) {
@@ -330,11 +330,11 @@ function initializeUploadListener() {
 			alert("图片大小超过1MB，请尝试换一张或压缩质量后再试");
 		} else {
 			reader.readAsDataURL(file);
-			reader.onload = function() {
+			reader.onload = function () {
 				const base64Image = reader.result;
 				$('#temp-avatar').attr('src', base64Image);
 				// displayCachedImage(base64Image);
-				$('#temp-avatar').ready(function() {
+				$('#temp-avatar').ready(function () {
 					clipDiamond();
 					// console.log(base64Image);
 
@@ -343,7 +343,7 @@ function initializeUploadListener() {
 		}
 	});
 	//监听自定义背景图上传事件
-	$('#custom-background-input').on('change', function(event) {
+	$('#custom-background-input').on('change', function (event) {
 		const file = event.target.files[0];
 		const reader = new FileReader();
 		if (file.size > 3145728) {
@@ -352,7 +352,7 @@ function initializeUploadListener() {
 		} else {
 
 			reader.readAsDataURL(file);
-			reader.onload = function() {
+			reader.onload = function () {
 				const base64Image = reader.result;
 				$('#custom-background img').attr('src', base64Image);
 				localStorage.setItem('customBackground', base64Image);
@@ -449,14 +449,15 @@ function refillCurrentArray(array) {
 	let cst = constConstant;
 	//按照定数递减-songId递减-
 	//difficulty按Present-Past-Future-Eternal-Beyond
-	ary.sort(function(a, b) {
+	ary.sort(function (a, b) {
 		return stringSort(a, b, -1);
 	});
-	ary.sort(function(a, b) {
+	ary.sort(function (a, b) {
 		return resultSort(a, b, 'constant', 1);
 	});
 	for (i = 0; i < ary.length; i++) {
-		for (j = 0; j < cst.length; j++) {;
+		for (j = 0; j < cst.length; j++) {
+			;
 			if ((ary[i].songId == cst[j].songId) && (ary[i].difficulty == cst[j].difficulty)) {
 				cst[j] = ary[i];
 				break;
@@ -465,20 +466,20 @@ function refillCurrentArray(array) {
 	}
 	baseArray = cst;
 	console.log(baseArray);
-	cst.sort(function(a, b) {
+	cst.sort(function (a, b) {
 		return resultSort(a, b, 'playRating', 1);
 	});
 
-	cst.sort(function(a, b) {
+	cst.sort(function (a, b) {
 		return resultSort(a, b, 'innerIndex', -1);
 	});
 
-	cst.sort(function(a, b) {
+	cst.sort(function (a, b) {
 		return resultSort(a, b, 'constant', 1);
 	});
 
 	generateUnits(cst, constant.length);
-	baseArray.sort(function(a, b) {
+	baseArray.sort(function (a, b) {
 		return resultSort(a, b, 'innerIndex', -1);
 	});
 
@@ -500,7 +501,7 @@ function stringSort(a, b, order) {
  */
 function displayB30(array) {
 	let ary = array;
-	ary.sort(function(a, b) {
+	ary.sort(function (a, b) {
 		return resultSort(a, b, 'playRating', 1);
 	});
 	console.log(ary);
@@ -599,8 +600,7 @@ async function generateUnits(array, unitQuantity) {
 		appendSongUnit(ary[index], index + 1);
 	}
 	let i = indexSlicer[1];
-	for (i;
-		(parseFloat(ary[i].constant) >= rangeLowerBound && (i < ary.length - 1)); i++) {}
+	for (i; (parseFloat(ary[i].constant) >= rangeLowerBound && (i < ary.length - 1)); i++) { }
 
 	appendStatistics(spliterCounter - 1, ary.slice(indexSlicer[1], i), i - indexSlicer[1]);
 	resizeWidth();
@@ -726,16 +726,16 @@ function appendStatistics(spliterCounter, slicedArray, count) {
 	let temp = slicedArray;
 	let sts = getStatistics(temp);
 	// console.log(`cst:${cst},sts:${sts}`)
-	ranks.forEach(function(rank) {
+	ranks.forEach(function (rank) {
 		area.append(
 			$(`<div class="spliter-statistics-unit">`)
-			.append(
-				$(`<img class="spliter-statistics-image" src="img/rank/${rank}.png">`)
-			)
-			.append(
-				$(`<p class=spliter-statistics-number>`).text((sts[rank] ? sts[rank].length : 0) + '/' +
-					count)
-			)
+				.append(
+					$(`<img class="spliter-statistics-image" src="img/rank/${rank}.png">`)
+				)
+				.append(
+					$(`<p class=spliter-statistics-number>`).text((sts[rank] ? sts[rank].length : 0) + '/' +
+						count)
+				)
 		);
 	});
 	spliter.append(area);
@@ -759,7 +759,7 @@ function scoreFormat(score) {
 async function compressImage(dataURL, quality) {
 	return new Promise((resolve, reject) => {
 		const img = new Image();
-		img.onload = function() {
+		img.onload = function () {
 			const canvas = document.createElement('canvas');
 			const ctx = canvas.getContext('2d');
 
@@ -867,10 +867,10 @@ function displayNoRecord() {
  * 
  */
 function reloadContent(array) {
-	array.sort(function(a, b) {
+	array.sort(function (a, b) {
 		return resultSort(a, b, 'playRating', 1);
 	});
-	array.forEach(function(currentRow, index) {
+	array.forEach(function (currentRow, index) {
 		currentRow.innerIndex = index;
 	});
 
@@ -945,7 +945,7 @@ function handleScroll(unitid, index) {
 		changeBound();
 	}
 
-	$('#ai-chan-content').html(`<img id="ai-chan-ill" src="${illustrationPath+baseArray[index].illustration}" />` +
+	$('#ai-chan-content').html(`<img id="ai-chan-ill" src="${illustrationPath + baseArray[index].illustration}" />` +
 		$('#ai-chan-content').text());
 	scrollToElement(unitid);
 }
@@ -978,7 +978,7 @@ async function initializeVHZEK() {
 			songId: 'lasteternity',
 			constant: ['', '', '', '9.7', '']
 		})
-		idx_constant = idx_constant.sort(function(a, b) {
+		idx_constant = idx_constant.sort(function (a, b) {
 			return resultSort(a, b, 'idx', -1);
 		})
 
@@ -1002,82 +1002,31 @@ function generateTable(array) {
 
 // async function readConstantChart() {
 async function getConstantSheet() {
-	let originalConstantChart = [];
-	let tempArray = [];
 	try {
-		const response = await fetch('sample/constantChart.csv');
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		let file = await response.text();
-		let temp = file.trim().replaceAll('\r\n', '\n');
-		let rows = temp.split('\n');
-		for (i = 0; i < rows.length; i++) {
-			const row = rows[i].split(',');
-			for (j = 2; j <= 6; j++) {
-				if (row[j]) {
-					tempArray.push([row[1], difficultyList[j - 2], parseFloat(row[j])])
-				}
-			}
-		}
+		const csvText = await (await fetch('sample/constantChart.csv')).text();
+		const rows = csvText.trim().replaceAll('\r\n', '\n').split('\n');
+		const tempArray = rows.flatMap(row => {
+			const columns = row.split(',');
+			return columns.slice(2, 7).map((value, index) => {
+				if (value) return [columns[1], difficultyList[index], parseFloat(value)];
+			}).filter(Boolean);
+		});
+		const songIdMap = await (await fetch('json/simplified_songlist.json')).json();
+		const idx2songId = Object.fromEntries(
+			Object.entries(songIdMap).map(([index, songId]) => [songId, parseInt(index, 10)])
+		);
+		tempArray.sort((a, b) => idx2songId[a[0]] - idx2songId[b[0]]);
+		tempArray.sort((a, b) => b[2] - a[2]);
+		testDataArray = tempArray;
 
-		try {
-			const response2 = await fetch('json/simplified_songlist.json');
-			if (!response2.ok) {
-				throw new Error(`HTTP error! status: ${response2.status}`);
-			}
-			let indexToSongIdMapper = await response2.json();
-			let idx2songId = {};
-			Object.keys(indexToSongIdMapper).forEach(index => {
-				const songId = indexToSongIdMapper[index];
-				idx2songId[songId] = parseInt(index, 10); // 将字符串索引转换为整数
-			});
-			tempArray.sort((a, b) => {
-				const indexA = idx2songId[a[0]];
-				const indexB = idx2songId[b[0]];
-				if (indexA < indexB) return -1;
-				if (indexA > indexB) return 1;
-				return 0;
-			});
-			tempArray.sort((a, b) => {
-				const constantA = a[2];
-				const constantB = b[2];
-				if (constantA < constantB) return 1;
-				if (constantA > constantB) return -1;
-				return 0;
-			})
-			testDataArray = tempArray;
-
-
-			constant = [];
-			let index = 99999;
-			tempArray.forEach(function(row) {
-				let single = new PlayResult('', row[0], row[1], -1,
-					0, 0, 0, 0, row[2],
-					0, index--);
-				constant.push(single);
-			})
-
-			//按照定数递减-songId递减-
-			//difficulty按Present-Past-Future-Eternal-Beyond
-			constant.sort(function(a, b) {
-				return stringSort(a, b, -1);
-			});
-			constant.sort(function(a, b) {
-				return resultSort(a, b, 'constant', 1);
-			});
-			constConstant = constant;
-			//初始化数据列表
-			initializeDataArray();
-
-
-
-		} catch (error) {
-			console.error('There was a problem loading the Json file:', error);
-		}
-
+		const constant = tempArray.map(([songId, difficulty, constantValue], index) =>
+			new PlayResult('', songId, difficulty, -1, 0, 0, 0, 0, constantValue, 0, 99999 - index)
+		);
+		constant.sort(stringSort).sort((a, b) => resultSort(a, b, 'constant'));
+		constConstant = constant;
+		initializeDataArray();
 
 	} catch (error) {
-		console.error('There was a problem loading the CSV file:', error);
+		console.error('Error fetching files:', error);
 	}
 }
