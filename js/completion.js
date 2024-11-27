@@ -1010,8 +1010,8 @@ async function getConstantSheet() {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 		let file = await response.text();
-		let temp = file.trim();
-		let rows = temp.split('\r\n');
+		let temp = file.trim().replaceAll('\r\n', '\n');
+		let rows = temp.split('\n');
 		for (i = 0; i < rows.length; i++) {
 			const row = rows[i].split(',');
 			for (j = 2; j <= 6; j++) {
