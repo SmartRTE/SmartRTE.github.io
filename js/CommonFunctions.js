@@ -3,6 +3,7 @@ let diffSongNamePath = 'json/Different_SongName.json';
 let aiChanPath = 'json/AiChan.json'
 // let difficultyPair = {'Past': 'PST', 'Present': 'PRS', 'Future': 'FTR', 'Beyond': 'BYD', 'Eternal': 'ETR'};
 let aiChanList = [];
+let difList = ['Past', 'Present', 'Future', 'Beyond', 'Eternal'];
 
 /**
  * 每条成绩存为一个对象，所有对象存在 currentArray 数组中
@@ -298,7 +299,7 @@ function readVHZek(file) {
 		var sheetName = workbook.SheetNames[0]; // 获取第一个工作表的名称
 		var sheet = workbook.Sheets[sheetName];
 
-		var columns = ['A', 'B', 'G', 'H'];
+		var columns = ['A', 'B', 'F', 'G', 'H'];
 		let rows = [];
 
 		columns.forEach(column => {
@@ -312,6 +313,7 @@ function readVHZek(file) {
 		});
 		rows['A'].shift();//idx
 		rows['B'].shift();//songName
+		rows['F'].shift();//difficulty
 		rows['G'].shift();//constant
 		rows['H'].shift();//score
 		console.log(rows);
@@ -319,13 +321,15 @@ function readVHZek(file) {
 		let innerIndex = 0;
 		for (i = 0; i < rows['A'].length; i++) {
 			if(rows['H'][i] != ''){
-				console.log(rows['A'][i],rows['B'][i],rows['G'][i],rows['H'][i])
+				// console.log(rows['A'][i],rows['B'][i],rows['G'][i],rows['H'][i])
 				let pr = new PlayResult(
 					rows['B'][i], 
 					idx_constant[rows['A'][i]].songId, 
-					findDifficulty(rows['A'][i],rows['G'][i], idx_constant), 
+					// findDifficulty(rows['A'][i],rows['G'][i], idx_constant), 
+					difList[rows['F'][i]],
 					rows['H'][i], 0, 0, 0, 0, parseFloat(rows['G'][i]), 0, i);
-				tarray.push(pr)
+				tarray.push(pr);
+				// console.log(pr)
 			}
 		}
 		console.log(tarray)

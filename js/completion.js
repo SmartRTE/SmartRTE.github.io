@@ -977,13 +977,19 @@ async function initializeVHZEK() {
 			idx: 283,
 			songId: 'lasteternity',
 			constant: ['', '', '', '9.7', '']
+		});
+		idx_constant.push({
+			idx: 421,
+			songId: 'dualdoom',
+			constant: ['3.5', '6.5', '8.9', '', '10.3']
 		})
-		idx_constant = idx_constant.sort(function (a, b) {
+		idx_constant = idx_constant.sort(function(a, b) {
 			return resultSort(a, b, 'idx', -1);
 		})
-
-		// idx_constant.shift();
-		// console.log(idx_constant)
+		
+		idx_constant.shift();
+		console.log('idx_constant:')
+		console.log(idx_constant)
 		// return idx_constant;
 	} catch (error) {
 		console.error('There was a problem loading the CSV file:', error);

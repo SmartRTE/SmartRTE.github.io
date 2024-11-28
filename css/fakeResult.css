@@ -30,6 +30,11 @@
 }
 
 @font-face {
+	font-family: "ExoLight";
+	src: url('../Fonts/Exo-Light.ttf');
+}
+
+@font-face {
 	font-family: "ExoBold";
 	src: url('../Fonts/Exo-SemiBold.ttf');
 }
@@ -43,6 +48,7 @@
 	font-family: "L2";
 	src: url('../Fonts/L2-SemiBold.ttf');
 }
+
 
 @font-face {
 	font-family: "L2Regular";
@@ -354,7 +360,7 @@ body {
 	font-weight: bolder;
 	opacity: 90%;
 	text-shadow: 3px 3px 1px rgb(140, 10, 10), 0 0 2px rgb(100, 10, 10);
-	letter-spacing: 3px;
+	letter-spacing: 0px;
 }
 
 #main-background {
@@ -416,15 +422,16 @@ body {
 }
 
 #fragment-value {
-	position: absolute;
-	left: 130px;
-	color: white;
-	text-align: center;
-	margin: 0 auto;
-	width: 250px;
-	font-family: "ExoBold";
-	font-weight: bolder;
-	top: 5px;
+    position: absolute;
+    left: 130px;
+    color: white;
+    text-align: center;
+    margin: 0 auto;
+    width: 250px;
+    font-family: "Exo";
+    /* font-weight: bolder; */
+    top: 5px;
+    text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white;
 }
 
 #memory {
@@ -455,9 +462,10 @@ body {
 	text-align: center;
 	margin: 0 auto;
 	width: 250px;
-	font-family: "ExoBold";
+	font-family: "Exo";
 	font-weight: bolder;
 	top: 5px;
+	text-shadow: 0 0 3px white, 0 0 3px white, 0 0 3px white;
 }
 
 #fragment-overflow {
@@ -544,7 +552,7 @@ body {
 	/* display: none; */
 	color: white;
 	z-index: 2;
-	text-shadow: 0 0 3.5px #5a437c, 0 3.5px 2px #5a437c, 2px 2px 2px #5a437c, 3.5px 0 2px #5a437c, 2px -2px 2px #5a437c, 0 -3.5px 2px #5a437c, -2px -2px 2px #5a437c, -3.5px 0 2px #5a437c, -2px 2px 2px #5a437c, 3px 3px #5a437c, -3px 3px #5a437c, 3px -3px #5a437c, -3px -3px #5a437c;
+	/* text-shadow: 0 0 3.5px #5a437c, 0 3.5px 2px #5a437c, 2px 2px 2px #5a437c, 3.5px 0 2px #5a437c, 2px -2px 2px #5a437c, 0 -3.5px 2px #5a437c, -2px -2px 2px #5a437c, -3.5px 0 2px #5a437c, -2px 2px 2px #5a437c, 3px 3px #5a437c, -3px 3px #5a437c, 3px -3px #5a437c, -3px -3px #5a437c; */
 	width: 88px;
 	text-align: center;
 }
@@ -578,7 +586,6 @@ body {
 	font-family: "NotoSansRegular";
 	letter-spacing: 0.5px;
 	font-weight: bold;
-	color: #463858;
 	text-shadow: 0 0 2px white,
 		0 2.5px 1px white,
 		2px 2px 1px white,
@@ -1082,6 +1089,12 @@ body {
 	height: 5rem;
 	max-width: 20rem;
 	font-size: 3rem;
+}
+
+.setting-row select{
+	font-size: 3rem;
+	max-width: 20rem;
+	height: 5rem;
 }
 
 #quick-select{

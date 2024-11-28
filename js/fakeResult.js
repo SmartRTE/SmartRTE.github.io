@@ -1,12 +1,29 @@
 let songlist = null;
 let quickSelectionGenerationFlag = false;
+let difficultyTextColor = ['#004d95', '#005215', '#62184b', '#8a0000', '#463858'];
+let difficultyTextShadowPattern = '0 0 3.5px COLOR, 0 3.5px 2px COLOR, 2px 2px 2px COLOR, 3.5px 0 2px COLOR, 2px -2px 2px COLOR, 0 -3.5px 2px COLOR, -2px -2px 2px COLOR, -3.5px 0 2px COLOR, -2px 2px 2px COLOR, 3px 3px COLOR, -3px 3px COLOR, 3px -3px COLOR, -3px -3px COLOR'
+let difficultyShadowColor = ['#004d95', '#096700', '#3e003e', '#600000', '#5a437c'];
+let diffSongIllusMapper = null;
 $(document).ready(function() {
 	console.log("ready");
 	// console.log(getAllValues());
 	showSettingValues(readLocalStorage() ? readLocalStorage() : getAllValues());
 	// console.log(readLocalStorage())
+	$('#input-difficulty').val(4);
 	applySettings(readLocalStorage() ? readLocalStorage() : getSettingValues());
 	readSongList();
+	getImageMapping().then(data=>{
+		console.log(data);
+		diffSongIllusMapper = data;
+	});
+	// console.log(diffSongIllusMapper);
+
+	let ls = JSON.parse(localStorage.fakeResult)
+	console.log(ls)
+	$('#character').css('top', ls.characterPosition[0] + 'px');
+	$('#character').css('left', ls.characterPosition[1] + 'px');
+	$('#current-selected-song img').attr('src', `Processed_Illustration/${ls.illustration}.jpg`);
+	$('#current-selected-song span').text(ls.songname);
 	$('#track-lost').change(function() {
 		if ($(this).is(":checked")) {
 			$('#clear-type').attr('src', 'img/clearType/clear_' + 'fail' + '.png');
@@ -24,6 +41,10 @@ $(document).ready(function() {
 			adjustPotentialPosition(false);
 		}
 	});
+	$('#input-difficulty').change(function(){
+		// console.log('change')
+		applyQuickSelection(songlist, $('#current-selected-id').text());
+	})
 })
 
 function getSettingValues() {
@@ -90,6 +111,11 @@ function getSettingValues() {
 	settingValues['isRanked'] = $('#hash').is(":checked") ? 1 : 0;
 	settingValues['rank'] = $('#world-rank').val();
 	settingValues['isTrackLost'] = $('#track-lost').is(':checked') ? 1 : 0;
+	if(localStorage.fakeResult!=undefined){
+		settingValues['characterPosition'] = readLocalStorage().characterPosition;
+	} else {
+		settingValues['characterPosition'] = [30, 1330]
+	}
 	return settingValues;
 }
 
@@ -156,6 +182,11 @@ function getAllValues() {
 	let ct = $('#clear-type').attr('src');
 	currentValues['clearType'] = ct.substring(ct.lastIndexOf('/') + 1, ct.indexOf('.png'));
 	// console.log(currentValues)
+	if(localStorage.fakeResult!=undefined){
+		currentValues['characterPosition'] = readLocalStorage().characterPosition;
+	} else {
+		currentValues['characterPosition'] = [30, 1330]
+	}
 	return currentValues;
 }
 
@@ -223,8 +254,16 @@ function applySettings(values) {
 	$('#memory-value').text(values['memory']);
 	$('#song-name').text(values['songname']);
 	$('#artist').text(values['artist']);
-	$('#difficulty').text(values['difficulty']);
-	$('#maxrecall-background').attr('src', 'img/layout/max-recall-' + values['difficulty'].toLowerCase() + '.png')
+	// $('#difficulty').text(values['difficulty']);
+	
+	let difficultyText = $('#input-difficulty option').filter(function() {
+		return $(this).val() == values['difficulty'];
+	  }).text();
+	  // console.log(values['difficulty'], difficultyText, difficultyTextColor[values['difficulty']])
+	$('#difficulty').text(difficultyText).css('color', difficultyTextColor[values['difficulty']]);
+	$('#constant').css('text-shadow', difficultyTextShadowPattern.replaceAll('COLOR', difficultyShadowColor[values['difficulty']]));
+	$('#plus-mark').css('text-shadow', difficultyTextShadowPattern.replaceAll('COLOR', difficultyShadowColor[values['difficulty']]));
+	$('#maxrecall-background').attr('src', 'img/layout/max-recall-' + difficultyText.toLowerCase() + '.png');
 	$('#constant').text(parseInt(values['constant']));
 	$('#plus-mark').css('display', (values['constant'] % 1).toFixed(1) >= 0.7 ? 'block' : 'none');
 	$('#maxrecall').text(values['maxrecall']);
@@ -232,6 +271,11 @@ function applySettings(values) {
 	$('#score-personal-best').text(formatScore(values['bestScore']));
 	$('#score-differnce').text((((values['currentScore'] - values['bestScore']) >= 0 ? '+' : '-') + formatScore(Math
 		.abs(values['currentScore'] - values['bestScore']))));
+	if(values['currentScore'] - values['bestScore'] > 0){
+		$('#score-panel-background').attr('src', 'img/layout/res_scoresection_high.png');
+	} else if(values['currentScore'] - values['bestScore'] <= 0){
+		$('#score-panel-background').attr('src', 'img/layout/res_scoresection.png');
+	}
 	$('#grade').attr('src', "img/grade/" + (getGrade(values) == 'PM' ? 'EX+' : getGrade(values)) + ".png");
 	$('#pure-count').text(values['pure']);
 	$('#far-count').text(values['far']);
@@ -259,7 +303,11 @@ function applySettings(values) {
 	changePotentialFrame(parseFloat(values['potential']));
 	adjustFragment(parseInt(values['fragment']));
 	// adjustPotentialPosition();
-	
+	if(localStorage.fakeResult!=undefined){
+		values['characterPosition'] = readLocalStorage().characterPosition;
+	} else {
+		values['characterPosition'] = [30, 1330]
+	}
 	saveLocalStorage(values);
 }
 
@@ -361,6 +409,12 @@ function adjustCharacterPosition(d) {
 	} else if (d == 3) {
 		$('#character').css("top", top + 10 + "px");
 	}
+	if(!localStorage.fakeResult){
+		localStorage.setItem(fakeResult)
+	}
+	let ls = JSON.parse(localStorage.fakeResult);
+	ls.characterPosition = [parseInt($('#character').css("top")), parseInt($('#character').css("left"))]
+	saveLocalStorage(ls);
 }
 
 
@@ -473,7 +527,7 @@ async function readSongList(){
 	try{
 		const sl = await fetch('json/songlist');
 		let slst = await sl.json();
-		console.log(slst)
+		console.log(slst);
 		songlist = slst.songs.sort(function(a,b){
 			return resultSort(a, b, 'idx', -1)
 		});
@@ -497,7 +551,7 @@ async function generateSongListSelection(songlist){
 	let sls = $('#quick-select-options');
 	songlist.forEach(function(song, index){
 		if(index != 127){
-			console.log(song);
+			// console.log(song);
 			let opt = $(`<li id="${song.id}" onclick="applyQuickSelection(songlist, ${index})">`).append($('<img>').attr('src', `Illustration/${song.id}.jpg`)).append($('<span>').text(Object.values(song.title_localized)[0]));
 			sls.append(opt);
 		}
@@ -509,37 +563,44 @@ function applyQuickSelection(songlist, idx){
 	let song = songlist[idx];
 	$('#input-songname').val(songlist[idx].title_localized['en']);
 	$('#input-artist').val(songlist[idx].artist);
-	let difficulty = 2;
-	switch($('#input-difficulty').val().toLowerCase()){
-		case 'past': {
-			difficulty = 0;
-			break;
-		} case 'present': {
-			difficulty = 1;
-			break;
-		} case 'future': {
-			difficulty = 2;
-			break;
-		} case 'beyond': {
-			difficulty = 3;
-			break;
-		} case 'eternal': {
-			difficulty = 4;
-			break;
-		} default: {
-			difficulty = 2;
-			break;
-		}
-		
-	}
+	let difficulty = $('#input-difficulty').val();
+	let difficultyText = $('#input-difficulty option').filter(function() {
+		return $(this).val() == difficulty;
+	  }).text();
+	// difficultyText.toString();
 	let constant = 9.9;
 	song['difficulties'].forEach(function(dif){
 		if(dif.ratingClass == difficulty){
-			constant = dif.ratingPlus ? dif.rating + dif.ratingPlus : dif.rating;
+			constant = dif.ratingPlus ? `${dif.rating + 0.7}` : dif.rating;
+			if(dif.title_localized){
+				$('#input-songname').val(dif.title_localized['en']);
+			}
 		}
 	});
+	// console.log(difficulty, difficultyText)
 	$('#input-constant').val(constant);
-	$('#input-illustration').val(song.id);
+	// let illustrationId = diffSongIllusMapper[song.id][difficultyText] != undefined ? song.id + diffSongIllusMapper[song.id][difficultyText] : song.id;
+	let illustrationId = song.id;
+	if (diffSongIllusMapper[song.id] && [song.id][difficultyText]){
+		illustrationId = illustrationId + diffSongIllusMapper[song.id][difficultyText];
+	}
+	$('#input-illustration').val(illustrationId);
 	applySettings(getSettingValues());
 	$('#quick-select button').click();
+	$('#current-selected-song img').attr('src', `Processed_Illustration/${illustrationId}.jpg`);
+	$('#current-selected-song span').text(song.title_localized['en']);
+	$('#current-selected-id').text(idx);
+}
+
+
+async function getImageMapping() {
+	try {
+		if (!diffSongIllusMapper) {
+			const response = await fetch('json/Different_Illustration.json');
+			diffSongIllusMapper = await response.json();
+		}
+		return diffSongIllusMapper;
+	} catch (error) {
+		console.error('Error loading image mapping:', error);
+	}
 }

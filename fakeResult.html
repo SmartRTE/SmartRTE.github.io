@@ -169,7 +169,7 @@
 					
 					<div class="setting-row">
 						<label for="input-fragment">残片数</label>
-						<input id="input-fragment"/>
+						<input id="input-fragment" placeholder="29999" value="29999"/>
 					</div>
 					<div class="setting-row">
 						<label for="input-memory">源点数</label>
@@ -195,7 +195,14 @@
 					
 					<div class="setting-row">
 						<label for="input-difficulty">难度</label>
-						<input id="input-difficulty"/>
+						<!-- <input id="input-difficulty"/> -->
+						<select id="input-difficulty">Eternal
+							<option value="4" selected>Eternal</option>
+							<option value="3">Beyond</option>
+							<option value="2">Future</option>
+							<option value="1">Present</option>
+							<option value="0">Past</option>
+						</select>
 					</div>
 					<div class="setting-row">
 						<label for="input-constant">定数</label>
@@ -296,35 +303,13 @@
 					<div class="setting-margin"></div>
 					<div class="setting-row" id="quick-select">
 						<label>快速选曲</label>
-						<button onclick="generateSongListSelection(songlist)">
-							<img src="processed_Illustration/ii.jpg">
-							<span>Sayonara Hatsukoi</span>
+						<label id="current-selected-id" hidden>410</label>
+						<button onclick="generateSongListSelection(songlist)" id="current-selected-song">
+							<img src="processed_Illustration/invertedworld.jpg">
+							<span>Inverted World</span>
 						</button>
 						<ul id="quick-select-options" style="display: none;">
-							<li>
-								<img src="processed_Illustration/ii.jpg">
-								<span>Sayonara Hatsukoi</span>
-							</li>
-							<li>
-								<img src="processed_Illustration/ii.jpg">
-								<span>Sayonara Hatsukoi</span>
-							</li>
-							<li>
-								<img src="processed_Illustration/ii.jpg">
-								<span>Sayonara Hatsukoi</span>
-							</li>
-							<li>
-								<img src="processed_Illustration/ii.jpg">
-								<span>Sayonara Hatsukoi</span>
-							</li>
-							<li>
-								<img src="processed_Illustration/ii.jpg">
-								<span>Sayonara Hatsukoi</span>
-							</li>
-							<li>
-								<img src="processed_Illustration/ii.jpg">
-								<span>Sayonara Hatsukoi</span>
-							</li>
+							
 						</ul>
 					</div>
 				</div>
