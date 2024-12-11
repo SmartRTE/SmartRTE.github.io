@@ -958,7 +958,7 @@ async function initializeVHZEK() {
 		}
 		let file = await response.text();
 		let temp = file.trim();
-		let rows = temp.split('\r\n');
+		let rows = temp.replaceAll('\r\n', "\n").split("\n");
 		// console.log(rows)
 		let single;
 		tempArray = [];

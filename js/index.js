@@ -254,9 +254,9 @@ function initializeUploadListener() {
 				i = findInArray(currentArray, idx_constant[cell].songId, d);
 				// i = (i == -1 ? null : i)
 				// console.log(index, cell, d, i)
-				finalOutputScore.push(i == -1 ? '' : currentArray[i].score);
+				finalOutputScore.push(i == -1 ? null : currentArray[i].score);
 			})
-			// console.log(finalOutputScore)
+			// console.log(finalOutputScore);
 
 			// 填充score
 			var rowIndex = 2;
@@ -679,25 +679,6 @@ function generateOptionList(str, difficulty) {
 	return searchResult;
 }
 
-// function debounce(func, wait) {
-// 	let timeoutId; // 用于存储setTimeout的返回值
-
-// 	return function(...args) {
-// 		clearTimeout(timeoutId); // 清除上一次延时任务
-// 		timeoutId = setTimeout(() => { // 设置新的延时任务
-// 			func.apply(this, args); // 在延时结束后执行原函数，并传递参数
-// 		}, wait);
-// 	};
-// }
-
-// function runFilter() {
-// 	console.log(rangeUpperBound + "-" + rangeLowerBound);
-// 	console.log($('#sort-mode').val() + "-" + $('#sort-order').val());
-// 	console.log($('#search-result').val());
-// }
-
-// const debouncedFilter = debounce(runFilter, 300);
-
 function showStatistics(array = currentArray) {
 	sts = getStatistics();
 	let list = ['PM', 'FR', 'EX+', 'EX', 'AA', 'A', 'B', 'C', 'D'];
@@ -753,7 +734,7 @@ async function initializeVHZEK() {
 		}
 		let file = await response.text();
 		let temp = file.trim();
-		let rows = temp.split('\r\n');
+		let rows = temp.replaceAll('\r\n', "\n").split("\n");
 		// console.log(rows)
 		let single;
 		tempArray = [];

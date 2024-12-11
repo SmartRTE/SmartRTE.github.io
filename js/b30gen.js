@@ -178,91 +178,59 @@ function initializeSettingListener() {
 
 }
 
-
-
 /**
  * 页面加载时将缓存数据内的设置部分替换到页面内
  */
 function initializeSettings() {
-	// let r10,b30,max;
-	if (localStorage.saved_username) {
-		localStorage.userName = localStorage.saved_username;
-		localStorage.removeItem('saved_username');
-	}
-	if (!localStorage.userName) {
-		localStorage.userName = 'Hikari';
-	}
-	if (localStorage.saved_user_id) {
-		localStorage.userId = localStorage.saved_uid;
-		localStorage.removeItem('saved_uid');
-	}
-	if (!localStorage.userId) {
-		localStorage.userId = '100000001';
-	}
-	if (localStorage.saved_bg) {
-		localStorage.backgroundImage = localStorage.saved_bg;
-		localStorage.removeItem('saved_bg');
-	}
-	if (!localStorage.backgroundImage) {
-		localStorage.backgroundImage = '8';
-	}
-	if (!localStorage.courseDanFrame) {
-		localStorage.courseDanFrame = "1";
-	}
-	if (localStorage.saved_ptt) {
-		localStorage.potential = localStorage.saved_ptt;
-		localStorage.removeItem('saved_ptt');
-	}
-	if (!localStorage.potential) {
-		localStorage.potential = 6.16;
-	}
-	if (!localStorage.rbm) {
-		localStorage.rbm = [6.16, 6.16, 6.16];
-	}
-	if (!localStorage.potentialFrame) {
-		localStorage.potentialFrame = 1;
-	}
-	if (localStorage.saved_icon) {
-		localStorage.avatar = localStorage.saved_icon;
-		localStorage.removeItem('saved_icon');
-	}
-	if (!localStorage.avatar) {
-		localStorage.avatar = '34u';
-	}
-	if (localStorage.customAvatar) {
-		$('#custom-avatar img').attr('src', localStorage.customAvatar);
-	}
+    // 设置默认值
+    const defaultValues = {
+        userName: 'Hikari',
+        userId: '100000001',
+        backgroundImage: '8',
+        courseDanFrame: "1",
+        potential: 6.16,
+        rbm: [6.16, 6.16, 6.16],
+        potentialFrame: 1,
+        avatar: '34u'
+    };
 
-	if (localStorage.customBackground) {
-		$('#custom-background img').attr('src', localStorage.customBackground);
-	}
+    // 从localStorage获取设置并设置默认值
+    for (const key in defaultValues) {
+        if (localStorage[`saved_${key}`]) {
+            localStorage[key] = localStorage[`saved_${key}`];
+            localStorage.removeItem(`saved_${key}`);
+        }
+        if (!localStorage[key]) {
+            localStorage[key] = defaultValues[key];
+        }
+    }
 
-	$('#user-name-input').val(localStorage.userName);
-	$('#user-name').text(localStorage.userName);
-	$('#user-id-input').val(localStorage.userId);
-	$('#user-id span').text(formatUserID(localStorage.userId));
-	let t = localStorage.rbm.split(',');
-	rbm = t;
-	$('#ptt-max span').text(toFloor(parseFloat(t[2]), 4));
-	$('#ptt-b30 span').text(toFloor(parseFloat(t[1]), 4));
-	$('#ptt-r10 span').text(toFloor(parseFloat(t[0]), 4));
-	$('#potential-input').val(localStorage.potential);
-	$('#potential-value').text(toFloor(parseFloat(localStorage.potential), 2));
-	changePotential(localStorage.potential);
-	changePotentialFrame(localStorage.potentialFrame);
-	changeAvatar(localStorage.avatar);
-	changeCourseDanFrame(localStorage.courseDanFrame);
-	changeBackgroundImage(localStorage.backgroundImage);
+    // 更新UI
+    $('#user-name-input').val(localStorage.userName);
+    $('#user-name').text(localStorage.userName);
+    $('#user-id-input').val(localStorage.userId);
+    $('#user-id span').text(formatUserID(localStorage.userId));
+    rbm = localStorage.rbm.split(',');
+    $('#ptt-max span').text(toFloor(parseFloat(rbm[2]), 4));
+    $('#ptt-b30 span').text(toFloor(parseFloat(rbm[1]), 4));
+    $('#ptt-r10 span').text(toFloor(parseFloat(rbm[0]), 4));
+    $('#potential-input').val(localStorage.potential);
+    $('#potential-value').text(toFloor(parseFloat(localStorage.potential), 2));
+    changePotential(localStorage.potential);
+    changePotentialFrame(localStorage.potentialFrame);
+    changeAvatar(localStorage.avatar);
+    changeCourseDanFrame(localStorage.courseDanFrame);
+    changeBackgroundImage(localStorage.backgroundImage);
 
-	if (localStorage.useCustomAvatar == 'true') {
-		$('#use-custom-avatar').prop("checked", true);
-		$('#icon img').attr('src', localStorage.customAvatar);
-	}
-
-	if (localStorage.useCustomBackground == 'true') {
-		$('#use-custom-background').prop("checked", true);
-		$('#background').css('background-image', `url(${localStorage.customBackground})`);;
-	}
+    // 处理自定义头像和背景
+    if (localStorage.useCustomAvatar === 'true') {
+        $('#use-custom-avatar').prop("checked", true);
+        $('#icon img').attr('src', localStorage.customAvatar || '');
+    }
+    if (localStorage.useCustomBackground === 'true') {
+        $('#use-custom-background').prop("checked", true);
+        $('#background').css('background-image', `url(${localStorage.customBackground || ''})`);
+    }
 }
 
 
@@ -297,7 +265,7 @@ function initializeUploadListener() {
 				reader.readAsText(selectedFile);
 			} else if(fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
 				console.log("VHZek");
-				readVHZek(selectedFile);
+				readVHZek(selectedFile, idx_constant);
 			} else {
 				runQuery(selectedFile);
 				console.log("Not a .csv file");
@@ -833,7 +801,8 @@ async function initializeVHZEK() {
 		}
 		let file = await response.text();
 		let temp = file.trim();
-		let rows = temp.split('\r\n');
+		console.log(temp)
+		let rows = temp.replaceAll('\r\n', "\n").split("\n");
 		// console.log(rows)
 		let single;
 		tempArray = [];
@@ -847,6 +816,7 @@ async function initializeVHZEK() {
 			}
 			tempArray.push(single);
 		}
+		// console.log(tempArray)
 		idx_constant = tempArray;
 		idx_constant.push({
 			idx: 283,

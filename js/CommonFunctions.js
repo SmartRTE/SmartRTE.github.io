@@ -288,7 +288,7 @@ function readLocalStorage() {
 /**
  * 读取VHZek制作的万能查分表xls / xlsx文件
  */
-function readVHZek(file) {
+function readVHZek(file, idx_constant) {
 	var reader = new FileReader();
 	let tarray = [];
 	reader.onload = function(e) {
@@ -298,33 +298,57 @@ function readVHZek(file) {
 		});
 		var sheetName = workbook.SheetNames[0]; // 获取第一个工作表的名称
 		var sheet = workbook.Sheets[sheetName];
+		let sheetMaxLength = 0;
+		Object.keys(sheet).forEach(function(cell) {
+			if (cell.startsWith("A") && parseInt(cell.substring(1)) > sheetMaxLength)
+				sheetMaxLength = parseInt(cell.substring(1));
+		})
 
 		var columns = ['A', 'B', 'F', 'G', 'H'];
 		let rows = [];
 
+		// columns.forEach(column => {
+		// 	var colArray = [];
+		// 	var col = column + '2';
+		// 	while (sheet[col]) {
+		// 		colArray.push(sheet[col].v);
+		// 		col = column + (colArray.length + 1).toString();
+		// 	}
+		// 	rows[column] = colArray;
+		// });
+
 		columns.forEach(column => {
 			var colArray = [];
 			var col = column + '2';
-			while (sheet[col]) {
-				colArray.push(sheet[col].v);
-				col = column + (colArray.length + 1).toString();
+			let index = 2;
+			while (index < sheetMaxLength) {
+				index++;
+				// console.log(sheet[col]);
+				if (sheet[col] == undefined || sheet[col] == null) {
+					colArray.push("");
+				} else {
+					colArray.push(sheet[col].v);
+				}
+				
+				col = column + (index).toString();
 			}
 			rows[column] = colArray;
 		});
-		rows['A'].shift();//idx
-		rows['B'].shift();//songName
-		rows['F'].shift();//difficulty
-		rows['G'].shift();//constant
-		rows['H'].shift();//score
-		console.log(rows);
-		
+		rows['A'].shift(); //idx
+		rows['B'].shift(); //songName
+		rows['F'].shift(); //difficulty
+		rows['G'].shift(); //constant
+		rows['H'].shift(); //score
+		// console.log(rows);
+
 		let innerIndex = 0;
 		for (i = 0; i < rows['A'].length; i++) {
-			if(rows['H'][i] != ''){
+			if (rows['H'][i] != '') {
 				// console.log(rows['A'][i],rows['B'][i],rows['G'][i],rows['H'][i])
+				console.log(i, idx_constant[rows['A'][i]])
 				let pr = new PlayResult(
-					rows['B'][i], 
-					idx_constant[rows['A'][i]].songId, 
+					rows['B'][i],
+					idx_constant[rows['A'][i]].songId,
 					// findDifficulty(rows['A'][i],rows['G'][i], idx_constant), 
 					difList[rows['F'][i]],
 					rows['H'][i], 0, 0, 0, 0, parseFloat(rows['G'][i]), 0, i);
@@ -336,15 +360,15 @@ function readVHZek(file) {
 		reloadContent(tarray)
 		filteredArray = tarray;
 		currentArray = filteredArray;
-		
+
 		saveLocalStorage(currentArray);
 		// displayB30(currentArray);
 		generateCard(currentArray);
 		generateTable(currentArray);
-		
+
 	}
 	reader.readAsBinaryString(file);
-	
+
 }
 
 
@@ -767,7 +791,7 @@ function findInArray(array, songId, difficulty) {
 }
 
 function findDifficulty(idx, constant, idx_constant) {
-	console.log(idx, constant, idx_constant)
+	// console.log(idx, constant, idx_constant)
 	let i = idx_constant[idx].constant.indexOf(String(constant));
 	if (i == '') {
 		return '';
