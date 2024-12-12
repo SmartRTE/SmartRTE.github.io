@@ -288,7 +288,7 @@ function readLocalStorage() {
 /**
  * 读取VHZek制作的万能查分表xls / xlsx文件
  */
-function readVHZek(file, idx_constant) {
+function readVHZek(file) {
 	var reader = new FileReader();
 	let tarray = [];
 	reader.onload = function(e) {
@@ -320,8 +320,8 @@ function readVHZek(file, idx_constant) {
 		columns.forEach(column => {
 			var colArray = [];
 			var col = column + '2';
-			let index = 2;
-			while (index < sheetMaxLength) {
+			let index = 1;
+			while (index <= sheetMaxLength) {
 				index++;
 				// console.log(sheet[col]);
 				if (sheet[col] == undefined || sheet[col] == null) {
@@ -339,13 +339,13 @@ function readVHZek(file, idx_constant) {
 		rows['F'].shift(); //difficulty
 		rows['G'].shift(); //constant
 		rows['H'].shift(); //score
-		// console.log(rows);
+		console.log(rows);
 
 		let innerIndex = 0;
-		for (i = 0; i < rows['A'].length; i++) {
+		for (i = 0; i < sheetMaxLength - 1; i++) {
+			console.log(idx_constant[rows['A'][i]]);
+			// console.log(rows['A'][i],rows['B'][i],rows['F'][i],rows['G'][i],rows['H'][i])
 			if (rows['H'][i] != '') {
-				// console.log(rows['A'][i],rows['B'][i],rows['G'][i],rows['H'][i])
-				console.log(i, idx_constant[rows['A'][i]])
 				let pr = new PlayResult(
 					rows['B'][i],
 					idx_constant[rows['A'][i]].songId,

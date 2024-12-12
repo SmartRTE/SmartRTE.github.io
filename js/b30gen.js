@@ -265,7 +265,7 @@ function initializeUploadListener() {
 				reader.readAsText(selectedFile);
 			} else if(fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
 				console.log("VHZek");
-				readVHZek(selectedFile, idx_constant);
+				readVHZek(selectedFile);
 			} else {
 				runQuery(selectedFile);
 				console.log("Not a .csv file");
