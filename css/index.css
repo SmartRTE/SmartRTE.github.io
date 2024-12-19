@@ -7,14 +7,26 @@
 @font-face {
 	font-family: "Exo";
 	src: url("../Fonts/Exo-SemiBold.ttf");
+	unicode-range: U+0020-007E;
 }
 
-@keyframes shake{
-	from{
+@font-face {
+	font-family: "L2";
+	src: url('../Fonts/L2-SemiBold.ttf');
+}
+
+@font-face {
+	font-family: "GeosansLightModified";
+	src: url('../Fonts/GeosansLight-Modified.otf');
+	unicode-range: U+0020-007E;
+}
+
+@keyframes shake {
+	from {
 		rotate: -15deg;
 	}
-	
-	to{
+
+	to {
 		rotate: 0;
 	}
 }
@@ -121,7 +133,9 @@ body {
 	font-family: "Exo";
 }
 
-
+.hidden {
+	display: none !important;
+}
 
 li {
 	list-style: none;
@@ -245,22 +259,22 @@ li {
 }
 
 #sticker {
-    position: relative;
-    margin: 0 auto;
-    height: 20vw;
-    max-height: 150px;
-    width: 20vw;
-    max-width: 150px;
-    transition-duration: 0.1s;
-    scale: 1.01;
+	position: relative;
+	margin: 0 auto;
+	height: 20vw;
+	max-height: 150px;
+	width: 20vw;
+	max-width: 150px;
+	transition-duration: 0.1s;
+	scale: 1.01;
 }
 
-#sticker:hover{
+#sticker:hover {
 	scale: 1.08;
 }
 
 #sticker:active {
-    scale: 0.9;
+	scale: 0.9;
 }
 
 
@@ -357,7 +371,7 @@ li {
 	font-weight: 800;
 	/* overflow: hidden; */
 	overflow: hidden;
-	font-family: "geosans";
+	font-family: "GeoSansModified", "L2", sans-serif;
 	white-space: nowrap;
 	/* text-overflow: ellipsis; */
 }
@@ -527,27 +541,37 @@ li {
 	text-align: center;
 }
 
-#result-table {
+/* #result-table {
 	padding: 0;
 	margin: 0 auto;
-	/* backdrop-filter: blur(10); */
 	position: relative;
 	backdrop-filter: blur(5px);
+} */
+
+#result-table {
+	backdrop-filter: blur(5px);
+	margin-top: 1rem;
 }
 
 #result {
 	border: 0.5px solid #7f006350;
+	background-color: #64646430;
 	border-radius: 10px;
 	width: 96%;
 	text-align: center;
 }
 
-#result tbody td{
+#result tbody td {
 	border: none;
 }
 
 #result thead {
 	background-color: #9eeaf920;
+}
+
+#result thead th {
+	box-shadow: aliceblue 0 0 2px;
+	border-radius: 8px;
 }
 
 #result thead tr td:first-of-type {
@@ -559,12 +583,12 @@ li {
 	border-top-right-radius: 8px;
 }
 
-#result tbody tr td:first-child{
+#result tbody tr td:first-child {
 	border-top-left-radius: 6px;
 	border-bottom-left-radius: 6px;
 }
 
-#result tbody tr td:last-child{
+#result tbody tr td:last-child {
 	border-top-right-radius: 6px;
 	border-bottom-right-radius: 6px;
 }
@@ -657,6 +681,13 @@ li {
 	user-select: none;
 	outline: none;
 }
+
+#save-csv-btn-container button {
+    display: inline-block;
+    left: auto;
+    position: relative;
+}
+
 
 #save-table-csv {
 	float: none;
@@ -1160,11 +1191,6 @@ li {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(7.2rem, 1fr));
 		margin: 0;
-	}
-
-	#result-table {
-		backdrop-filter: blur(5px);
-		margin-top: 1rem;
 	}
 
 	.table-ill {

@@ -25,9 +25,11 @@ class PlayResult {
 	 * @param {Number} playRating	单曲潜力值
 	 * @param {Number} innerIndex	内部排序索引
 	 */
+	loseScore = 0;
 	constructor(songName, songId, difficulty, score,
 		perfect, criticalPerfect, far, lost,
-		constant, playRating, innerIndex) {
+		constant, playRating, innerIndex,
+		loseScore, maxLoseScore, objectAmount) {
 
 		if (diffIllMapping) {
 			const diffSongId = diffIllMapping[songId];
@@ -64,20 +66,39 @@ class PlayResult {
 		this.lost = lost ? lost : 0;
 		this.constant = constant;
 		this.playRating = playRating ? playRating : calculateSingleRating(score, constant, 5);
-		if (perfect == 0 && lost == 0) {
-			this.loseScore = 0;
+		// this.loseScore = loseScore ? loseScore : 0;
+		if (loseScore) {
+			this.loseScore = loseScore;
 		} else {
-			this.loseScore = getLoseScore(constant, score, perfect + far + lost, criticalPerfect);
+			if (perfect == 0 && lost == 0) {
+				this.loseScore = 0;
+			} else {
+				this.loseScore = getLoseScore(constant, score, perfect + far + lost, criticalPerfect);
+			}
 		}
-		if (score >= 10000000) {
-			// console.log(toFloor(this.criticalPerfect / this.perfect));
-			this.percentage = 100 + parseFloat(toFloor(this.criticalPerfect / this.perfect, 2));
+		if (maxLoseScore) {
+			this.percentage = (maxLoseScore - loseScore) / maxLoseScore * 100;
 		} else {
-			this.percentage = 100 * parseFloat(toFloor(this.playRating / (this.constant + 2), 4));
+			this.percentage = (this.constant * 38 - this.loseScore) / (this.constant * 38) * 100;
 		}
 
+		if (objectAmount) {
+			this.objectAmount = objectAmount;
+		} else {
+			this.objectAmount = this.perfect + this.far + this.lost;
+		}
 
-		// console.log(this.loseScore);
+		this.equivalentFar = this.far + this.lost * 2;
+
+
+	};
+
+	setEquivalentFar(eqFar) {
+		this.equivalentFar = eqFar;
+	}
+
+	setAccuracy(acc) {
+		this.criticalPerfect = acc;
 	}
 }
 
@@ -286,7 +307,7 @@ function readLocalStorage() {
 }
 
 /**
- * 读取VHZek制作的万能查分表xls / xlsx文件
+ * 读取VHZek制作的万能查分表xls / xlsx文件并生成成绩对象数组
  */
 function readVHZek(file) {
 	var reader = new FileReader();
@@ -304,18 +325,8 @@ function readVHZek(file) {
 				sheetMaxLength = parseInt(cell.substring(1));
 		})
 
-		var columns = ['A', 'B', 'F', 'G', 'H'];
+		var columns = ['A', 'B', 'F', 'G', 'H', 'J', 'K'];
 		let rows = [];
-
-		// columns.forEach(column => {
-		// 	var colArray = [];
-		// 	var col = column + '2';
-		// 	while (sheet[col]) {
-		// 		colArray.push(sheet[col].v);
-		// 		col = column + (colArray.length + 1).toString();
-		// 	}
-		// 	rows[column] = colArray;
-		// });
 
 		columns.forEach(column => {
 			var colArray = [];
@@ -329,7 +340,7 @@ function readVHZek(file) {
 				} else {
 					colArray.push(sheet[col].v);
 				}
-				
+
 				col = column + (index).toString();
 			}
 			rows[column] = colArray;
@@ -339,36 +350,63 @@ function readVHZek(file) {
 		rows['F'].shift(); //difficulty
 		rows['G'].shift(); //constant
 		rows['H'].shift(); //score
-		console.log(rows);
+		rows['J'].shift(); //objectAmount
+		rows['K'].shift(); //accuracy
+		// console.log(rows);
 
 		let innerIndex = 0;
 		for (i = 0; i < sheetMaxLength - 1; i++) {
-			console.log(idx_constant[rows['A'][i]]);
-			// console.log(rows['A'][i],rows['B'][i],rows['F'][i],rows['G'][i],rows['H'][i])
+			let loseScore = getLoseScoreByObjectAmoutAndAccuracy(parseInt(rows['H'][i]), parseFloat(rows['G'][i]),
+				parseInt(rows['J'][i]), parseInt(rows['K'][i]));
+			// console.log(loseScore);
+			let eqFar, acc;
+			// console.log(eqFar, acc, currentRow.objectAmount);
 			if (rows['H'][i] != '') {
+				[eqFar, acc] = calculateEquivalentFarAndAccuracy(parseInt(rows['H'][i]), parseInt(rows['J'][i]));
 				let pr = new PlayResult(
 					rows['B'][i],
 					idx_constant[rows['A'][i]].songId,
-					// findDifficulty(rows['A'][i],rows['G'][i], idx_constant), 
 					difList[rows['F'][i]],
-					rows['H'][i], 0, 0, 0, 0, parseFloat(rows['G'][i]), 0, i);
+					rows['H'][i] == -1 ? rows['J'][i] + 10000000 : rows['H'][i], 
+					0, 
+					0, 
+					0, 
+					0, 
+					parseFloat(rows['G'][i]), 
+					0, 
+					i, 
+					loseScore, 
+					rows['F'][i] * 38,
+					parseInt(rows['J'][i]));
+				pr.setEquivalentFar(eqFar);
+				pr.setAccuracy(acc);
 				tarray.push(pr);
-				// console.log(pr)
 			}
 		}
-		console.log(tarray)
 		reloadContent(tarray)
 		filteredArray = tarray;
 		currentArray = filteredArray;
 
 		saveLocalStorage(currentArray);
-		// displayB30(currentArray);
 		generateCard(currentArray);
 		generateTable(currentArray);
 
 	}
-	reader.readAsBinaryString(file);
+	reader.readAsArrayBuffer(file);
 
+}
+
+// 由分数、定数、物量、准度(大P数)计算失分数
+
+function getLoseScoreByObjectAmoutAndAccuracy(score, constant, objectAmount, accuracy) {
+	return (score == -1) ? 0 :
+		Math.max(
+			Math.min(28.5 * constant, (10000000 - score) / 10000000 * 100 * 28.5 * constant),
+			0
+		) + Math.max(
+			Math.min(9.5 * constant, (0.995 * objectAmount - accuracy) / objectAmount * 100 * constant),
+			0
+		);
 }
 
 
@@ -654,7 +692,7 @@ async function initializeAvatarList() {
  */
 async function initializeBackgroundList() {
 	let l = [
-		'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', 's1', 's2', 's3', 's4', 's5', 's6',
+		'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', 's1', 's2', 's3', 's4', 's5', 's6',
 		's7', 's8', 's9', 's10', 's11', 's12', 's13', 's14', 's15', 's16', 's17', 's18', 's19', 's20', 's21',
 		's22', 's23', 's24', 's25', 's26'
 	];
@@ -672,7 +710,7 @@ async function initializeBackgroundList() {
  */
 async function initializeUserCourseDanList() {
 	let l = [
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
 	];
 	let list = $('#user-course-dan-list');
 	l.forEach(function(li) {
@@ -796,17 +834,8 @@ function findDifficulty(idx, constant, idx_constant) {
 	if (i == '') {
 		return '';
 	}
-	switch (i) {
-		case 0:
-			return "Past";
-		case 1:
-			return "Present";
-		case 2:
-			return "Future";
-		case 3:
-			return "Beyond";
-		case 4:
-			return "Eternal";
+	if (i <= 4) {
+		return difList[i];
 	}
 	return '';
 }
@@ -816,37 +845,6 @@ function findIndex(songId, songlist) {
 }
 
 async function initializeSonglist() {
-	// try {
-	// 	const response = await fetch('json/title-id-original.json');
-	// 	if (!response.ok) {
-	// 		throw new Error(`HTTP error! status: ${response.status}`);
-	// 	}
-	// 	title_id_mapping = await response.json();
-	// } catch (error) {
-	// 	console.error('There was a problem loading the JSON file:', error);
-	// }
-	// try {
-	// 	const response = await fetch('json/id-title-revised.json');
-	// 	if (!response.ok) {
-	// 		throw new Error(`HTTP error! status: ${response.status}`);
-	// 	}
-	// 	id_title_mapping = await response.json();
-	// } catch (error) {
-	// 	console.error('There was a problem loading the JSON file:', error);
-	// }
-
-
-	// try {
-	// 	const response = await fetch('sample/b30test.csv');
-	// 	if (!response.ok) {
-	// 		throw new Error(`HTTP error! status: ${response.status}`);
-	// 	}
-	// 	csv = await response.text();
-	// } catch (error) {
-	// 	console.error('There was a problem loading the JSON file:', error);
-	// }
-
-
 	/**
 	 * 新版更新了index，直接用吧
 	 */
@@ -863,4 +861,22 @@ async function initializeSonglist() {
 		return NULL;
 	}
 
+}
+/**
+ * 根据分数和物量信息返回等效far和大p数
+ */
+function calculateEquivalentFarAndAccuracy(score, objectAmount) {
+	let acc;
+	let eqFar;
+	if (score === -1 || score === objectAmount + 10000000) {
+		return [0, objectAmount];
+	} else if (score === 0) {
+		return [objectAmount * 2, 0];
+	} else {
+		acc = Math.floor(score - Math.floor(score / 5000000 * objectAmount) * 5000000 / objectAmount, 1) +
+			1 - Math.floor(score / 10000000) + (score === -1 ? objectAmount : 0);
+		farScore = 10000000 / objectAmount / 2;
+		eqFar = (10000000 + acc - score) / farScore;
+		return [(eqFar).toFixed(0), acc];
+	}
 }

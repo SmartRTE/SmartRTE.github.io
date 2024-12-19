@@ -8,7 +8,6 @@
 		<script src="js/jquery-3.6.1.min.js"></script>
 		<script src="js/CommonFunctions.js"></script>
 		<script src="js/sql-wasm.js"></script>
-		<!-- <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script> -->
 		<script src="js/xlsx-0.20.2.full.min.js" type="text/javascript"></script>
 		<link rel="icon" href="favicon.ico" />
 	</head>
@@ -60,14 +59,14 @@
 			<div id="result-area">
 				<div id="notice">
 					<div id="version">
-						<label>当前曲目数据库版本：<span>6.0.3</span></label><br />
-						<label>当前曲绘文件库版本：<span>6.0.3</span></label><br />
+						<label>当前曲目数据库版本：<span>6.1.0</span></label><br />
+						<label>当前曲绘文件库版本：<span>6.1.0</span></label><br />
 						<label style="text-decoration: line-through;opacity: 0.3;">当前手填表文件版本：<span>5.6.0</span></label><br />
 						<label>当前万能查分表版本：<span>6.0.1</span></label>
 						<!-- <a href="sample/模板.csv" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载手填分数表</button></a><br /> -->
 						<a href="sample/Arcaea 万能查分表6.0.1空白.xlsx" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载万能查分表</button></a><br />
 						<h3>!手填表只填写分数即可，单曲潜力值会自动计算!</h3><br>
-						<label>更新于：<span>2024/11/24</span></label>
+						<label>更新于：<span>2024/12/19</span></label>
 						<h3 style="text-decoration: line-through; opacity: 0.3;">由于个人原因，手填表更新将推迟，非常抱歉！</h3><br>
 						<h3>推荐使用<a href="https://space.bilibili.com/18710009" target="_blank">V.H.Zek</a>制作的查分表进行手填更新！（点击上方按钮下载）</h3><br>
 						<!-- <img id="sticker"/> -->
@@ -112,9 +111,10 @@
 					<button class="func-btn" id="convert-to-VHZEK" onclick="saveVHZEK()">保存为VH版万能查分表</button>
 					<br />
 					<input type="file" id="uploadExcel" hidden>
-					<label>点曲绘可以对曲目信息进行修改🖼</label><br />
-					<label id="try-to-rotate">横屏可以显示更多信息！♻</label>
+					
 				</div>
+				<label>点曲绘可以对曲目信息进行修改🖼</label><br />
+				<label id="try-to-rotate">横屏可以显示更多信息！♻</label>
 				<div id="result-card" style="display: none;">
 
 					<!-- <div class="single-card beyond">
@@ -133,17 +133,17 @@
 					<table id="result">
 						<thead>
 							<tr>
-								<td>NO.</td>
-								<td class="t-ill">曲绘</td>
-								<td class="t-song-name">曲名</td>
-								<td class="t-score">分数</td>
-								<td class="t-perfect">Pure</td>
-								<td class="t-critical-perfect">大P数</td>
-								<td class="t-normal-perfect">小P数</td>
-								<td class="t-far">far</td>
-								<td class="t-lost">lost</td>
-								<td class="t-constant">定数</td>
-								<td class="t-play-rating">单曲潜力值&失分</td>
+								<th>NO.</th>
+								<th class="t-ill">曲绘</th>
+								<th class="t-song-name">曲名</th>
+								<th class="t-score">分数</th>
+								<th class="t-perfect">Pure</th>
+								<th class="t-critical-perfect">大P数</th>
+								<th class="t-normal-perfect">小P数</th>
+								<th class="t-far">far</th>
+								<th class="t-lost">lost</th>
+								<th class="t-constant">定数</th>
+								<th class="t-play-rating">单曲潜力值&失分</th>
 							</tr>
 
 						</thead>

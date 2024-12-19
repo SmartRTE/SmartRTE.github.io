@@ -314,6 +314,8 @@ function initializeUploadListener() {
 			} else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
 				console.log("VHZek");
 				readVHZek(selectedFile);
+				
+				location.reload()
 			} else {
 				runQuery(selectedFile);
 				console.log("Not a .csv file");

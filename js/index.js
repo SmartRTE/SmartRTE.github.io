@@ -32,8 +32,8 @@ let sqlWasmPath = "sql-wasm.wasm"; //sql.wasm路径
 
 let diffSongNameMapping = null; //差分曲名映射
 let diffIllMapping = null; //差分曲绘映射
-// let title_id_mapping = null; //VHZek佬的万能查分表相关，用来以曲名对应songId
-// let id_title_mapping = null; //VHZek佬的万能查分表相关，用来以songId和difficulty对应曲名
+// let title_id_mapping = null; //弃用 VHZek佬的万能查分表相关，用来以曲名对应songId
+// let id_title_mapping = null; //弃用 VHZek佬的万能查分表相关，用来以songId和difficulty对应曲名
 let currentVersionMaxPotential = 13.12; //现版本最高理论潜力值
 let viewMode = 0; //成绩显示状态，0=table 1=card
 // let currentB30;//当前best30
@@ -77,7 +77,11 @@ $(document).ready(function() {
 			fakeCounter = 0;
 		}
 	})
+	
+	switchItemLoseScore();
 });
+
+
 
 /**
  * 查询结果点击跳转监听,用全局变量viewMode控制跳转位置（表格/卡片）
@@ -196,7 +200,7 @@ function initializeUploadListener() {
 					runConvert(csvContent);
 				};
 				reader.readAsText(selectedFile);
-			} else if(fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
+			} else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
 				console.log("VHZek");
 				readVHZek(selectedFile);
 			} else {
@@ -209,11 +213,6 @@ function initializeUploadListener() {
 	$("#uploadExcel").on("change", function(e) {
 		var file = e.target.files[0];
 		if (!file) return;
-		// if ((!file.name.endsWith('xls')) || (!file.name.endsWith('xlsx'))) {
-		// 	alert("不是正确的文件！");
-		// 	return;
-		// }
-
 		var reader = new FileReader();
 		reader.onload = function(e) {
 			var data = e.target.result;
@@ -238,7 +237,7 @@ function initializeUploadListener() {
 			});
 			idData['A'].shift();
 			idData['G'].shift();
-			console.log(idData)
+			// console.log(idData)
 			// runConvert(csv);
 
 			tempArray = currentArray;
@@ -279,7 +278,7 @@ function initializeUploadListener() {
 			});
 
 		};
-		reader.readAsBinaryString(file);
+		reader.readAsArrayBuffer(file);
 
 	});
 }
@@ -431,16 +430,11 @@ function convertToTable(currentRow, index) {
 	$trElem.append($('<td>').addClass('t-far').text(currentRow.far));
 	$trElem.append($('<td>').addClass('t-lost').text(currentRow.lost));
 	$trElem.append($('<td>').addClass('t-constant').text(currentRow.constant.toFixed(1)));
-	let linearGradient;
-	// console.log("percentage="+typeof(currentRow.percentage))
-
-	if ((currentRow.far != null && currentRow.lost != null) && (currentRow.far == 0 && currentRow.lost == 0)) {
-		// this.percentage = 100 + toFloor((this.criticalPerfect / this.perfect), 2);
-		linearGradient = "linear-gradient(90deg, #55aaff " + (currentRow.percentage - 100) * 100 + "%, #55ff00 " +
-			(currentRow.percentage - 100) * 100 + "%)";
+	let linearGradient = "";
+	if (currentRow.percentage == 100 || currentRow.loseScore == 0) {
+		linearGradient = "linear-gradient(90deg, #55aaff 0%, #55aaff 100%)";
 	} else {
-		// this.percentage = toFloor((this.playRating / (this.constant + 2) * 100), 2);
-		linearGradient = "linear-gradient(90deg, #55ff00 " + currentRow.percentage + "%, rgba(255, 0, 127, 1.0) " +
+		linearGradient = "linear-gradient(90deg, #42c800 " + currentRow.percentage + "%, #c80064 " +
 			currentRow.percentage + "%)";
 	}
 	let rt = 0;
@@ -449,12 +443,6 @@ function convertToTable(currentRow, index) {
 	} else {
 		rt = toFloor(currentRow.playRating, 4)
 	}
-
-
-	// $trElem	.append($('<td>').addClass('t-play-rating').css("background", linearGradient)
-	// 		.text(rt + "(" + toFloor(currentRow.percentage, 2) + "%)"));
-
-
 	$trElem.append($('<td>').addClass('t-play-rating').css("background", linearGradient)
 		.text(rt + "(" + currentRow.loseScore.toFixed(2) * (-1) + ")"));
 	// $trElem.append($$('<td>').addClass('t-lose-score'));
@@ -462,7 +450,6 @@ function convertToTable(currentRow, index) {
 		$trElem.addClass("theoretical");
 	}
 	return $trElem;
-	// $cardElem.append($('<div>').addClass('card-rank').text('#' + index));
 }
 /**
  * 转换为卡片单元
@@ -525,9 +512,29 @@ function generateCard(array, number = 40) {
 function generateTable(array, number = 40) {
 	console.log("generateTable");
 	$('#result tbody').html('');
+	noItemFlag = false;
 	for (i = 0; i < array.length; i++) {
+		if (array[i].perfect == 0 && array[i].far == 0 && array[i].lost == 0) {
+			noItemFlag = true;
+		}
 		$('#result tbody').append(convertToTable(array[i], i + 1));
 	}
+	if (noItemFlag == true) {
+		// $(".t-song-name").addClass("hidden");
+		$(".t-perfect").addClass("hidden");
+		$(".t-normal-perfect").addClass("hidden");
+		$(".t-critical-perfect").addClass("hidden");
+		$(".t-far").addClass("hidden");
+		$(".t-lost").addClass("hidden");
+	} else {
+		// $(".t-song-name").removeClass("hidden");
+		$(".t-perfect").removeClass("hidden");
+		$(".t-normal-perfect").removeClass("hidden");
+		$(".t-critical-perfect").removeClass("hidden");
+		$(".t-far").removeClass("hidden");
+		$(".t-lost").removeClass("hidden");
+	}
+	
 }
 /**
  * 计算recent10
@@ -614,18 +621,6 @@ function reloadContent(array) {
 	filterByConstant();
 }
 
-// function reloadContentVHZek(array) {
-// 	array.sort(function(a, b) {
-// 		return resultSort(a, b, 'playRating', 1);
-// 	})
-// 	array.forEach(function(currentRow, index) {
-// 		currentRow.innerIndex = index;
-// 	})
-// 	saveLocalStorage(array);
-// 	// displayB30(array);
-// 	filterByConstant();
-// }
-
 function saveChange(array) {
 	currentArray = array;
 	saveLocalStorage(currentArray);
@@ -703,13 +698,14 @@ function showStatistics(array = currentArray) {
 function saveVHZEK() {
 	msg = "！注意！\n" +
 		"请你自备一份'Arcaea 万能查分表.xls'文档，（可以不为空但数据会被替换）在稍后弹出的文件选择界面选择它\n" +
-		"手动复制分数列然后粘贴到原有的工作表中，不用重新排序\n"+
+		"手动复制分数列然后粘贴到原有的工作表中，不用重新排序\n" +
 		"如果没有，请到首页下载一份。不用担心，目前的数据都已经被缓存\n" +
 		"新的表格xslx文件会丢失**全部的**单元格样式，推荐只是把这个功能当成快速填入数据的工具，'\n\n'" +
-		"如果你不知道我在说什么，请关闭这个对话框\n\n"+
+		"如果你不知道我在说什么，请关闭这个对话框\n\n" +
 		"感谢表格作者V.H.Zek";
 	if (confirm(msg)) {
 		let temp = currentArray;
+		console.log(temp)
 		let csv = [columns.join(",")];
 		temp.forEach(function(row) {
 			let r = [row.songName, row.songId, row.difficulty, row.score, row.perfect, row.criticalPerfect, row
@@ -764,16 +760,10 @@ async function initializeVHZEK() {
 		})
 
 		idx_constant.shift();
-		console.log('idx_constant:')
-		console.log(idx_constant)
-		// return idx_constant;
 	} catch (error) {
 		console.error('There was a problem loading the CSV file:', error);
 	}
 }
-
-
-
 
 function initializeSticker() {
 	let randomIndex = Math.floor(Math.random() * 12);
@@ -781,3 +771,8 @@ function initializeSticker() {
 	$('#sticker').css('background-size', 'contain');
 
 }
+
+// // 是否将用不到的显示pure、far、lost的物量信息转为显示失分数和百分比？
+// function switchItemLoseScore(){
+	
+// }

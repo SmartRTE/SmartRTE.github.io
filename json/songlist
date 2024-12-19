@@ -27432,6 +27432,276 @@
                     "hidden_until": "song"
                 }
             ]
+        },
+        {
+            "idx": 435,
+            "id": "ignition",
+            "title_localized": {
+                "en": "Ignition"
+            },
+            "artist": "パソコン音楽クラブ",
+            "search_title": {
+                "ja": [
+                    "いぐにしょん"
+                ],
+                "ko": [
+                    "이그니션"
+                ]
+            },
+            "search_artist": {
+                "en": [
+                    "pasocom ongaku kurabu",
+                    "pasocon ongaku kurabu",
+                    "pasocom music club"
+                ],
+                "ja": [
+                    "ぱそこんおんがくくらぶ"
+                ],
+                "ko": [
+                    "파소콘 온가쿠 쿠라부"
+                ]
+            },
+            "bpm": "160",
+            "bpm_base": 160,
+            "set": "chunithm_append_3",
+            "purchase": "chunithm_append_3",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "chunithmnew_light",
+            "bg_inverse": "chunithmnew_conflict",
+            "source_localized": {
+                "en": "CHUNITHM"
+            },
+            "source_copyright": "©SEGA",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1734566400,
+            "version": "6.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "るくあんす",
+                    "jacketDesigner": "",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "るくあんす",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "るくあんす",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 436,
+            "id": "blazingair",
+            "title_localized": {
+                "en": "BlazinG AIR"
+            },
+            "artist": "kanone",
+            "search_title": {
+                "ja": [
+                    "ぶれいじんぐえあー"
+                ],
+                "ko": [
+                    "블레이징 에어"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "かのね"
+                ],
+                "ko": [
+                    "카노네"
+                ]
+            },
+            "bpm": "150",
+            "bpm_base": 150,
+            "set": "chunithm_append_3",
+            "purchase": "chunithm_append_3",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "chunithmnew_light",
+            "bg_inverse": "chunithmnew_conflict",
+            "source_localized": {
+                "en": "CHUNITHM"
+            },
+            "source_copyright": "©SEGA",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1734566401,
+            "version": "6.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "BlazinG ÉND",
+                    "jacketDesigner": "",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "BlazinG ÉND",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "BlazinG ÉND",
+                    "jacketDesigner": "",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "BlazinG ÉND",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 437,
+            "id": "eightem",
+            "title_localized": {
+                "en": "8-EM"
+            },
+            "artist": "Sampling Masters AYA",
+            "search_title": {
+                "ja": [
+                    "えいてぃーえむ"
+                ],
+                "ko": [
+                    "에이티엠"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "さんぷりんぐますたーずあや"
+                ],
+                "ko": [
+                    "샘플링 마스터스 아야"
+                ]
+            },
+            "bpm": "168",
+            "bpm_base": 168,
+            "set": "chunithm_append_3",
+            "purchase": "chunithm_append_3",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "chunithmnew_conflict",
+            "bg_inverse": "chunithmnew_light",
+            "source_localized": {
+                "en": "CHUNITHM"
+            },
+            "source_copyright": "©SEGA",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1734566402,
+            "version": "6.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Exschwasion",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Exschwasion",
+                    "jacketDesigner": "",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Rave Gallery",
+                    "jacketDesigner": "",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "X-SCHWASION",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 438,
+            "id": "daat",
+            "title_localized": {
+                "en": "DA'AT -The First Seeker of Souls-"
+            },
+            "artist": "水野健治 VS 大国奏音",
+            "search_title": {
+                "ja": [
+                    "だぁとざふぁーすとしーかーおぶそうるず"
+                ],
+                "ko": [
+                    "다아트 더 퍼스트 시커 오브 소울즈"
+                ]
+            },
+            "search_artist": {
+                "en": [
+                    "mizuno kenji",
+                    "oguni kanon"
+                ],
+                "ja": [
+                    "みずのけんじ",
+                    "おおぐにかのん"
+                ],
+                "ko": [
+                    "미즈노 켄지",
+                    "오오구니 카논"
+                ]
+            },
+            "bpm": "222",
+            "bpm_base": 222,
+            "set": "chunithm_append_3",
+            "purchase": "chunithm_append_3",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "chuni-ikazuchi",
+            "source_localized": {
+                "en": "CHUNITHM"
+            },
+            "source_copyright": "©SEGA",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1734566402,
+            "version": "6.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "夜浪 -Revolutions-",
+                    "jacketDesigner": "",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "夜浪 -Revolutions-",
+                    "jacketDesigner": "",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "夜浪 -Revolutions-",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
         }
     ]
 }

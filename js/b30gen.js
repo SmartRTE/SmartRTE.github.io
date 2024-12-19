@@ -11,6 +11,7 @@ let songlist = {}; //idx - songId 键值对
 let idData = {};
 let unitQuantity = 39;
 let uidFlag = true;
+let loseScoreFlag = 0;
 let p30Flag = 0; //0=b 1=p 2=s
 let userCourseDanPath = 'img/course/';
 let illustrationPath = 'Processed_Illustration/';
@@ -59,6 +60,7 @@ $(document).ready(function() {
 	//初始化数据列表
 	initializeDataArray();
 	//初始化AI-chan推荐
+	switchLoseScore(loseScoreFlag);
 	initializeAiChan();
 	
 	initializeVHZEK();
@@ -68,7 +70,7 @@ $(document).ready(function() {
 	});
 	resizeWidth(1);
 	// $('#main-capture').css('height', );
-
+	// switchLoseScore();
 	// 页面加载显示时间
 	showTime();
 	// 每秒更新时间显示
@@ -151,6 +153,7 @@ function initializeSettingListener() {
 			if (localStorage.customAvatar) {
 				localStorage.useCustomAvatar = true;
 				$('#icon img').attr('src', localStorage.customAvatar);
+				$('#temp-avatar').attr('src', localStorage.customAvatar);
 			} else {
 				alert('还没有上传过自定义头像！\n点击右边可以手动上传~');
 				$('#use-custom-avatar').prop("checked", false);
@@ -169,13 +172,19 @@ function initializeSettingListener() {
 			if (localStorage.customBackground) {
 				$('#background').css('background-image', `url(${localStorage.customBackground})`);
 				localStorage.useCustomBackground = true;
+				$('#custom-background img').attr('src', localStorage.customBackground);
 			} else {
 				alert('还没有上传过自定义背景！\n点击右边可以手动上传~');
 				$('#use-custom-background').prop("checked", false);
 			}
 		}
 	});
-
+	
+	$('#switch-losescore').on('change', function(){
+		switchLoseScore($('#switch-losescore').val());
+		localStorage.loseScoreFlag = $('#switch-losescore').val();
+		loseScoreFlag = $('#switch-losescore').val();
+	})
 }
 
 /**
@@ -216,18 +225,29 @@ function initializeSettings() {
     $('#ptt-r10 span').text(toFloor(parseFloat(rbm[0]), 4));
     $('#potential-input').val(localStorage.potential);
     $('#potential-value').text(toFloor(parseFloat(localStorage.potential), 2));
+	if(localStorage.loseScoreFlag == undefined){
+		localStorage.loseScoreFlag = 0;
+	}
+	if(localStorage.customAvatar){
+		$('#custom-avatar img').attr('src', localStorage.customAvatar);
+	}
+	if(localStorage.customBackground){
+		$('#custom-background img').attr('src', localStorage.customBackground);
+	}
+	$('#switch-losescore').val(localStorage.loseScoreFlag);
+	loseScoreFlag = localStorage.loseScoreFlag;
     changePotential(localStorage.potential);
     changePotentialFrame(localStorage.potentialFrame);
     changeAvatar(localStorage.avatar);
     changeCourseDanFrame(localStorage.courseDanFrame);
     changeBackgroundImage(localStorage.backgroundImage);
-
+	
     // 处理自定义头像和背景
-    if (localStorage.useCustomAvatar === 'true') {
+    if (localStorage.useCustomAvatar == 'true') {
         $('#use-custom-avatar').prop("checked", true);
         $('#icon img').attr('src', localStorage.customAvatar || '');
     }
-    if (localStorage.useCustomBackground === 'true') {
+    if (localStorage.useCustomBackground == 'true') {
         $('#use-custom-background').prop("checked", true);
         $('#background').css('background-image', `url(${localStorage.customBackground || ''})`);
     }
@@ -365,13 +385,14 @@ function saveQueryResult(result) {
 	// generateTable(currentArray);
 	// console.table(currentArray);
 	saveLocalStorage(currentArray);
+	switchLoseScore();
 	// displayB30(filteredArray);
 	switchP30(0);
 }
 
 /**
  * 将csv格式的分数表转换成为成绩对象数组
- * @param csv 待转化怒的csv文件，必须是旧版或新版页面能生成和读取的对应格式
+ * @param csv 待转换的csv文件，必须是旧版或新版页面能生成和读取的对应格式
  */
 function runConvert(csv) {
 	file = csv.trim();
@@ -389,6 +410,7 @@ function runConvert(csv) {
 	filteredArray = tempArray;
 	currentArray = filteredArray;
 	saveLocalStorage(filteredArray);
+	switchLoseScore();
 	// displayB30(filteredArray);
 	// generateCard(filteredArray);
 	// generateTable(filteredArray);
@@ -527,7 +549,10 @@ function appendSongUnit(currentRow, index) {
 		currentRow.normalPerfect + ')'));
 	si.append($('<div>').addClass('item-far').text('F/' + currentRow.far));
 	si.append($('<div>').addClass('item-lost').text('L/' + currentRow.lost));
+	
+	si.append($('<div>').addClass('item-losescore').addClass('item-hidden').text('Lose Score : ' + currentRow.loseScore.toFixed(4)));
 
+	si.append($('<div>').addClass('item-acc').addClass('item-hidden').text(`P/(${-1 * (currentRow.objectAmount - currentRow.criticalPerfect)})\tEquivalent Far : ${currentRow.equivalentFar}`))
 	let rk = getSongRanking(currentRow.score, currentRow.far, currentRow.lost);
 	let ri = $('<img>').addClass('song-ranking-image').attr('src', songRankingPath + rk + '.png');
 
@@ -781,6 +806,8 @@ function switchP30(add = 1) {
 		displayWindow('ptt-p30');
 	}
 	p30Flag = (p30Flag + add) % 3;
+	
+	switchLoseScore();
 }
 
 function handleScroll(unitid, index) {
@@ -801,7 +828,7 @@ async function initializeVHZEK() {
 		}
 		let file = await response.text();
 		let temp = file.trim();
-		console.log(temp)
+		// console.log(temp)
 		let rows = temp.replaceAll('\r\n', "\n").split("\n");
 		// console.log(rows)
 		let single;
@@ -848,5 +875,41 @@ function generateCard(array){
 
 function generateTable(array){
 	//
+	switchLoseScore();
 	displayB30(array);
+}
+
+function switchLoseScore(selection){
+	if(!selection){
+		if((currentArray[0].far == 0 && currentArray[0].perfect == 0 && currentArray[0].lost == 0)
+		&& (currentArray[parseInt(currentArray.length / 2)].far == 0 && currentArray[parseInt(currentArray.length / 2)].perfect == 0 && currentArray[parseInt(currentArray.length / 2)].lost == 0)
+		&& (currentArray[parseInt(currentArray.length / 2) - 1].far == 0 && currentArray[parseInt(currentArray.length / 2) - 1].perfect == 0 && currentArray[parseInt(currentArray.length / 2) - 1].lost == 0)){
+			// vconsole.log("switchLoseScore");
+			switchLoseScore(2);
+		}
+	}
+	if(selection == 0){				//显示物量信息， 默认
+		$('.item-pure').removeClass("item-hidden");
+		$('.item-far').removeClass("item-hidden");
+		$('.item-lost').removeClass("item-hidden");
+		$('.item-losescore').addClass("item-hidden");
+		$('.item-acc').addClass("item-hidden");
+	}else if(selection == 1){		//显示失分数
+		$('.item-pure').addClass("item-hidden");
+		$('.item-far').addClass("item-hidden");
+		$('.item-lost').addClass("item-hidden");
+		$('.item-losescore').removeClass("item-hidden");
+		$('.item-acc').addClass("item-hidden");
+	}else if(selection == 2){		//显示小p数和等效far
+		$('.item-pure').addClass("item-hidden");
+		$('.item-far').addClass("item-hidden");
+		$('.item-lost').addClass("item-hidden");
+		$('.item-losescore').addClass("item-hidden");
+		$('.item-acc').removeClass("item-hidden");
+	}
+	loseScoreFlag = selection;
+	localStorage.loseScoreFlag = selection;
+	console.log("loseScore"+loseScoreFlag);
+	$('#switch-losescore').val(loseScoreFlag);
+	console.log("loseScore"+$('#switch-losescore').val());
 }

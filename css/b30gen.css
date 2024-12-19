@@ -7,6 +7,18 @@
 @font-face {
 	font-family: "Exo";
 	src: url("../Fonts/Exo-SemiBold.ttf");
+	unicode-range: U+0020-007E;
+}
+
+@font-face {
+	font-family: "L2";
+	src: url('../Fonts/L2-SemiBold.ttf');
+}
+
+@font-face {
+	font-family: "GeosansLightModified";
+	src: url('../Fonts/GeosansLight-Modified.otf');
+	unicode-range: U+0020-007E;
 }
 
 
@@ -199,7 +211,7 @@ button:active {
     z-index: -999;
     transition-duration: 0.3s;
     /* opacity: 0.5; */
-    background: url(https://smartrte.github.io/bgs/5.webp);
+    background: url(bgs/5.webp);
     background-size: cover;
     background-position: center top;
 }
@@ -355,7 +367,7 @@ button:active {
 		-1px -1px 1px black,
 		0px -1px 1px black,
 		1px -1px 1px black;
-	font-family: 'geosans', sans-serif;
+    font-family: "GeosansLightModified", "L2", sans-serif;
 	font-weight: bolder;
 }
 
@@ -643,9 +655,10 @@ button:active {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	letter-spacing: 1px;
-	font-family: 'Exo', sans-serif;
+	letter-spacing: 0.5px;
+    font-family: "exo", "L2", sans-serif;
 	text-shadow: 0 0 1px dimgray;
+	font-weight: bolder;
 }
 
 .song-score {
@@ -653,11 +666,11 @@ button:active {
 	left: 10.0rem;
 	top: 4.5rem;
 	font-size: 2.8rem;
-	font-family: 'geosans', sans-serif;
+	font-family: 'GeosansLightModified', sans-serif;
 	font-weight: bold;
 	text-shadow: 0 0 2px dimgray,
 		1px 1px 2px dimgray;
-	letter-spacing: 1px;
+	letter-spacing: 3px;
 }
 
 
@@ -710,6 +723,27 @@ button:active {
 	white-space: nowrap;
 }
 
+.item-losescore {
+    color: darkgreen;
+    text-align: left;
+    position: relative;
+    left: -40px;
+    text-shadow: 1px 1px 3px green;
+    font-size: larger;
+}
+
+.item-acc {
+    color: #003f3f;
+    text-align: left;
+    position: relative;
+    left: -10px;
+    text-shadow: 1px 1px 3px cyan;
+    font-size: larger;
+}
+
+.item-hidden {
+	display: none!important;
+}
 
 .song-ranking-image {
 	display: block;
@@ -821,25 +855,22 @@ button:active {
 }
 
 #setting-close {
-	font-size: 5rem;
-	font-family: 'Exo', sans-serif;
-	height: 3rem;
-	width: 3rem;
-	line-height: 3rem;
-	text-align: center;
-	position: fixed;
-	text-shadow: 0px 0px 3px grey,
-		0px 0px 3px grey,
-		0px 0px 3px grey,
-		0px 0px 3px grey;
-	display: block;
-	left: 87%;
-	top: 10%;
-	/* border: #7f0063 solid 4px; */
-	z-index: 999;
-	color: whitesmoke;
-	transition-duration: 0.3s;
-	/* animation: backwards ease-out rotate-1-round 0.5s; */
+    font-size: 3rem;
+    font-family: 'Exo', sans-serif;
+    height: 3rem;
+    width: 3rem;
+    line-height: 3rem;
+    text-align: center;
+    position: fixed;
+    text-shadow: 0px 0px 3px grey, 0px 0px 3px grey, 0px 0px 3px grey, 0px 0px 3px grey;
+    display: block;
+    left: 87%;
+    top: 10%;
+    /* border: #7f0063 solid 4px; */
+    z-index: 999;
+    color: whitesmoke;
+    transition-duration: 0.3s;
+    /* animation: backwards ease-out rotate-1-round 0.5s; */
 }
 
 #setting-close:hover {
@@ -871,6 +902,11 @@ button:active {
 	width: auto;
 	min-width: 60%;
 	align-items: center;
+}
+
+.setting-container select {
+    height: 2rem;
+    font-size: 0.9rem;
 }
 
 .setting-input {
@@ -936,7 +972,7 @@ button:active {
 	background-image: url('../img/course/1.png');
 	transition-duration: 0.3s;
 	cursor: pointer;
-	font-family: 'geosans', sans-serif;
+	font-family: 'GeosansLightModified', sans-serif;
 	font-weight: bolder;
 	text-shadow: 0 0 2px aliceblue,
 		0 0 2px aliceblue,
@@ -1015,11 +1051,22 @@ button:active {
 	scale: 0.9;
 }
 
-#avatar-display img,
-#custom-avatar img {
-	height: 6rem;
+#avatar-display img{
+	max-height: 6rem;
+	min-height: 4rem;
+	max-width: 6rem;
+	min-width: 4rem;
+	height: 4vw;
+	width: 4vw;
 }
-
+#custom-avatar img {
+	max-height: 5rem;
+	min-height: 3.5rem;
+	max-width: 5rem;
+	min-width: 3.5rem;
+	height: 3.5vw;
+	width: 3.5vw;
+}
 #avatar-select {
 	width: 170%;
 	height: 10rem;
@@ -1063,11 +1110,23 @@ button:active {
 	width: 100%;
 }
 
-#background-display,
+#background-display {
+	float: left;
+	max-height: 100px;
+	max-width: 40px;
+	transition-duration: 0.3s;
+	cursor: pointer;
+}
+
 #custom-background,
 #custom-background img {
 	float: left;
-	height: 100px;
+	min-height: 100px;
+	min-width: 50px;
+	max-height: 100px;
+	max-width: 100px;
+	width: 4vw;
+	height: 3vh;
 	transition-duration: 0.3s;
 	cursor: pointer;
 }
