@@ -16,9 +16,10 @@
 		<div id="bg"></div>
 		<div id="main-container">
 			<div id="main-controller">
-				<label id="load-db" style="color: red;">数据库文件未加载</label>
-				<label id="load-il" style="color: red;">曲绘差分文件未加载</label>
-				<label id="load-sn" style="color: red;">曲名差分文件未加载</label>
+				<label class="loading-notice" id="load-db" style="color: red;">数据库文件未加载</label>
+				<label class="loading-notice" id="load-il" style="color: red;">曲绘差分文件未加载</label>
+				<label class="loading-notice" id="load-sn" style="color: red;">曲名差分文件未加载</label>
+				<label class="loading-notice" id="load-sl" style="color: red;">曲目列表文件未加载</label>
 				<!-- <div id="help-me">
 					<a href="https://space.bilibili.com/171403897">给点三连呗😘</a>
 				</div> -->
@@ -62,9 +63,9 @@
 						<label>当前曲目数据库版本：<span>6.1.0</span></label><br />
 						<label>当前曲绘文件库版本：<span>6.1.0</span></label><br />
 						<label style="text-decoration: line-through;opacity: 0.3;">当前手填表文件版本：<span>5.6.0</span></label><br />
-						<label>当前万能查分表版本：<span>6.0.1</span></label>
+						<label>当前万能查分表版本：<span>6.1.0</span></label>
 						<!-- <a href="sample/模板.csv" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载手填分数表</button></a><br /> -->
-						<a href="sample/Arcaea 万能查分表6.0.1空白.xlsx" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载万能查分表</button></a><br />
+						<a href="sample/Arcaea 万能查分表6.1.0空白.xlsx" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载万能查分表</button></a><br />
 						<h3>!手填表只填写分数即可，单曲潜力值会自动计算!</h3><br>
 						<label>更新于：<span>2024/12/19</span></label>
 						<h3 style="text-decoration: line-through; opacity: 0.3;">由于个人原因，手填表更新将推迟，非常抱歉！</h3><br>
@@ -291,8 +292,8 @@
 			</div>
 
 			<div id="modify-window-buttons">
-				<div id="modify-window-accept" class="accept-btn" onclick="acceptModifyResult(currentArray)">√</div>
-				<div id="modify-window-refuse" class="refuse-btn" onclick="abortModifyResult()">X</div>
+				<div id="modify-window-accept" class="accept-btn" onclick="acceptModifyResult(currentArray)">✔</div>
+				<div id="modify-window-refuse" class="refuse-btn" onclick="abortModifyResult()">❌</div>
 			</div>
 
 		</div>

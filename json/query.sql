@@ -478,7 +478,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Design
 
 -- 6.1.0
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Ignition', 'ignition', 3.5, 6.0, 9.8, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('BlazinG AIR', 'blazingair', 3.5, 6.5, 8.9, '', 10.1);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('BlazinG AIR', 'blazingair', 3.0, 6.0, 8.9, '', 10.1);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('8-EM', 'eightem', 4.5, 7.8, 9.5, '', 10.3);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('DA''AT -The First Seeker of Souls-', 'daat', 5.5, 8.4, 10.9, '', '');
 

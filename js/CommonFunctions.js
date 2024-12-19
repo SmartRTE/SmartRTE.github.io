@@ -130,7 +130,7 @@ function initializeQuery() {
 			query = resp;
 			// console.log("Query data:", query);
 			console.log("Query data loaded");
-			$('#load-db').text("√数据库数据文件已加载").css("color", "green");
+			$('#load-db').text("✔数据库数据文件已加载").css("color", "green");
 			$('#load-db').hide("slow").css("height", "0");
 		},
 		error: function(xhr, status, error) {
@@ -250,7 +250,7 @@ async function getImageMapping() {
 			const response = await fetch(diffIllPath);
 			diffIllMapping = await response.json();
 		}
-		$('#load-il').text("√曲绘差分文件已加载").css("color", "green");
+		$('#load-il').text("✔曲绘差分文件已加载").css("color", "green");
 		$('#load-il').hide("slow").css("height", "0");
 		console.log("image mapping loaded");
 		return diffIllMapping;
@@ -271,7 +271,7 @@ async function getTitleMapping() {
 			const response = await fetch(diffSongNamePath);
 			diffSongNameMapping = await response.json();
 		}
-		$('#load-sn').text("√曲名差分文件已加载").css("color", "green");
+		$('#load-sn').text("✔曲名差分文件已加载").css("color", "green");
 		$('#load-sn').hide("slow").css("height", "0");
 		console.log("songname mapping loaded");
 		return diffSongNameMapping;
