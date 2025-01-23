@@ -27702,6 +27702,288 @@
                     "ratingPlus": true
                 }
             ]
+        },
+        {
+            "idx": 439,
+            "id": "breakbreak",
+            "title_localized": {
+                "en": "BREaK! BREaK! BREaK!"
+            },
+            "artist": "HiTECH NINJA vs Cranky",
+            "search_title": {
+                "ja": [
+                    "ぶれいくぶれいくぶれいく"
+                ],
+                "ko": [
+                    "브레이크 브레이크 브레이크"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "はいてっくにんじゃ",
+                    "くらんきー"
+                ],
+                "ko": [
+                    "하이테크 닌자",
+                    "크랭키"
+                ]
+            },
+            "bpm": "165",
+            "bpm_base": 165,
+            "set": "maimai_append_2",
+            "purchase": "maimai_append_2",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "maimai_conflict",
+            "bg_inverse": "maimai_light",
+            "source_localized": {
+                "en": "maimai"
+            },
+            "source_copyright": "©SEGA",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1737417600,
+            "version": "6.2",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "écologie",
+                    "jacketDesigner": "",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "écologie",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "écologie",
+                    "jacketDesigner": "",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "EXSCHWASiON vs 絶滅",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 440,
+            "id": "straightintolights",
+            "title_localized": {
+                "en": "Straight into the lights"
+            },
+            "artist": "Cosmograph",
+            "search_title": {
+                "ja": [
+                    "すとれーといんとぅざらいつ"
+                ],
+                "ko": [
+                    "스트레이트 인투 더 라이츠"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "こすもぐらふ"
+                ],
+                "ko": [
+                    "코스모그래프"
+                ]
+            },
+            "bpm": "90",
+            "bpm_base": 180,
+            "set": "maimai_append_2",
+            "purchase": "maimai_append_2",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "maimai_conflict",
+            "bg_inverse": "maimai_light",
+            "source_localized": {
+                "en": "maimai"
+            },
+            "source_copyright": "©SEGA",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1737417601,
+            "version": "6.2",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "nora::kuma",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "nora::kuma",
+                    "jacketDesigner": "",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "nora::kuma",
+                    "jacketDesigner": "",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "反水 × 夜浪",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 441,
+            "id": "virtus",
+            "title_localized": {
+                "en": "ViRTUS"
+            },
+            "artist": "Hiro",
+            "search_title": {
+                "ja": [
+                    "うぃるとす"
+                ],
+                "ko": [
+                    "버투스",
+                    "비르투스"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "ひろ"
+                ],
+                "ko": [
+                    "히로"
+                ]
+            },
+            "bpm": "225",
+            "bpm_base": 225,
+            "set": "maimai_append_2",
+            "purchase": "maimai_append_2",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "virtus",
+            "bg_inverse": "virtus",
+            "source_localized": {
+                "en": "maimai"
+            },
+            "source_copyright": "©SEGA",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1737417602,
+            "version": "6.2",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "NiTRO",
+                    "jacketDesigner": "",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "NiTRO",
+                    "jacketDesigner": "",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "NiTRO",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "NiTRO",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 442,
+            "id": "yomibitoshirazu",
+            "title_localized": {
+                "en": "yomibito_shirazu",
+                "ja": "ヨミビトシラズ"
+            },
+            "artist": "Limonène (サノカモメ+月島春果)",
+            "search_title": {
+                "en": [
+                    "yomibito shirazu"
+                ],
+                "ko": [
+                    "어나니머스",
+                    "요미비토시라즈",
+                    "익명"
+                ]
+            },
+            "search_artist": {
+                "en": [
+                    "limonene",
+                    "sano kamome",
+                    "kamome sano",
+                    "tsukishima haruka"
+                ],
+                "ja": [
+                    "りもねん",
+                    "つきしまはるか"
+                ],
+                "ko": [
+                    "리모네네",
+                    "카모메 사노",
+                    "사노 카모메",
+                    "츠키시마 하루카"
+                ]
+            },
+            "bpm": "188",
+            "bpm_base": 188,
+            "set": "maimai_append_2",
+            "purchase": "maimai_append_2",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "maimai_light",
+            "bg_inverse": "maimai_conflict",
+            "source_localized": {
+                "en": "maimai"
+            },
+            "source_copyright": "©SEGA",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1737417602,
+            "version": "6.2",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "<!-- raycast -->",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "<!-- raycast -->",
+                    "jacketDesigner": "",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "<!-- raycast -->",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                }
+            ]
         }
     ]
 }

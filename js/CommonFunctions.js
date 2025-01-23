@@ -24,6 +24,10 @@ class PlayResult {
 	 * @param {Number} constant	定数
 	 * @param {Number} playRating	单曲潜力值
 	 * @param {Number} innerIndex	内部排序索引
+	 * --下为可选参数--
+	 * @param {Number} loseScore		失分数
+	 * @param {Number} maxLoseScore		最大失分数
+	 * @param {Number} objectAmount		物量
 	 */
 	loseScore = 0;
 	constructor(songName, songId, difficulty, score,
@@ -69,12 +73,10 @@ class PlayResult {
 		// this.loseScore = loseScore ? loseScore : 0;
 		if (loseScore) {
 			this.loseScore = loseScore;
+			this.percentage = Math.abs(loseScore / maxLoseScore);
+			this.percentage = (this.constant * 38 - this.loseScore) / (this.constant * 38) * 100;
 		} else {
-			if (perfect == 0 && lost == 0) {
-				this.loseScore = 0;
-			} else {
-				this.loseScore = getLoseScore(constant, score, perfect + far + lost, criticalPerfect);
-			}
+			this.loseScore = getLoseScore(constant, score, perfect + far + lost, criticalPerfect);
 		}
 		if (maxLoseScore) {
 			this.percentage = (maxLoseScore - loseScore) / maxLoseScore * 100;
@@ -113,7 +115,7 @@ function initializeSqliteJs() {
 
 	// let myScatterChart;
 	//初始化
-	initSqlJs(config).then(function(sqlModule) {
+	initSqlJs(config).then(function (sqlModule) {
 		SQL = sqlModule;
 		console.log("sql.js initialized");
 	});
@@ -122,22 +124,20 @@ function initializeSqliteJs() {
 /**
  * 数据库查询初始化
  */
-function initializeQuery() {
-	$.ajax({
-		url: queryFilePath,
-		dataType: "text",
-		success: function(resp) {
-			query = resp;
-			// console.log("Query data:", query);
-			console.log("Query data loaded");
-			$('#load-db').text("✔数据库数据文件已加载").css("color", "green");
-			$('#load-db').hide("slow").css("height", "0");
-		},
-		error: function(xhr, status, error) {
-			console.error("Error fetching data:", error);
-			$('#load-db').text("XX数据库数据文件加载失败！请尝试刷新页面").css("color", "red");
+async function initializeQuery() {
+	try {
+		const response = await fetch(queryFilePath);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
 		}
-	});
+		query = await response.text();
+		console.log("Query data loaded");
+		$('#load-db').text("✔数据库数据文件已加载").css("color", "green");
+		$('#load-db').hide("slow").css("height", "0");
+	} catch (error) {
+		console.error("Error fetching data:", error);
+		$('#load-db').text("XX数据库数据文件加载失败！请尝试刷新页面").css("color", "red");
+	}
 }
 /**
  * AI-Chan文案初始化
@@ -312,7 +312,7 @@ function readLocalStorage() {
 function readVHZek(file) {
 	var reader = new FileReader();
 	let tarray = [];
-	reader.onload = function(e) {
+	reader.onload = function (e) {
 		var data = e.target.result;
 		var workbook = XLSX.read(data, {
 			type: 'binary'
@@ -320,7 +320,7 @@ function readVHZek(file) {
 		var sheetName = workbook.SheetNames[0]; // 获取第一个工作表的名称
 		var sheet = workbook.Sheets[sheetName];
 		let sheetMaxLength = 0;
-		Object.keys(sheet).forEach(function(cell) {
+		Object.keys(sheet).forEach(function (cell) {
 			if (cell.startsWith("A") && parseInt(cell.substring(1)) > sheetMaxLength)
 				sheetMaxLength = parseInt(cell.substring(1));
 		})
@@ -352,30 +352,25 @@ function readVHZek(file) {
 		rows['H'].shift(); //score
 		rows['J'].shift(); //objectAmount
 		rows['K'].shift(); //accuracy
-		// console.log(rows);
-
-		let innerIndex = 0;
 		for (i = 0; i < sheetMaxLength - 1; i++) {
 			let loseScore = getLoseScoreByObjectAmoutAndAccuracy(parseInt(rows['H'][i]), parseFloat(rows['G'][i]),
 				parseInt(rows['J'][i]), parseInt(rows['K'][i]));
-			// console.log(loseScore);
 			let eqFar, acc;
-			// console.log(eqFar, acc, currentRow.objectAmount);
 			if (rows['H'][i] != '') {
 				[eqFar, acc] = calculateEquivalentFarAndAccuracy(parseInt(rows['H'][i]), parseInt(rows['J'][i]));
 				let pr = new PlayResult(
 					rows['B'][i],
 					idx_constant[rows['A'][i]].songId,
 					difList[rows['F'][i]],
-					rows['H'][i] == -1 ? rows['J'][i] + 10000000 : rows['H'][i], 
-					0, 
-					0, 
-					0, 
-					0, 
-					parseFloat(rows['G'][i]), 
-					0, 
-					i, 
-					loseScore, 
+					rows['H'][i] == -1 ? rows['J'][i] + 10000000 : rows['H'][i],
+					0,
+					parseInt(rows['K'][i]),
+					0,
+					0,
+					parseFloat(rows['G'][i]),
+					0,
+					i,
+					loseScore,
 					rows['F'][i] * 38,
 					parseInt(rows['J'][i]));
 				pr.setEquivalentFar(eqFar);
@@ -420,10 +415,10 @@ function scrollToElement(id) {
 		top: $("#" + id).offset().top - 100,
 		behavior: 'smooth'
 	});
-	setTimeout(function() {
+	setTimeout(function () {
 		$('#' + id).addClass('stressed-unit');
 	}, 300);
-	setTimeout(function() {
+	setTimeout(function () {
 		$('#' + id).removeClass('stressed-unit');
 	}, 2000);
 }
@@ -437,14 +432,14 @@ function displayWindow(windowId) {
 	if ($('#' + windowId).is(":hidden")) {
 		// console.log("window'shidden");
 		$('#' + windowId).css("display", "block");
-		setTimeout(function() {
+		setTimeout(function () {
 			$('#' + windowId).css("opacity", 1);
 		}, 100);
 	} else {
 		// console.log("window'sshown");
 		// $('#filter-window').fadeOut(800);
 		$('#' + windowId).css("opacity", 0);
-		setTimeout(function() {
+		setTimeout(function () {
 			$('#' + windowId).css("display", "none");
 		}, 500);
 	}
@@ -670,21 +665,19 @@ async function initializeQRCode() {
  * 读取头像列表csv并生成头像选择部分
  */
 async function initializeAvatarList() {
-	$.ajax({
-		url: avatarListPath,
-		dataType: "text",
-		success: function(resp) {
-			// console.log(resp);
-			avatarList = resp.trim().replaceAll('\r\n', '\n').split('\n');
-			avatarList.forEach(function(avt) {
-				appendAvatarUnit(avt);
-			});
-		},
-		error: function(xhr, status, error) {
-			console.error("Error fetching data:", error);
-
+	try {
+		const response = await fetch(avatarListPath);
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
 		}
-	});
+		const resp = await response.text();
+		avatarList = resp.trim().replaceAll('\r\n', '\n').split('\n');
+		avatarList.forEach(function (avt) {
+			appendAvatarUnit(avt);
+		});
+	} catch (error) {
+		console.error("Error fetching data:", error);
+	}
 }
 /**
  * 生成背景图片列表
@@ -697,10 +690,10 @@ async function initializeBackgroundList() {
 		's22', 's23', 's24', 's25', 's26'
 	];
 	let list = $('#background-list');
-	l.forEach(function(li) {
+	l.forEach(function (li) {
 		list.append(
 			$(`<li class="background-option" onclick="changeBackgroundImage('${String(li)}')">`)
-			.append($(`<img src='bgs/${li}.webp'>`))
+				.append($(`<img src='bgs/${li}.webp'>`))
 		);
 	});
 }
@@ -710,13 +703,13 @@ async function initializeBackgroundList() {
  */
 async function initializeUserCourseDanList() {
 	let l = [
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 	];
 	let list = $('#user-course-dan-list');
-	l.forEach(function(li) {
+	l.forEach(function (li) {
 		list.append(
 			$(`<li class="user-course-dan-option" value="${li}" onclick="changeCourseDanFrame(${li})">`)
-			.append($(`<img class="user-course-dan-image" src="img/course/${li}.png">`))
+				.append($(`<img class="user-course-dan-image" src="img/course/${li}.png">`))
 		);
 	});
 }
@@ -788,7 +781,7 @@ function clipDiamond() {
 function getStatistics(array = currentArray) {
 	let temp = array;
 	let sts = {};
-	temp.forEach(function(currentRow) {
+	temp.forEach(function (currentRow) {
 		let ranking = getSongRanking(currentRow.score, currentRow.far, currentRow.lost);
 		if (!sts[ranking]) {
 			sts[ranking] = [];
@@ -821,8 +814,8 @@ function findInArray(array, songId, difficulty) {
 		key: 'difficulty',
 		value: difficulty
 	}]
-	return array.findIndex(function(obj) {
-		return keysValues.every(function(kv) {
+	return array.findIndex(function (obj) {
+		return keysValues.every(function (kv) {
 			return obj[kv.key] === kv.value;
 		});
 	});

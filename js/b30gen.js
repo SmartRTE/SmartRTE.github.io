@@ -546,7 +546,7 @@ function appendSongUnit(currentRow, index) {
 	let ss = $('<div>').addClass('song-score').text(scoreFormat(parseInt(currentRow.score)));
 	let si = $('<div>').addClass('song-items');
 	si.append($('<div>').addClass('item-pure').text('P/' + currentRow.perfect + '(-' +
-		currentRow.normalPerfect + ')'));
+		Math.abs(currentRow.normalPerfect) + ')'));
 	si.append($('<div>').addClass('item-far').text('F/' + currentRow.far));
 	si.append($('<div>').addClass('item-lost').text('L/' + currentRow.lost));
 	

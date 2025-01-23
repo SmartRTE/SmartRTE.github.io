@@ -482,6 +482,11 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Blazin
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('8-EM', 'eightem', 4.5, 7.8, 9.5, '', 10.3);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('DA''AT -The First Seeker of Souls-', 'daat', 5.5, 8.4, 10.9, '', '');
 
+-- 6.2.0
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('BREaK! BREaK! BREaK!', 'breakbreak', 3.5, 6.5, 8.8, '', 10.3);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Straight into the lights', 'straightintolights', 4.0, 7.5, 9.5, '', 10.5);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('ViRTUS', 'virtus', 5.5, 8.6, 9.9, '', 10.9);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('yomibito_shirazu', 'yomibitoshirazu', 4.5, 8.0, 9.8, '', '');
 
 COMMIT TRANSACTION;
 

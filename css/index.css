@@ -549,13 +549,15 @@ li {
 #result-table {
 	backdrop-filter: blur(5px);
 	margin-top: 1rem;
+	width: 100%;
+	overflow-x: scroll;
 }
 
 #result {
 	border: 0.5px solid #7f006350;
 	background-color: #64646430;
 	border-radius: 10px;
-	width: 96%;
+	width: 100%;
 	text-align: center;
 }
 
@@ -565,6 +567,10 @@ li {
 
 #result thead {
 	background-color: #9eeaf920;
+}
+
+#result tr {
+	width: 100%;
 }
 
 #result thead th {
@@ -624,6 +630,7 @@ li {
 
 #result td {
 	border: 1px solid gray;
+	box-sizing: border-box;
 	border-radius: 3px;
 }
 

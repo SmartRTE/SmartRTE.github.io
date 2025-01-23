@@ -454,7 +454,7 @@ function convertToCard(currentRow, index) {
 /**
  * 生成卡片单元
  */
-function generateCard(array, number = 40) {
+function generateCard(array) {
 	console.log("generateCard");
 	$("#result-card").html('');
 	for (i = 0; i < array.length; i++) {
@@ -464,7 +464,7 @@ function generateCard(array, number = 40) {
 /**
  * 生成表格行
  */
-function generateTable(array, number = 40) {
+function generateTable(array) {
 	console.log("generateTable");
 	$('#result tbody').html('');
 	noItemFlag = false;
@@ -650,10 +650,10 @@ function showStatistics(array = currentArray) {
 
 function saveVHZEK() {
 	msg = "！注意！\n" +
-		"请你自备一份'Arcaea 万能查分表.xls'文档，（可以不为空但数据会被替换）在稍后弹出的文件选择界面选择它\n" +
-		"手动复制分数列然后粘贴到原有的工作表中，不用重新排序\n" +
+		"请你自备一份'Arcaea 万能查分表.xlsx'文档，（可以不为空但数据会被替换）在稍后弹出的文件选择界面选择它\n" +
 		"如果没有，请到首页下载一份。不用担心，目前的数据都已经被缓存\n" +
-		"新的表格xslx文件会丢失**全部的**单元格样式，推荐只是把这个功能当成快速填入数据的工具，'\n\n'" +
+		"新的表格xslx文件会丢失**全部的**单元格样式，推荐只是把这个功能当成复制粘贴快速填入数据的工具，'\n\n'" +
+		"手动复制分数列然后粘贴到原有的工作表中，不用重新排序\n" +
 		"如果你不知道我在说什么，请关闭这个对话框\n\n" +
 		"感谢表格作者V.H.Zek";
 	if (confirm(msg)) {
