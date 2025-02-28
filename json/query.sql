@@ -488,6 +488,9 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Straig
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('ViRTUS', 'virtus', 5.5, 8.6, 9.9, '', 10.9);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('yomibito_shirazu', 'yomibitoshirazu', 4.5, 8.0, 9.8, '', '');
 
+-- 6.2.6
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Aether Crest: Astral', 'aethercrest', 6.0, 8.9, 10.6, '', 11.5);
+
 COMMIT TRANSACTION;
 
 PRAGMA foreign_keys = on;

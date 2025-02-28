@@ -991,7 +991,8 @@
             "artist": "Laur",
             "search_title": {
                 "ja": [
-                    "ぷらぐまてぃずむ"
+                    "ぷらぐまてぃずむ",
+                    "ぷらぐまてぃずむりざれくしょん"
                 ],
                 "ko": [
                     "프라그마티즘",
@@ -7242,7 +7243,9 @@
             "search_title": {
                 "ja": [
                     "ゔぃしゃすひろいずむ",
-                    "びしゃすひろいずむ"
+                    "びしゃすひろいずむ",
+                    "ゔぃしゃすあんちひろいずむ",
+                    "びしゃすあんちひろいずむ"
                 ],
                 "ko": [
                     "비셔스 히로이즘"
@@ -25703,7 +25706,8 @@
             },
             "search_artist": {
                 "ja": [
-                    "こばりょー"
+                    "こばりょー",
+                    "ひゅん"
                 ],
                 "ko": [
                     "코바료",
@@ -27155,7 +27159,7 @@
             "artist": "Supire feat.eili",
             "search_title": {
                 "ja": [
-                    "ぶりーちおぶふぁいす"
+                    "ぶりーちおぶふぇいす"
                 ],
                 "ko": [
                     "브리치 오브 페이스"
@@ -27297,7 +27301,7 @@
             "artist": "Designant",
             "search_title": {
                 "ja": [
-                    "でしぐなんと"
+                    "でじぐなんと"
                 ],
                 "ko": [
                     "데지그넌트"
@@ -27305,7 +27309,7 @@
             },
             "search_artist": {
                 "ja": [
-                    "でしぐなんと"
+                    "でじぐなんと"
                 ],
                 "ko": [
                     "데지그넌트"
@@ -27982,6 +27986,76 @@
                     "jacketDesigner": "",
                     "rating": 9,
                     "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 443,
+            "id": "aethercrest",
+            "title_localized": {
+                "en": "Aether Crest: Astral"
+            },
+            "artist": "void (Mournfinale) × 水野健治",
+            "search_title": {
+                "ja": [
+                    "えーてるくれすとあすとらる"
+                ],
+                "ko": [
+                    "에테르 크레스트 아스트랄"
+                ]
+            },
+            "search_artist": {
+                "en": [
+                    "mizuno kenji"
+                ],
+                "ja": [
+                    "ぼいど",
+                    "ゔぉいど",
+                    "みずのけんじ"
+                ],
+                "ko": [
+                    "보이드",
+                    "미즈노 켄지"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180,
+            "set": "chunithm_append_3",
+            "purchase": "chunithm_append_3",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "aethercrest",
+            "bg_inverse": "aethercrest",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1740700800,
+            "version": "6.2",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Nitro",
+                    "jacketDesigner": "すずなし",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Empyrean",
+                    "jacketDesigner": "すずなし",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "M理論 《Quintessence》",
+                    "jacketDesigner": "すずなし",
+                    "rating": 10
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "夜浪 × 絶滅「αἴθων」",
+                    "jacketDesigner": "すずなし",
+                    "rating": 11
                 }
             ]
         }
