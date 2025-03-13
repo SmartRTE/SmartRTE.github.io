@@ -28058,6 +28058,467 @@
                     "rating": 11
                 }
             ]
+        },
+        {
+            "idx": 444,
+            "id": "heartache",
+            "title_localized": {
+                "en": "Heartache",
+                "ja": "心の痛み"
+            },
+            "artist": "Toby Fox",
+            "search_title": {
+                "ja": [
+                    "はーとえいく",
+                    "こころのいたみ"
+                ],
+                "ko": [
+                    "하트에이크"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "とびーふぉっくす"
+                ],
+                "ko": [
+                    "토비 폭스"
+                ]
+            },
+            "bpm": "239",
+            "bpm_base": 239,
+            "set": "undertale",
+            "source_localized": {
+                "en": "UNDERTALE®"
+            },
+            "purchase": "undertale",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "undertale_light",
+            "bg_inverse": "undertale_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1741478400,
+            "version": "6.3",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "sidewaves",
+                    "jacketDesigner": "",
+                    "rating": 1
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "sidewaves",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "sidewaves",
+                    "jacketDesigner": "",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "sidewaves",
+                    "jacketDesigner": "",
+                    "rating": 8,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 445,
+            "id": "deathbyglamour",
+            "title_localized": {
+                "en": "Death By Glamour",
+                "ja": "華麗なる死闘"
+            },
+            "artist": "Toby Fox",
+            "bpm": "148",
+            "bpm_base": 148,
+            "set": "undertale",
+            "source_localized": {
+                "en": "UNDERTALE®"
+            },
+            "purchase": "undertale",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "undertale_light",
+            "bg_inverse": "undertale_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1741478401,
+            "version": "6.3",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "RYCT QUIZ SHOW",
+                    "jacketDesigner": "",
+                    "rating": 2
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "RYCT COOKING",
+                    "jacketDesigner": "",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "RYCT NEWS",
+                    "jacketDesigner": "",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "RYCT THE MUSICAL",
+                    "jacketDesigner": "",
+                    "rating": 9
+                }
+            ]
+        },
+        {
+            "idx": 446,
+            "id": "yourbestnightmare",
+            "title_localized": {
+                "en": "Your Best Nightmare",
+                "ja": "最高の悪夢"
+            },
+            "artist": "Toby Fox",
+            "search_title": {
+                "ja": [
+                    "ゆあべすとないとめあ",
+                    "さいこうのあくむ"
+                ],
+                "ko": [
+                    "유어 베스트 나이트메어"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "とびーふぉっくす"
+                ],
+                "ko": [
+                    "토비 폭스"
+                ]
+            },
+            "bpm": "190",
+            "bpm_base": 190,
+            "set": "undertale",
+            "source_localized": {
+                "en": "UNDERTALE®"
+            },
+            "purchase": "undertale",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "undertale_conflict",
+            "bg_inverse": "undertale_light",
+            "remote_dl": true,
+            "world_unlock": false,
+            "byd_local_unlock": true,
+            "date": 1741478402,
+            "version": "6.3",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Nitro",
+                    "jacketDesigner": "",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Nitro",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Arcaea Charting Team【The Six Souls】",
+                    "jacketDesigner": "",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 3,
+                    "chartDesigner": "Arcaea Charting Team【The Six Souls】",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "hidden_until": "none"
+                }
+            ]
+        },
+        {
+            "idx": 447,
+            "id": "lastgoodbye",
+            "title_localized": {
+                "en": "Last Goodbye",
+                "ja": "これでホントにサヨナラ"
+            },
+            "artist": "Toby Fox",
+            "search_title": {
+                "ja": [
+                    "らすとぐっばい",
+                    "らすとぐっどばい",
+                    "これでほんとにさよなら"
+                ],
+                "ko": [
+                    "라스트 굿바이"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "とびーふぉっくす"
+                ],
+                "ko": [
+                    "토비 폭스"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180,
+            "set": "undertale",
+            "source_localized": {
+                "en": "UNDERTALE®"
+            },
+            "purchase": "undertale",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "undertale_light",
+            "bg_inverse": "undertale_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1741478403,
+            "version": "6.3",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Luxance",
+                    "jacketDesigner": "",
+                    "rating": 2
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Luxance",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Luxance",
+                    "jacketDesigner": "",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "Good night.",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 448,
+            "id": "megalovania",
+            "title_localized": {
+                "en": "MEGALOVANIA"
+            },
+            "artist": "Toby Fox",
+            "search_title": {
+                "ja": [
+                    "めがろばにあ",
+                    "めがろゔぁにあ"
+                ],
+                "ko": [
+                    "메갈로바니아",
+                    "메갈로베니아"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "とびーふぉっくす"
+                ],
+                "ko": [
+                    "토비 폭스"
+                ]
+            },
+            "bpm": "240",
+            "bpm_base": 240,
+            "set": "undertale",
+            "source_localized": {
+                "en": "UNDERTALE®"
+            },
+            "purchase": "undertale",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "undertale_conflict",
+            "bg_inverse": "undertale_light",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1741478404,
+            "version": "6.3",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "瑞獣 ＬＶ３",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "瑞獣 ＬＶ８",
+                    "jacketDesigner": "",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "瑞獣 ＬＶ１５",
+                    "jacketDesigner": "",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "瑞獣 ＬＶ１９",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 449,
+            "id": "megalovaniarmx",
+            "title_localized": {
+                "en": "MEGALOVANIA (Camellia Remix)"
+            },
+            "artist": "Camellia",
+            "search_title": {
+                "ja": [
+                    "めがろゔぁにあかめりありみっくす",
+                    "めがろばにあかめりありみっくす"
+                ],
+                "ko": [
+                    "메갈로바니아 카멜리아 리믹스",
+                    "메갈로베니아 카멜리아 리믹스"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "かめりあ"
+                ],
+                "ko": [
+                    "카멜리아"
+                ]
+            },
+            "bpm": "242",
+            "bpm_base": 242,
+            "set": "single",
+            "category": "poprec",
+            "source_localized": {
+                "en": "UNDERTALE®"
+            },
+            "purchase": "megalovaniarmx",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "megalovaniarmx",
+            "bg_inverse": "megalovaniarmx",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1741478405,
+            "limitedSaleEndTime": 1773014400,
+            "version": "6.3",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "M理論",
+                    "jacketDesigner": "夏生",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "M理論",
+                    "jacketDesigner": "夏生",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "M理論",
+                    "jacketDesigner": "夏生",
+                    "rating": 9,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "* do you wanna have a bad time?",
+                    "jacketDesigner": "夏生",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 450,
+            "id": "placebobattler",
+            "title_localized": {
+                "en": "Placebo♥Battler",
+                "ja": "プラシイボ♥バトラー"
+            },
+            "artist": "OSTER project",
+            "search_title": {
+                "en": [
+                    "purashiibo batora"
+                ],
+                "ko": [
+                    "플라시보 배틀러"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "おすたーぷろじぇくと"
+                ],
+                "ko": [
+                    "오스터 프로젝트"
+                ]
+            },
+            "bpm": "270",
+            "bpm_base": 270,
+            "set": "single",
+            "category": "original",
+            "purchase": "placebobattler",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "vs_light",
+            "bg_inverse": "vs_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1741478406,
+            "version": "6.3",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "絶滅【再構築】",
+                    "jacketDesigner": "cyawa",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "絶滅【再構築】",
+                    "jacketDesigner": "cyawa",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "絶滅【再構築】",
+                    "jacketDesigner": "cyawa",
+                    "rating": 10
+                }
+            ]
         }
     ]
 }
