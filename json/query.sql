@@ -492,7 +492,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('yomibi
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Aether Crest: Astral', 'aethercrest', 6.0, 8.9, 10.6, '', 11.5);
 
 -- 6.3.0
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Heartache', 'Heartache', 1.5, 4.5, 7.5, '', 8.7);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Heartache', 'heartache', 1.5, 4.5, 7.5, '', 8.7);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Death By Glamour', 'deathbyglamour', 2.5, 5.0, 7.8, '', 9.4);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Your Best Nightmare', 'yourbestnightmare', 3.5, 6.5, 8.9, 10.2, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Last Goodbye', 'lastgoodbye', 2.5, 6.5, 8.2, '', 9.7);
