@@ -120,7 +120,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('INTERN
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Infinite Strife', 'infinitestrife', 4.0, 7.5, 9.9, 10.9, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MAXRAGE', 'maxrage', 3.5, 6.5, 9.9, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('New York Back Raise', 'newyorkbackraise', 4.5, 7.0, 9.9, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Nhelv', 'nhelv', 3.0, 6.5, 9.9, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Nhelv', 'nhelv', 3.0, 6.5, 9.9, 10.9, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('SOUNDWiTCH', 'soundwitch', 3.5, 6.5, 9.8, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Summer Fireworks of Love', 'summerfireworks', 3.0, 6.5, 9.9, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('The Survivor (Game Edit)', 'thesurvivor', 3.5, 6.5, 9.9, '', '');
@@ -151,7 +151,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('THE UL
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('World Fragments III(radio edit)', 'worldfragments', 3.5, 7.0, 9.8, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Xeraphinite', 'xeraphinite', 3.0, 7.5, 9.8, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('init()', 'init', 4.0, 7.5, 9.8, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Altale', 'altale', 2.5, 5.5, 9.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Altale', 'altale', 2.5, 5.5, 9.8, 10.0, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('AlterAle', 'alterale', 3.0, 6.0, 9.7, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('BADTEK', 'badtek', 4.0, 7.0, 9.7, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('BATTLE NO.1', 'battlenoone', 3.5, 6.5, 9.7, '', '');
@@ -180,7 +180,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('u', 'm
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('A Wandering Melody of Love', 'melodyoflove', 3.5, 7.5, 9.6, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Astral tale', 'astraltale', 4.5, 7.0, 9.6, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Avant Raze', 'avantraze', 3.5, 6.5, 9.6, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('ENERGY SYNERGY MATRIX', 'energysynergymatrix', 3.5, 7.0, 9.6, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('ENERGY SYNERGY MATRIX', 'energysynergymatrix', 3.5, 7.0, 9.6, 10.3, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Fallensquare', 'fallensquare', 3.0, 7.5, 9.7, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('IMPACT', 'impact', 3.5, 7.8, 9.6, 10.4, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Lazy Addiction', 'lazyaddiction', 2.5, 6.0, 9.6, '', '');
@@ -241,7 +241,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('PICO-P
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Sakura Fubuki', 'sakurafubuki', 3.5, 6.5, 9.4, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Syro', 'syro', 3.5, 6.5, 9.3, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Alice a la mode', 'alicealamode', 2.5, 6.5, 9.2, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Anokumene', 'anokumene', 2.5, 6.5, 9.2, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Anokumene', 'anokumene', 2.5, 6.5, 9.2, 9.9, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Dancin'' on a Cat''s Paw', 'nekonote', 3.0, 6.0, 9.2, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Libertas', 'libertas', 3.5, 5.5, 9.2, 10.5, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Lost Civilization', 'lostcivilization', 4.0, 7.0, 9.2, 9.8, '');
@@ -315,7 +315,7 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Moonhe
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Purgatorium', 'purgatorium', 2.5, 6.0, 8.4, 9.6, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('REconstruction', 'reconstruction', 2.5, 6.0, 8.4, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Rabbit In The Black Room', 'rabbitintheblackroom', 2.5, 5.5, 8.4, '', '');
-INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Snow White', 'snowwhite', 2.5, 5.0, 8.4, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Snow White', 'snowwhite', 2.5, 5.0, 8.4, 9.7, '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Tsuki ni Murakumo Hana ni Kaze', 'tsukinimurakumo', 3.0, 6.0, 8.7, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('enchanted love', 'enchantedlove', 2.0, 4.5, 8.6, '', '');
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Avril -Flicka i krans-', 'avril', 3.0, 6.0, 8.3, '', '');
@@ -499,6 +499,32 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Last G
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MEGALOVANIA', 'megalovania', 4.5, 7.5, 9.5, '', 10.5);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('MEGALOVANIA (Camellia Remix)', 'megalovaniarmx', 5.5, 8.4, 9.8, '', 10.9);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Placebo Battler', 'placebobattler', 5.5, 8.3, 10.4, '', '');
+
+--6.3.0 - 6.6.1
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Black Mirror on the Wall', 'blackmirror', 3.5, 6.5, 8.6, '', 9.7);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Shinchoku Doudesuka', 'shinchoku', 3.5, 7.5, 8.8, '', 9.9);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('TRPNO', 'trpno', 4.5, 7.8, 10.0, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Tau', 'tau', 4.5, 7.8, 9.7, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Dull Blade', 'dullblade', 4.5, 8.0, 10.5, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Won''t Back Down', 'wontbackdown', 3.5, 6.5, 9.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Don''t Die', 'dontdie', 3.5, 7.0, 9.4, '', 10.1);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Ladymade Star', 'ladymadestar', 2.5, 6.5, 8.4, '', 9.2);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('End of The Moonlight', 'endmoonlight', 3.0, 5.5, 9.5, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('U.A.D', 'uad', 3.5, 6.5, 8.7, '', 9.8);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('OBLIVION', 'oblivion', 4.0, 7.0, 9.5, '', 10.1);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Nightmare', 'nightmare', 4.5, 7.8, 9.8, '', 10.8);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Tic! Tac! Toe!', 'tictactoe', 3.5, 7.5, 8.8, '', 9.9);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('SATISFACTION', 'satisfaction', 3.5, 6.5, 8.5, '', 9.5);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Someday', 'someday', 3.0, 6.0, 9.5, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Miles', 'miles', 3.5, 6.5, 8.2, '', 9.8);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('I Want You', 'iwantyou', 3.0, 5.5, 8.3, '', 9.4);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Syriana', 'syriana', 4.5, 7.5, 9.9, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Liar', 'liar', 4.5, 7.8, 10.0, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('BlythE', 'blythe', 3.0, 7.5, 9.4, '', 10.5);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('We''re All Gonna Die', 'wereallgonnadie', 5.5, 8.0, 10.1, '', 10.9);
+
+
+
 
 COMMIT TRANSACTION;
 

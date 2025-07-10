@@ -106,7 +106,7 @@ INTERNET YAMERO,internetyamero,4.5,7.8,9.9,,
 Infinite Strife,infinitestrife,4,7.5,9.9,10.9,
 MAXRAGE,maxrage,3.5,6.5,9.9,,
 New York Back Raise,newyorkbackraise,4.5,7,9.9,,
-Nhelv,nhelv,3,6.5,9.9,,
+Nhelv,nhelv,3,6.5,9.9,10.9,
 SOUNDWiTCH,soundwitch,3.5,6.5,9.8,,
 Summer Fireworks of Love,summerfireworks,3,6.5,9.9,,
 The Survivor (Game Edit),thesurvivor,3.5,6.5,9.9,,
@@ -137,7 +137,7 @@ THE ULTIMACY,theultimacy,3,7,9.8,,
 World Fragments III(radio edit),worldfragments,3.5,7,9.8,,
 Xeraphinite,xeraphinite,3,7.5,9.8,,
 init(),init,4,7.5,9.8,,
-Altale,altale,2.5,5.5,9.8,,
+Altale,altale,2.5,5.5,9.8,10.0,
 AlterAle,alterale,3,6,9.7,,
 BADTEK,badtek,4,7,9.7,,
 BATTLE NO.1,battlenoone,3.5,6.5,9.7,,
@@ -166,7 +166,7 @@ u,mu,3.5,7.5,9.7,,
 A Wandering Melody of Love,melodyoflove,3.5,7.5,9.6,,
 Astral tale,astraltale,4.5,7,9.6,,
 Avant Raze,avantraze,3.5,6.5,9.6,,
-ENERGY SYNERGY MATRIX,energysynergymatrix,3.5,7,9.6,,
+ENERGY SYNERGY MATRIX,energysynergymatrix,3.5,7,9.6,10.3,
 Fallensquare,fallensquare,3,7.5,9.7,,
 IMPACT,impact,3.5,7.8,9.6,10.4,
 Lazy Addiction,lazyaddiction,2.5,6,9.6,,
@@ -227,7 +227,7 @@ PICO-Pico-Translation!,picopicotranslation,2,6,9.4,,
 Sakura Fubuki,sakurafubuki,3.5,6.5,9.4,,
 Syro,syro,3.5,6.5,9.3,,
 Alice a la mode,alicealamode,2.5,6.5,9.2,,
-Anokumene,anokumene,2.5,6.5,9.2,,
+Anokumene,anokumene,2.5,6.5,9.2,9.9,
 Dancin'' on a Cat''s Paw,nekonote,3,6,9.2,,
 Libertas,libertas,3.5,5.5,9.2,10.5,
 Lost Civilization,lostcivilization,4,7,9.2,9.8,
@@ -299,7 +299,7 @@ Moonheart,moonheart,2.5,5.5,8.4,9.7,
 Purgatorium,purgatorium,2.5,6,8.4,9.6,
 REconstruction,reconstruction,2.5,6,8.4,,
 Rabbit In The Black Room,rabbitintheblackroom,2.5,5.5,8.4,,
-Snow White,snowwhite,2.5,5,8.4,,
+Snow White,snowwhite,2.5,5,8.4,9.7,
 Tsuki ni Murakumo Hana ni Kaze,tsukinimurakumo,3,6,8.7,,
 enchanted love,enchantedlove,2,4.5,8.6,,
 Avril -Flicka i krans-,avril,3,6,8.3,,
@@ -449,3 +449,24 @@ Last Goodbye,lastgoodbye,2.5,6.5,8.2,,9.7
 MEGALOVANIA,megalovania,4.5,7.5,9.5,,10.5
 MEGALOVANIA (Camellia Remix),megalovaniarmx,5.5,8.4,9.8,,10.9
 Placebo Battler,placebobattler,5.5,8.3,10.4,,
+Black Mirror on the Wall,blackmirror,3.5,6.5,8.6,,9.7
+Shinchoku Doudesuka,shinchoku,3.5,7.5,8.8,,9.9
+TRPNO,trpno,4.5,7.8,10.0,,
+Tau,tau,4.5,7.8,9.7,,
+Dull Blade,dullblade,4.5,8.0,10.5,,
+Won't Back Down,wontbackdown,3.5,6.5,9.8,,
+Don't Die,dontdie,3.5,7.0,9.4,,10.1
+Ladymade Star,ladymadestar,2.5,6.5,8.4,,9.2
+End of The Moonlight,endmoonlight,3.0,5.5,9.5,,
+U.A.D,uad,3.5,6.5,8.7,,9.8
+OBLIVION,oblivion,4.0,7.0,9.5,,10.1
+Nightmare,nightmare,4.5,7.8,9.8,,10.8
+Tic! Tac! Toe!,tictactoe,3.5,7.5,8.8,,9.9
+SATISFACTION,satisfaction,3.5,6.5,8.5,,9.5
+Someday,someday,3.0,6.0,9.5,,
+Miles,miles,3.5,6.5,8.2,,9.8
+I Want You,iwantyou,3.0,5.5,8.3,,9.4
+Syriana,syriana,4.5,7.5,9.9,,
+Liar,liar,4.5,7.8,10.0,,
+BlythE,blythe,3.0,7.5,9.4,,10.5
+We're All Gonna Die,wereallgonnadie,5.5,8.0,10.1,,10.9
