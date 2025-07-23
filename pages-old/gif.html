@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>图片合成GIF</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    label { display: block; margin-top: 10px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
+    input[type="text"], select { padding: 6px; font-size: 16px; width: 200px; margin-left: 5px; }
+  </style>
+</head>
+<body>
+  <h2>图片合成GIF</h2>
+  <label>
+    生成文件名（不含后缀）：
+    <input type="text" id="filename" value="output" />
+  </label>
+  <label>
+    选择保存后缀：
+    <select id="extSelect">
+      <option value="jpg" selected>jpg</option>
+      <option value="gif">gif</option>
+    </select>
+  </label>
+  <label>选择图片 A：<input type="file" id="fileA" accept="image/*" /></label>
+  <label>选择图片 B：<input type="file" id="fileB" accept="image/*" /></label>
+  <button id="generate">生成 GIF</button>
+
+  <script src="../js/gif.js"></script>
+  <script>
+    const fileA = document.getElementById('fileA');
+    const fileB = document.getElementById('fileB');
+    const btn = document.getElementById('generate');
+    const filenameInput = document.getElementById('filename');
+    const extSelect = document.getElementById('extSelect');
+
+    btn.onclick = async () => {
+      if (!fileA.files[0] || !fileB.files[0]) {
+        alert('请先选择两张图片！');
+        return;
+      }
+
+      let filename = filenameInput.value.trim();
+      if (!filename) {
+        alert('请输入生成文件名！');
+        filenameInput.focus();
+        return;
+      }
+      // 过滤非法字符（简单版）
+      filename = filename.replace(/[\/\\:*?"<>|]/g, '');
+
+      let ext = extSelect.value || 'jpg';
+
+      const imgA = await readImage(fileA.files[0]);
+      const imgB = await readImage(fileB.files[0]);
+      const width = Math.max(imgA.width, imgB.width);
+      const height = Math.max(imgA.height, imgB.height);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      const gif = new GIF({
+        workers: 2,
+        quality: 10,
+        workerScript: "../js/gif.worker.js" // 根据你的目录修改路径
+      });
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.drawImage(imgA, 0, 0, width, height);
+      gif.addFrame(canvas, { copy: true, delay: 1 });
+
+      ctx.clearRect(0, 0, width, height);
+      ctx.drawImage(imgB, 0, 0, width, height);
+      gif.addFrame(canvas, { copy: true, delay: 600000 });
+
+      gif.on('finished', function (blob) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename + '.' + ext;
+        a.click();
+      });
+
+      gif.render();
+    };
+
+    function readImage(file) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.src = URL.createObjectURL(file);
+      });
+    }
+  </script>
+</body>
+</html>
