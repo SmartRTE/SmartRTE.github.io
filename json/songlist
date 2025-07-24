@@ -29973,6 +29973,411 @@
                     "ratingPlus": true
                 }
             ]
+        },
+        {
+            "idx": 472,
+            "id": "dematerialized",
+            "title_localized": {
+                "en": "Dematerialized"
+            },
+            "artist": "In Love With A Ghost",
+            "search_title": {
+                "ja": [
+                    "でまてりあらいずど"
+                ],
+                "ko": [
+                    "디메테럴라이즈드"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "いんらぶうぃずあごーすと"
+                ],
+                "ko": [
+                    "인 러브 윗 어 고스트",
+                    "인 러브 위드 어 고스트"
+                ]
+            },
+            "bpm": "86",
+            "bpm_base": 172,
+            "set": "base",
+            "purchase": "",
+            "audioPreview": 55813,
+            "audioPreviewEnd": 80930,
+            "side": 1,
+            "bg": "eden_conflict",
+            "bg_inverse": "eden_light",
+            "remote_dl": false,
+            "world_unlock": false,
+            "date": 1753315200,
+            "version": "6.7",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "mw2k",
+                    "rating": 1
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "mw2k",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "mw2k",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "mw2k",
+                    "rating": 8
+                }
+            ]
+        },
+        {
+            "idx": 473,
+            "id": "seethelights",
+            "title_localized": {
+                "en": "See the Lights!"
+            },
+            "artist": "polysha feat. しろさきあや",
+            "search_title": {
+                "ja": [
+                    "しーざらいつ"
+                ],
+                "ko": [
+                    "시 더 라이츠"
+                ]
+            },
+            "search_artist": {
+                "en": [
+                    "shirosaki aya"
+                ],
+                "ja": [
+                    "ぽりしゃ"
+                ],
+                "ko": [
+                    "폴리샤",
+                    "시로사키 아야"
+                ]
+            },
+            "bpm": "136",
+            "bpm_base": 136,
+            "set": "anima",
+            "purchase": "anima",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "anima_light",
+            "bg_inverse": "anima_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1753315201,
+            "version": "6.7",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "raycast☆",
+                    "jacketDesigner": "桑島黎音",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "raycast☆",
+                    "jacketDesigner": "桑島黎音",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "raycast☆",
+                    "jacketDesigner": "桑島黎音",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "raycast☆",
+                    "jacketDesigner": "桑島黎音",
+                    "rating": 9
+                }
+            ]
+        },
+        {
+            "idx": 474,
+            "id": "scarletlunar",
+            "title_localized": {
+                "en": "Scarlet Lunar Empress",
+                "ja": "朱月ノ姫"
+            },
+            "artist": "technoplanet feat. 夕月ティア",
+            "search_title": {
+                "en": [
+                    "akatsuki no hime"
+                ],
+                "ja": [
+                    "あかつきのひめ"
+                ],
+                "ko": [
+                    "스칼렛 루나 엠프레스",
+                    "아카츠키노 히메",
+                    "붉은 달의 공주"
+                ]
+            },
+            "search_artist": {
+                "en": [
+                    "yuudutsu tear"
+                ],
+                "ja": [
+                    "てくのぷらねっと",
+                    "ゆうづつてぃあ"
+                ],
+                "ko": [
+                    "테크노플래닛",
+                    "유우다츠 티어"
+                ]
+            },
+            "bpm": "108-184",
+            "bpm_base": 184,
+            "set": "anima",
+            "purchase": "anima",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "anima_light",
+            "bg_inverse": "anima_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1753315202,
+            "version": "6.7",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "青月sidewaves",
+                    "jacketDesigner": "祝く月",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "青月sidewaves",
+                    "jacketDesigner": "祝く月",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "青月sidewaves",
+                    "jacketDesigner": "祝く月",
+                    "rating": 9,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 475,
+            "id": "dualdependency",
+            "title_localized": {
+                "en": "Dual Dependency"
+            },
+            "artist": "seatrus",
+            "search_title": {
+                "ja": [
+                    "でゅあるでぃぺんでんしー"
+                ],
+                "ko": [
+                    "듀얼 디펜던시"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "しーとらす"
+                ],
+                "ko": [
+                    "시트러스"
+                ]
+            },
+            "bpm": "155",
+            "bpm_base": 155,
+            "set": "anima",
+            "purchase": "anima",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "anima_light",
+            "bg_inverse": "anima_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1753315203,
+            "version": "6.7",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "絶∥滅",
+                    "jacketDesigner": "U0",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "絶∥滅",
+                    "jacketDesigner": "U0",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "絶∥滅",
+                    "jacketDesigner": "U0",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "絶∥滅",
+                    "jacketDesigner": "U0",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 476,
+            "id": "lilly",
+            "title_localized": {
+                "en": "Lilly"
+            },
+            "artist": "Juggernaut.",
+            "search_title": {
+                "ja": [
+                    "りりぃ",
+                    "りりい"
+                ],
+                "ko": [
+                    "릴리"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "じゃがーのーと"
+                ],
+                "ko": [
+                    "저거넛",
+                    "저거노트"
+                ]
+            },
+            "bpm": "235",
+            "bpm_base": 235,
+            "set": "anima",
+            "purchase": "anima",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "anima_light",
+            "bg_inverse": "anima_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1753315204,
+            "version": "6.7",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "反水【天龍】",
+                    "jacketDesigner": "イシダタツキ",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "反水【天龍】",
+                    "jacketDesigner": "イシダタツキ",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "反水【天龍】",
+                    "jacketDesigner": "イシダタツキ",
+                    "rating": 9,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "瑞獣【応龍】",
+                    "jacketDesigner": "イシダタツキ",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 477,
+            "id": "extradimensional",
+            "title_localized": {
+                "en": "Extradimensional Cosmic Phenomenon",
+                "ja": "多次元宇宙融合論"
+            },
+            "artist": "TAKIO feat. つぐ",
+            "search_title": {
+                "en": [
+                    "tajigen uchuu yuugouron"
+                ],
+                "ja": [
+                    "たじげんうちゅうゆうごうろん"
+                ],
+                "ko": [
+                    "타지겐 우츄우 유우고우론",
+                    "다차원 우주 융합론"
+                ]
+            },
+            "search_artist": {
+                "en": [
+                    "tsugu"
+                ],
+                "ja": [
+                    "たきお",
+                    "つぐ"
+                ],
+                "ko": [
+                    "타키오",
+                    "츠구"
+                ]
+            },
+            "bpm": "180-300",
+            "bpm_base": 234,
+            "set": "anima",
+            "purchase": "anima",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "extradimensional",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1753315205,
+            "version": "6.7",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "#0000遒ｧ",
+                    "jacketDesigner": "すずなし",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "#0000遒ｧ",
+                    "jacketDesigner": "すずなし",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "#0000遒ｧ",
+                    "jacketDesigner": "すずなし",
+                    "rating": 10
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "#0000遒ｧ",
+                    "jacketDesigner": "すずなし",
+                    "legacy11": true,
+                    "rating": 11
+                }
+            ]
         }
     ]
 }

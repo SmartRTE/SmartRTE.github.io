@@ -523,8 +523,13 @@ INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Liar',
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('BlythE', 'blythe', 3.0, 7.5, 9.4, '', 10.5);
 INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('We''re All Gonna Die', 'wereallgonnadie', 5.5, 8.0, 10.1, '', 10.9);
 
-
-
+-- 6.7.0
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Dematerialized', 'dematerialized', 1.5, 4.5, 7.5, '', 8.3);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('See the Lights!', 'seethelights', 3.5, 6.5, 8.6, '', 9.6);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Scarlet Lunar Empress', 'scarletlunar', 3.5, 7.0, 9.8, '', '');
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Dual Dependency', 'dualdependency', 4.5, 7.8, 9.5, '', 10.4);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Lilly', 'lilly', 5.0, 8.4, 9.9, '', 10.8);
+INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('Extradimensional Cosmic Phenomenon', 'extradimensional', 6.5, 8.8, 10.6, '', 11.3);
 
 COMMIT TRANSACTION;
 
