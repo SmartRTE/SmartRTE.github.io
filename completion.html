@@ -108,180 +108,161 @@
 
 
 		<div id="setting-window" hidden="hidden">
-			<div id="setting-bg" onclick="displayWindow('setting-window')"></div>
-			<div id="setting-close" onclick="displayWindow('setting-window')">×</div>
+			<div id="setting-bg" onclick="closeSettings()"></div>
+			<div id="setting-close" onclick="closeSettings()">&times;</div>
 			<div id="setting-main">
+				<div class="modal-header">
+					<h3 class="modal-title">设置</h3>
+					<button class="theme-toggle-btn theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn">🌙 深色</button>
+				</div>
 				<div hidden="hidden">
 					<img id="temp-avatar" src="img/avatar/0_icon.webp" alt="暂存自定义头像" />
 					<img id="temp-background" src="bgs/0.webp" alt="暂存自定义背景" />
 				</div>
-				<div class="setting-row">
-					<div class="setting-container">
+				<div class="setting-grid">
+					<div class="setting-card">
+						<span class="card-label">数据文件</span>
 						<input type="file" id="file-input" hidden="hidden" />
-						<button id="file-input-button" class="setting-button"
-							onclick="inputFile('file-input')">选择st3或分数表</button>
+						<button type="button" class="btn-action primary" onclick="inputFile('file-input')" style="width:100%;">选择 st3 或分数表</button>
 					</div>
-				</div>
-
-				<div class="setting-row">
-					<div class="setting-container">
-						<button class="setting-button" onclick="window.open('index.html', parent)">返回主页</button>
+					<div class="setting-card">
+						<span class="card-label">操作</span>
+						<button type="button" class="btn-action primary" onclick="saveAsImage('mainCapture')" style="width:100%;">生成图片</button>
+						<button type="button" class="btn-action" onclick="window.location.href='index.html'" style="width:100%;">返回主页</button>
 					</div>
-				</div>
-
-				<div class="setting-row">
-					<div class="setting-container">
-						<label for="user-name-input" class="setting-label">用户名</label>
-						<input id="user-name-input" class="setting-input" placeholder="Hikari" />
+					<div class="setting-card">
+						<span class="card-label">玩家名称</span>
+						<input id="user-name-input" placeholder="Hikari" />
 					</div>
-				</div>
-
-				<div class="setting-row">
-					<div class="setting-container">
-						<label for="user-id-input" class="setting-label">好友码</label>
-						<input id="user-id-input" class="setting-input" placeholder="100000001" />
+					<div class="setting-card">
+						<span class="card-label">好友码</span>
+						<input id="user-id-input" placeholder="100000001" />
+						<button type="button" class="btn-action" onclick="hideUID()" style="width:100%;">显示/隐藏好友码</button>
 					</div>
-				</div>
-				<div class="setting-row">
-					<div class="setting-container">
-						<button class="setting-button" onclick="hideUID()">显示/隐藏好友码</button>
+					<div class="setting-card">
+						<span class="card-label">潜力值</span>
+						<input id="potential-input" placeholder="6.16" />
 					</div>
-				</div>
-				<div class="setting-row">
-					<div class="setting-container">
-						<label for="potential-input" class="setting-label">潜力值</label>
-						<input id="potential-input" class="setting-input" placeholder="6.16" />
-						<!-- <label class="setting-label" style="float: none;">(*影响r10计算)</label> -->
+					<div class="setting-card">
+						<span class="card-label">定数范围</span>
+						<div style="display:flex;gap:6px;align-items:center;">
+							<input type="number" id="range-upper-bound" placeholder="12.0" value="12.0" style="width:80px;" />
+							<span>到</span>
+							<input type="number" id="range-lower-bound" placeholder="9.0" value="9.0" style="width:80px;" />
+							<button type="button" class="btn-action" onclick="changeBound()">更改</button>
+						</div>
 					</div>
-				</div>
-				<div class="setting-row">
-					<div class="setting-container">
-						<label for="range-upper-bound" class="setting-label">显示定数从</label>
-						<input class="setting-input" type="number" id="range-upper-bound" placeholder="11.0"
-							value="12.0" />
-					</div>
-				</div>
-				<div class="setting-row">
-					<div class="setting-container">
-						<label for="range-lower-bound" class="setting-label">到</label>
-						<input class="setting-input" type="number" id="range-lower-bound" placeholder="9.0"
-							value="9.0" />
-						<button class="setting-button" onclick="changeBound()">更改</button>
-					</div>
-				</div>
-				<div class="setting-row">
-					<div class="setting-container">
+					<div class="setting-card">
+						<span class="card-label">记录显示</span>
 						<div id="no-record-hidden"></div>
-						<button class="setting-button" onclick="displayNoRecord()"
-							id="no-record-button">隐藏没有记录的成绩</button>
+						<button type="button" class="btn-action" onclick="displayNoRecord()" id="no-record-button" style="width:100%;">隐藏没有记录的成绩</button>
 					</div>
-				</div>
-				<div class="setting-row">
-					<div class="setting-container">
-						<button class="setting-button" onclick="saveAsImage('mainCapture')">生成图片</button>
-					</div>
-				</div>
-				<div class="setting-row">
-					<div class="setting-container">
-						<label for="user-course-dan-display" class="setting-label">段位</label>
+					<div class="setting-card">
+						<span class="card-label">段位框</span>
 						<input type="number" id="selected-dan" hidden="hidden" value="0" />
 						<div id="user-course-dan-display" onclick="displayWindow('user-course-dan-select')">不显示</div>
-						<br />
-						<div id="user-course-dan-select">
-							<ul id="user-course-dan-list">
-								<li class="user-course-dan-option" value="0" onclick="changeCourseDanFrame(0)">
-									<button>不显示</button>
-								</li>
-								<!-- <li class="user-course-dan-option" value="1" onclick="changeCourseDanFrame(1)"><img
-										class="user-course-dan-img" src="img/course/1.png"></li>-->
-							</ul>
-						</div>
+						<button type="button" class="btn-action" id="show-uid-frame" onclick="displayWindow('id-course-dan')" style="width:100%;">显示/隐藏好友码段位框</button>
 					</div>
-				</div>
-
-				<div class="setting-row">
-					<div class="setting-container">
-						<button class="setting-button" id="show-uid-frame"
-							onclick="displayWindow('id-course-dan')">显示/隐藏好友码段位框</button>
-					</div>
-				</div>
-
-				<div class="setting-row">
-					<div class="setting-container">
-						<label for="avatar-select" class="setting-label">选择头像</label>
-						<div id="avatar-display">
-							<img src="img/avatar/0_icon.webp" onclick="displayWindow('avatar-select')" />
+					<div class="setting-card">
+						<span class="card-label">头像</span>
+						<div class="media-options">
+							<div class="media-option media-avatar">
+								<span class="media-option-label">预设</span>
+								<div id="avatar-display">
+									<img src="img/avatar/0_icon.webp" onclick="displayWindow('avatar-select')" />
+								</div>
+							</div>
+							<div class="media-option media-avatar">
+								<span class="media-option-label">手动</span>
+								<div id="custom-avatar">
+									<img src="Processed_Illustration/random.jpg" />
+								</div>
+							</div>
 						</div>
-						<!-- <button class="setting-button" >换</button> -->
-						<br />
-						<div id="avatar-select">
-							<ul id="avatar-list">
-								<!-- 
-								<li class="avatar-option" onclick="changeAvatar(0)"><img src="img/avatar/0_icon.webp" /></li>
-								<li class="avatar-option" onclick="changeAvatar(1)"><img src="img/avatar/1_icon.webp" /></li>
-								-->
-							</ul>
+						<div class="upload-toggle-row">
+							<button type="button" class="btn-action" onclick="inputFile('custom-avatar-input')">手动上传</button>
+							<label class="custom-toggle">
+								<input type="checkbox" id="use-custom-avatar">
+								<span>使用手动上传</span>
+							</label>
 						</div>
-
-					</div>
-				</div>
-				<div class="setting-row">
-					<div class="setting-container">
 						<input type="file" id="custom-avatar-input" hidden="hidden">
-						<input type="checkbox" id="use-custom-avatar">
-						<label for="custom-avatar" class="setting-label">手动上传头像</label>
-						<br />
-						<div id="custom-avatar" onclick="inputFile('custom-avatar-input')">
-							<img src="Processed_Illustration/random.jpg" />
-						</div>
 					</div>
-				</div>
-				<div class="setting-row">
-					<div class="setting-container">
-						<label class="setting-label">选择背景图</label>
-						<img id="background-display" onclick="displayWindow('background-select')" src="bgs/1.webp" />
-						<div id="background-select">
-							<ul id="background-list">
-								<!-- <li class="background-option"><img src="bgs/s25.webp"
-										onclick="changeBackgroundImage('s25')" /></li>
-								<li class="background-option"><img src="bgs/s26.webp"
-										onclick="changeBackgroundImage('s26')" /></li> -->
-
-							</ul>
+					<div class="setting-card">
+						<span class="card-label">背景图</span>
+						<div class="media-options">
+							<div class="media-option media-background">
+								<span class="media-option-label">预设</span>
+								<img id="background-display" onclick="displayWindow('background-select')" src="bgs/1.webp" />
+							</div>
+							<div class="media-option media-background">
+								<span class="media-option-label">手动</span>
+								<div id="custom-background">
+									<img src="Processed_Illustration/random.jpg" />
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
-				<div class="setting-row">
-					<div class="setting-container">
+						<div class="upload-toggle-row">
+							<button type="button" class="btn-action" onclick="inputFile('custom-background-input')">手动上传</button>
+							<label class="custom-toggle">
+								<input type="checkbox" id="use-custom-background">
+								<span>使用手动上传</span>
+							</label>
+						</div>
 						<input type="file" id="custom-background-input" hidden="hidden">
-						<input type="checkbox" id="use-custom-background">
-						<label for="custom-background" class="setting-label">手动上传背景图</label>
-						<br />
-						<div id="custom-background" onclick="inputFile('custom-background-input')">
-							<img src="Processed_Illustration/random.jpg" />
-						</div>
+					</div>
+					<div class="setting-card">
+						<span class="card-label">缓存</span>
+						<button type="button" class="btn-action danger" id="delete-local-storage" onclick="deleteLocalStorage()" style="width:100%;">清空本地缓存</button>
 					</div>
 				</div>
-
-				<div class="setting-row">
-					<div class="setting-container">
-						<button id="delete-local-storage" onclick="deleteLocalStorage()">⚠清空本地缓存⚠</button>
-					</div>
-				</div>
-
-				<!-- <div class="setting-row">
-					<div class="setting-container">
-						<button class="setting-button rainbow" id="switch-p30" onclick="switchP30()">看看P30</button>
-					</div>
-				</div> -->
 			</div>
-
 		</div>
-		<div id="modify-window">
+
+		<!-- ===== Popup: Avatar Select ===== -->
+		<div id="avatar-select" hidden="hidden">
+			<div class="popup-bg" onclick="displayWindow('avatar-select')"></div>
+			<div class="popup-content">
+				<div class="modal-header">
+					<h3 class="modal-title">选择头像</h3>
+					<span class="modal-close" onclick="displayWindow('avatar-select')">&times;</span>
+				</div>
+				<ul id="avatar-list"></ul>
+			</div>
+		</div>
+
+		<!-- ===== Popup: Background Select ===== -->
+		<div id="background-select" hidden="hidden">
+			<div class="popup-bg" onclick="displayWindow('background-select')"></div>
+			<div class="popup-content">
+				<div class="modal-header">
+					<h3 class="modal-title">选择背景图</h3>
+					<span class="modal-close" onclick="displayWindow('background-select')">&times;</span>
+				</div>
+				<ul id="background-list"></ul>
+			</div>
+		</div>
+
+		<!-- ===== Popup: Course Dan Select ===== -->
+		<div id="user-course-dan-select" hidden="hidden">
+			<div class="popup-bg" onclick="displayWindow('user-course-dan-select')"></div>
+			<div class="popup-content">
+				<div class="modal-header">
+					<h3 class="modal-title">选择段位框</h3>
+					<span class="modal-close" onclick="displayWindow('user-course-dan-select')">&times;</span>
+				</div>
+				<ul id="user-course-dan-list">
+					<li class="user-course-dan-option" value="0" onclick="changeCourseDanFrame(0)"><button>不显示</button></li>
+				</ul>
+			</div>
+		</div>
+		<div id="modify-window" hidden="hidden">
 			<div id="modify-window-background" onclick="displayWindow('modify-window')"></div>
 			<div id="modify-window-close" onclick="displayWindow('modify-window')">×</div>
 			<div id="modify-window-main">
-				<div id="modify-window-title">单曲信息（暂不支持修改）</div>
+				<div class="modal-header">
+					<h3 id="modify-window-title" class="modal-title">单曲信息</h3>
+				</div>
 				<div id="modify-window-content">
 
 					<input type="number" hidden="hidden" value="0" id="modify-current-index" />
@@ -304,33 +285,40 @@
 
 					</div>
 					<div class="modify-row" id="modify-song-item">
-						<label>物量</label><br />
-						<label>Pure数：</label>
-						<input type="number" id="modify-pure" /><br />
-						<label>大P数：</label>
-						<input type="number" id="modify-critical-pure" /><br />
-						<label>Far数:</label>
-						<input type="number" id="modify-far" /><br />
-						<label>Lost数:</label>
-						<input type="number" id="modify-lost" /><br />
+						<div class="modify-field">
+							<label for="modify-pure">Pure数</label>
+							<input type="number" id="modify-pure" />
+						</div>
+						<div class="modify-field">
+							<label for="modify-critical-pure">大P数</label>
+							<input type="number" id="modify-critical-pure" />
+						</div>
+						<div class="modify-field">
+							<label for="modify-far">Far数</label>
+							<input type="number" id="modify-far" />
+						</div>
+						<div class="modify-field">
+							<label for="modify-lost">Lost数</label>
+							<input type="number" id="modify-lost" />
+						</div>
 					</div>
 					<!-- <div class="modify-row">
 						<button class="modify-button" id="delete-result" onclick="deleteResult()">删除此条记录</button>
 					</div> -->
 				</div>
 				<div id="modify-window-buttons">
-					<!-- <div id="modify-window-accept" class="accept-btn" onclick="acceptModifyResult(currentArray)">正确</div> -->
-					<div id="modify-window-refuse" class="refuse-btn" onclick="abortModifyResult()">错误</div>
+					<button type="button" id="modify-window-refuse" class="refuse-btn" onclick="abortModifyResult()">关闭</button>
 				</div>
 			</div>
 		</div>
 
-		<div id="ai-chan-dialog">
+		<div id="ai-chan-dialog" hidden="hidden">
 			<div id="ai-chan-dialog-background" onclick="displayWindow('ai-chan-dialog')"></div>
 			<div id="ai-chan-dialog-close" onclick="displayWindow('ai-chan-dialog')">×</div>
 			<div id="ai-chan-dialog-main">
 				<div id="ai-chan-dialog-title">
-					<button id="ai-chan-roll" class="setting-button" onclick="aiChanRoll()">再推荐一首给我吧！</button>
+					<h3 class="modal-title">AI酱推荐</h3>
+					<button id="ai-chan-roll" class="btn-action" onclick="aiChanRoll()">再推荐一首给我吧！</button>
 				</div>
 				<div id="ai-chan-content">(=・ω・=)
 				</div>
@@ -345,10 +333,13 @@
 		<div id="ai-chan" onclick="displayWindow('ai-chan-dialog')">
 			<img src="img/ai-chan.png" />
 		</div>
+		<!-- 生成图片 -->
+		<div id="generate-image-btn" onclick="saveAsImage('mainCapture')">生成<br />图片</div>
 		<!-- 返回顶部 -->
 		<div id="back-to-top" onclick="scrollToElement('top-of-body')">
 			回到<br />顶部
 			<span></span>
 		</div>
+		<div id="tool-root" data-tool-label="小工具" data-tool-title="单曲PTT计算器" data-fab-variant="square"></div>
 	</body>
 </html>

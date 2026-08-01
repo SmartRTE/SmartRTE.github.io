@@ -23,7 +23,6 @@ let defaultCSV = '';
 let avatarListPath = 'sample/avatar.csv';
 let potentialFramePath = 'img/rating/rating_';
 let sqlWasmPath = "sql-wasm.wasm"; //sql.wasm路径
-let queryFilePath = "json/query.sql"; //sql查询代码文件路径
 let diffSongNameMapping = null; //差分曲名映射
 let diffIllMapping = null; //差分曲绘映射
 
@@ -39,21 +38,13 @@ let rangeLowerBound = 10.0; //筛选中的最低定数边界
 
 $(document).ready(function () {
 	//首次加载保证transition生效
-	displayWindow('modify-window');
-	displayWindow('setting-window');
 	displayWindow('ptt-p30');
-	displayWindow('ai-chan-dialog');
-	//初始化曲名映射
-	diffSongNameMapping = getTitleMapping();
-	//初始化曲绘映射
-	diffIllMapping = getImageMapping();
-	// displayWindow('ai-chan');
-	songlist = initializeSonglist();
-	// readConstantChart();
-	initializeVHZEK();
-	initializeBound();
-	changeBound();
-	getConstantSheet();
+	//初始化曲目数据（songlist + constants.json 派生并生成SQL），完成后生成完成表
+	initializeSongData().then(function () {
+		initializeBound();
+		changeBound();
+		getConstantSheet();
+	});
 	//初始化设置监听
 	initializeSettingListener();
 	//初始化缓存设置
@@ -66,8 +57,6 @@ $(document).ready(function () {
 	initializeUserCourseDanList();
 	//初始化sqlite.js
 	initializeSqliteJs();
-	//读取查询语句文件
-	initializeQuery();
 	//初始化上传文件监听
 	initializeUploadListener();
 	//初始化二维码
@@ -99,6 +88,8 @@ function initializeBound() {
  * 当缓存内有savedArrayData时，直接生成
  */
 function initializeDataArray() {
+	// 版本不匹配时清除旧缓存，避免结构变更后崩溃
+	checkLocalStorageVersion();
 	if (localStorage.saved_csv_data) {
 		runConvert(localStorage.saved_csv_data);
 		localStorage.removeItem('saved_csv_data');
@@ -113,7 +104,7 @@ function initializeDataArray() {
 		fetch(defaultCSVPath)
 			.then(response => response.text())
 			.then(data => {
-				runConvert(data);
+				runConvert(data, false);
 			})
 			.catch(error => console.error('Error:', error));
 	}
@@ -161,14 +152,17 @@ function initializeSettingListener() {
 		console.log(isChecked);
 		if (!isChecked) {
 			changeAvatar(localStorage.avatar);
-			displayWindow('avatar-select');
 			localStorage.useCustomAvatar = false;
+			$('#avatar-display').addClass('is-selected');
+			$('#custom-avatar').removeClass('is-selected');
 		} else {
 			if (localStorage.customAvatar) {
 				localStorage.useCustomAvatar = true;
 				$('#icon img').attr('src', localStorage.customAvatar);
+				$('#avatar-display').removeClass('is-selected');
+				$('#custom-avatar').addClass('is-selected');
 			} else {
-				alert('还没有上传过自定义头像！\n点击右边可以手动上传~');
+				alert('还没有上传过自定义头像！\n请先点击“手动上传”上传一张。');
 				$('#use-custom-avatar').prop("checked", false);
 			}
 		}
@@ -179,19 +173,35 @@ function initializeSettingListener() {
 		console.log(isChecked);
 		if (!isChecked) {
 			changeBackgroundImage(localStorage.backgroundImage);
-			displayWindow('background-select');
 			localStorage.useCustomBackground = false;
+			$('#background-display').addClass('is-selected');
+			$('#custom-background').removeClass('is-selected');
 		} else {
 			if (localStorage.customBackground) {
 				$('#background').css('background-image', `url(${localStorage.customBackground})`);
 				localStorage.useCustomBackground = true;
+				$('#background-display').removeClass('is-selected');
+				$('#custom-background').addClass('is-selected');
 			} else {
-				alert('还没有上传过自定义背景！\n点击右边可以手动上传~');
+				alert('还没有上传过自定义背景！\n请先点击“手动上传”上传一张。');
 				$('#use-custom-background').prop("checked", false);
 			}
 		}
 	});
 
+	$(document).on('click', '#avatar-list .avatar-option', function() {
+		localStorage.useCustomAvatar = false;
+		$('#use-custom-avatar').prop('checked', false);
+		$('#avatar-display').addClass('is-selected');
+		$('#custom-avatar').removeClass('is-selected');
+	});
+
+	$(document).on('click', '#background-list .background-option', function() {
+		localStorage.useCustomBackground = false;
+		$('#use-custom-background').prop('checked', false);
+		$('#background-display').addClass('is-selected');
+		$('#custom-background').removeClass('is-selected');
+	});
 }
 
 
@@ -252,6 +262,10 @@ function initializeSettings() {
 	if (localStorage.customBackground) {
 		$('#custom-background img').attr('src', localStorage.customBackground);
 	}
+	$('#avatar-display').toggleClass('is-selected', localStorage.useCustomAvatar != 'true');
+	$('#custom-avatar').toggleClass('is-selected', localStorage.useCustomAvatar == 'true');
+	$('#background-display').toggleClass('is-selected', localStorage.useCustomBackground != 'true');
+	$('#custom-background').toggleClass('is-selected', localStorage.useCustomBackground == 'true');
 
 	$('#user-name-input').val(localStorage.userName);
 	$('#user-name').text(localStorage.userName);
@@ -273,11 +287,27 @@ function initializeSettings() {
 	if (localStorage.useCustomAvatar == 'true') {
 		$('#use-custom-avatar').prop("checked", true);
 		$('#icon img').attr('src', localStorage.customAvatar);
+		localStorage.useCustomAvatar = true;
+		$('#avatar-display').removeClass('is-selected');
+		$('#custom-avatar').addClass('is-selected');
+	} else {
+		$('#use-custom-avatar').prop("checked", false);
+		localStorage.useCustomAvatar = false;
+		$('#avatar-display').addClass('is-selected');
+		$('#custom-avatar').removeClass('is-selected');
 	}
 
 	if (localStorage.useCustomBackground == 'true') {
 		$('#use-custom-background').prop("checked", true);
 		$('#background').css('background-image', `url(${localStorage.customBackground})`);;
+		localStorage.useCustomBackground = true;
+		$('#background-display').removeClass('is-selected');
+		$('#custom-background').addClass('is-selected');
+	} else {
+		$('#use-custom-background').prop("checked", false);
+		localStorage.useCustomBackground = false;
+		$('#background-display').addClass('is-selected');
+		$('#custom-background').removeClass('is-selected');
 	}
 }
 
@@ -302,7 +332,10 @@ function initializeUploadListener() {
 		if (selectedFile) {
 			let fileName = selectedFile.name;
 			console.log("selectedFileName:" + fileName);
-			if (fileName.endsWith(".csv")) {
+			if (fileName.endsWith(".json")) {
+				// 全曲成绩页导出的 JSON 文件
+				loadScoresExportIntoCache(selectedFile);
+			} else if (fileName.endsWith(".csv")) {
 				let reader = new FileReader();
 				reader.onload = function (e) {
 					csvContent = reader.result;
@@ -312,10 +345,9 @@ function initializeUploadListener() {
 				};
 				reader.readAsText(selectedFile);
 			} else if (fileName.endsWith(".xls") || fileName.endsWith(".xlsx")) {
-				console.log("VHZek");
-				readVHZek(selectedFile);
-				
-				location.reload()
+				// 万能查分表（VHZek）功能已停用
+				// readVHZek(selectedFile);
+				alert("万能查分表（xls/xlsx）上传功能已停用，请使用st3或CSV文件");
 			} else {
 				runQuery(selectedFile);
 				console.log("Not a .csv file");
@@ -330,6 +362,7 @@ function initializeUploadListener() {
 		if (file.size > 1048576) {
 			console.log("over 1MB");
 			alert("图片大小超过1MB，请尝试换一张或压缩质量后再试");
+			return;
 		} else {
 			reader.readAsDataURL(file);
 			reader.onload = function () {
@@ -351,6 +384,7 @@ function initializeUploadListener() {
 		if (file.size > 3145728) {
 			console.log("over 3MB");
 			alert("图片大小超过3MB，请尝试换一张或压缩质量后再试");
+			return;
 		} else {
 
 			reader.readAsDataURL(file);
@@ -371,6 +405,10 @@ function initializeUploadListener() {
  * 运行查询语句
  */
 async function runQuery(file) {
+	// 确保曲目数据（含生成的SQL）已就绪
+	if (!query) {
+		await initializeSongData();
+	}
 	let buffer = await file.arrayBuffer();
 	let uInt8Array = new Uint8Array(buffer);
 	db = new SQL.Database(uInt8Array);
@@ -380,6 +418,8 @@ async function runQuery(file) {
 		alert("st3文件选取有误，请重试！");
 		return;
 	}
+	// 提示有成绩但未登记定数的曲目
+	logMissingConstants(db);
 	// console.log(query);
 	let result = db.exec(query);
 	if (result.length > 0) {
@@ -425,12 +465,14 @@ function saveQueryResult(result) {
  * 将csv格式的分数表转换成为成绩对象数组
  * @param csv 待转化的csv文件，必须是旧版或新版页面能生成和读取的对应格式
  */
-function runConvert(csv) {
-	file = csv.trim();
-	const rows = file.split('\n');
+function runConvert(csv, persist = true) {
+	const rows = csvToRows(csv);
 	tempArray = [];
 	for (i = 1; i < rows.length; i++) {
-		const row = rows[i].split(',');
+		const row = rows[i];
+		// 分数为空的行视为“未填写”，跳过
+		const scoreText = (row[3] === undefined || row[3] === null) ? '' : String(row[3]).trim();
+		if (scoreText === '') continue;
 		single = new PlayResult(row[0], row[1], row[2],
 			parseFloat(row[3]), parseFloat(row[4]),
 			parseFloat(row[5]), parseFloat(row[6]),
@@ -440,10 +482,22 @@ function runConvert(csv) {
 	}
 	currentArray = tempArray;
 	console.log("runconvert over");
-	saveLocalStorage(currentArray);
+	if (persist !== false) {
+		saveLocalStorage(currentArray);
+		displayB30(currentArray);
+		refillCurrentArray(currentArray);
+		location.reload();
+		return;
+	}
+	// 默认示例数据仅用于预览，不写入共享缓存，也不触发整页刷新
 	displayB30(currentArray);
 	refillCurrentArray(currentArray);
-	location.reload();
+}
+
+// 全曲成绩导出载入后的页面刷新钩子
+function onScoresLoaded(arr) {
+	displayB30(arr);
+	refillCurrentArray(arr);
 }
 
 function refillCurrentArray(array) {
@@ -565,6 +619,7 @@ async function generateUnits(array, unitQuantity) {
 	}
 	// console.log('generateUnits called');
 	let ary = array;
+	if (!ary || ary.length === 0) return; // 定数表尚未生成（changeBound 先于 getConstantSheet 触发）时跳过，避免越界崩溃
 	$('#b30-data').html('');
 	let index = 0;
 	let indexSlicer = [0, 0];
@@ -952,52 +1007,6 @@ function handleScroll(unitid, index) {
 	scrollToElement(unitid);
 }
 
-async function initializeVHZEK() {
-	try {
-		const response = await fetch('sample/constantChart.csv');
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		let file = await response.text();
-		let temp = file.trim();
-		let rows = temp.replaceAll('\r\n', "\n").split("\n");
-		// console.log(rows)
-		let single;
-		tempArray = [];
-		for (i = 1; i < rows.length; i++) {
-			single = {};
-			const row = rows[i].split(',');
-			single = {
-				idx: findIndex(row[1], songlist),
-				songId: row[1],
-				constant: [row[2], row[3], row[4], row[5], row[6]]
-			}
-			tempArray.push(single);
-		}
-		idx_constant = tempArray;
-		idx_constant.push({
-			idx: 283,
-			songId: 'lasteternity',
-			constant: ['', '', '', '9.7', '']
-		});
-		idx_constant.push({
-			idx: 421,
-			songId: 'dualdoom',
-			constant: ['3.5', '6.5', '8.9', '', '10.3']
-		})
-		idx_constant = idx_constant.sort(function(a, b) {
-			return resultSort(a, b, 'idx', -1);
-		})
-		
-		idx_constant.shift();
-		console.log('idx_constant:')
-		console.log(idx_constant)
-		// return idx_constant;
-	} catch (error) {
-		console.error('There was a problem loading the CSV file:', error);
-	}
-}
-
 function generateCard(array) {
 	//
 	generateUnits(array, unitQuantity)
@@ -1008,23 +1017,21 @@ function generateTable(array) {
 	displayB30(array);
 }
 
-// async function readConstantChart() {
 async function getConstantSheet() {
 	try {
-		const csvText = await (await fetch('sample/constantChart.csv')).text();
-		const rows = csvText.trim().replaceAll('\r\n', '\n').split('\n');
-		const tempArray = rows.flatMap(row => {
-			const columns = row.split(',');
-			return columns.slice(2, 7).map((value, index) => {
-				if (value) return [columns[1], difficultyList[index], parseFloat(value)];
-			}).filter(Boolean);
+		// 全谱面定数列表由 songCatalog 派生（json/songlist + json/constants.json），不再读取 constantChart.csv
+		const tempArray = [];
+		Object.keys(songCatalog).forEach(function (songId) {
+			const cat = songCatalog[songId];
+			Object.keys(cat.difficulties).forEach(function (difficulty) {
+				const value = cat.difficulties[difficulty].constant;
+				if (value !== null && value !== undefined) {
+					tempArray.push([songId, difficulty, value]);
+				}
+			});
 		});
-		const songIdMap = await (await fetch('json/simplified_songlist.json')).json();
-		const idx2songId = Object.fromEntries(
-			Object.entries(songIdMap).map(([index, songId]) => [songId, parseInt(index, 10)])
-		);
-		tempArray.sort((a, b) => idx2songId[a[0]] - idx2songId[b[0]]);
-		tempArray.sort((a, b) => b[2] - a[2]);
+		// 与旧行为一致：定数降序，同定数按 songlist idx 升序
+		tempArray.sort((a, b) => (b[2] - a[2]) || (songCatalog[a[0]].idx - songCatalog[b[0]].idx));
 		testDataArray = tempArray;
 
 		const constant = tempArray.map(([songId, difficulty, constantValue], index) =>
@@ -1035,6 +1042,20 @@ async function getConstantSheet() {
 		initializeDataArray();
 
 	} catch (error) {
-		console.error('Error fetching files:', error);
+		console.error('Error building constant sheet:', error);
 	}
+}
+
+/**
+ * 关闭设置窗口及其子选择弹出窗
+ */
+function closeSettings() {
+	displayWindow('setting-window', false);
+	var subWindows = ['avatar-select', 'background-select', 'user-course-dan-select'];
+	subWindows.forEach(function(id) {
+		var $el = $('#' + id);
+		if (!$el.is(':hidden')) {
+			displayWindow(id, false);
+		}
+	});
 }

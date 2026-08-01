@@ -1,321 +1,207 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>新st3解析</title>
-		<link rel="stylesheet" href="css/index.css" type="text/css" />
-		<script src="js/jquery-3.6.1.min.js"></script>
-		<script src="js/CommonFunctions.js"></script>
-		<script src="js/sql-wasm.js"></script>
-		<script src="js/xlsx-0.20.2.full.min.js" type="text/javascript"></script>
-		<link rel="icon" href="favicon.ico" />
-	</head>
-	<body>
-		<input type="file" id="file-input" hidden="hidden" />
-		<div id="bg"></div>
-		<div id="main-container">
-			<div id="main-controller">
-				<label class="loading-notice" id="load-db" style="color: red;">数据库文件未加载</label>
-				<label class="loading-notice" id="load-il" style="color: red;">曲绘差分文件未加载</label>
-				<label class="loading-notice" id="load-sn" style="color: red;">曲名差分文件未加载</label>
-				<label class="loading-notice" id="load-sl" style="color: red;">曲目列表文件未加载</label>
-				<!-- <div id="help-me">
-					<a href="https://space.bilibili.com/171403897">给点三连呗😘</a>
-				</div> -->
-				<div id="func-container">
-					<button class="func-btn" onclick="inputFile()" id="select-file">选择st3或分数表文件</button>
-					<button class="func-btn" onclick="readSavedScore()">读取缓存的分数数据</button>
-				</div>
-				<div id="func-container2">
-					<!-- <button class="func-btn" onclick="inputFile()">选择st3或分数表文件</button>
-					<button class="func-btn">读取缓存的分数数据</button>
-					<button class="func-btn">下载手填分数表</button> -->
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>st3 解析 - Arcaea 查分工具</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="js/jquery-3.6.1.min.js" defer></script>
+    <script src="js/CommonFunctions.js" defer></script>
+    <script src="js/sql-wasm.js" defer></script>
+    <script src="js/xlsx-0.20.2.full.min.js" defer></script>
+    <script src="js/index.js" defer></script>
+    <link rel="icon" href="favicon.ico">
+</head>
+<body>
+<div id="bg"></div>
+<input type="file" id="file-input" hidden>
+<div id="app">
+    <button type="button" id="sidebar-toggle" aria-label="收起侧边栏" aria-expanded="true">
+        <span class="sidebar-toggle-arrow">⌃</span>
+        <span class="sidebar-toggle-text sidebar-toggle-collapse">收起</span>
+        <span class="sidebar-toggle-text sidebar-toggle-expand">展开</span>
+    </button>
+    <aside id="sidebar">
+        <div id="loading-status">
+            <span class="loading-notice" id="load-db" style="color:#ff6b6b">⚠ 数据库文件未加载</span>
+            <span class="loading-notice" id="load-il" style="color:#ff6b6b">⚠ 曲绘差分文件未加载</span>
+            <span class="loading-notice" id="load-sn" style="color:#ff6b6b">⚠ 曲名差分文件未加载</span>
+            <span class="loading-notice" id="load-sl" style="color:#ff6b6b">⚠ 曲目列表文件未加载</span>
+        </div>
+        <div id="action-buttons">
+            <button class="btn-primary" onclick="inputFile()" id="select-file">选择 st3 或分数表文件</button>
+            <button class="btn-secondary" onclick="readSavedScore()">读取缓存数据</button>
+        </div>
+        <div id="nav-buttons">
+            <button class="btn-nav" onclick="window.open('b30gen.html')">生成 B30</button>
+            <button class="btn-nav" onclick="window.open('completion.html')">查看完成表</button>
+            <button class="btn-nav" onclick="window.open('scores.html')">全曲成绩管理</button>
+        </div>
+        <div class="divider"></div>
+        <div id="stats-panel">
+            <div class="stat-row"><span class="stat-label">共有</span><span class="stat-value" id="result-quantity">0</span><span class="stat-label">条结果</span></div>
+            <div class="stat-row"><span class="stat-label">当前 PTT</span><input id="disp-ptt" type="text" value="0.00" oninput="calculateR10()"></div>
+            <div class="stat-row"><span class="stat-label">Best30</span><span class="stat-value" id="disp-b30">0.0000</span></div>
+            <div class="stat-row"><span class="stat-label">Max PTT</span><span class="stat-value" id="disp-max">0.0000</span></div>
+            <div class="stat-row"><span class="stat-label" id="disp-r10">Recent10 <span>0.0000</span></span></div>
+            <button class="btn-link" onclick="showStatistics()">查看统计</button>
+        </div>
+        <div class="divider"></div>
+        <div id="filter-controls">
+            <div class="filter-group"><label>定数范围</label><div class="range-inputs"><input type="number" id="range-lower-bound" value="1.0" step="0.1" min="1.0" max="12.0"><span>—</span><input type="number" id="range-upper-bound" value="12.0" step="0.1" min="1.0" max="12.0"></div></div>
+            <div class="filter-group"><label>排序方式</label><div class="sort-row"><select id="sort-mode"><option value="playRating">单曲 PTT</option><option value="constant">定数</option><option value="score">分数</option><option value="criticalRate">大P率</option><option value="normalPerfect">小P数</option><option value="loseScore">失分数</option></select><select id="sort-order"><option value="1">降序</option><option value="-1">升序</option></select></div></div>
+            <div class="filter-group"><label>搜索曲目</label><div class="search-row"><input id="search-song" placeholder="曲名"><select id="search-difficulty"><option value="Past">Past</option><option value="Present">Present</option><option value="Future" selected>Future</option><option value="Eternal">Eternal</option><option value="Beyond">Beyond</option></select></div><button class="btn-small" onclick="searchSong()">查找</button><select id="search-result"><option selected disabled>结果会显示在这里</option></select></div>
+            <div class="filter-actions">
+                <!-- <button class="btn-small" onclick="aiChanRoll(filteredArray, viewMode)">🎲 AI 酱 roll 一首？</button> -->
+                <button class="btn-small" onclick="switchView()" id="switch-view">显示为卡片</button>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div id="bottom-actions">
+            <button class="btn-secondary theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn">🌙 深色</button>
+            <div class="divider"></div>
+            <button class="btn-danger" onclick="deleteLocalStorage()">🗑 清除本地缓存</button>
+        </div>
+    </aside>
+    <main id="main-content">
+        <section id="notice">
+            <div id="version">
+                <div class="version-row"><span>当前数据版本：<strong id="version-value">加载中…</strong></span></div>
+                <div class="version-row"><span>更新于：<strong id="version-updated">加载中…</strong></span></div>
+            </div>
+            <!-- <div id="download-area"><a href="sample/Arcaea 万能查分表6.7.0空白.xlsx" download><button class="btn-primary">📥 下载万能查分表</button></a><p class="hint">手填表只填写分数即可，单曲潜力值会自动计算！</p><p class="hint">推荐使用 <a href="https://space.bilibili.com/18710009" target="_blank">V.H.Zek</a> 制作的查分表进行手填更新！</p></div> -->
+            <div id="sticker" onclick="initializeSticker()"></div>
+            <div id="ai-recommend" hidden>
+                <div class="ai-recommend-head">
+                    <span class="ai-recommend-title">AI酱 推荐一首？</span>
+                    <span class="ai-recommend-hint">点上面的表情 重抽一首吧</span>
+                </div>
+                <div id="ai-recommend-body" class="ai-recommend-body">
+                    <img id="ai-recommend-ill" class="ai-recommend-ill" alt="" onerror="this.style.visibility='hidden'">
+                    <div class="ai-recommend-main">
+                        <div class="ai-recommend-song">
+                            <span id="ai-recommend-songname" class="ai-recommend-songname"></span>
+                            <span id="ai-recommend-diff" class="ai-recommend-diff"></span>
+                        </div>
+                        <div id="ai-recommend-meta" class="ai-recommend-meta"></div>
+                        <div id="ai-recommend-text" class="ai-recommend-text"></div>
+                    </div>
+                </div>
+            </div>
+            <details id="help-section"><summary id="help-toggle">📖 使用说明 </summary>
+            <div id="help"><ul>
+                <li class="warning">⚠ 若打开本网页或跳转 b30 生成页面时弹出下载提示框，请取消掉，因为页面需要从服务器下载所需的脚本等文件，而有时这些文件会被下载软件的浏览器插件监听并接管下载。若嫌麻烦可以设置默认屏蔽该网页的下载请求。</li>
+                <li class="warning">‼ 请确定你看完并理解了下面的视频，并了解了本页所有内容后再使用！</li>
+                <li><a href="https://www.bilibili.com/video/BV1kp4y1F7Jw" target="_blank">查看原理、食用方法以及获取 st3 数据库文件的方法</a></li>
+            </ul>
+            <div class="bili-wrapper"><iframe id="bili" src="//player.bilibili.com/player.html?aid=958967055&amp;bvid=BV1kp4y1F7Jw&amp;cid=1281665008&amp;p=1" scrolling="no" frameborder="no" allowfullscreen></iframe></div>
+            <ul>
+                <li><a href="https://www.bilibili.com/opus/922305683783680053" target="_blank"><strong>文字版使用说明点这里看！</strong></a></li>
+                <li style="color:#ffad7f;font-size:18px">我不要脸，给我三连 (</li>
+                <li>1. 点击"选择 st3 文件"上传你的 st3 文件，文件名可改可不改</li>
+                <li>2. 上传完之后如果不出意外会立马显示数据库内的全曲目游玩记录表格</li>
+                <!-- <li>3. 点击"下载万能查分表"文件可以把表格保存到本地</li> -->
+                <li>4. 表格正常生成之后点击跳转 b30 生成页，默认生成 B39 图片</li>
+                <li>5. 玩家名、好友码和显示的潜力值需要手动填写，可以手动指定显示曲目的数量</li>
+                <li>6. 保存图片用时和图片大小与显示的曲目数量有关，保存图片时显示的曲目成绩最好不超过 800。若数值填得过大，在某些设备上可能会导致严重卡顿</li>
+                <li class="warning">7. 所有对文件的读写以及缓存都只在本地实现，不会上传到服务器</li>
+                <li>8. 如果遇到载图不全、或者缺少其他组件，多刷新几次页面</li>
+                <li>9. 如果遇到 bug 或者其他问题请务必联系我！</li>
+                <li>* 本意是方便自己查看分数表，免受手打成绩之苦，如果能帮到更多的人那就太好了</li>
+                <li>* 水平有限，缝缝补补得到的这几个页面难免会有些许问题 TvT</li>
+                <li>—— RTE <a href="https://space.bilibili.com/171403897" target="_blank">我的 B 站空间</a></li>
+            </ul></div></details>
+        </section>
+        <div id="save-csv-btn-container" style="display:none">
+            <button class="btn-primary" onclick="saveTableCSV()">💾 保存分数表文件</button>
+            <!-- <button class="btn-secondary" onclick="saveVHZEK()">📤 保存为 VH 版万能查分表</button> -->
+        </div>
+        <p id="click-hint" style="display:none">点击曲绘可以对曲目信息进行修改 🎄</p>
+        <p id="try-to-rotate" style="display:none">横屏可以显示更多信息！🌠</p>
+        <div id="result-card" style="display:none"></div>
+        <div id="result-table" style="display:none">
+            <table id="result">
+                <thead><tr>
+                    <th>NO.</th>
+                    <th class="t-ill">曲绘</th>
+                    <th class="t-song-name">曲名</th>
+                    <th class="t-score">分数</th>
+                    <th class="t-perfect">Pure</th>
+                    <th class="t-critical-perfect">大P数</th>
+                    <th class="t-normal-perfect">小P数</th>
+                    <th class="t-far">far</th>
+                    <th class="t-lost">lost</th>
+                    <th class="t-constant">定数</th>
+                    <th class="t-play-rating">单曲PTT(失分)</th>
+                </tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </main>
+</div>
 
-					<button class="func-btn" onclick="window.open('b30gen.html')">生成b30</button>
-					<button class="func-btn" onclick="window.open('completion.html')">查看完成表</button>
-				</div>
-				<div id="disp-container">
-					<br />
-					<label>共有 <span id="result-quantity">0</span> 条结果</label>
-					<button id="show-statistics-btn" onclick="showStatistics()">查看统计</button><br />
-					<label for="disp-ptt">当前ptt为</label>
-					<input id="disp-ptt" type="text" oninput="calculateR10()" />
-					<label for="disp-ptt">(点击修改)</label><br />
-					<label id="disp-b30">best30为<span>0.0000</span></label><br />
-					<label id="disp-max">maxptt为<span>0.0000</span></label><br />
-					<label id="disp-r10"><a>理论recent10为</a><span>0.0000</span></label>
-					<br /><br />
-				</div>
-				<div id="filter-btn-container">
-					<br />
-					<!-- <label for="filter-btn">显示曲目筛选</label><br /> -->
-					<button id="filter-btn" class="func-btn" onclick="displayWindow('filter-window')">筛选 / 排序</button>
-					<!-- <label for="switch-view">切换显示</label><br /> -->
-					<button id="switch-view" class="func-btn" onclick="switchView()">显示为卡片</button>
-				</div>
+<div id="filter-window" hidden>
+    <div id="filter-bg" onclick="displayWindow('filter-window')"></div>
+    <div id="filter-close" onclick="displayWindow('filter-window')">✕</div>
+    <div id="filter-main">
+        <h3 class="modal-title">筛选 / 排序</h3>
+        <div class="filter-row"><label>定数范围</label><div class="filter-inputs"><input type="number" id="filter-range-lower" value="1.0" step="0.1"><span>—</span><input type="number" id="filter-range-upper" value="12.0" step="0.1"></div></div>
+        <div class="filter-row"><label>排序方式</label><select id="filter-sort-mode"><option value="playRating">单曲 PTT</option><option value="constant">定数</option><option value="score">分数</option><option value="criticalRate">大P率</option><option value="normalPerfect">小P数</option><option value="loseScore">失分数</option></select><select id="filter-sort-order"><option value="1">降序</option><option value="-1">升序</option></select></div>
+        <div class="filter-row"><label>搜索曲目</label><input id="filter-search-song" placeholder="曲名"><select id="filter-search-difficulty"><option value="Past">Past</option><option value="Present">Present</option><option value="Future" selected>Future</option><option value="Eternal">Eternal</option><option value="Beyond">Beyond</option></select><button class="btn-small" onclick="filterSearchSong()">查找</button></div>
+        <div class="filter-row"><select id="filter-search-result" size="5"><option disabled>结果会显示在这里</option></select></div>
+        <div class="filter-row"><button class="btn-small" onclick="aiChanRoll(filteredArray, viewMode)">🎲 AI 酱 roll 一首</button></div>
+    </div>
+</div>
 
-			</div>
+<div id="modify-window" hidden>
+    <div id="modify-window-background" onclick="displayWindow('modify-window')"></div>
+    <div id="modify-window-close" onclick="displayWindow('modify-window')">✕</div>
+    <div id="modify-window-main">
+        <h3 id="modify-window-title">修改<span></span>信息</h3>
+        <div id="modify-window-content">
+            <input type="hidden" id="modify-current-index" value="0">
+            <div class="modify-row" id="modify-illustration-container"><img src="Processed_Illustration/sayonarahatsukoi.jpg" alt="曲绘"></div>
+            <div class="modify-row" id="modify-song-name"><label>曲名</label><input placeholder="输入你想显示的曲名"></div>
+            <div class="modify-row" id="modify-song-id"><label>Song ID</label><input placeholder="不知道是什么请不要修改"></div>
+            <div class="modify-row" id="modify-song-score"><label>分数</label><input type="number" placeholder="0"></div>
+            <div class="modify-row" id="modify-song-item"><label>物量数</label><br><label>Pure 数：</label><input type="number" id="modify-pure"><br><label>大P 数：</label><input type="number" id="modify-critical-pure"><br><label>Far 数：</label><input type="number" id="modify-far"><br><label>Lost 数：</label><input type="number" id="modify-lost"><br></div>
+            <div class="modify-row"><button class="btn-danger" id="delete-result" onclick="deleteResult()">删除此条记录</button></div>
+        </div>
+        <div id="modify-window-buttons"><div id="modify-window-accept" class="accept-btn" onclick="acceptModifyResult(currentArray)">✓</div><div id="modify-window-refuse" class="refuse-btn" onclick="abortModifyResult()">✗</div></div>
+    </div>
+</div>
 
-			<div id="result-area">
-				<div id="notice">
-					<div id="version">
-						<label>当前曲目数据库版本：<span>6.8.0</span></label><br />
-						<label>当前曲绘文件库版本：<span>6.8.0</span></label><br />
-						<label style="text-decoration: line-through;opacity: 0.3;">当前手填表文件版本：<span>5.6.0</span></label><br />
-						<label>当前万能查分表版本：<span>6.7.0</span> <i style="text-decoration: line-through;">最近比较忙更新缓慢见谅！</i></label>
-						<!-- <a href="sample/模板.csv" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载手填分数表</button></a><br /> -->
-						<a href="sample/Arcaea 万能查分表6.7.0空白.xlsx" style="text-decoration: none;"><button class="func-btn" style="left: 0; float: none;">点击下载万能查分表</button></a><br />
-						<h3>!手填表只填写分数即可，单曲潜力值会自动计算!</h3><br>
-						<label>更新于：<span>2025/08/24</span></label>
-						<h3 style="text-decoration: line-through; opacity: 0.3;">由于个人原因，手填表更新将推迟，非常抱歉！</h3><br>
-						<h3>推荐使用<a href="https://space.bilibili.com/18710009" target="_blank">V.H.Zek</a>制作的查分表进行手填更新！（点击上方按钮下载）</h3><br>
-						<!-- <img id="sticker"/> -->
-						<div id="sticker" onclick="initializeSticker()"></div>
-					</div>
-					<!-- <a href="https://smartrte.gitee.io/" target="_blank"><h1>如果加载太慢可以尝试gitee page(点击这里)</h1></a> -->
-					<div id="help">
-						<h1>看这里！</h1>
-						<ul>
-							<li style="color: firebrick;">
-								!若打开本网页或跳转b30生成页面时弹出下载提示框，请取消掉，<br />因为页面需要从服务器下载所需的脚本等文件，<br />而有时这些文件会被下载软件的浏览器插件监听并接管下载。<br />若嫌麻烦可以设置默认屏蔽该网页的下载请求
-							</li>
-							<li>!!请确定你看完并理解了下面的视频<br />并了解了本页所有内容后再使用！!</li>
+<div id="confirm-dialog" hidden>
+    <div id="dialog-background"></div>
+    <div id="confirm-dialog-main">
+        <div id="confirm-dialog-title">提示</div>
+        <div id="confirm-dialog-content"></div>
+        <div id="confirm-dialog-buttons"><button id="confirm-dialog-accept" class="btn-accept">确定</button><button id="confirm-dialog-refuse" class="btn-refuse">取消</button></div>
+    </div>
+</div>
 
-							<li><a href="https://www.bilibili.com/video/BV1kp4y1F7Jw"
-									target="_blank">查看原理、食用方法以及获取st3数据库文件的方法</a></li>
-							<iframe id="bili"
-								src="//player.bilibili.com/player.html?aid=958967055&bvid=BV1kp4y1F7Jw&cid=1281665008&p=1"
-								scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true">
-							</iframe>
+<div id="stats-window" hidden>
+    <div id="stats-bg" onclick="closeStatsModal()"></div>
+    <div id="stats-main">
+        <h3 class="modal-title" style="margin-bottom:16px">统计信息</h3>
+        <div id="stats-content"><div class="stats-grid">
+            <div class="stats-item"><span class="stats-label">总计</span><span class="stats-value" id="sts-total">0</span></div>
+            <div class="stats-item"><span class="stats-label">PM</span><span class="stats-value sts-pm" id="sts-PM">0</span></div>
+            <div class="stats-item"><span class="stats-label">FR</span><span class="stats-value sts-fr" id="sts-FR">0</span></div>
+            <div class="stats-item"><span class="stats-label">EX+</span><span class="stats-value sts-exp" id="sts-EX+">0</span></div>
+            <div class="stats-item"><span class="stats-label">EX</span><span class="stats-value sts-ex" id="sts-EX">0</span></div>
+            <div class="stats-item"><span class="stats-label">AA</span><span class="stats-value sts-aa" id="sts-AA">0</span></div>
+            <div class="stats-item"><span class="stats-label">A</span><span class="stats-value sts-a" id="sts-A">0</span></div>
+            <div class="stats-item"><span class="stats-label">B</span><span class="stats-value sts-b" id="sts-B">0</span></div>
+            <div class="stats-item"><span class="stats-label">C</span><span class="stats-value sts-c" id="sts-C">0</span></div>
+            <div class="stats-item"><span class="stats-label">D</span><span class="stats-value sts-d" id="sts-D">0</span></div>
+        </div></div>
+        <div style="text-align:center;margin-top:16px"><button class="btn-small" onclick="closeStatsModal()">关闭</button></div>
+    </div>
+</div>
 
-							<li><a href="https://www.bilibili.com/opus/922305683783680053" target="_blank"><h1>文字版使用说明点这里看！</h1></a></li>
-							<li style="color: rgba(255, 170, 127, 1.0); font-size: 22px;">我不要脸，给我三连!(</li>
-							<li>1.点击 “上传st3文件” 上传你的st3文件，文件名可改可不改 </li>
-							<li>2.上传完之后如果不出意外会立马显示数据库内的全曲目游玩记录表格 </li><br />
-							<!-- <li>3.点击 下载csv文件 可以把表格保存到本地，供后续修改使用 </li> -->
-							<li>3.点击 下载万能查分表	文件 可以把表格保存到本地，供后续修改使用 </li>
-							<li>4.表格正常生成之后点击跳转b30生成页，默认生成B39图片 </li>
-							<li>5.玩家名、好友码和显示的潜力值需要手动填写，可以手动指定显示曲目的数量 </li>
-							<li>6.保存图片用时和图片大小与显示的曲目数量有关，保存图片时显示的曲目成绩最好不超过800。(真的有人试吗（)<br />若数值填得过大，在某些设备上可能会导致严重卡顿</li>
-							<li style="color: darkred;">7.所有对文件的读写以及缓存都只在本地实现，不会上传到服务器(我也存不起) </li>
-							<li>8.如果遇到载图不全、或者缺失其他组件，多刷新几次页面</li>
-							<li>9.如果遇到bug或者其他问题请务必联系我！</li><br />
-							<li>*本意是方便自己查看分数表，免受手打成绩之苦，如果能帮到更多的人那就太好了</li>
-							<li>*水平有限，缝缝补补得到的这几个页面难免会有些许问题🙏</li><br />
-							<li>————RTE <a href="https://space.bilibili.com/171403897">我的B站空间</a></li><br />
-						</ul>
-					</div>
-				</div>
-				<div id="save-csv-btn-container" style="width: 100%; display: none;">
-					<button class="func-btn" id="save-table-csv" onclick="saveTableCSV()">保存分数表文件</button>
-					<button class="func-btn" id="convert-to-VHZEK" onclick="saveVHZEK()">保存为VH版万能查分表</button>
-					<br />
-					<input type="file" id="uploadExcel" hidden>
-					
-				</div>
-				<label>点曲绘可以对曲目信息进行修改🖼</label><br />
-				<label id="try-to-rotate">横屏可以显示更多信息！♻</label>
-				<div id="result-card" style="display: none;">
+<div id="back-to-top" onclick="scrollToElement('load-db')" title="回到顶部">↑</div>
 
-					<!-- <div class="single-card beyond">
-						<div class="card-rank">#n</div>
-						<div class="card-ill-container">
-							<img class="card-ill" src="IllustrationMin/ii.jpg"/>
-						</div>
-						<div class="song-name">cybernacia catharasis</div>
-						<div class="song-score">10002221</div>
-						<div class="song-rating">12.8000</div>
-						<div class="song-percentage">99.1%</div>
-						<div class="song-achievement"></div>
-					</div> -->
-				</div>
-				<div id="result-table" style="display: none;">
-					<table id="result">
-						<thead>
-							<tr>
-								<th>NO.</th>
-								<th class="t-ill">曲绘</th>
-								<th class="t-song-name">曲名</th>
-								<th class="t-score">分数</th>
-								<th class="t-perfect">Pure</th>
-								<th class="t-critical-perfect">大P数</th>
-								<th class="t-normal-perfect">小P数</th>
-								<th class="t-far">far</th>
-								<th class="t-lost">lost</th>
-								<th class="t-constant">定数</th>
-								<th class="t-play-rating">单曲潜力值&失分</th>
-							</tr>
-
-						</thead>
-						<tbody>
-							<!-- <tr>
-								<td><img src="IllustrationMin/ii.jpg" class="table-ill"/></td>
-								<td>Fracture Ray</td>
-								<td>10000000</td>
-								<td>1000</td>
-								<td>500</td>
-								<td>100</td>
-								<td>10</td>
-								<td>11.3</td>
-								<td>11.3</td>
-							</tr> -->
-						</tbody>
-					</table>
-				</div>
-
-
-			</div>
-		</div>
-
-		<div id="filter-window" hidden="hidden">
-			<div id="filter-bg" onclick="displayWindow('filter-window')"></div>
-			<div id="filter-close" onclick="displayWindow('filter-window')">×</div>
-			<div id="filter-main">
-				<div class="filter-row">
-					<div class="filter-container">
-						<label for="range-lower-bound" class="filter-label">筛选定数从</label>
-						<input type="number" id="range-lower-bound" class="filter-input" value="1.0" />
-						<label for="range-upper-bound" class="filter-label">到</label>
-						<input type="number" id="range-upper-bound" class="filter-input" value="12.0" />
-					</div>
-
-				</div>
-				<!-- <br /> -->
-				<div class="filter-row">
-					<div class="filter-container">
-						<label for="sort-mode" class="filter-label">排序方式</label>
-						<select id="sort-mode" class="filter-select">
-							<option value="playRating">单曲ptt</option>
-							<option value="constant">定数</option>
-							<option value="score">分数</option>
-							<option value="criticalRate">大P率</option>
-							<option value="normalPerfect">小p数</option>
-							<!-- <option value="percentage">吃分率</option> -->
-							<option value="loseScore">失分数</option>
-						</select>
-						<label for="sort-order" class="filter-label">,</label>
-						<select id="sort-order" class="filter-select">
-							<option value="1">降序</option>
-							<option value="-1">升序</option>
-						</select>
-					</div>
-
-				</div>
-				<div class="filter-row">
-					<div class="filter-container">
-						<label for="search-song" class="filter-label">查找曲目</label>
-						<input id="search-song" class="filter-input" />
-						<select id="search-difficulty" class="filter-select">
-							<option value="Past">Past</option>
-							<option value="Present">Present</option>
-							<option value="Future" selected="selected">Future</option>
-							<option value="Eternal">Eternal</option>
-							<option value="Beyond">Beyond</option>
-						</select><br />
-
-					</div>
-				</div>
-				<div class="filter-row">
-					<div class="filter-container">
-						<button id="search-confirm" class="filter-button" onclick="searchSong()">查找</button>
-
-					</div>
-				</div>
-
-				<div class="filter-row">
-					<div class="filter-container">
-						<select id="search-result" class="filter-select">
-							<!-- <option style="background: url('../img/11.webp');"></option> -->
-							<option selected="selected"><img src="img/11.webp"
-									style="display: block; height: 1rem;" />结果会显示在这里</option>
-						</select>
-					</div>
-				</div>
-				<div class="filter-row">
-					<div class="filter-container">
-						<button class="filter-button" onclick="aiChanRoll(filteredArray,viewMode)">让Ai酱roll一首？</button>
-					</div>
-				</div>
-				<div id="ai-chan-content" class="filter-row">
-					(=・ω・= )
-				</div>
-				<div class="filter-row">
-					<div class="filter-container">
-						<button id="delete-local-storage" onclick="deleteLocalStorage()">⚠清空本地缓存⚠</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="modify-window">
-			<div id="modify-window-background" onclick="displayWindow('modify-window')"></div>
-			<div id="modify-window-close" onclick="displayWindow('modify-window')">×</div>
-			<div id="modify-window-main">
-				<div id="modify-window-title">修改<span></span>信息</div>
-				<div id="modify-window-content">
-
-					<input type="number" hidden="hidden" value="0" id="modify-current-index" />
-					<div class="modify-row" id="modify-illustration-container">
-						<img src="Processed_Illustration/sayonarahatsukoi.jpg" />
-					</div>
-					<div class="modify-row" id="modify-song-name">
-						<label>修改显示的曲名</label>
-						<input placeholder="输入你想显示的曲名" />
-
-					</div>
-					<div class="modify-row" id="modify-song-id">
-						<label>修改曲目的songid</label>
-						<input placeholder="不知道是什么请不要修改" />
-
-					</div>
-					<div class="modify-row" id="modify-song-score">
-						<label>修改分数</label>
-						<input type="number" placeholder="0" />
-
-					</div>
-					<div class="modify-row" id="modify-song-item">
-						<label>修改物量</label><br />
-						<label>Pure数：</label>
-						<input type="number" id="modify-pure" /><br />
-						<label>大P数：</label>
-						<input type="number" id="modify-critical-pure" /><br />
-						<label>Far数:</label>
-						<input type="number" id="modify-far" /><br />
-						<label>Lost数:</label>
-						<input type="number" id="modify-lost" /><br />
-					</div>
-					<div class="modify-row">
-						<button class="modify-button" id="delete-result" onclick="deleteResult()">删除此条记录</button>
-					</div>
-				</div>
-			</div>
-
-			<div id="modify-window-buttons">
-				<div id="modify-window-accept" class="accept-btn" onclick="acceptModifyResult(currentArray)">✔</div>
-				<div id="modify-window-refuse" class="refuse-btn" onclick="abortModifyResult()">❌</div>
-			</div>
-
-		</div>
-
-		<div id="confirm-dialog">
-			<div id="dialog-background"></div>
-			<div id="confirm-dialog-close">×</div>
-			<div id="confirm-dialog-main">
-				<div id="confirm-dialog-title">提示</div>
-				<div id="confirm-dialog-content">内容</div>
-				<div id="confirm-dialog-buttons">
-					<div id="confirm-dialog-accept">彳</div>
-					<div id="confirm-dialog-refuse">亍</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- 返回顶部 -->
-		<div id="back-to-top" onclick="scrollToElement('load-db')">
-			回到<br />顶部
-			<span></span>
-		</div>
-	</body>
-	<script src="js/index.js"></script>
+        <div id="tool-root" data-tool-label="工具箱" data-tool-title="工具箱" data-fab-variant="index" data-fab-bottom="5rem"></div>
+</body>
 </html>

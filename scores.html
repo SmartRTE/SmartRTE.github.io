@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>全曲成绩管理</title>
+	<link rel="stylesheet" href="css/theme.css">
+	<link rel="stylesheet" href="css/scores.css">
+	<script src="js/jquery-3.6.1.min.js" defer></script>
+	<script src="js/CommonFunctions.js" defer></script>
+	<script src="js/sql-wasm.js" defer></script>
+	<script src="js/scores.js" defer></script>
+	<link rel="icon" href="favicon.ico">
+</head>
+<body>
+	<div id="page">
+		<header id="toolbar">
+			<button type="button" id="toolbar-toggle" aria-label="收起工具栏" aria-expanded="true">
+				<span class="toolbar-toggle-arrow">⌃</span>
+				<span class="toolbar-toggle-text toolbar-toggle-collapse">收起</span>
+				<span class="toolbar-toggle-text toolbar-toggle-expand">展开</span>
+			</button>
+			<div id="title-row">
+				<h1>📝 全曲成绩管理</h1>
+				<div id="toolbar-actions">
+					<button class="btn-primary" id="export-btn" type="button">⬇ 导出全曲成绩</button>
+					<button class="btn-secondary" id="export-csv-btn" type="button">⬇ 导出为CSV</button>
+					<button class="btn-secondary" id="import-btn" type="button">⬆ 载入成绩文件</button>
+					<input type="file" id="import-file" accept=".json,.csv,.db,.st3,application/json,application/octet-stream" hidden>
+					<button class="btn-secondary theme-toggle" type="button" onclick="toggleTheme()" id="theme-toggle-btn">🌙 深色</button>
+				</div>
+			</div>
+			<div id="filter-row">
+				<label class="tool-label">视图</label>
+				<select id="view-select">
+					<option value="default">默认排序</option>
+					<option value="pack">按曲包分组</option>
+					<option value="version">按版本</option>
+					<option value="name">按全曲名</option>
+					<option value="constant">按全曲定数</option>
+				</select>
+				<label class="tool-label">难度</label>
+				<span id="difficulty-filters"></span>
+				<input id="search-input" type="search" placeholder="搜索曲名 / 曲目ID">
+				<label class="check-label"><input type="checkbox" id="only-unrecorded"> 仅显示未记录</label>
+				<label class="check-label"><input type="checkbox" id="only-recorded"> 只显示有记录</label>
+				<label class="check-label"><input type="checkbox" id="sort-reversed"> 逆向排序</label>
+				<span id="collapse-actions">
+					<button class="btn-small" id="collapse-all-btn" type="button">全部收起</button>
+					<button class="btn-small" id="expand-all-btn" type="button">全部展开</button>
+				</span>
+			</div>
+			<div id="stats-bar"></div>
+		</header>
+		<main id="chart-list"></main>
+	</div>
+	<div id="toast" hidden></div>
+</body>
+</html>

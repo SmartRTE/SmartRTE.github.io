@@ -23,16 +23,12 @@ let defaultCSV = '';
 let avatarListPath = 'sample/avatar.csv';
 let potentialFramePath = 'img/rating/rating_';
 let sqlWasmPath = "sql-wasm.wasm"; //sql.wasm路径
-let queryFilePath = "json/query.sql"; //sql查询代码文件路径
 let diffSongNameMapping = null; //差分曲名映射
 let diffIllMapping = null; //差分曲绘映射
 
-$(document).ready(function() {
+$(document).ready(async function() {
 	//首次加载保证transition生效
-	displayWindow('modify-window');
-	displayWindow('setting-window');
 	displayWindow('ptt-p30');
-	displayWindow('ai-chan-dialog');
 	//初始化设置监听
 	initializeSettingListener();
 	//初始化缓存设置
@@ -45,16 +41,10 @@ $(document).ready(function() {
 	initializeUserCourseDanList();
 	//初始化sqlite.js
 	initializeSqliteJs();
-	//读取查询语句文件
-	initializeQuery();
+	//初始化曲目数据（songlist + constants.json 派生并生成SQL）
+	await initializeSongData();
 	//初始化上传文件监听
 	initializeUploadListener();
-	//初始化曲名映射
-	diffSongNameMapping = getTitleMapping();
-	//初始化曲绘映射
-	diffIllMapping = getImageMapping();
-	
-	songlist = initializeSonglist();
 	//初始化二维码
 	initializeQRCode();
 	//初始化数据列表
@@ -63,7 +53,6 @@ $(document).ready(function() {
 	switchLoseScore(loseScoreFlag);
 	initializeAiChan();
 	
-	initializeVHZEK();
 	filteredArray = currentArray;
 	$(window).on('resize', function() {
 		resizeWidth(1);
@@ -84,6 +73,8 @@ $(document).ready(function() {
  * 当缓存内有savedArrayData时，直接生成
  */
 function initializeDataArray() {
+	// 版本不匹配时清除旧缓存，避免结构变更后崩溃
+	checkLocalStorageVersion();
 	if (localStorage.saved_csv_data) {
 		runConvert(localStorage.saved_csv_data);
 		localStorage.removeItem('saved_csv_data');
@@ -99,7 +90,7 @@ function initializeDataArray() {
 			.then(response => response.text())
 			.then(data => {
 				// console.log(data);
-				runConvert(data);
+				runConvert(data, false);
 			})
 			.catch(error => console.error('Error:', error));
 	}
@@ -147,15 +138,18 @@ function initializeSettingListener() {
 		console.log(isChecked);
 		if (!isChecked) {
 			changeAvatar(localStorage.avatar);
-			displayWindow('avatar-select');
 			localStorage.useCustomAvatar = false;
+			$('#avatar-display').addClass('is-selected');
+			$('#custom-avatar').removeClass('is-selected');
 		} else {
 			if (localStorage.customAvatar) {
 				localStorage.useCustomAvatar = true;
 				$('#icon img').attr('src', localStorage.customAvatar);
 				$('#temp-avatar').attr('src', localStorage.customAvatar);
+				$('#avatar-display').removeClass('is-selected');
+				$('#custom-avatar').addClass('is-selected');
 			} else {
-				alert('还没有上传过自定义头像！\n点击右边可以手动上传~');
+				alert('还没有上传过自定义头像！\n请先点击“手动上传”上传一张。');
 				$('#use-custom-avatar').prop("checked", false);
 			}
 		}
@@ -166,15 +160,18 @@ function initializeSettingListener() {
 		console.log(isChecked);
 		if (!isChecked) {
 			changeBackgroundImage(localStorage.backgroundImage);
-			displayWindow('background-select');
 			localStorage.useCustomBackground = false;
+			$('#background-display').addClass('is-selected');
+			$('#custom-background').removeClass('is-selected');
 		} else {
 			if (localStorage.customBackground) {
 				$('#background').css('background-image', `url(${localStorage.customBackground})`);
 				localStorage.useCustomBackground = true;
 				$('#custom-background img').attr('src', localStorage.customBackground);
+				$('#background-display').removeClass('is-selected');
+				$('#custom-background').addClass('is-selected');
 			} else {
-				alert('还没有上传过自定义背景！\n点击右边可以手动上传~');
+				alert('还没有上传过自定义背景！\n请先点击“手动上传”上传一张。');
 				$('#use-custom-background').prop("checked", false);
 			}
 		}
@@ -185,6 +182,20 @@ function initializeSettingListener() {
 		localStorage.loseScoreFlag = $('#switch-losescore').val();
 		loseScoreFlag = $('#switch-losescore').val();
 	})
+
+	$(document).on('click', '#avatar-list .avatar-option', function() {
+		localStorage.useCustomAvatar = false;
+		$('#use-custom-avatar').prop('checked', false);
+		$('#avatar-display').addClass('is-selected');
+		$('#custom-avatar').removeClass('is-selected');
+	});
+
+	$(document).on('click', '#background-list .background-option', function() {
+		localStorage.useCustomBackground = false;
+		$('#use-custom-background').prop('checked', false);
+		$('#background-display').addClass('is-selected');
+		$('#custom-background').removeClass('is-selected');
+	});
 }
 
 /**
@@ -234,22 +245,44 @@ function initializeSettings() {
 	if(localStorage.customBackground){
 		$('#custom-background img').attr('src', localStorage.customBackground);
 	}
+	$('#avatar-display').toggleClass('is-selected', localStorage.useCustomAvatar != 'true');
+	$('#custom-avatar').toggleClass('is-selected', localStorage.useCustomAvatar == 'true');
+	$('#background-display').toggleClass('is-selected', localStorage.useCustomBackground != 'true');
+	$('#custom-background').toggleClass('is-selected', localStorage.useCustomBackground == 'true');
 	$('#switch-losescore').val(localStorage.loseScoreFlag);
 	loseScoreFlag = localStorage.loseScoreFlag;
+    var useCustomAvatar = localStorage.useCustomAvatar == 'true';
+    var useCustomBackground = localStorage.useCustomBackground == 'true';
     changePotential(localStorage.potential);
     changePotentialFrame(localStorage.potentialFrame);
     changeAvatar(localStorage.avatar);
     changeCourseDanFrame(localStorage.courseDanFrame);
     changeBackgroundImage(localStorage.backgroundImage);
-	
+
     // 处理自定义头像和背景
-    if (localStorage.useCustomAvatar == 'true') {
+    if (useCustomAvatar) {
         $('#use-custom-avatar').prop("checked", true);
         $('#icon img').attr('src', localStorage.customAvatar || '');
+        localStorage.useCustomAvatar = true;
+        $('#avatar-display').removeClass('is-selected');
+        $('#custom-avatar').addClass('is-selected');
+    } else {
+        $('#use-custom-avatar').prop("checked", false);
+        localStorage.useCustomAvatar = false;
+        $('#avatar-display').addClass('is-selected');
+        $('#custom-avatar').removeClass('is-selected');
     }
-    if (localStorage.useCustomBackground == 'true') {
+    if (useCustomBackground) {
         $('#use-custom-background').prop("checked", true);
         $('#background').css('background-image', `url(${localStorage.customBackground || ''})`);
+        localStorage.useCustomBackground = true;
+        $('#background-display').removeClass('is-selected');
+        $('#custom-background').addClass('is-selected');
+    } else {
+        $('#use-custom-background').prop("checked", false);
+        localStorage.useCustomBackground = false;
+        $('#background-display').addClass('is-selected');
+        $('#custom-background').removeClass('is-selected');
     }
 }
 
@@ -274,7 +307,10 @@ function initializeUploadListener() {
 		if (selectedFile) {
 			let fileName = selectedFile.name;
 			console.log("selectedFileName:" + fileName);
-			if (fileName.endsWith(".csv")) {
+			if (fileName.endsWith(".json")) {
+				// 全曲成绩页导出的 JSON 文件
+				loadScoresExportIntoCache(selectedFile);
+			} else if (fileName.endsWith(".csv")) {
 				let reader = new FileReader();
 				reader.onload = function(e) {
 					csvContent = reader.result;
@@ -284,8 +320,9 @@ function initializeUploadListener() {
 				};
 				reader.readAsText(selectedFile);
 			} else if(fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
-				console.log("VHZek");
-				readVHZek(selectedFile);
+				// 万能查分表（VHZek）功能已停用
+				// readVHZek(selectedFile);
+				alert("万能查分表（xls/xlsx）上传功能已停用，请使用st3或CSV文件");
 			} else {
 				runQuery(selectedFile);
 				console.log("Not a .csv file");
@@ -300,6 +337,7 @@ function initializeUploadListener() {
 		if (file.size > 1048576) {
 			console.log("over 1MB");
 			alert("图片大小超过1MB，请尝试换一张或压缩质量后再试");
+			return;
 		} else {
 			reader.readAsDataURL(file);
 			reader.onload = function() {
@@ -321,6 +359,7 @@ function initializeUploadListener() {
 		if (file.size > 3145728) {
 			console.log("over 3MB");
 			alert("图片大小超过3MB，请尝试换一张或压缩质量后再试");
+			return;
 		} else {
 
 			reader.readAsDataURL(file);
@@ -341,6 +380,10 @@ function initializeUploadListener() {
  * 运行查询语句
  */
 async function runQuery(file) {
+	// 确保曲目数据（含生成的SQL）已就绪
+	if (!query) {
+		await initializeSongData();
+	}
 	let buffer = await file.arrayBuffer();
 	let uInt8Array = new Uint8Array(buffer);
 	db = new SQL.Database(uInt8Array);
@@ -350,6 +393,8 @@ async function runQuery(file) {
 		alert("st3文件选取有误，请重试！");
 		return;
 	}
+	// 提示有成绩但未登记定数的曲目
+	logMissingConstants(db);
 	// console.log(query);
 	let result = db.exec(query);
 	if (result.length > 0) {
@@ -394,12 +439,14 @@ function saveQueryResult(result) {
  * 将csv格式的分数表转换成为成绩对象数组
  * @param csv 待转换的csv文件，必须是旧版或新版页面能生成和读取的对应格式
  */
-function runConvert(csv) {
-	file = csv.trim();
-	const rows = file.split('\n');
+function runConvert(csv, persist = true) {
+	const rows = csvToRows(csv);
 	tempArray = [];
 	for (i = 1; i < rows.length; i++) {
-		const row = rows[i].split(',');
+		const row = rows[i];
+		// 分数为空的行视为“未填写”，跳过
+		const scoreText = (row[3] === undefined || row[3] === null) ? '' : String(row[3]).trim();
+		if (scoreText === '') continue;
 		single = new PlayResult(row[0], row[1], row[2],
 			parseFloat(row[3]), parseFloat(row[4]),
 			parseFloat(row[5]), parseFloat(row[6]),
@@ -409,7 +456,8 @@ function runConvert(csv) {
 	}
 	filteredArray = tempArray;
 	currentArray = filteredArray;
-	saveLocalStorage(filteredArray);
+	// 默认示例数据仅用于预览，不写入共享缓存（否则会污染成绩页/其他页面的数据）
+	if (persist !== false) saveLocalStorage(filteredArray);
 	switchLoseScore();
 	// displayB30(filteredArray);
 	// generateCard(filteredArray);
@@ -550,7 +598,7 @@ function appendSongUnit(currentRow, index) {
 	si.append($('<div>').addClass('item-far').text('F/' + currentRow.far));
 	si.append($('<div>').addClass('item-lost').text('L/' + currentRow.lost));
 	
-	si.append($('<div>').addClass('item-losescore').addClass('item-hidden').text('Lose Score : ' + currentRow.loseScore.toFixed(4)));
+	si.append($('<div>').addClass('item-losescore').addClass('item-hidden').text('Lose Score : ' + (currentRow.loseScore || 0).toFixed(4)));
 
 	si.append($('<div>').addClass('item-acc').addClass('item-hidden').text(`P/(${-1 * (currentRow.objectAmount - currentRow.criticalPerfect)})\tEquivalent Far : ${currentRow.equivalentFar}`))
 	let rk = getSongRanking(currentRow.score, currentRow.far, currentRow.lost);
@@ -820,54 +868,6 @@ function handleScroll(unitid, index) {
 	scrollToElement(unitid);
 }
 
-async function initializeVHZEK() {
-	try {
-		const response = await fetch('sample/constantChart.csv');
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		let file = await response.text();
-		let temp = file.trim();
-		// console.log(temp)
-		let rows = temp.replaceAll('\r\n', "\n").split("\n");
-		// console.log(rows)
-		let single;
-		tempArray = [];
-		for (i = 1; i < rows.length; i++) {
-			single = {};
-			const row = rows[i].split(',');
-			single = {
-				idx: findIndex(row[1], songlist),
-				songId: row[1],
-				constant: [row[2], row[3], row[4], row[5], row[6]]
-			}
-			tempArray.push(single);
-		}
-		// console.log(tempArray)
-		idx_constant = tempArray;
-		idx_constant.push({
-			idx: 283,
-			songId: 'lasteternity',
-			constant: ['', '', '', '9.7', '']
-		});
-		idx_constant.push({
-			idx: 421,
-			songId: 'dualdoom',
-			constant: ['3.5', '6.5', '8.9', '', '10.3']
-		})
-		idx_constant = idx_constant.sort(function(a, b) {
-			return resultSort(a, b, 'idx', -1);
-		})
-		
-		idx_constant.shift();
-		console.log('idx_constant:')
-		console.log(idx_constant)
-		// return idx_constant;
-	} catch (error) {
-		console.error('There was a problem loading the CSV file:', error);
-	}
-}
-
 function generateCard(array){
 	//
 	generateUnits(array, unitQuantity)
@@ -880,7 +880,7 @@ function generateTable(array){
 }
 
 function switchLoseScore(selection){
-	if(!selection){
+	if(!selection && currentArray && currentArray.length > 0){
 		if((currentArray[0].far == 0 && currentArray[0].perfect == 0 && currentArray[0].lost == 0)
 		&& (currentArray[parseInt(currentArray.length / 2)].far == 0 && currentArray[parseInt(currentArray.length / 2)].perfect == 0 && currentArray[parseInt(currentArray.length / 2)].lost == 0)
 		&& (currentArray[parseInt(currentArray.length / 2) - 1].far == 0 && currentArray[parseInt(currentArray.length / 2) - 1].perfect == 0 && currentArray[parseInt(currentArray.length / 2) - 1].lost == 0)){
@@ -912,4 +912,23 @@ function switchLoseScore(selection){
 	console.log("loseScore"+loseScoreFlag);
 	$('#switch-losescore').val(loseScoreFlag);
 	console.log("loseScore"+$('#switch-losescore').val());
+}
+
+// 全曲成绩导出载入后的页面刷新钩子
+function onScoresLoaded(arr) {
+	switchLoseScore();
+	switchP30(0);
+}
+/**
+ * 关闭设置窗口及其子选择弹出窗
+ */
+function closeSettings() {
+    displayWindow('setting-window', false);
+    var subWindows = ['avatar-select', 'background-select', 'user-course-dan-select'];
+    subWindows.forEach(function(id) {
+        var $el = $('#' + id);
+        if (!$el.is(':hidden')) {
+            displayWindow(id, false);
+        }
+    });
 }

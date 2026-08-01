@@ -601,7 +601,7 @@ function applyQuickSelection(songlist, idx) {
 	$('#input-constant').val(constant);
 	// let illustrationId = diffSongIllusMapper[song.id][difficultyText] != undefined ? song.id + diffSongIllusMapper[song.id][difficultyText] : song.id;
 	let illustrationId = song.id;
-	if (diffSongIllusMapper[song.id] && [song.id][difficultyText]) {
+	if (diffSongIllusMapper[song.id] && diffSongIllusMapper[song.id][difficultyText]) {
 		illustrationId = illustrationId + diffSongIllusMapper[song.id][difficultyText];
 	}
 	$('#input-illustration').val(illustrationId);
@@ -616,8 +616,21 @@ function applyQuickSelection(songlist, idx) {
 async function getImageMapping() {
 	try {
 		if (!diffSongIllusMapper) {
-			const response = await fetch('json/Different_Illustration.json');
-			diffSongIllusMapper = await response.json();
+			// 曲绘差分由 songlist 的 jacketOverride 字段派生，不再读取单独文件
+			const response = await fetch('json/songlist');
+			const data = await response.json();
+			const DIF_BY_CLASS = { 0: 'Past', 1: 'Present', 2: 'Future', 3: 'Beyond', 4: 'Eternal' };
+			const mapping = {};
+			data.songs.forEach(function (song) {
+				(song.difficulties || []).forEach(function (d) {
+					const key = DIF_BY_CLASS[d.ratingClass];
+					if (d.jacketOverride && key) {
+						if (!mapping[song.id]) mapping[song.id] = {};
+						mapping[song.id][key] = '_' + d.ratingClass;
+					}
+				});
+			});
+			diffSongIllusMapper = mapping;
 		}
 		return diffSongIllusMapper;
 	} catch (error) {

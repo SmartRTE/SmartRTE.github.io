@@ -1,0 +1,71 @@
+/* ===== Theme: Light (default) ===== */
+:root {
+    --bg-primary: #f5f0eb;
+    --bg-secondary: #ffffff;
+    --bg-elevated: rgba(255, 255, 255, 0.92);
+    --text-primary: #1a1a2e;
+    --text-secondary: #666;
+    --text-muted: #999;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.12);
+    --surface: rgba(255, 255, 255, 0.88);
+    --surface-alt: rgba(245, 240, 235, 0.7);
+    --accent: #6c4fa0;
+    --accent-secondary: #4a7ab5;
+    --accent-glow: rgba(108, 79, 160, 0.2);
+    --danger: #d65050;
+    --success: #3a8a4a;
+    --warning: #e09a30;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --table-bg: rgba(255, 255, 255, 0.6);
+    --table-hover: rgba(0, 0, 0, 0.03);
+    --modal-bg: rgba(255, 255, 255, 0.95);
+    --overlay: rgba(0, 0, 0, 0.35);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.12);
+    --shadow: rgba(0, 0, 0, 0.08);
+    --btn-primary-text: #ffffff;
+    --btn-secondary-bg: rgba(0, 0, 0, 0.04);
+    --btn-secondary-text: #444;
+    --input-bg: rgba(255, 255, 255, 0.7);
+    --input-border: rgba(0, 0, 0, 0.12);
+    --input-text: #222;
+    --stat-value: #5a4a8a;
+    --link: #5a4aaa;
+    --code-bg: rgba(0, 0, 0, 0.03);
+}
+
+/* ===== Theme: Dark ===== */
+[data-theme="dark"] {
+    --bg-primary: #0a0a12;
+    --bg-secondary: #141220;
+    --bg-elevated: rgba(20, 18, 32, 0.95);
+    --text-primary: #e0e0e0;
+    --text-secondary: #888;
+    --text-muted: #666;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-strong: rgba(255, 255, 255, 0.1);
+    --surface: rgba(20, 18, 32, 0.85);
+    --surface-alt: rgba(26, 24, 40, 0.7);
+    --accent: #8a6fc0;
+    --accent-secondary: #5a8ac5;
+    --accent-glow: rgba(138, 111, 192, 0.25);
+    --danger: #ff6b6b;
+    --success: #4a9a5a;
+    --warning: #e0a040;
+    --card-bg: rgba(25, 22, 40, 0.85);
+    --table-bg: rgba(20, 18, 32, 0.6);
+    --table-hover: rgba(255, 255, 255, 0.02);
+    --modal-bg: rgba(22, 20, 35, 0.95);
+    --overlay: rgba(0, 0, 0, 0.5);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.12);
+    --shadow: rgba(0, 0, 0, 0.3);
+    --btn-primary-text: #ffffff;
+    --btn-secondary-bg: rgba(255, 255, 255, 0.06);
+    --btn-secondary-text: #c0c0d0;
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --input-border: rgba(255, 255, 255, 0.08);
+    --input-text: #ddd;
+    --stat-value: #b8acff;
+    --link: #9eaaff;
+    --code-bg: rgba(255, 255, 255, 0.03);
+}
