@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-从 Arcaea APK 中提取缺失的曲目曲绘，处理为 170x170 / JPEG 质量70，写入 Processed_Illustration。
+从 Arcaea APK 中提取缺失的曲目曲绘（170x170 / JPEG 质量70），并把 songlist / packlist 整文件同步到 json 目录。
 
 用法：
     python extract_jackets.py [apk路径] [--size 170] [--quality 70] [--dry-run]
@@ -21,6 +21,7 @@
 import argparse
 import io
 import json
+import shutil
 import sys
 import zipfile
 from pathlib import Path
@@ -96,6 +97,25 @@ def process_one(zf, entry, out_path, size, quality):
     im.save(out_path, "JPEG", quality=quality, optimize=True)
 
 
+def sync_metadata(zf, entry_set):
+    """直接把 APK 中的 songlist / packlist 整文件复制到项目 json 目录（逐字节一致）"""
+    specs = (
+        ("assets/songs/songlist", SCRIPT_DIR / "json" / "songlist"),
+        ("assets/songs/packlist", SCRIPT_DIR / "json" / "packlist"),
+    )
+    for entry, out_path in specs:
+        if entry not in entry_set:
+            print("APK 中未找到 %s，跳过同步" % entry)
+            continue
+        try:
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            with zf.open(entry) as src, open(out_path, "wb") as dst:
+                shutil.copyfileobj(src, dst)
+            print("已同步 %s -> %s" % (entry, out_path))
+        except Exception as e:
+            print("同步 %s 失败: %s" % (entry, e))
+
+
 def main():
     ap = argparse.ArgumentParser(description="从 Arcaea APK 提取缺失曲绘（170x170 / JPEG 质量70）")
     ap.add_argument("apk", nargs="?", help="APK 文件路径；省略则弹出文件选择窗口")
@@ -114,9 +134,6 @@ def main():
     missing = {name: info for name, info in needed.items() if name not in existing}
     print("songlist 所需曲绘: %d，%s 已有: %d，缺失: %d"
           % (len(needed), args.out, len(existing), len(missing)))
-    if not missing:
-        print("没有缺失曲绘，无需处理。")
-        return
 
     if args.dry_run:
         for name in sorted(missing):
@@ -133,6 +150,14 @@ def main():
 
     with zf:
         entry_set = set(zf.namelist())
+
+        # 1) 同步 songlist / packlist（整文件直接替换）
+        sync_metadata(zf, entry_set)
+
+        # 2) 提取缺失曲绘
+        if not missing:
+            print("没有缺失曲绘，无需处理。")
+            return
 
         def find_entry(sid, rc):
             folders = ("assets/songs/%s/" % sid, "assets/songs/dl_%s/" % sid)
