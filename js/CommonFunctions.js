@@ -1499,7 +1499,7 @@ function initToolWidgets() {
 .tool-panel { display: none; }
 .tool-panel.active { display: block; }
 .tool-push-refresh {
-	align-self: flex-start; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border);
+	align-self: center; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border);
 	background: var(--surface-alt); color: var(--text-primary); font-size: .82rem; font-weight: 600; cursor: pointer;
 	transition: .2s; font-family: "Exo", "L2", sans-serif;
 }
@@ -1538,7 +1538,7 @@ function initToolWidgets() {
 .tool-push-delta { font-size: 1rem; font-weight: 800; color: var(--success); font-variant-numeric: tabular-nums; }
 .tool-push-target { font-size: .68rem; color: var(--text-muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
 .tool-push-item-noplay { border-style: dashed; opacity: .85; }
-.tool-push-toggle-row { display: flex; align-items: center; gap: 10px; }
+.tool-push-toggle-row { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
 /* 需提高优先级：面板内的 label 会命中 .tool-calc label 的纵向布局规则 */
 label.tool-push-toggle {
 	display: flex; flex-direction: row; align-items: center; gap: 10px; cursor: pointer;
@@ -1547,7 +1547,10 @@ label.tool-push-toggle {
 	padding: 4px 0;
 	flex: 0 0 auto;
 }
-.tool-push-hint { flex: 1; min-width: 0; }
+/* 物量换算模式下，右侧换算说明独占一行，避免挤压左侧曲目信息列 */
+.tool-push-note-mode .tool-push-item { flex-wrap: wrap; }
+.tool-push-note-mode .tool-push-main { min-width: 150px; }
+.tool-push-note-mode .tool-push-right { flex: 1 1 100%; text-align: left; }
 .tool-switch { position: relative; display: inline-block; width: 42px; height: 24px; flex: 0 0 42px; }
 .tool-switch input { position: absolute; opacity: 0; width: 0; height: 0; }
 .tool-switch-slider {
@@ -1613,14 +1616,13 @@ label.tool-push-toggle {
 		'	<div class="tool-panel" data-tool-panel="ptt-push">' +
 		'		<div class="tool-calc">' +
 		'			<div class="tool-push-toggle-row">' +
-		'				<label class="tool-push-toggle">' +
-		'					<span class="tool-switch"><input type="checkbox" id="tool-push-note-toggle"><span class="tool-switch-slider"></span></span>' +
-		'					<span>按 Far/Pure/大P 换算</span>' +
-		'				</label>' +
-		'				<p class="tool-calc-hint tool-push-hint">整体PTT按 (Best30 + Recent10) / 40 估算；求最小推分，Recent10 按 Best10。PTT 显示截断至2位小数（不四舍五入），推分 = 让显示PTT +0.01 所需最低加分（已达上限的谱面除外；无记录会特殊标注）。</p>' +
-		'			</div>' +
-		'			<button type="button" id="tool-push-refresh" class="tool-push-refresh">重新计算</button>' +
-		'			<div id="tool-push-list" class="tool-push-list"></div>' +
+	'				<label class="tool-push-toggle">' +
+	'					<span class="tool-switch"><input type="checkbox" id="tool-push-note-toggle"><span class="tool-switch-slider"></span></span>' +
+	'					<span>按 Far/Pure/大P 换算</span>' +
+	'				</label>' +
+	'				<button type="button" id="tool-push-refresh" class="tool-push-refresh">重新计算</button>' +
+	'			</div>' +
+	'			<div id="tool-push-list" class="tool-push-list"></div>' +
 		'		</div>' +
 		'	</div>' +
 		'</div>';
@@ -1856,13 +1858,14 @@ function renderPttPush() {
 		}
 		return;
 	}
+	const noteToggleEl = document.getElementById('tool-push-note-toggle');
+	const noteMode = !!(noteToggleEl && noteToggleEl.checked);
+	listEl.classList.toggle('tool-push-note-mode', noteMode);
 	const data = computePttPush();
 	if (!data.results.length) {
 		listEl.innerHTML = '<div class="tool-push-empty">暂无可行的推分推荐：要么没有载入任何成绩，要么全部成绩都已达到单曲PTT上限</div>';
 		return;
 	}
-	const noteToggleEl = document.getElementById('tool-push-note-toggle');
-	const noteMode = !!(noteToggleEl && noteToggleEl.checked);
 	const rows = data.results.map(function (r, i) {
 		const c = r.chart;
 		const noplay = !c.hasRecord;
