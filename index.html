@@ -48,9 +48,19 @@
         </div>
         <div class="divider"></div>
         <div id="filter-controls">
-            <div class="filter-group"><label>定数范围</label><div class="range-inputs"><input type="number" id="range-lower-bound" value="1.0" step="0.1" min="1.0" max="12.0"><span>—</span><input type="number" id="range-upper-bound" value="12.0" step="0.1" min="1.0" max="12.0"></div></div>
+            <div class="filter-group"><label>视图</label>
+                <select id="index-view-select">
+                    <option value="default">默认排序</option>
+                    <option value="pack">按曲包分组</option>
+                    <option value="version">按版本</option>
+                    <option value="name">按全曲名</option>
+                    <option value="constant">按全曲定数</option>
+                </select>
+            </div>
             <div class="filter-group"><label>排序方式</label><div class="sort-row"><select id="sort-mode"><option value="playRating">单曲 PTT</option><option value="constant">定数</option><option value="score">分数</option><option value="criticalRate">大P率</option><option value="normalPerfect">小P数</option><option value="loseScore">失分数</option></select><select id="sort-order"><option value="1">降序</option><option value="-1">升序</option></select></div></div>
-            <div class="filter-group"><label>搜索曲目</label><div class="search-row"><input id="search-song" placeholder="曲名"><select id="search-difficulty"><option value="Past">Past</option><option value="Present">Present</option><option value="Future" selected>Future</option><option value="Eternal">Eternal</option><option value="Beyond">Beyond</option></select></div><button class="btn-small" onclick="searchSong()">查找</button><select id="search-result"><option selected disabled>结果会显示在这里</option></select></div>
+            <div class="filter-group"><label>难度</label><span id="index-difficulty-filters"></span></div>
+            <div class="filter-group"><label>搜索</label><input id="index-search" type="search" placeholder="搜索曲名 / 曲目ID"></div>
+            <label class="check-label"><input type="checkbox" id="index-sort-reversed"> 逆向排序</label>
             <div class="filter-actions">
                 <!-- <button class="btn-small" onclick="aiChanRoll(filteredArray, viewMode)">🎲 AI 酱 roll 一首？</button> -->
                 <button class="btn-small" onclick="switchView()" id="switch-view">显示为卡片</button>

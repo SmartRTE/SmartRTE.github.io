@@ -715,6 +715,7 @@ function bindEvents() {
 				else collapsedGroups.delete(gid);
 			}
 		})
+		.on('click', '.row-ill', function () { showSongDetail(this); })
 		.on('click', '.save-row', function () { saveRowByEl(this); })
 		.on('click', '.clear-row', function () { clearRowByEl(this); })
 		.on('change', '.inp-const', function () { saveConstOverrideByEl(this); })
@@ -722,4 +723,85 @@ function bindEvents() {
 		.on('keydown', '.inp-score', function (e) {
 			if (e.key === 'Enter') saveRowByEl(this);
 		});
+
+	$('#song-detail-close').on('click', closeSongDetail);
+	$('#song-detail-bg').on('click', closeSongDetail);
+	$(document).on('keydown', function (e) {
+		if (e.key === 'Escape') closeSongDetail();
+	});
+}
+
+/* ---------- 曲目详情（点击曲绘） ---------- */
+
+const SONG_DETAIL_DIF = {
+	0: { short: 'PST', long: 'Past' },
+	1: { short: 'PRS', long: 'Present' },
+	2: { short: 'FTR', long: 'Future' },
+	3: { short: 'BYD', long: 'Beyond' },
+	4: { short: 'ETR', long: 'Eternal' }
+};
+
+function showSongDetail(el) {
+	const key = rowElToKey(el);
+	if (!key) return;
+	const row = rowsByKey[key];
+	if (!row) return;
+	const song = songlistDetail[row.songId];
+	const cat = songCatalog[row.songId];
+	if (!song || !cat) {
+		showToast('未找到曲目信息');
+		return;
+	}
+	let packNameStr = cat.set || '记忆档案馆';
+	if (cat.set && packsById[cat.set]) packNameStr = packName(packsById[cat.set]);
+	const sideMap = { 0: '光侧', 1: '纷争侧' };
+	const sideStr = sideMap[song.side] !== undefined ? sideMap[song.side] : String(song.side);
+	let dateStr = '';
+	if (song.date) {
+		const dt = new Date(song.date * 1000);
+		dateStr = dt.getFullYear() + '/' + ('0' + (dt.getMonth() + 1)).slice(-2) + '/' + ('0' + dt.getDate()).slice(-2);
+	}
+	const infoRow = function (label, value) {
+		return '<div class="info-row"><span class="info-label">' + label + '</span><span class="info-value">' + esc(value) + '</span></div>';
+	};
+	let html = infoRow('曲名', cat.title);
+	const tl = song.title_localized || {};
+	const aliases = Object.keys(tl).filter(function (k) { return tl[k] && tl[k] !== cat.title; })
+		.map(function (k) { return tl[k]; });
+	if (aliases.length) {
+		html += '<div class="info-row"><span class="info-label">别名</span><span class="info-value">'
+			+ aliases.map(esc).join('<br>') + '</span></div>';
+	}
+	html += infoRow('曲目ID', song.id);
+	if (song.artist) html += infoRow('曲师', song.artist);
+	if (song.bpm) html += infoRow('BPM', song.bpm);
+	html += infoRow('所属曲包', packNameStr);
+	if (song.version) html += infoRow('版本', song.version);
+	html += infoRow('主题', sideStr);
+	if (dateStr) html += infoRow('收录时间', dateStr);
+	html += '<div class="song-detail-diffs">';
+	(song.difficulties || []).forEach(function (d) {
+		const m = SONG_DETAIL_DIF[d.ratingClass];
+		const shortName = m ? m.short : ('难度' + d.ratingClass);
+		const longName = m ? m.long : shortName;
+		const diffCat = cat.difficulties[longName];
+		const constant = (diffCat && diffCat.constant !== null && diffCat.constant !== undefined) ? diffCat.constant : '—';
+		const active = m && row.difficulty === m.long ? ' diff-line-active' : '';
+		html += '<div class="diff-line' + active + '">'
+			+ '<span class="diff-badge diff-' + shortName.toLowerCase() + '">' + shortName + '</span>'
+			+ '<span>定数 ' + constant + '</span>'
+			+ (d.chartDesigner ? '<span class="diff-designer">谱师</span><span class="diff-designer-name">' + esc(d.chartDesigner) + '</span>' : '')
+			+ (d.jacketDesigner ? '<span class="diff-designer">曲绘</span><span class="diff-designer-name">' + esc(d.jacketDesigner) + '</span>' : '')
+			+ '</div>';
+	});
+	html += '</div>';
+
+	$('#song-detail-title').text(cat.title);
+	$('#song-detail-ill').css('visibility', 'visible').attr('src', 'Processed_Illustration/' + (row.illustration || row.songId + '.jpg'));
+	$('#song-detail-info').html(html);
+	$('#song-detail-modal').removeAttr('hidden');
+}
+
+function closeSongDetail() {
+	$('#song-detail-modal').attr('hidden', true);
 }

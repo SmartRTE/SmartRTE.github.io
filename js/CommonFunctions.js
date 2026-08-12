@@ -6,6 +6,7 @@ let aiChanList = [];
 let difList = ['Past', 'Present', 'Future', 'Beyond', 'Eternal'];
 let query = ''; // 运行时生成的SQL查询文本（由 initializeSongData 生成）
 let songCatalog = {}; // songId -> {idx, title, artist, difficulties: {Difficulty: {title, illustration, constant}}}
+let songlistDetail = {}; // songId -> songlist 原始条目（详情弹窗等用途）
 let DATA_VERSION = 2; // localStorage 数据版本号，数据结构变更时+1
 let songDataReady = false; // 曲目数据（songlist + constants.json）是否已加载完成
 let dataVersion = ''; // 数据版本（读取自 constants.json 的 version 字段）
@@ -151,6 +152,7 @@ async function initializeSongData() {
 		diffIllMapping = {};
 		songCatalog = {};
 		songlist = {};
+		songlistDetail = {};
 		const DIF_BY_CLASS = { 0: 'Past', 1: 'Present', 2: 'Future', 3: 'Beyond', 4: 'Eternal' };
 		const CONST_KEY_BY_DIF = { Past: 'PST', Present: 'PRS', Future: 'FTR', Beyond: 'BYD', Eternal: 'ETR' };
 		rawSonglist.forEach(function (song) {
@@ -165,6 +167,7 @@ async function initializeSongData() {
 				difficulties: {}
 			};
 			songlist[song.idx] = songId;
+			songlistDetail[song.id] = song;
 			(song.difficulties || []).forEach(function (d) {
 				const key = DIF_BY_CLASS[d.ratingClass];
 				if (!key) return;
@@ -1110,6 +1113,9 @@ function hideUID() {
  */
 async function initializeQRCode() {
 	let url = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+	if (url.indexOf("appassets") != -1){
+		url = 'https://smartrte.github.io';
+	}
 	$('#copyright span:first').text(`Generated at ${url} @ `);
 	// if (url == 'https://smartrte.github.io') {
 	// 	$('#qrcode').attr('src', 'img/QRCODE-githubio.png');

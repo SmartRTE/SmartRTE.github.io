@@ -55,5 +55,18 @@
 		<main id="chart-list"></main>
 	</div>
 	<div id="toast" hidden></div>
+	<div id="song-detail-modal" hidden>
+		<div id="song-detail-bg"></div>
+		<div id="song-detail-box">
+			<div class="song-detail-header">
+				<span id="song-detail-title" class="song-detail-title"></span>
+				<button type="button" id="song-detail-close" aria-label="关闭">✕</button>
+			</div>
+			<div class="song-detail-body">
+				<img id="song-detail-ill" class="song-detail-ill" alt="" onerror="this.style.visibility='hidden'">
+				<div id="song-detail-info" class="song-detail-info"></div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

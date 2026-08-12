@@ -28,6 +28,12 @@ let viewMode = 0;
 let rangeUpperBound = 12.0;
 let rangeLowerBound = 1.0;
 let fakeCounter = 0;
+let listView = 'default';
+let selectedDifficulties = new Set(['Past', 'Present', 'Future', 'Beyond', 'Eternal']);
+let searchText = '';
+let sortReversed = false;
+let packsById = {};
+let packOrder = [];
 
 // ─── 确认对话框 Promise 封装 ───
 let _confirmResolver = null;
@@ -50,9 +56,10 @@ $(document).ready(function () {
         // 曲目数据初始化（songlist + constants.json 派生并生成SQL）
         initializeSongData().then(renderDataVersion).catch(function (e) { console.warn("initializeSongData failed", e); });
 
-        initailizeConstantRangeListener();
         initializeSortListener();
-        initailizeSearchResultListener();
+        buildIndexDifficultyFilter();
+        initIndexFilterControls();
+        initializePacklist();
         initializeSticker();
 
         $("#sticker").click(function () {
@@ -100,27 +107,186 @@ $(document).ready(function () {
             }, 300);
         });
 
-        // 快捷键：绑定 filter-window 的搜索
-        $("#search-song").on("keydown", function (e) {
-            if (e.key === "Enter") searchSong();
-        });
-
     } catch (err) {
         console.error("init error:", err);
     }
 });
 
-// ─── 搜索结果点击跳转 ───
-function initailizeSearchResultListener() {
-    $("#search-result").on("change", function () {
-        try {
-            let songId = $(this).val();
-            if (!songId) return;
-            let difficulty = $("#search-difficulty").val();
-            let prefix = viewMode === 0 ? "t-" : "";
-            let unit = prefix + songId + "-" + difficulty;
-            scrollToElement(unit);
-        } catch (err) { console.warn("search-jump error:", err); }
+// ─── index 筛选/视图（scores 风格） ───
+function esc(s) {
+    return String(s === null || s === undefined ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+
+function initializePacklist() {
+    fetch('json/packlist').then(function (r) { return r.json(); }).then(function (d) {
+        packsById = {};
+        packOrder = [];
+        (d.packs || []).forEach(function (p) {
+            packsById[p.id] = p;
+            packOrder.push(p.id);
+        });
+        renderIndexList();
+    }).catch(function () { /* 忽略：曲包名回退为 id */ });
+}
+
+function packDisplayName(setId) {
+    const p = packsById[setId];
+    if (p) {
+        const nl = p.name_localized || {};
+        return nl['zh-Hans'] || nl.en || p.id;
+    }
+    return setId || '记忆档案馆';
+}
+
+function buildIndexDifficultyFilter() {
+    const html = ['Past', 'Present', 'Future', 'Beyond', 'Eternal'].map(function (dif) {
+        return '<label class="dif-check"><input type="checkbox" data-dif="' + dif + '"'
+            + (selectedDifficulties.has(dif) ? ' checked' : '') + '> ' + dif + '</label>';
+    }).join('');
+    $('#index-difficulty-filters').html(html);
+}
+
+function initIndexFilterControls() {
+    $('#index-view-select').on('change', function () {
+        listView = this.value;
+        renderIndexList();
+    });
+    $('#index-difficulty-filters').on('change', 'input[type=checkbox]', function () {
+        const dif = $(this).data('dif');
+        if (this.checked) selectedDifficulties.add(dif);
+        else selectedDifficulties.delete(dif);
+        renderIndexList();
+    });
+    $('#index-search').on('input', function () {
+        searchText = this.value;
+        renderIndexList();
+    });
+    $('#index-sort-reversed').on('change', function () {
+        sortReversed = this.checked;
+        renderIndexList();
+    });
+}
+
+function versionCmp(a, b) {
+    if (a === b) return 0;
+    if (a === '未知') return 1;
+    if (b === '未知') return -1;
+    const pa = String(a).split('.').map(Number);
+    const pb = String(b).split('.').map(Number);
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+        const x = i < pa.length ? pa[i] : 0;
+        const y = i < pb.length ? pb[i] : 0;
+        if (x !== y) return x - y;
+    }
+    return 0;
+}
+
+function difRankCmp(a, b) {
+    const order = ['Eternal', 'Beyond', 'Future', 'Present', 'Past'];
+    return order.indexOf(a.difficulty) - order.indexOf(b.difficulty);
+}
+
+function groupIndexRows(arr, kind) {
+    const groups = [];
+    const map = {};
+    arr.forEach(function (r) {
+        let key, title;
+        if (kind === 'pack') {
+            const setId = (songCatalog[r.songId] && songCatalog[r.songId].set) || 'single';
+            key = setId;
+            title = packDisplayName(setId);
+        } else {
+            const ver = (songCatalog[r.songId] && songCatalog[r.songId].version) || '未知';
+            key = ver;
+            title = '版本 ' + ver;
+        }
+        if (!map[key]) {
+            map[key] = { key: key, title: title, rows: [] };
+            groups.push(map[key]);
+        }
+        map[key].rows.push(r);
+    });
+    if (kind === 'version') {
+        groups.sort(function (a, b) {
+            return sortReversed ? -versionCmp(a.key, b.key) : versionCmp(a.key, b.key);
+        });
+    } else {
+        groups.sort(function (a, b) {
+            let ia = packOrder.indexOf(a.key);
+            let ib = packOrder.indexOf(b.key);
+            if (ia === -1) ia = 999;
+            if (ib === -1) ib = 999;
+            return sortReversed ? ib - ia : ia - ib;
+        });
+    }
+    return groups;
+}
+
+function renderIndexList() {
+    // 1) 筛选：难度 + 搜索
+    let arr = (currentArray || []).filter(function (r) {
+        if (!selectedDifficulties.has(r.difficulty)) return false;
+        if (searchText) {
+            const q = searchText.toLowerCase();
+            if ((r.songName || '').toLowerCase().indexOf(q) === -1 && (r.songId || '').toLowerCase().indexOf(q) === -1) return false;
+        }
+        return true;
+    });
+    // 2) 基础排序：排序方式
+    const attr = $('#sort-mode').val() || 'playRating';
+    const order = parseInt($('#sort-order').val(), 10) || 1;
+    arr = arr.slice().sort(function (a, b) { return resultSort(a, b, attr, order); });
+    // 3) 视图
+    const rev = sortReversed ? -1 : 1;
+    let groups;
+    if (listView === 'name') {
+        arr.sort(function (a, b) {
+            return rev * ((a.songName || '').localeCompare(b.songName || '', undefined, { numeric: true }) || difRankCmp(a, b));
+        });
+        groups = [{ title: null, rows: arr }];
+    } else if (listView === 'constant') {
+        arr.sort(function (a, b) {
+            return rev * (resultSort(a, b, 'constant', 1) || difRankCmp(a, b));
+        });
+        groups = [{ title: null, rows: arr }];
+    } else if (listView === 'pack' || listView === 'version') {
+        groups = groupIndexRows(arr, listView);
+    } else {
+        if (sortReversed) arr = arr.slice().reverse();
+        groups = [{ title: null, rows: arr }];
+    }
+    filteredArray = arr;
+    renderIndexGroups(groups);
+}
+
+function renderIndexGroups(groups) {
+    const hasEmptyItems = (filteredArray || []).some(function (r) {
+        return r.perfect === 0 && r.far === 0 && r.lost === 0;
+    });
+    $('.t-perfect, .t-normal-perfect, .t-critical-perfect, .t-far, .t-lost')[hasEmptyItems ? 'addClass' : 'removeClass']('hidden');
+    const $body = $('#result tbody').empty();
+    let rank = 0;
+    groups.forEach(function (g) {
+        if (g.title !== null) {
+            $body.append('<tr class="index-group-header"><td colspan="11">' + esc(g.title) + '</td></tr>');
+        }
+        g.rows.forEach(function (r) {
+            rank++;
+            $body.append(convertToTable(r, rank));
+        });
+    });
+    const $card = $('#result-card').empty();
+    rank = 0;
+    groups.forEach(function (g) {
+        if (g.title !== null) {
+            $card.append('<div class="index-card-group-header">' + esc(g.title) + '</div>');
+        }
+        g.rows.forEach(function (r) {
+            rank++;
+            $card.append(convertToCard(r, rank));
+        });
     });
 }
 
@@ -136,50 +302,9 @@ function renderDataVersion() {
 function initializeSortListener() {
     $("#sort-mode, #sort-order").on("change", function () {
         try {
-            filterResult(filteredArray, $("#sort-mode").val(), $("#sort-order").val());
+            renderIndexList();
         } catch (err) { console.warn("sort error:", err); }
     });
-}
-
-// ─── 定数范围监听 ───
-function initailizeConstantRangeListener() {
-    const clampInput = function (sel, min, max) {
-        let v = parseFloat($(sel).val());
-        if (isNaN(v)) v = min;
-        v = Math.min(max, Math.max(min, v));
-        $(sel).val(v.toFixed(1));
-        filterByConstant();
-    };
-    $("#range-lower-bound").on("input", function () {
-        let v = parseFloat($(this).val());
-        if (isNaN(v)) return;
-        if (v < 1.0) $(this).val("1.0");
-        if (v > 12.0) $(this).val("12.0");
-        filterByConstant();
-    });
-    $("#range-upper-bound").on("input", function () {
-        let v = parseFloat($(this).val());
-        if (isNaN(v)) return;
-        if (v < 1.0) $(this).val("1.0");
-        if (v > 12.0) $(this).val("12.0");
-        filterByConstant();
-    });
-}
-
-// ─── 定数范围筛选 ───
-function filterByConstant() {
-    try {
-        rangeUpperBound = parseFloat($("#range-upper-bound").val()) || 12.0;
-        rangeLowerBound = parseFloat($("#range-lower-bound").val()) || 1.0;
-        if (rangeUpperBound < rangeLowerBound) {
-            [rangeUpperBound, rangeLowerBound] = [rangeLowerBound, rangeUpperBound];
-        }
-        filteredArray = currentArray.filter(function (row) {
-            return row.constant >= rangeLowerBound && row.constant <= rangeUpperBound;
-        }).slice();
-        generateCard(filteredArray);
-        generateTable(filteredArray);
-    } catch (err) { console.warn("filterByConstant error:", err); }
 }
 
 // ─── 触发文件上传 ───
@@ -220,8 +345,7 @@ function initializeUploadListener() {
 // 全曲成绩导出载入后的页面刷新钩子
 function onScoresLoaded(arr) {
     displayB30(arr);
-    generateCard(arr);
-    generateTable(arr);
+    renderIndexList();
 }
 
 // ─── SQLite 查询 ───
@@ -263,8 +387,7 @@ function saveQueryResult(result) {
         });
         filteredArray = currentArray;
         displayB30(currentArray);
-        generateCard(currentArray);
-        generateTable(currentArray);
+        renderIndexList();
         saveLocalStorage(currentArray);
         rollAiRecommend();
     } catch (err) { console.error("saveQueryResult error:", err); }
@@ -294,8 +417,7 @@ function runConvert(csv) {
         currentArray = filteredArray;
         saveLocalStorage(currentArray);
         displayB30(currentArray);
-        generateCard(currentArray);
-        generateTable(currentArray);
+        renderIndexList();
         rollAiRecommend();
     } catch (err) {
         console.error("runConvert error:", err);
@@ -314,8 +436,7 @@ function readSavedScore() {
         currentArray = data;
         filteredArray = currentArray;
         displayB30(currentArray);
-        generateCard(currentArray);
-        generateTable(currentArray);
+        renderIndexList();
         rollAiRecommend();
     } catch (err) {
         console.error("readSavedScore error:", err);
@@ -539,7 +660,7 @@ function reloadContent(array) {
         displayB30(array);
         filteredArray = array;
         currentArray = array;
-        filterByConstant();
+        renderIndexList();
     } catch (err) { console.error("reloadContent error:", err); }
 }
 

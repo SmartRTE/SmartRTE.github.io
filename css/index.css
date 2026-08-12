@@ -149,6 +149,34 @@ ul { list-style: none; }
 }
 .filter-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 .filter-actions .btn-small { flex: 1; min-width: 0; text-align: center; }
+
+/* ---------- scores 风格筛选（视图/难度/搜索/逆向排序） ---------- */
+#index-view-select {
+    background: var(--input-bg); color: var(--input-text);
+    border: 1px solid var(--input-border); border-radius: 8px;
+    padding: 6px 10px; font-size: 0.85rem;
+}
+#index-difficulty-filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.dif-check {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 0.78rem; color: var(--text-secondary);
+    cursor: pointer; user-select: none;
+}
+.dif-check input { accent-color: var(--accent); cursor: pointer; }
+#index-search {
+    width: 100%; padding: 7px 10px; border-radius: 8px;
+    border: 1px solid var(--input-border); background: var(--input-bg);
+    color: var(--input-text); font-size: 0.85rem; box-sizing: border-box;
+}
+#index-search:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.check-label {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.8rem; color: var(--text-secondary);
+    cursor: pointer; user-select: none;
+}
+.check-label input { accent-color: var(--accent); cursor: pointer; }
+.index-group-header td { background: var(--surface-alt); color: var(--accent); font-weight: 700; text-align: left; padding: 6px 10px; }
+.index-card-group-header { grid-column: 1 / -1; font-size: 0.82rem; font-weight: 700; color: var(--accent); padding: 8px 4px 2px; }
 #bottom-actions { margin-top: auto; padding-top: 8px; }
 
 /* ===== 主内容区 ===== */
