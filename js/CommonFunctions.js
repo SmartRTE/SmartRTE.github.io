@@ -681,6 +681,208 @@ async function loadScoresExportIntoCache(file) {
 	}
 }
 
+/* ===== 图片缓存嵌入 / 恢复 ===== */
+// v2：ARCAEA_CACHE_V2::长度:: + 原始 deflate 字节（只存必要字段，无 Base64）
+// v1：ARCAEA_CACHE_START::长度::ARCAEA_CACHE_END + Base64 JSON（旧格式，兼容读取）
+const CACHE_MARK_V1 = 'ARCAEA_CACHE_START::';
+const CACHE_MARK_END = '::ARCAEA_CACHE_END';
+const CACHE_MARK_V2 = 'ARCAEA_CACHE_V2::';
+
+function cacheUtf8ToBase64(str) {
+	const bytes = new TextEncoder().encode(str);
+	let bin = '';
+	for (let i = 0; i < bytes.length; i += 0x8000) {
+		bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+	}
+	return btoa(bin);
+}
+
+function cacheBase64ToUtf8(b64) {
+	const bin = atob(b64);
+	const bytes = new Uint8Array(bin.length);
+	for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+	return new TextDecoder().decode(bytes);
+}
+
+/** 只存必要字段：其余字段（normalPerfect/playRating/loseScore/曲名/曲绘等）恢复时由 PlayResult 重建 */
+function buildCachePayload() {
+	const records = (readLocalStorage() || []).map(function (r) {
+		return {
+			i: r.songId,
+			d: r.difficulty,
+			s: r.score,
+			p: r.perfect,
+			c: r.criticalPerfect,
+			f: r.far,
+			l: r.lost,
+			k: r.constant
+		};
+	});
+	return JSON.stringify({
+		app: 'arcaea-cache',
+		v: Number(DATA_VERSION),
+		fmt: 2,
+		records: records,
+		constantOverrides: loadConstantOverrides() || {}
+	});
+}
+
+/** 最小字段记录 -> 完整成绩记录 */
+function hydrateMinimalRecords(records) {
+	return (records || []).map(function (r, i) {
+		// 传入基础曲名：PlayResult 仅在难度有单独曲名时用映射覆盖，否则直接用该曲名
+		const cat = songCatalog[r.i];
+		const baseName = (cat && cat.title) ? cat.title : r.i;
+		return new PlayResult(baseName, r.i, r.d, r.s, r.p, r.c, r.f, r.l, r.k, 0, i);
+	});
+}
+
+function dataURLToBlob(dataURL) {
+	const parts = dataURL.split(',');
+	const mime = (parts[0].match(/:(.*?);/) || [])[1] || 'image/jpeg';
+	const bin = atob(parts[1]);
+	const u8 = new Uint8Array(bin.length);
+	for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+	return new Blob([u8], { type: mime });
+}
+
+async function deflateBytes(bytes) {
+	const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate'));
+	return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+async function inflateBytes(bytes) {
+	const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));
+	return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+function findBytes(haystack, needle) {
+	outer:
+	for (let i = 0; i <= haystack.length - needle.length; i++) {
+		for (let j = 0; j < needle.length; j++) {
+			if (haystack[i + j] !== needle[j]) continue outer;
+		}
+		return i;
+	}
+	return -1;
+}
+
+/** 把当前缓存压缩后以原始字节追加到图片（dataURL）尾部，返回新的 Blob */
+async function embedCacheIntoImage(dataURL) {
+	const blob = dataURLToBlob(dataURL);
+	const payloadText = buildCachePayload();
+	if (typeof CompressionStream === 'undefined' || typeof DecompressionStream === 'undefined') {
+		// 不支持压缩时退回 v1 Base64 格式
+		const payload = cacheUtf8ToBase64(payloadText);
+		const tail = CACHE_MARK_V1 + payload.length + CACHE_MARK_END + payload;
+		return new Blob([blob, tail], { type: blob.type });
+	}
+	const jsonBytes = new TextEncoder().encode(payloadText);
+	const compressed = await deflateBytes(jsonBytes);
+	const head = CACHE_MARK_V2 + compressed.length + '::';
+	return new Blob([blob, new TextEncoder().encode(head), compressed], { type: blob.type });
+}
+
+/** 从图片文件中提取嵌入的缓存数据（v2 优先，v1 兼容），未找到返回 null */
+async function extractCacheFromFile(file) {
+	const buf = await file.arrayBuffer();
+	const bytes = new Uint8Array(buf);
+	// v2：载荷为原始字节且应恰好延伸到文件末尾
+	const v2Head = new TextEncoder().encode(CACHE_MARK_V2);
+	const headIdx = findBytes(bytes, v2Head);
+	if (headIdx !== -1) {
+		let p = headIdx + v2Head.length;
+		let lenStr = '';
+		while (p < bytes.length && bytes[p] >= 48 && bytes[p] <= 57) {
+			lenStr += String.fromCharCode(bytes[p]);
+			p++;
+		}
+		if (lenStr && bytes[p] === 58 && bytes[p + 1] === 58) {
+			const len = parseInt(lenStr, 10);
+			const start = p + 2;
+			if (start + len === bytes.length) {
+				try {
+					const jsonBytes = await inflateBytes(bytes.slice(start, start + len));
+					const json = JSON.parse(new TextDecoder().decode(jsonBytes));
+					if (json && json.app === 'arcaea-cache') return json;
+				} catch (e) { /* 继续走 v1 兼容 */ }
+			}
+		}
+	}
+	// v1：Base64 JSON（旧格式）
+	let bin = '';
+	for (let i = 0; i < bytes.length; i += 0x8000) {
+		bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+	}
+	let idx = bin.indexOf(CACHE_MARK_V1);
+	while (idx !== -1) {
+		const after = idx + CACHE_MARK_V1.length;
+		const endIdx = bin.indexOf(CACHE_MARK_END, after);
+		if (endIdx !== -1) {
+			const len = parseInt(bin.slice(after, endIdx), 10);
+			const payload = bin.slice(endIdx + CACHE_MARK_END.length, endIdx + CACHE_MARK_END.length + len);
+			if (!isNaN(len) && payload.length === len) {
+				try {
+					const json = JSON.parse(cacheBase64ToUtf8(payload));
+					if (json && json.app === 'arcaea-cache') return json;
+				} catch (e) { /* 标记误命中，继续找下一个 */ }
+			}
+		}
+		idx = bin.indexOf(CACHE_MARK_V1, idx + 1);
+	}
+	return null;
+}
+
+/** 从图片恢复缓存并刷新页面；成功返回记录数，取消/失败返回 null */
+async function restoreCacheFromImage(file) {
+	try {
+		const data = await extractCacheFromFile(file);
+		if (!data) {
+			alert('图片中没有找到可恢复的缓存数据（可能不是本工具生成的图片，或数据已被清除）。');
+			return null;
+		}
+		if (Number(data.v) !== Number(DATA_VERSION)) {
+			alert('图片中的缓存版本（v' + data.v + '）与当前版本（v' + DATA_VERSION + '）不一致，无法恢复。');
+			return null;
+		}
+		const records = data.records ? hydrateMinimalRecords(data.records) : (data.savedArrayData || []);
+		const n = records.length;
+		if (!confirm('将从图片恢复 ' + n + ' 条成绩记录（含定数覆盖），并替换当前缓存。是否继续？')) return null;
+		const arr = applyScoresToCache(records, data.constantOverrides || {});
+		currentArray = arr;
+		filteredArray = arr;
+		if (typeof onScoresLoaded === 'function') onScoresLoaded(arr);
+		return n;
+	} catch (e) {
+		alert('图片缓存恢复失败：' + e.message);
+		return null;
+	}
+}
+
+/**
+ * 统一成绩文件上传入口：自动识别 st3 / CSV 分数表 / score.json 导出 / 带缓存的图片。
+ * 成功返回记录数，取消/失败返回 null。
+ */
+async function handleScoreFileUpload(file) {
+	try {
+		const name = (file.name || '').toLowerCase();
+		if (/\.(jpg|jpeg|png|webp)$/i.test(name)) {
+			return await restoreCacheFromImage(file);
+		}
+		const data = await parseScoreFile(file);
+		const records = data.records || [];
+		if (!confirm('将导入 ' + records.length + ' 条成绩记录（含定数覆盖），并替换当前缓存。是否继续？')) return null;
+		const arr = applyScoresToCache(records, data.constantOverrides || {});
+		currentArray = arr;
+		filteredArray = arr;
+		if (typeof onScoresLoaded === 'function') onScoresLoaded(arr);
+		return records.length;
+	} catch (e) {
+		alert('导入失败：' + e.message + '（现有缓存未受影响）');
+		return null;
+	}
+}
+
 /**
  * 检查localStorage缓存版本，版本不匹配时清除旧成绩缓存（避免结构变更后崩溃）
  * 应在读取缓存前调用

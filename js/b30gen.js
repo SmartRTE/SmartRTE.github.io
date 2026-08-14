@@ -305,28 +305,8 @@ function initializeUploadListener() {
 		let selectedFile = this.files[0];
 		// console.log(selectedFile);
 		if (selectedFile) {
-			let fileName = selectedFile.name;
-			console.log("selectedFileName:" + fileName);
-			if (fileName.endsWith(".json")) {
-				// 全曲成绩页导出的 JSON 文件
-				loadScoresExportIntoCache(selectedFile);
-			} else if (fileName.endsWith(".csv")) {
-				let reader = new FileReader();
-				reader.onload = function(e) {
-					csvContent = reader.result;
-					console.log("CSV Content:" + "success");
-					// console.log("CSV Content:" + csvContent);
-					runConvert(csvContent);
-				};
-				reader.readAsText(selectedFile);
-			} else if(fileName.endsWith(".xls") || fileName.endsWith(".xlsx")){
-				// 万能查分表（VHZek）功能已停用
-				// readVHZek(selectedFile);
-				alert("万能查分表（xls/xlsx）上传功能已停用，请使用st3或CSV文件");
-			} else {
-				runQuery(selectedFile);
-				console.log("Not a .csv file");
-			}
+			// 统一上传入口：st3 / CSV / score.json / 带缓存的图片
+			handleScoreFileUpload(selectedFile);
 		}
 		$('#file-input').val('');
 	});
@@ -702,8 +682,11 @@ async function saveAsImage(captureId) {
 		const dataURL = canvas.toDataURL('image/jpg');
 		const compressedDataURL = await compressImage(dataURL, 0.6);
 		// const compressedDataURL = dataURL;
+		// 把当前缓存嵌入图片文件尾部，之后可用“从图片恢复缓存”还原
+		const embeddedBlob = await embedCacheIntoImage(compressedDataURL);
+		const embeddedURL = URL.createObjectURL(embeddedBlob);
 		const link = document.createElement('a');
-		link.href = compressedDataURL;
+		link.href = embeddedURL;
 		link.download = 'B30_' + localStorage.userName +
 			"_" + $('#copyright span').text().replace('\t', '-') +
 			'.jpg';
@@ -717,6 +700,7 @@ async function saveAsImage(captureId) {
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
+		URL.revokeObjectURL(embeddedURL);
 		resizeWidth(1);
 		$('#mainCover').css({
 			'display': 'none',

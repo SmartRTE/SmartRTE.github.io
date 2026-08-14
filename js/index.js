@@ -316,25 +316,8 @@ function initializeUploadListener() {
         try {
             let file = this.files[0];
             if (!file) return;
-            let name = file.name;
-            if (name.endsWith(".json")) {
-                // 全曲成绩页导出的 JSON 文件
-                loadScoresExportIntoCache(file);
-            } else if (name.endsWith(".csv")) {
-                let reader = new FileReader();
-                reader.onload = function () {
-                    try {
-                        csvContent = reader.result;
-                        runConvert(csvContent);
-                    } catch (e) { alert("CSV 解析出错: " + e.message); }
-                };
-                reader.readAsText(file);
-            } else if (name.endsWith(".xls") || name.endsWith(".xlsx")) {
-                // 万能查分表（VHZek）功能已停用
-                alert("万能查分表（xls/xlsx）上传功能已停用，请使用st3或CSV文件");
-            } else {
-                runQuery(file);
-            }
+            // 统一上传入口：st3 / CSV / score.json / 带缓存的图片
+            handleScoreFileUpload(file);
         } catch (err) { alert("文件读取失败: " + err.message); }
         $(this).val("");
     });

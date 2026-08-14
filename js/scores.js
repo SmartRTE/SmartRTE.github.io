@@ -591,45 +591,16 @@ function exportScoresCsv() {
 	showToast('已导出 ' + chartRows.length + ' 行谱面（含未记录）');
 }
 
+// 统一成绩文件上传：st3 / CSV / score.json / 带缓存的图片
+function onScoresLoaded(arr) {
+	rebuildRecordsMap();
+	updateStats();
+	render();
+}
+
 async function importScoresFile(file) {
-	try {
-		const name = (file.name || '').toLowerCase();
-		if (!name.endsWith('.json')) {
-			// CSV 分数表 / st3 数据库：统一走跨页面解析
-			const data = await parseScoreFile(file);
-			const n = (data.records || []).length;
-			if (!confirm('将导入 ' + file.name + ' 的 ' + n + ' 条成绩记录，并整体替换当前缓存。是否继续？')) return;
-			currentArray = applyScoresToCache(data.records || [], data.constantOverrides || {});
-			overrides = data.constantOverrides || {};
-			rebuildRecordsMap();
-			updateStats();
-			render();
-			showToast('成功导入 ' + currentArray.length + ' 条记录');
-			return;
-		}
-		const text = await file.text();
-		const data = JSON.parse(text);
-		if (!data || data.app !== 'arcaea-scores') {
-			throw new Error('不是有效的全曲成绩文件（缺少 app 标记）');
-		}
-		if (Number(data.version) !== Number(DATA_VERSION)) {
-			throw new Error('文件版本不兼容（文件 v' + data.version + '，当前 v' + DATA_VERSION + '），请重新导出后再载入');
-		}
-		if (!Array.isArray(data.records)) {
-			throw new Error('records 字段缺失或格式错误');
-		}
-		const n = data.records.length;
-		if (!confirm('将导入 ' + n + ' 条成绩记录（含定数覆盖），并整体替换当前缓存。是否继续？')) return;
-		currentArray = data.records;
-		overrides = (data.constantOverrides && typeof data.constantOverrides === 'object') ? data.constantOverrides : {};
-		sortAndPersistScores();
-		saveConstantOverrides(overrides);
-		updateStats();
-		render();
-		showToast('成功导入 ' + n + ' 条记录');
-	} catch (e) {
-		alert('载入失败：' + e.message + '（现有缓存未受影响）');
-	}
+	const n = await handleScoreFileUpload(file);
+	if (n) showToast('成功导入 ' + n + ' 条记录');
 }
 
 /* ---------- 提示 ---------- */
