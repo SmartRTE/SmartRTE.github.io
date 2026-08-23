@@ -480,6 +480,10 @@ function displayB30(array) {
         $("#disp-max").text((rbm[2] || 0).toFixed(4));
         $("#disp-ptt").val(toFloor(rbm[2] || 0, 2));
         $("#disp-r10 span").text((rbm[0] || 0).toFixed(4));
+        const rbm50 = calculateMax50(array);
+        $("#disp-b50").text((rbm50[1] || 0).toFixed(4));
+        $("#disp-max50").text((rbm50[2] || 0).toFixed(4));
+        $("#disp-b10").text((rbm50[0] || 0).toFixed(4));
     } catch (err) { console.error("displayB30 error:", err); }
 }
 

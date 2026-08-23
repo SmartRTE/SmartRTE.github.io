@@ -516,6 +516,30 @@ function calculateMax(array) {
 }
 
 /**
+ * 7.0.0 新版潜力值：统计前50高单曲PTT（best50），max = (best50总和 + best10总和) / 60
+ * @param {Array} array 按 playRating 降序排列的成绩数组
+ * @return {Array} [best10, best50, max50]
+ */
+function calculateMax50(array) {
+	let sum = 0;
+	let rbm = []; // best10, best50, max50
+	const n50 = array.length > 50 ? 50 : array.length;
+	for (i = 0; i < n50; i++) {
+		sum += parseFloat(array[i].playRating);
+		if (i == 9) {
+			rbm.push(sum / 10); // best10（前10平均）
+		}
+	}
+	rbm.push(sum / 50); // best50
+	const n10 = array.length > 10 ? 10 : array.length;
+	for (i = 0; i < n10; i++) {
+		sum += parseFloat(array[i].playRating);
+	}
+	rbm.push(sum / 60); // max50 = (best50总和 + best10总和) / 60
+	return rbm;
+}
+
+/**
  * 按 RFC 4180 转义单个CSV字段（含逗号/引号/换行时加引号包裹、内部引号双写）
  * @param {*} value 字段值
  * @return {String} 可直接写入CSV的字段文本

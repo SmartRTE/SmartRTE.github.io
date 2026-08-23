@@ -9,7 +9,7 @@ let idx_constant = [];
 let finalOutputScore = [];
 let songlist = {}; //idx - songId 键值对
 let idData = {};
-let unitQuantity = 39;
+let unitQuantity = 50;
 let uidFlag = true;
 let loseScoreFlag = 0;
 let p30Flag = 0; //0=b 1=p 2=s
@@ -82,7 +82,7 @@ function initializeDataArray() {
 		currentArray = getResultArray();
 		// console.log(currentArray);
 		unitQuantity = localStorage.unitQuantity;
-		unitQuantity = 39;
+		unitQuantity = 50;
 		generateUnits(currentArray, unitQuantity);
 		displayB30(currentArray);
 	} else {
@@ -453,7 +453,7 @@ function runConvert(csv, persist = true) {
  * @param array 成绩对象数组
  */
 function displayB30(array) {
-	rbm = calculateMax(array);
+	rbm = calculateMax50(array);
 	localStorage.rbm = rbm;
 	// generateUnits(array, unitQuantity);
 	$('#ptt-max span').text(toFloor(parseFloat(rbm[2]), 4));
@@ -462,7 +462,7 @@ function displayB30(array) {
 }
 
 function displayAccuratePtt() {
-	alert(`精确数值（大概）：\n不推分可获得的最高PTT:${rbm[2]}\nBest30平均值：${rbm[1]}\n逆推得到的Recent10平均值：${rbm[0]}`);
+	alert(`精确数值（大概）：\n不推分可获得的最高PTT:${rbm[2]}\nBest50平均值：${rbm[1]}\nBest10平均值：${rbm[0]}`);
 }
 
 
@@ -507,7 +507,7 @@ async function generateUnits(array, unitQuantity) {
 		if (index == unitQuantity) {
 			break;
 		}
-		if (index == 30) {
+		if (index == 10) {
 			appendOverflowSpliter();
 		}
 		appendSongUnit(ary[index], index + 1);
@@ -688,7 +688,7 @@ async function saveAsImage(captureId) {
 		const embeddedURL = URL.createObjectURL(embeddedBlob);
 		const link = document.createElement('a');
 		link.href = embeddedURL;
-		link.download = 'B30_' + localStorage.userName +
+		link.download = 'B50_' + localStorage.userName +
 			"_" + $('#copyright span').text().replace('\t', '-') +
 			'.jpg';
 		const img = document.createElement('img');
@@ -806,41 +806,22 @@ function filterP30S30(array, type) {
 
 }
 /**
- * 在best30/pure30/sex30之间循环切换，为了复用这段垃圾代码，使用一个变量add控制
- * @param {number} add add=1时正常循环，add=0时只使用对应段落的代码重新生成页面内容，不进行切换
+ * B50：无 overflow 分栏，始终渲染全部 50 个单元（保留此入口以兼容旧调用）
  */
 function switchP30(add = 1) {
-	console.log(`currentP30Flag=${p30Flag},add=${add}`);
-	console.log(currentArray.length);
-	if (p30Flag + add - 1 == 0) { //b->p
-		$('#spliter-text-best30').attr('src', 'img/perfect30.png').css('left', '30.15rem');
-		let f = filterP30S30(currentArray, 0);
-		generateUnits(f, unitQuantity);
-		$('#ptt-p30').html("P30 : " + '<span>' + toFloor(calculateMax(f)[1], 4) + '</span>');
-		$('#switch-p30').text('看看S30');
-	} else if (p30Flag + add - 1 == 1) { //p->s
-		$('#spliter-text-best30').attr('src', 'img/sex30.png').css('left', '30.15rem');
-		let f = filterP30S30(currentArray, 1);
-		generateUnits(filteredArray, unitQuantity);
-		$('#ptt-p30').html("S30 : " + '<span>' + toFloor(calculateMax(f)[1], 4) + '</span>');
-		$('#switch-p30').text('回到B30');
-	} else if (p30Flag + add - 1 == 2 || (add == 0 && p30Flag == 0)) { //s->b
-		$('#spliter-text-best30').attr('src', 'img/best30.png').css('left', '31.25rem');
-		displayB30(currentArray);
-		filteredArray = currentArray;
-		generateUnits(currentArray, unitQuantity);
-		$('#switch-p30').text('看看P30');
-	}
-
-	if (add != 0 && (p30Flag == 0 || p30Flag == 2)) {
-		displayWindow('ptt-max');
-		displayWindow('ptt-b30');
-		displayWindow('ptt-r10');
-		displayWindow('ptt-p30');
-	}
-	p30Flag = (p30Flag + add) % 3;
-	
+	displayB30(currentArray);
+	filteredArray = currentArray;
+	generateUnits(currentArray, unitQuantity);
 	switchLoseScore();
+}
+/**
+ * 生成OverFlow的分隔线和分割文字图片
+ */
+function appendOverflowSpliter() {
+	let overflow = $('<div id="spliter-overflow">').addClass('spliter');
+	overflow.append($('<img id="spliter-image-overflow">').addClass('spliter-image').attr('src', 'img/divider.png'));
+	overflow.append($('<img id="spliter-text-overflow">').attr('src', 'img/overflow.png'));
+	$('#b30-data').append(overflow);
 }
 
 function handleScroll(unitid, index) {

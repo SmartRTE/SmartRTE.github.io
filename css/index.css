@@ -116,6 +116,15 @@ ul { list-style: none; }
 .stat-row { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; padding: 4px 0; }
 .stat-label { color: var(--text-secondary); }
 .stat-value { color: var(--stat-value); font-weight: 700; font-size: 0.9rem; }
+.stat-new {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+}
+.stat-new .stat-label {
+    color: var(--accent);
+    font-weight: 700;
+}
 #disp-ptt {
     width: 72px; padding: 2px 6px;
     background: var(--input-bg); border: 1px solid var(--input-border);
