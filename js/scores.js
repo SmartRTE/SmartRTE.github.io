@@ -12,8 +12,8 @@ let packs = []; // packlist
 let packsById = {}; // packlist id -> pack
 let sectionPacks = {}; // section -> [pack]
 
-const DIF_ASC = ['Past', 'Present', 'Future', 'Beyond', 'Eternal'];
-const DIF_DESC = ['Eternal', 'Beyond', 'Future', 'Present', 'Past'];
+const DIF_ASC = ['Past', 'Present', 'Future', 'Beyond', 'Inscribed', 'Eternal'];
+const DIF_DESC = ['Eternal', 'Inscribed', 'Beyond', 'Future', 'Present', 'Past'];
 const SECTION_ORDER = ['mainstory', 'mainstory2', 'sidestory', 'arcaea', 'collab', 'variety', 'single'];
 const SECTION_NAMES = {
 	mainstory: '主线',
@@ -26,7 +26,7 @@ const SECTION_NAMES = {
 };
 
 let viewMode = 'default';
-let selectedDifficulties = new Set(['Future', 'Beyond', 'Eternal']);
+let selectedDifficulties = new Set(['Future', 'Beyond', 'Inscribed', 'Eternal']);
 let searchText = '';
 let onlyUnrecorded = false;
 let onlyRecorded = false;
@@ -752,7 +752,10 @@ function showSongDetail(el) {
 	if (dateStr) html += infoRow('收录时间', dateStr);
 	html += '<div class="song-detail-diffs">';
 	(song.difficulties || []).forEach(function (d) {
-		const m = SONG_DETAIL_DIF[d.ratingClass];
+		// Inscribed 与 Beyond 共用 ratingClass=3，靠 ratingClassAlias=1 区分
+		const m = (d.ratingClassAlias === 1)
+			? { short: 'INS', long: 'Inscribed' }
+			: SONG_DETAIL_DIF[d.ratingClass];
 		const shortName = m ? m.short : ('难度' + d.ratingClass);
 		const longName = m ? m.long : shortName;
 		const diffCat = cat.difficulties[longName];

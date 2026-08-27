@@ -235,8 +235,8 @@ function initializeSettings() {
     $('#ptt-max span').text(toFloor(parseFloat(rbm[2]), 4));
     $('#ptt-b30 span').text(toFloor(parseFloat(rbm[1]), 4));
     $('#ptt-r10 span').text(toFloor(parseFloat(rbm[0]), 4));
-    $('#potential-input').val(localStorage.potential);
-    $('#potential-value').text(toFloor(parseFloat(localStorage.potential), 2));
+    // 个人潜力值直接取最高潜力值（三位小数，截断），不再手动输入
+    $('#potential-value').text(toFloor(parseFloat(rbm[2]), 3));
 	if(localStorage.loseScoreFlag == undefined){
 		localStorage.loseScoreFlag = 0;
 	}
@@ -254,8 +254,7 @@ function initializeSettings() {
 	loseScoreFlag = localStorage.loseScoreFlag;
     var useCustomAvatar = localStorage.useCustomAvatar == 'true';
     var useCustomBackground = localStorage.useCustomBackground == 'true';
-    changePotential(localStorage.potential);
-    changePotentialFrame(localStorage.potentialFrame);
+    changePotentialFrame(getPotentialFrame(rbm[2]));
     changeAvatar(localStorage.avatar);
     changeCourseDanFrame(localStorage.courseDanFrame);
     changeBackgroundImage(localStorage.backgroundImage);
@@ -459,6 +458,9 @@ function displayB30(array) {
 	$('#ptt-max span').text(toFloor(parseFloat(rbm[2]), 4));
 	$('#ptt-b30 span').text(toFloor(parseFloat(rbm[1]), 4));
 	$('#ptt-r10 span').text(toFloor(parseFloat(rbm[0]) > 0 ? parseFloat(rbm[0]) : 0, 4));
+	// 个人潜力值：直接取最高潜力值（三位小数，截断）
+	$('#potential-value').text(toFloor(parseFloat(rbm[2]), 3));
+	changePotentialFrame(getPotentialFrame(rbm[2]));
 }
 
 function displayAccuratePtt() {

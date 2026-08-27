@@ -293,6 +293,7 @@ html, body {
 .diff-future { background: #8a56c8; }
 .diff-beyond { background: #c9453f; }
 .diff-eternal { background: #5b4a8a; }
+.diff-inscribed { background: #6d28d9; }
 
 /* ---------- 输入区 ---------- */
 
@@ -506,6 +507,7 @@ html, body {
 .diff-ftr { background: #8a56c8; }
 .diff-byd { background: #c9453f; }
 .diff-etr { background: #5b4a8a; }
+.diff-ins { background: #6d28d9; }
 @media (max-width: 640px) {
 	.song-detail-body { flex-direction: column; align-items: center; }
 	.song-detail-ill { width: 120px; height: 120px; flex: 0 0 120px; }

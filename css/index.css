@@ -299,11 +299,13 @@ ul { list-style: none; }
 .future .song-rating { background: #a060d0; }
 .beyond .song-rating { background: #e05050; }
 .eternal .song-rating { background: #c88ad0; }
+.inscribed .song-rating { background: #6d28d9; }
 .past .song-name { background: rgba(74, 127, 255, 0.2); }
 .present .song-name { background: rgba(68, 200, 68, 0.2); }
 .future .song-name { background: rgba(160, 96, 208, 0.25); }
 .beyond .song-name { background: rgba(224, 80, 80, 0.2); }
 .eternal .song-name { background: rgba(200, 138, 208, 0.2); }
+.inscribed .song-name { background: rgba(109, 40, 217, 0.2); }
 
 .theoretical .song-score, .theoretical .t-score { text-shadow: 0 0 6px #55ddff; }
 .theoretical { box-shadow: 0 0 8px rgba(85, 221, 255, 0.3); }
@@ -370,6 +372,7 @@ ul { list-style: none; }
 .ftr td:first-child { border-left: 6px solid #a060d0; }
 .byd td:first-child { border-left: 6px solid #e05050; }
 .etr td:first-child { border-left: 6px solid #c88ad0; }
+.ins td:first-child { border-left: 6px solid #6d28d9; }
 
 /* ===== 曲绘难度色框 ===== */
 .pst .table-ill { border: 2px solid #4a7fff; }
@@ -377,11 +380,13 @@ ul { list-style: none; }
 .ftr .table-ill { border: 2px solid #a060d0; }
 .byd .table-ill { border: 2px solid #e05050; }
 .etr .table-ill { border: 2px solid #c88ad0; }
+.ins .table-ill { border: 2px solid #6d28d9; }
 .past .card-ill-container { border: 2px solid #4a7fff; }
 .present .card-ill-container { border: 2px solid #44c844; }
 .future .card-ill-container { border: 2px solid #a060d0; }
 .beyond .card-ill-container { border: 2px solid #e05050; }
 .eternal .card-ill-container { border: 2px solid #c88ad0; }
+.inscribed .card-ill-container { border: 2px solid #6d28d9; }
 
 /* ===== Modal 通用 ===== */
 #filter-window, #modify-window, #confirm-dialog, #stats-window {
@@ -668,6 +673,7 @@ ul { list-style: none; }
 .ai-recommend-diff-future { background: #8a56c8; }
 .ai-recommend-diff-beyond { background: #c9453f; }
 .ai-recommend-diff-eternal { background: #5b4a8a; }
+.ai-recommend-diff-inscribed { background: #6d28d9; }
 .ai-recommend-meta {
     font-size: 0.72rem;
     color: var(--text-muted);

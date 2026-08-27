@@ -3,7 +3,7 @@ let constantsPath = 'json/constants.json'; // 唯一手维护文件：idx -> 各
 let aiChanPath = 'json/AiChan.json'
 // let difficultyPair = {'Past': 'PST', 'Present': 'PRS', 'Future': 'FTR', 'Beyond': 'BYD', 'Eternal': 'ETR'};
 let aiChanList = [];
-let difList = ['Past', 'Present', 'Future', 'Beyond', 'Eternal'];
+let difList = ['Past', 'Present', 'Future', 'Beyond', 'Eternal', 'Inscribed'];
 let query = ''; // 运行时生成的SQL查询文本（由 initializeSongData 生成）
 let songCatalog = {}; // songId -> {idx, title, artist, difficulties: {Difficulty: {title, illustration, constant}}}
 let songlistDetail = {}; // songId -> songlist 原始条目（详情弹窗等用途）
@@ -76,7 +76,9 @@ class PlayResult {
 		this.far = far ? far : 0;
 		this.lost = lost ? lost : 0;
 		this.constant = constant;
-		this.playRating = playRating ? playRating : calculateSingleRating(score, constant, 5);
+		// 单曲潜力值统一按“分数+定数”实时重算（7.0.0 公式：≥7,000,000 分 +0.2），
+		// 避免直接沿用 st3/CSV/缓存里存量的旧值；仅当定数缺失无法计算时才回退到传入值
+		this.playRating = computePlayRating(score, constant, playRating);
 		// this.loseScore = loseScore ? loseScore : 0;
 		if (loseScore) {
 			this.loseScore = loseScore;
@@ -154,7 +156,7 @@ async function initializeSongData() {
 		songlist = {};
 		songlistDetail = {};
 		const DIF_BY_CLASS = { 0: 'Past', 1: 'Present', 2: 'Future', 3: 'Beyond', 4: 'Eternal' };
-		const CONST_KEY_BY_DIF = { Past: 'PST', Present: 'PRS', Future: 'FTR', Beyond: 'BYD', Eternal: 'ETR' };
+		const CONST_KEY_BY_DIF = { Past: 'PST', Present: 'PRS', Future: 'FTR', Beyond: 'BYD', Eternal: 'ETR', Inscribed: 'INS' };
 		rawSonglist.forEach(function (song) {
 			const songId = song.id;
 			const baseTitle = pickTitle(song);
@@ -169,12 +171,17 @@ async function initializeSongData() {
 			songlist[song.idx] = songId;
 			songlistDetail[song.id] = song;
 			(song.difficulties || []).forEach(function (d) {
-				const key = DIF_BY_CLASS[d.ratingClass];
+				// Inscribed 与 Beyond 共用 ratingClass=3，靠 ratingClassAlias=1 区分
+				const key = (d.ratingClassAlias === 1) ? 'Inscribed' : DIF_BY_CLASS[d.ratingClass];
 				if (!key) return;
 				const diffTitle = (d.title_localized && d.title_localized.en) ? d.title_localized.en : baseTitle;
 				const illustration = d.jacketOverride ? songId + '_' + d.ratingClass + '.jpg' : songId + '.jpg';
 				const constKey = CONST_KEY_BY_DIF[key];
-				const rawConstant = constantsByIdx[String(song.idx)] ? constantsByIdx[String(song.idx)][constKey] : null;
+				const constRow = constantsByIdx[String(song.idx)] || null;
+				let rawConstant = constRow ? constRow[constKey] : null;
+				if ((rawConstant === undefined || rawConstant === null || rawConstant === '') && key === 'Inscribed' && constRow) {
+					rawConstant = constRow.BYD; // 定数表未单列 INS 时，兼容存放在 BYD 的情况
+				}
 				const constant = (rawConstant === undefined || rawConstant === null || rawConstant === '') ? null : rawConstant;
 				cat.difficulties[key] = {
 					title: diffTitle,
@@ -258,7 +265,7 @@ const PTT2_SQL_TAIL = `
 			WHEN songDifficulty = 0 THEN "Past"
 			WHEN songDifficulty = 1 THEN "Present"
 			WHEN songDifficulty = 2 THEN "Future"
-			WHEN songDifficulty = 3 THEN "Beyond"
+			WHEN songDifficulty = 3 THEN allsongs.CLS3
 			WHEN songDifficulty = 4 THEN "Eternal"
 			END AS Difficulty,
 			scores.score,
@@ -361,7 +368,6 @@ const PTT2_SQL_TAIL = `
  * @return {String} 完整SQL文本
  */
 function buildQuerySQL(constantsByIdx, rawSonglist) {
-	const DIFF_KEYS = ['PST', 'PRS', 'FTR', 'BYD', 'ETR'];
 	const lines = [];
 	lines.push('PRAGMA foreign_keys = off;');
 	lines.push('BEGIN TRANSACTION;');
@@ -373,18 +379,26 @@ function buildQuerySQL(constantsByIdx, rawSonglist) {
 	lines.push('  PRS,');
 	lines.push('  FTR,');
 	lines.push('  BYD,');
-	lines.push('  ETR');
+	lines.push('  ETR,');
+	lines.push('  CLS3 TEXT');
 	lines.push(');');
 	rawSonglist.forEach(function (song) {
 		const c = constantsByIdx[String(song.idx)];
 		if (!c) return;
 		const name = pickTitle(song).replace(/'/g, "''");
-		const vals = DIFF_KEYS.map(function (k) {
-			const v = c[k];
-			return (v === undefined || v === null || v === '' || v === '-') ? "''" : String(v);
+		// ratingClass=3 的难度名：带 ratingClassAlias=1 视为 Inscribed，否则 Beyond
+		let cls3 = 'Beyond';
+		(song.difficulties || []).forEach(function (d) {
+			if (d.ratingClass === 3) cls3 = (d.ratingClassAlias === 1 ? 'Inscribed' : 'Beyond');
 		});
-		lines.push("INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR) VALUES ('" + name +
-			"', '" + song.id + "', " + vals.join(', ') + ");");
+		// class3 的定数：优先取 INS，未单列时回退到 BYD
+		const class3Const = (c.INS !== undefined && c.INS !== null && c.INS !== '' && c.INS !== '-') ? c.INS : c.BYD;
+		const fmt = function (v) {
+			return (v === undefined || v === null || v === '' || v === '-') ? "''" : String(v);
+		};
+		lines.push("INSERT INTO allsongs (songname, songId, PST, PRS, FTR, BYD, ETR, CLS3) VALUES ('" + name +
+			"', '" + song.id + "', " + [c.PST, c.PRS, c.FTR, class3Const, c.ETR].map(fmt).join(', ') +
+			", '" + cls3 + "');");
 	});
 	lines.push('COMMIT TRANSACTION;');
 	lines.push('PRAGMA foreign_keys = on;');
@@ -481,14 +495,37 @@ function formatPotential(ptt) {
  * @return 返回单曲潜力值
  */
 function calculateSingleRating(score, constant, decimal) {
+	let rt;
 	if (score >= 10000000) {
-		return constant + 2;
+		rt = constant + 2;
 	} else if (score > 9800000) {
-		return constant + 1 + (score - 9800000) / 200000;
+		rt = constant + 1 + (score - 9800000) / 200000;
 	} else {
-		let rt = constant + (score - 9500000) / 300000;
-		return Math.max(rt, 0);
+		rt = constant + (score - 9500000) / 300000;
+		rt = Math.max(rt, 0);
 	}
+	// 7.0.0 起：分数达到 7,000,000（即通关）时，最终单曲潜力值 +0.2
+	if (score >= 7000000) {
+		rt += 0.2;
+	}
+	return rt;
+}
+
+/**
+ * 按 7.0.0 公式由“分数+定数”重算单曲潜力值；
+ * 定数/分数缺失无法计算时，回退到传入的 playRating（仍无效则为 0）
+ * @param {*} score 分数
+ * @param {*} constant 定数
+ * @param {*} fallback 兜底的单曲潜力值
+ * @return {Number} 单曲潜力值
+ */
+function computePlayRating(score, constant, fallback) {
+	const cNum = (constant === undefined || constant === null || constant === '') ? NaN : parseFloat(constant);
+	if (!isNaN(cNum) && cNum > 0 && score !== undefined && score !== null && score !== '') {
+		return calculateSingleRating(score, cNum, 5);
+	}
+	const fb = parseFloat(fallback);
+	return isNaN(fb) ? 0 : fb;
 }
 
 /**
@@ -670,11 +707,8 @@ async function parseScoreFile(file) {
 function applyScoresToCache(records, constantOverrides) {
 	const arr = (records || []).slice();
 	arr.forEach(function (r) {
-		const pr = parseFloat(r.playRating);
-		if (isNaN(pr)) {
-			const c = parseFloat(r.constant);
-			r.playRating = isNaN(c) ? 0 : calculateSingleRating(parseFloat(r.score) || 0, c, 5);
-		}
+		// 统一按新公式重算，避免导入文件里存量的旧 playRating 不带 +0.2
+		r.playRating = computePlayRating(r.score, r.constant, r.playRating);
 	});
 	arr.sort(function (a, b) {
 		const pa = (a.playRating === null || a.playRating === undefined) ? -Infinity : a.playRating;
@@ -990,6 +1024,10 @@ function readLocalStorage() {
 	if (localStorage.getItem("savedArrayData")) {
 		let savedArray = JSON.parse(localStorage.getItem("savedArrayData"));
 		if (savedArray) {
+			// 缓存里可能存着旧公式算出的 playRating，读取时统一重算（7.0.0：≥7,000,000 分 +0.2）
+			(Array.isArray(savedArray) ? savedArray : [savedArray]).forEach(function (r) {
+				r.playRating = computePlayRating(r.score, r.constant, r.playRating);
+			});
 			return savedArray;
 		} else {
 			return null;
@@ -1265,7 +1303,7 @@ function deleteLocalStorage() {
  */
 function changePotential(ptt) {
 	ptt = ptt ? ptt : '0.00';
-	p = toFloor(ptt, 2);
+	p = toFloor(ptt, 3);
 	$('#potential-value').text(p);
 	changePotentialFrame(getPotentialFrame(ptt));
 	localStorage.setItem('potential', p);
@@ -1295,7 +1333,7 @@ function changeCourseDanFrame(index) {
 	$('#user-course-dan').attr('src', userCourseDanPath + index + '.png');
 
 	$('#id-course-dan').attr('src', userCourseDanPath + index + '.png');
-	$('#user-course-dan-display').css('background-image', 'url("' + userCourseDanPath + index + '.png")');
+	$('#user-course-dan-display').css('background-image', 'url("' + userCourseDanPath + index + '.png")').css('height', "3rem");
 	$('#user-course-dan-display').text(index + 'dan');
 	displayWindow('user-course-dan-select', false);
 	localStorage.setItem('courseDanFrame', index);
@@ -1392,7 +1430,10 @@ async function initializeBackgroundList() {
  */
 async function initializeUserCourseDanList() {
 	let l = [
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
+		11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 
+		21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 
+		31, 32, 33, 34, 35, 36, 37, 38, 39, 40
 	];
 	let list = $('#user-course-dan-list');
 	l.forEach(function (li) {
@@ -1522,7 +1563,7 @@ function findDifficulty(idx, constant, idx_constant) {
 	if (i == '') {
 		return '';
 	}
-	if (i <= 4) {
+	if (i >= 0 && i < difList.length) {
 		return difList[i];
 	}
 	return '';
@@ -1765,6 +1806,7 @@ function initToolWidgets() {
 .tool-push-diff-future { background: #8a56c8; border-color: #8a56c8; color: #fff; }
 .tool-push-diff-beyond { background: #c9453f; border-color: #c9453f; color: #fff; }
 .tool-push-diff-eternal { background: #5b4a8a; border-color: #5b4a8a; color: #fff; }
+.tool-push-diff-inscribed { background: #6d28d9; border-color: #6d28d9; color: #fff; }
 .tool-push-meta { font-size: .72rem; color: var(--text-muted); margin-top: 2px; }
 .tool-push-right { text-align: right; flex: 0 0 auto; }
 .tool-push-delta { font-size: 1rem; font-weight: 800; color: var(--success); font-variant-numeric: tabular-nums; }
@@ -1850,7 +1892,7 @@ label.tool-push-toggle {
 		'			<div class="tool-push-toggle-row">' +
 	'				<label class="tool-push-toggle">' +
 	'					<span class="tool-switch"><input type="checkbox" id="tool-push-note-toggle"><span class="tool-switch-slider"></span></span>' +
-	'					<span>按 Far/Pure/大P 换算</span>' +
+	'					<span>按 Far/Lost 换算</span>' +
 	'				</label>' +
 	'				<button type="button" id="tool-push-refresh" class="tool-push-refresh">重新计算</button>' +
 	'			</div>' +
@@ -1935,10 +1977,11 @@ function toolScoreFormat(n) {
 /* 由目标单曲PTT反推所需最低分数 */
 function scoreForPtt(targetPtt, constant) {
 	let s;
-	if (targetPtt >= constant + 1) {
-		s = 9800000 + (targetPtt - constant - 1) * 200000;
+	// 与 calculateSingleRating 保持逆运算一致：≥7,000,000 分时单曲潜力值 +0.2
+	if (targetPtt >= constant + 1.2) {
+		s = 9800000 + (targetPtt - constant - 1.2) * 200000;
 	} else {
-		s = 9500000 + (targetPtt - constant) * 300000;
+		s = 9500000 + (targetPtt - constant - 0.2) * 300000;
 	}
 	return Math.max(0, s);
 }
@@ -1974,34 +2017,35 @@ function computePttPush() {
 		});
 	});
 
-	// 按单曲PTT降序；整体PTT = (Best30总和 + Best10总和) / 40（求最小推分，Recent10 按 Best10 即前10名处理）
+	// 按单曲PTT降序；整体PTT（7.0.0 新版）= (Best50总和 + Best10总和) / 60
 	charts.sort(function (a, b) { return b.ptt - a.ptt; });
-	const top30 = charts.slice(0, 30);
+	const top50 = charts.slice(0, 50);
 	const best10 = {};
-	top30.slice(0, 10).forEach(function (c) { best10[c.key] = true; });
-	const inTop30 = {};
-	top30.forEach(function (c) { inTop30[c.key] = true; });
-	const border30 = top30.length ? top30[top30.length - 1].ptt : 0;
-	const currentOverall = (top30.reduce(function (s, c) { return s + c.ptt; }, 0) +
-		top30.slice(0, 10).reduce(function (s, c) { return s + c.ptt; }, 0)) / 40;
+	top50.slice(0, 10).forEach(function (c) { best10[c.key] = true; });
+	const inTop50 = {};
+	top50.forEach(function (c) { inTop50[c.key] = true; });
+	const border50 = top50.length ? top50[top50.length - 1].ptt : 0;
+	const currentOverall = (top50.reduce(function (s, c) { return s + c.ptt; }, 0) +
+		top50.slice(0, 10).reduce(function (s, c) { return s + c.ptt; }, 0)) / 60;
 
-	// Arcaea 的 PTT 显示截断（不四舍五入）到小数点后2位：推分 = 让显示值 +0.01
-	const displayedOverall = Math.floor(currentOverall * 100) / 100;
-	const nextDisplay = displayedOverall + 0.01;
-	// 使整体PTT显示+0.01所需的单曲PTT增量（规整到9位小数，避免浮点噪声导致推分差1分）
-	const deltaBest10 = Math.round(20 * (nextDisplay - currentOverall) * 1e9) / 1e9; // 前10名同时计入Best30与Best10，杠杆2倍
-	const deltaNormal = Math.round(40 * (nextDisplay - currentOverall) * 1e9) / 1e9; // 仅计入Best30
+	// 整体PTT显示为三位小数（截断，不四舍五入）：推分 = 让显示值 +0.001
+	const displayedOverall = Math.floor(currentOverall * 1000) / 1000;
+	// 加 1e-9 的浮点余量，确保达标后的整体PTT一定越过 0.001 截断档位（否则可能因浮点误差停在档位线上）
+	const nextDisplay = displayedOverall + 0.001 + 1e-9;
+	// 使整体PTT显示+0.001所需的单曲PTT增量（规整到9位小数，避免浮点噪声导致推分差1分）
+	const deltaBest10 = Math.round(30 * (nextDisplay - currentOverall) * 1e9) / 1e9; // 前10名同时计入Best50与Best10，Δ=30d（普通曲目的2倍）
+	const deltaNormal = Math.round(60 * (nextDisplay - currentOverall) * 1e9) / 1e9; // 仅计入Best50
 	const EPS = 1e-9;
 	const results = [];
 	charts.forEach(function (c) {
-		const cap = c.constant + 2;
+		const cap = c.constant + 2.2; // 单曲潜力值上限：PM（≥10,000,000 且通关）= 定数 + 2 + 0.2
 		let target;
 		if (best10[c.key]) {
 			target = c.ptt + deltaBest10;
-		} else if (inTop30[c.key]) {
+		} else if (inTop50[c.key]) {
 			target = c.ptt + deltaNormal;
 		} else {
-			target = Math.max(border30 + deltaNormal, c.ptt + deltaNormal);
+			target = Math.max(border50 + deltaNormal, c.ptt + deltaNormal);
 		}
 		if (target > cap + EPS) return; // 已达单曲PTT上限（Pure Memory），无法再提升
 		const targetScore = Math.ceil(scoreForPtt(target, c.constant) - EPS);
@@ -2015,7 +2059,7 @@ function computePttPush() {
 	});
 	results.sort(function (a, b) { return a.delta - b.delta; });
 	return {
-		results: results.slice(0, 20),
+		results: results, // 显示全部可行推荐，不再只取前20条
 		currentOverall: currentOverall,
 		displayedOverall: displayedOverall,
 		nextDisplay: nextDisplay,
@@ -2023,7 +2067,7 @@ function computePttPush() {
 	};
 }
 
-/* 按物量换算推分：Far→Pure 每个 +5000000/N，Lost→Pure 每个 +10000000/N，Pure→大P 每个 +1 分 */
+/* 按物量换算推分：Far→Pure 每个 +5000000/N，Lost→Pure 每个 +10000000/N（不推荐推大P） */
 function toolPushNoteInfo(c, delta) {
 	if (!c.rec) return null; // 无记录，无法换算
 	const r = c.rec;
@@ -2033,12 +2077,9 @@ function toolPushNoteInfo(c, delta) {
 	const lostGain = 10000000 / N;
 	const farAvail = Number(r.far) || 0;
 	const lostAvail = Number(r.lost) || 0;
-	const bigAvail = Math.max(0, (Number(r.perfect) || 0) - (Number(r.criticalPerfect) || 0));
 	const farCnt = Math.ceil(delta / farGain - 1e-9);
 	const lostCnt = Math.ceil(delta / lostGain - 1e-9);
-	const bigPCnt = Math.min(delta, N); // 大P数量不可能超过总物量，显示上限取N；每个大P +1分
-	const bigPFeasible = delta <= bigAvail; // 需要恰好delta个可转换的普通Pure
-	// 最少物量组合：Lost 收益最高优先，其次 Far，最后大P；受现有数量限制
+	// 最少物量组合：Lost 收益最高优先，其次 Far；受现有数量限制
 	let rem = delta;
 	let uLost = lostAvail > 0 ? Math.min(lostAvail, Math.ceil(rem / lostGain - 1e-9)) : 0;
 	rem -= uLost * lostGain;
@@ -2047,22 +2088,13 @@ function toolPushNoteInfo(c, delta) {
 		uFar = Math.min(farAvail, Math.ceil(rem / farGain - 1e-9));
 		rem -= uFar * farGain;
 	}
-	let uBig = 0;
-	if (rem > 1e-6 && bigAvail > 0) {
-		uBig = Math.min(bigAvail, Math.ceil(rem));
-		rem -= uBig;
-	}
 	return {
 		farCnt: farCnt,
 		lostCnt: lostCnt,
-		bigPCnt: bigPCnt,
-		bigPFeasible: bigPFeasible,
 		farAvail: farAvail,
 		lostAvail: lostAvail,
-		bigAvail: bigAvail,
 		uLost: uLost,
 		uFar: uFar,
-		uBig: uBig,
 		comboShort: rem > 1e-6
 	};
 }
@@ -2098,7 +2130,22 @@ function renderPttPush() {
 		listEl.innerHTML = '<div class="tool-push-empty">暂无可行的推分推荐：要么没有载入任何成绩，要么全部成绩都已达到单曲PTT上限</div>';
 		return;
 	}
-	const rows = data.results.map(function (r, i) {
+	// 物量模式下删除只能靠推大P达成的推荐项，仅保留可通过 Far/Lost 达成、暂无记录或缺少物量信息的条目
+	const pushItems = [];
+	if (noteMode) {
+		data.results.forEach(function (r) {
+			const info = toolPushNoteInfo(r.chart, r.delta);
+			if (info && !info.noNotes && info.comboShort) return; // 需要推大P，删除该推荐项
+			pushItems.push(r);
+		});
+		if (!pushItems.length) {
+			listEl.innerHTML = '<div class="tool-push-empty">物量模式下没有可通过 Far/Lost 推分的推荐（其余都需推大P）</div>';
+			return;
+		}
+	} else {
+		pushItems.push.apply(pushItems, data.results);
+	}
+	const rows = pushItems.map(function (r, i) {
 		const c = r.chart;
 		const noplay = !c.hasRecord;
 		let rightHtml;
@@ -2118,14 +2165,12 @@ function renderPttPush() {
 				const parts = [];
 				if (info.uLost > 0) parts.push('Lost×' + info.uLost);
 				if (info.uFar > 0) parts.push('Far×' + info.uFar);
-				if (info.uBig > 0) parts.push('大P×' + info.uBig);
 				const combo = parts.join(' + ') || '—';
 				const alt = '或 Far×' + info.farCnt + (info.farCnt > info.farAvail ? '(不足)' : '') +
-					' / Lost×' + info.lostCnt + (info.lostCnt > info.lostAvail ? '(不足)' : '') +
-					' / 大P×' + info.bigPCnt + (info.bigPFeasible ? '' : '(不足)');
+					' / Lost×' + info.lostCnt + (info.lostCnt > info.lostAvail ? '(不足)' : '');
 				rightHtml = '<div class="tool-push-right">' +
-					'	<div class="tool-push-delta">' + combo + (info.comboShort ? '（物量不足）' : '') + '</div>' +
-					'	<div class="tool-push-target">' + alt + '<br>当前 Far ' + info.farAvail + ' / Lost ' + info.lostAvail + ' / 可大P ' + info.bigAvail + '</div>' +
+					'	<div class="tool-push-delta">' + combo + '</div>' +
+					'	<div class="tool-push-target">' + alt + '<br>当前 Far ' + info.farAvail + ' / Lost ' + info.lostAvail + '</div>' +
 					'</div>';
 			}
 		} else {
@@ -2147,9 +2192,11 @@ function renderPttPush() {
 			rightHtml +
 			'</div>';
 	}).join('');
-	listEl.innerHTML =
-		'<div class="tool-push-summary">当前整体PTT（显示）≈ ' + toFloor(data.displayedOverall, 2) +
-		' · 共 ' + data.total + ' 条可行，以下为推分最少的20条（每项达标后整体PTT显示 ' + toFloor(data.nextDisplay, 2) + '，+0.01）</div>' + rows;
+	const summary = '当前整体PTT（显示）≈ ' + toFloor(data.displayedOverall, 3) +
+		' · 共 ' + data.total + ' 条可行，' +
+		(noteMode ? '以下为可通过 Far/Lost 推分的 ' + pushItems.length + ' 条' : '以下为全部推荐') +
+		'（每项达标后整体PTT显示 ' + toFloor(data.nextDisplay, 3) + '，+0.001，截断不四舍五入）';
+	listEl.innerHTML = '<div class="tool-push-summary">' + summary + '</div>' + rows;
 }
 
 $(function () {

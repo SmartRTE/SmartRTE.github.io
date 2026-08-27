@@ -29437,7 +29437,8 @@
                     "ratingClass": 1,
                     "chartDesigner": "零下",
                     "jacketDesigner": "",
-                    "rating": 7
+                    "rating": 7,
+                    "ratingPlus": true
                 },
                 {
                     "ratingClass": 2,
@@ -34345,7 +34346,7 @@
                     "chartDesigner": "sidewavesチュウ",
                     "jacketDesigner": "",
                     "rating": 9,
-                    "ratingPlus": true
+                    "ratingPlus": true 
                 }
             ]
         },
@@ -34400,7 +34401,7 @@
                     "ratingClass": 0,
                     "chartDesigner": "絶滅っぽいな",
                     "jacketDesigner": "",
-                    "rating": 4
+                    "rating": 3
                 },
                 {
                     "ratingClass": 1,
@@ -34610,7 +34611,7 @@
                     "ratingClass": 1,
                     "chartDesigner": "反水反水反水",
                     "jacketDesigner": "",
-                    "rating": 7
+                    "rating": 6
                 },
                 {
                     "ratingClass": 2,
@@ -34765,6 +34766,77 @@
             ]
         },
         {
+            "idx": 544,
+            "id": "diein",
+            "title_localized": {
+                "en": "DIE IN"
+            },
+            "artist": "TAK x Sobrem",
+            "search_title": {
+                "ja": [
+                    "だいいん",
+                    "だいん"
+                ],
+                "ko": [
+                    "다이 인"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "たく",
+                    "そぶれむ"
+                ],
+                "ko": [
+                    "탁",
+                    "소브렘"
+                ]
+            },
+            "bpm": "160-230",
+            "bpm_base": 222,
+            "set": "single",
+            "category": "musicgames",
+            "source_localized": {
+                "en": "DJMAX"
+            },
+            "source_copyright": "© NEOWIZ",
+            "purchase": "",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "djmax_nightmare",
+            "remote_dl": true,
+            "world_unlock": true,
+            "date": 1787788800,
+            "version": "7.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "antymIV",
+                    "jacketDesigner": "",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "antymIV",
+                    "jacketDesigner": "",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "antymIV",
+                    "jacketDesigner": "",
+                    "rating": 10
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "Beyond the ExtinctioIV",
+                    "jacketDesigner": "",
+                    "legacy11": false,
+                    "rating": 11
+                }
+            ]
+        },
+        {
             "idx": 545,
             "id": "chronologia",
             "title_localized": {
@@ -34833,6 +34905,516 @@
                     "jacketDesigner": "Khronetic x SARYN",
                     "rating": 10,
                     "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 546,
+            "id": "balor",
+            "title_localized": {
+                "en": "Balor"
+            },
+            "artist": "Redsign",
+            "search_title": {
+                "ja": [
+                    "ばろーる",
+                    "ばろる"
+                ],
+                "ko": [
+                    "발러",
+                    "밸러"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "れっどさいん"
+                ],
+                "ko": [
+                    "리디자인"
+                ]
+            },
+            "bpm": "157",
+            "bpm_base": 157,
+            "set": "konzetsu",
+            "purchase": "konzetsu",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 4,
+            "bg": "konzetsu-a",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1787788801,
+            "version": "7.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "karat, the Piercing Eye",
+                    "jacketDesigner": "イシダタツキ",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "karat, the Piercing Eye",
+                    "jacketDesigner": "イシダタツキ",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "karat, the Piercing Eye",
+                    "jacketDesigner": "イシダタツキ",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "karat, the Piercing Eye",
+                    "jacketDesigner": "イシダタツキ",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 547,
+            "id": "dreadarea",
+            "title_localized": {
+                "en": "DREAD AREA"
+            },
+            "artist": "Ashrount vs. 打打だいず",
+            "search_title": {
+                "ja": [
+                    "どれっどえりあ"
+                ],
+                "ko": [
+                    "드레드 에어리어"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "あしゅらうんと",
+                    "だだだいず"
+                ],
+                "ko": [
+                    "애쉬라운트",
+                    "애쉬런트",
+                    "다다다이즈"
+                ]
+            },
+            "bpm": "205",
+            "bpm_base": 205,
+            "set": "konzetsu",
+            "purchase": "konzetsu",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 2,
+            "bg": "konzetsu-b",
+            "remote_dl": true,
+            "world_unlock": false,
+            "byd_local_unlock": true,
+            "date": 1787788802,
+            "version": "7.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "絶滅「天道」",
+                    "jacketDesigner": "あらへなす",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "絶滅「天道」",
+                    "jacketDesigner": "あらへなす",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "絶滅「天道」",
+                    "jacketDesigner": "あらへなす",
+                    "rating": 10
+                },
+                {
+                    "ratingClass": 3,
+                    "ratingClassAlias": 1,
+                    "chartDesigner": "絶滅「天道」",
+                    "jacketDesigner": "あらへなす",
+                    "rating": 11,
+                    "hidden_until": "difficulty",
+                    "legacy11": true
+                }
+            ]
+        },
+        {
+            "idx": 548,
+            "id": "un",
+            "title_localized": {
+                "en": "un"
+            },
+            "artist": "黒魔",
+            "search_title": {
+                "ja": [
+                    "あん"
+                ],
+                "ko": [
+                    "언",
+                    "은",
+                    "운"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "くろま"
+                ],
+                "ko": [
+                    "쿠로마"
+                ]
+            },
+            "bpm": "188",
+            "bpm_base": 188,
+            "set": "konzetsu",
+            "purchase": "konzetsu",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 4,
+            "bg": "konzetsu-a",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1787788803,
+            "version": "7.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "én「The Resolute」",
+                    "jacketDesigner": "_ziro",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "én「The Resolute」",
+                    "jacketDesigner": "_ziro",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "én「The Resolute」",
+                    "jacketDesigner": "_ziro",
+                    "rating": 9,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "NITRO「The Absolute」",
+                    "jacketDesigner": "_ziro",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 549,
+            "id": "rivenpilgrim",
+            "title_localized": {
+                "en": "Riven Pilgrimage"
+            },
+            "artist": "rejection & Supire feat. eili",
+            "search_title": {
+                "ja": [
+                    "りべんぴるぐりめーじ"
+                ],
+                "ko": [
+                    "리벤 필그러메이지"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "すぱいあ",
+                    "りじぇくしょん",
+                    "えいり"
+                ],
+                "ko": [
+                    "스파이어",
+                    "리젝션",
+                    "에일리"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180,
+            "set": "konzetsu",
+            "purchase": "konzetsu",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 2,
+            "bg": "konzetsu-b",
+            "remote_dl": true,
+            "world_unlock": false,
+            "byd_local_unlock": true,
+            "date": 1787788804,
+            "version": "7.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "零下「kuratoro」",
+                    "jacketDesigner": "雨儀",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "零下「kuratoro」",
+                    "jacketDesigner": "雨儀",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "零下「kuratoro」",
+                    "jacketDesigner": "雨儀",
+                    "rating": 10
+                },
+                {
+                    "ratingClass": 3,
+                    "ratingClassAlias": 1,
+                    "chartDesigner": "零下 vs 夜浪「gardantoj」",
+                    "jacketDesigner": "雨儀",
+                    "rating": 11,
+                    "hidden_until": "difficulty",
+                    "legacy11": true
+                }
+            ]
+        },
+        {
+            "idx": 550,
+            "id": "cataclysmcry",
+            "title_localized": {
+                "en": "Cataclysm Cry"
+            },
+            "artist": "Aid",
+            "search_title": {
+                "ja": [
+                    "かたくりずむくらい"
+                ],
+                "ko": [
+                    "카타클리즘 시티"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "えいど"
+                ],
+                "ko": [
+                    "에이드"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180,
+            "set": "konzetsu",
+            "purchase": "konzetsu",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 4,
+            "bg": "cataclysmcry",
+            "remote_dl": true,
+            "world_unlock": false,
+            "byd_local_unlock": true,
+            "date": 1787788805,
+            "version": "7.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "運命の響 -echo of fate-",
+                    "jacketDesigner": "すずなし",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "運命の目 -eye of fate-",
+                    "jacketDesigner": "すずなし",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "運命の手 -hand of fate-",
+                    "jacketDesigner": "すずなし",
+                    "rating": 10
+                },
+                {
+                    "ratingClass": 3,
+                    "ratingClassAlias": 1,
+                    "chartDesigner": "運命の淵 -threshold of fate-",
+                    "jacketDesigner": "すずなし",
+                    "rating": 11,
+                    "ratingPlus": true,
+                    "hidden_until": "difficulty",
+                    "legacy11": true
+                }
+            ],
+            "additional_files": [
+                {
+                    "file_name": "video.mp4",
+                    "requirement": "required"
+                },
+                {
+                    "file_name": "video_audio.ogg",
+                    "requirement": "required"
+                }
+            ]
+        },
+        {
+            "idx": 551,
+            "id": "deinosphainein",
+            "title_localized": {
+                "en": "DEINOS PHAINEIN"
+            },
+            "artist": "Blacklolita vs Juggernaut.",
+            "search_title": {
+                "ja": [
+                    "えいのすふぁいねいん"
+                ],
+                "ko": [
+                    "에이노스 파이네인"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "ぶらっくろりーた",
+                    "じゃがーのーと"
+                ],
+                "ko": [
+                    "블랙로리타",
+                    "저거너트",
+                    "저거넛"
+                ]
+            },
+            "bpm": "190",
+            "bpm_base": 190,
+            "set": "konzetsu",
+            "purchase": "konzetsu",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 4,
+            "bg": "deinosphainein",
+            "remote_dl": true,
+            "world_unlock": false,
+            "byd_local_unlock": true,
+            "date": 1787788806,
+            "version": "7.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "DIVINE INSIGHT ⟦識眼⟧",
+                    "jacketDesigner": "すずなし",
+                    "rating": 7,
+                    "hidden_until_unlocked": true,
+                    "hidden_until": "song"
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "DIVINE KNOWLEDGE ⟦叡智⟧",
+                    "jacketDesigner": "すずなし",
+                    "rating": 9,
+                    "hidden_until_unlocked": true,
+                    "hidden_until": "song"
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "DIVINE CURSE ⟦呪詛⟧",
+                    "jacketDesigner": "すずなし",
+                    "rating": 10,
+                    "ratingPlus": true,
+                    "hidden_until_unlocked": true,
+                    "hidden_until": "song"
+                },
+                {
+                    "ratingClass": 3,
+                    "ratingClassAlias": 1,
+                    "chartDesigner": "DIVINE WRATH ⟦憤怒⟧",
+                    "jacketDesigner": "すずなし",
+                    "rating": 12,
+                    "hidden_until_unlocked": true,
+                    "hidden_until": "difficulty",
+                    "legacy11": true
+                }
+            ],
+            "additional_files": [
+                {
+                    "file_name": "video.mp4",
+                    "requirement": "required"
+                },
+                {
+                    "file_name": "video_audio.ogg",
+                    "requirement": "required"
+                },
+                {
+                    "file_name": "video_720.mp4",
+                    "requirement": "low_res"
+                },
+                {
+                    "file_name": "video_1080.mp4",
+                    "requirement": "hi_res"
+                }
+            ]
+        },
+        {
+            "idx": 552,
+            "id": "ember",
+            "title_localized": {
+                "en": "Ember"
+            },
+            "artist": "Powerless & siqlo feat. Tia",
+            "search_title": {
+                "ja": [
+                    "えんばー"
+                ],
+                "ko": [
+                    "엠버"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "ぱわーれす",
+                    "さいくろ",
+                    "てぃあ"
+                ],
+                "ko": [
+                    "파워리스",
+                    "사이클로",
+                    "티아"
+                ]
+            },
+            "bpm": "190",
+            "bpm_base": 190,
+            "set": "konzetsu",
+            "purchase": "konzetsu",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 2,
+            "bg": "konzetsu-b",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1787788807,
+            "version": "7.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Fate's End",
+                    "jacketDesigner": "辷",
+                    "rating": 5,
+                    "hidden_until_unlocked": true,
+                    "hidden_until": "song"
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Fate's End",
+                    "jacketDesigner": "辷",
+                    "rating": 8,
+                    "hidden_until_unlocked": true,
+                    "hidden_until": "song"
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Fate's End",
+                    "jacketDesigner": "辷",
+                    "rating": 9,
+                    "ratingPlus": true,
+                    "hidden_until_unlocked": true,
+                    "hidden_until": "song"
                 }
             ]
         }

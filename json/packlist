@@ -91,6 +91,22 @@
       }
     },
     {
+      "id": "konzetsu",
+      "section": "mainstory2",
+      "plus_character": -1,
+      "custom_banner": true,
+      "name_localized": {
+        "en": "Divine Oblivion"
+      },
+      "description_localized": {
+        "en": "Light fades to nothing as a soul burns\nin absolution; here fighting for the sake\nof another.\n\n5 songs herald the crescendo of Arcaea's\nsecond Act. Take Saya's hand at the edge\nof the world, and face down the 8th Seeker.",
+        "ja": "ある魂は贖罪へと焚べられ、\nかの光はやがて、無へと帰す。\n……残るのは、誰かのための戦いだけ。\n\nここは最果て、《Act II》を綴じるは5曲。\nさあ、サヤと共に──かの第八究明者に挑め。",
+        "ko": "꺼져가는 빛, 구원받아 타오르는 영혼.\n누군가를 지키기 위한 싸움.\n\n5개의 악곡과 함께 Arcaea Act II는, 절정으로.\n세상의 끝에서 사야의 손을 잡고,\n여덟 번 째에 맞서 싸워보세요.",
+        "zh-Hant": "光芒盡散，靈魂在救贖中得以焚燒。\n於此，少女高舉長劍，為他人而戰。\n\nArcaea主線第二幕的巔峰已至：\n在世界的邊緣，第八席來勢洶洶。\n握緊咲彌的手，向神明舉起長劍。",
+        "zh-Hans": "光芒尽散，灵魂在救赎中得以焚烧。\n于此，少女高举长剑，为他人而战。\n\nArcaea主线第二幕的巅峰已至：\n在世界的边缘，第八席来势汹汹。\n握紧咲弥的手，向神明举起长剑。"
+      }
+    },
+    {
       "id": "eclipse",
       "section": "mainstory2",
       "plus_character": -1,

@@ -98,7 +98,8 @@
 						<input id="user-id-input" placeholder="100000001" />
 						<button class="btn-action" onclick="hideUID()" style="width:100%;">显示/隐藏好友码</button>
 					</div>
-					<div class="setting-card">
+					<!-- 潜力值输入已隐藏：个人潜力值直接读取最高潜力值（代码保留，恢复时去掉 style="display:none" 即可） -->
+					<div class="setting-card" style="display:none">
 						<span class="card-label">潜力值</span>
 						<input id="potential-input" placeholder="6.16" />
 					</div>
@@ -176,7 +177,8 @@
 					<input type="file" id="file-input" hidden="hidden" />
 					<button class="btn-action primary" onclick="inputFile('file-input')" style="width:100%;">选择 st3 或分数表</button>
 					<button class="btn-action primary" onclick="saveAsImage('mainCapture')" style="width:100%;">生成图片</button>
-					<button class="btn-action" onclick="window.location.href='b30gen.html'" style="width:100%;">切到 B30</button>
+					<!-- B30 生成页入口已隐藏（代码保留，恢复时去掉 display:none 即可） -->
+					<button class="btn-action" onclick="window.location.href='b30gen.html'" style="width:100%;display:none;">切到 B30</button>
 						<button class="btn-action" onclick="window.location.href='index.html'" style="width:100%;">返回主页</button>
 					</div>
 					<div class="setting-card">

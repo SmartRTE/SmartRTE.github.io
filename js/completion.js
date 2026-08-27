@@ -1,7 +1,7 @@
 let db; //以上两条为sql.js相关
 let SQL; //以上两条为sql.js相关
 
-let difficultyList = ['Past', 'Present', 'Future', 'Beyond', 'Eternal'];
+let difficultyList = ['Past', 'Present', 'Future', 'Beyond', 'Eternal', 'Inscribed'];
 let filteredArray = [];
 let currentArray = [];
 let rbm = [];
@@ -276,10 +276,9 @@ function initializeSettings() {
 	$('#ptt-max span').text(toFloor(parseFloat(t[2]), 4));
 	$('#ptt-b30 span').text(toFloor(parseFloat(t[1]), 4));
 	$('#ptt-r10 span').text(toFloor(parseFloat(t[0]), 4));
-	$('#potential-input').val(localStorage.potential);
-	$('#potential-value').text(toFloor(parseFloat(localStorage.potential), 2));
-	changePotential(localStorage.potential);
-	changePotentialFrame(localStorage.potentialFrame);
+	// 个人潜力值直接取最高潜力值（三位小数，截断），不再手动输入
+	$('#potential-value').text(toFloor(parseFloat(t[2]), 3));
+	changePotentialFrame(getPotentialFrame(t[2]));
 	changeAvatar(localStorage.avatar);
 	changeCourseDanFrame(localStorage.courseDanFrame);
 	changeBackgroundImage(localStorage.backgroundImage);
@@ -541,16 +540,19 @@ function displayB30(array) {
 		return resultSort(a, b, 'playRating', 1);
 	});
 	console.log(ary);
-	rbm = calculateMax(ary);
+	rbm = calculateMax50(ary);
 	localStorage.rbm = rbm;
 	// generateUnits(array, unitQuantity);
 	$('#ptt-max span').text(toFloor(parseFloat(rbm[2]), 4));
 	$('#ptt-b30 span').text(toFloor(parseFloat(rbm[1]), 4));
 	$('#ptt-r10 span').text(toFloor(parseFloat(rbm[0]), 4));
+	// 个人潜力值：直接取最高潜力值（三位小数，截断）
+	$('#potential-value').text(toFloor(parseFloat(rbm[2]), 3));
+	changePotentialFrame(getPotentialFrame(rbm[2]));
 }
 
 function displayAccuratePtt() {
-	alert(`精确数值（大概）：\n不推分可获得的最高PTT:${rbm[2]}\nBest30平均值：${rbm[1]}\nRecent10平均值：${rbm[0]}`);
+	alert(`精确数值（大概）：\n不推分可获得的最高PTT:${rbm[2]}\nBest50平均值：${rbm[1]}\nBest10平均值：${rbm[0]}`);
 }
 
 /**
@@ -916,7 +918,7 @@ function reloadContent(array) {
 	});
 
 	saveLocalStorage(array);
-	rbm = calculateMax(currentArray);
+	rbm = calculateMax50(currentArray);
 	localStorage.rbm = rbm;
 	// switchP30(0);
 }

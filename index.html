@@ -33,7 +33,8 @@
             <button class="btn-secondary" onclick="readSavedScore()">读取缓存数据</button>
         </div>
         <div id="nav-buttons">
-            <button class="btn-nav" onclick="window.open('b30gen.html')">生成 B30</button>
+            <!-- B30 生成页入口已隐藏（代码保留，恢复时去掉 style="display:none" 即可） -->
+            <button class="btn-nav" onclick="window.open('b30gen.html')" style="display:none">生成 B30</button>
             <button class="btn-nav" onclick="window.open('b50gen.html')">生成 B50</button>
             <button class="btn-nav" onclick="window.open('completion.html')">查看完成表</button>
             <button class="btn-nav" onclick="window.open('scores.html')">全曲成绩管理</button>
@@ -41,13 +42,15 @@
         <div class="divider"></div>
         <div id="stats-panel">
             <div class="stat-row"><span class="stat-label">共有</span><span class="stat-value" id="result-quantity">0</span><span class="stat-label">条结果</span></div>
-            <div class="stat-row"><span class="stat-label">当前 PTT</span><input id="disp-ptt" type="text" value="0.00" oninput="calculateR10()"></div>
-            <div class="stat-row"><span class="stat-label">Best30</span><span class="stat-value" id="disp-b30">0.0000</span></div>
-            <div class="stat-row"><span class="stat-label">Max PTT</span><span class="stat-value" id="disp-max">0.0000</span></div>
-            <div class="stat-row"><span class="stat-label" id="disp-r10">Recent10 <span>0.0000</span></span></div>
+            <!-- 当前 PTT 输入已隐藏：个人潜力值直接读取最高潜力值（代码保留，恢复时去掉 style="display:none" 即可） -->
+            <div class="stat-row" style="display:none"><span class="stat-label">当前 PTT</span><input id="disp-ptt" type="text" value="0.00" oninput="calculateR10()"></div>
+            <!-- B30 统计部分已隐藏（代码保留，恢复时去掉 style="display:none" 即可） -->
+            <div class="stat-row" style="display:none"><span class="stat-label">Best30</span><span class="stat-value" id="disp-b30">0.0000</span></div>
+            <div class="stat-row" style="display:none"><span class="stat-label">Max PTT</span><span class="stat-value" id="disp-max">0.0000</span></div>
+            <div class="stat-row" style="display:none"><span class="stat-label" id="disp-r10">Recent10 <span>0.0000</span></span></div>
             <div class="stat-row stat-new"><span class="stat-label">7.0.0更新后预计潜力值</span></div>
-            <div class="stat-row"><span class="stat-label">Best50</span><span class="stat-value" id="disp-b50">0.0000</span></div>
             <div class="stat-row"><span class="stat-label">Max50</span><span class="stat-value" id="disp-max50">0.0000</span></div>
+            <div class="stat-row"><span class="stat-label">Best50</span><span class="stat-value" id="disp-b50">0.0000</span></div>
             <div class="stat-row"><span class="stat-label">Best10</span><span class="stat-value" id="disp-b10">0.0000</span></div>
             <button class="btn-link" onclick="showStatistics()">查看统计</button>
         </div>
@@ -121,7 +124,7 @@
                 <li>1. 点击"选择 st3 文件"上传你的 st3 文件，文件名可改可不改</li>
                 <li>2. 上传完之后如果不出意外会立马显示数据库内的全曲目游玩记录表格</li>
                 <!-- <li>3. 点击"下载万能查分表"文件可以把表格保存到本地</li> -->
-                <li>4. 表格正常生成之后点击跳转 b30 生成页，默认生成 B39 图片</li>
+                <li>4. 表格正常生成之后点击跳转 b50 生成页，默认生成 B50 图片</li>
                 <li>5. 玩家名、好友码和显示的潜力值需要手动填写，可以手动指定显示曲目的数量</li>
                 <li>6. 保存图片用时和图片大小与显示的曲目数量有关，保存图片时显示的曲目成绩最好不超过 800。若数值填得过大，在某些设备上可能会导致严重卡顿</li>
                 <li class="warning">7. 所有对文件的读写以及缓存都只在本地实现，不会上传到服务器</li>
@@ -167,7 +170,7 @@
         <h3 class="modal-title">筛选 / 排序</h3>
         <div class="filter-row"><label>定数范围</label><div class="filter-inputs"><input type="number" id="filter-range-lower" value="1.0" step="0.1"><span>—</span><input type="number" id="filter-range-upper" value="12.0" step="0.1"></div></div>
         <div class="filter-row"><label>排序方式</label><select id="filter-sort-mode"><option value="playRating">单曲 PTT</option><option value="constant">定数</option><option value="score">分数</option><option value="criticalRate">大P率</option><option value="normalPerfect">小P数</option><option value="loseScore">失分数</option></select><select id="filter-sort-order"><option value="1">降序</option><option value="-1">升序</option></select></div>
-        <div class="filter-row"><label>搜索曲目</label><input id="filter-search-song" placeholder="曲名"><select id="filter-search-difficulty"><option value="Past">Past</option><option value="Present">Present</option><option value="Future" selected>Future</option><option value="Eternal">Eternal</option><option value="Beyond">Beyond</option></select><button class="btn-small" onclick="filterSearchSong()">查找</button></div>
+        <div class="filter-row"><label>搜索曲目</label><input id="filter-search-song" placeholder="曲名"><select id="filter-search-difficulty"><option value="Past">Past</option><option value="Present">Present</option><option value="Future" selected>Future</option><option value="Inscribed">Inscribed</option><option value="Eternal">Eternal</option><option value="Beyond">Beyond</option></select><button class="btn-small" onclick="filterSearchSong()">查找</button></div>
         <div class="filter-row"><select id="filter-search-result" size="5"><option disabled>结果会显示在这里</option></select></div>
         <div class="filter-row"><button class="btn-small" onclick="aiChanRoll(filteredArray, viewMode)">🎲 AI 酱 roll 一首</button></div>
     </div>

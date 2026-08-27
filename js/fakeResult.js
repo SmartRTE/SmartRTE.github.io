@@ -623,7 +623,7 @@ async function getImageMapping() {
 			const mapping = {};
 			data.songs.forEach(function (song) {
 				(song.difficulties || []).forEach(function (d) {
-					const key = DIF_BY_CLASS[d.ratingClass];
+					const key = (d.ratingClassAlias === 1) ? 'Inscribed' : DIF_BY_CLASS[d.ratingClass];
 					if (d.jacketOverride && key) {
 						if (!mapping[song.id]) mapping[song.id] = {};
 						mapping[song.id][key] = '_' + d.ratingClass;

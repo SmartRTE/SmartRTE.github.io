@@ -9,8 +9,8 @@ let illustrationPath = 'Processed_Illustration/';
 let sqlWasmPath = 'sql-wasm.wasm';
 const ILL_PATH = "Processed_Illustration/";
 const STICKER_PATH = "img/stickers/";
-const DIF = ["Past", "Present", "Future", "Beyond", "Eternal"];
-const SHORTEN_DIF = { Past: "pst", Present: "prs", Future: "ftr", Beyond: "byd", Eternal: "etr" };
+const DIF = ["Past", "Present", "Future", "Beyond", "Inscribed", "Eternal"];
+const SHORTEN_DIF = { Past: "pst", Present: "prs", Future: "ftr", Beyond: "byd", Inscribed: "ins", Eternal: "etr" };
 const TABLE_COLUMNS = ["SongName", "SongId", "Difficulty", "Score", "Perfect", "Perfect+", "Far", "Lost", "Constant", "PlayRating"];
 
 let currentArray = [];
@@ -29,7 +29,7 @@ let rangeUpperBound = 12.0;
 let rangeLowerBound = 1.0;
 let fakeCounter = 0;
 let listView = 'default';
-let selectedDifficulties = new Set(['Past', 'Present', 'Future', 'Beyond', 'Eternal']);
+let selectedDifficulties = new Set(['Past', 'Present', 'Future', 'Beyond', 'Inscribed', 'Eternal']);
 let searchText = '';
 let sortReversed = false;
 let packsById = {};
@@ -141,7 +141,7 @@ function packDisplayName(setId) {
 }
 
 function buildIndexDifficultyFilter() {
-    const html = ['Past', 'Present', 'Future', 'Beyond', 'Eternal'].map(function (dif) {
+    const html = ['Past', 'Present', 'Future', 'Beyond', 'Inscribed', 'Eternal'].map(function (dif) {
         return '<label class="dif-check"><input type="checkbox" data-dif="' + dif + '"'
             + (selectedDifficulties.has(dif) ? ' checked' : '') + '> ' + dif + '</label>';
     }).join('');
@@ -184,7 +184,7 @@ function versionCmp(a, b) {
 }
 
 function difRankCmp(a, b) {
-    const order = ['Eternal', 'Beyond', 'Future', 'Present', 'Past'];
+    const order = ['Eternal', 'Inscribed', 'Beyond', 'Future', 'Present', 'Past'];
     return order.indexOf(a.difficulty) - order.indexOf(b.difficulty);
 }
 
@@ -478,12 +478,13 @@ function displayB30(array) {
         localStorage.setItem("rbm", rbm);
         $("#disp-b30").text((rbm[1] || 0).toFixed(4));
         $("#disp-max").text((rbm[2] || 0).toFixed(4));
-        $("#disp-ptt").val(toFloor(rbm[2] || 0, 2));
         $("#disp-r10 span").text((rbm[0] || 0).toFixed(4));
         const rbm50 = calculateMax50(array);
-        $("#disp-b50").text((rbm50[1] || 0).toFixed(4));
-        $("#disp-max50").text((rbm50[2] || 0).toFixed(4));
-        $("#disp-b10").text((rbm50[0] || 0).toFixed(4));
+        // 当前 PTT 输入框（已隐藏）直接读取最高潜力值 max50
+        $("#disp-ptt").val(toFloor(rbm50[2] || 0, 2));
+        $("#disp-b50").text(toFloor(rbm50[1] || 0, 4));
+        $("#disp-max50").text(toFloor(rbm50[2] || 0, 4));
+        $("#disp-b10").text(toFloor(rbm50[0] || 0, 4));
     } catch (err) { console.error("displayB30 error:", err); }
 }
 
