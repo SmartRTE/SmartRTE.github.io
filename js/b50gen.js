@@ -9,7 +9,7 @@ let idx_constant = [];
 let finalOutputScore = [];
 let songlist = {}; //idx - songId 键值对
 let idData = {};
-let unitQuantity = 50;
+let unitQuantity = 70;
 let uidFlag = true;
 let loseScoreFlag = 0;
 let p30Flag = 0; //0=b 1=p 2=s
@@ -82,7 +82,7 @@ function initializeDataArray() {
 		currentArray = getResultArray();
 		// console.log(currentArray);
 		unitQuantity = localStorage.unitQuantity;
-		unitQuantity = 50;
+		unitQuantity = 60;
 		generateUnits(currentArray, unitQuantity);
 		displayB30(currentArray);
 	} else {
@@ -509,7 +509,8 @@ async function generateUnits(array, unitQuantity) {
 		if (index == unitQuantity) {
 			break;
 		}
-		if (index == 10) {
+		// 第50个数据之下显示 OVERFLOW 分隔线，剩余数据继续显示（不足50个时不显示）
+		if (index == 50) {
 			appendOverflowSpliter();
 		}
 		appendSongUnit(ary[index], index + 1);

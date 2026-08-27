@@ -1230,11 +1230,11 @@ button:active {
 }
 
 #spliter-text-best30 {
-	position: absolute;
-	left: 31.25rem;
-	top: 0.625rem;
-	height: 5.625rem;
-	opacity: 85%;
+    position: absolute;
+    left: 35.55rem;
+    top: 0.625rem;
+    height: 5.625rem;
+    opacity: 85%;
 }
 
 #b30-data {
@@ -3078,17 +3078,7 @@ body,
 .song-result-unit .item-losescore { left: -24px; }
 .song-result-unit .item-acc { left: -6px; }
 
-/* ===== B50：隐藏第二处分隔线（overflow 分隔线，保留代码） ===== */
-#spliter-overflow {
-	display: none !important;
-}
-
-/* ===== B50：隐藏第一处分隔线上方的 Best30 图片（保留第一条分隔线） ===== */
-#spliter-text-best30 {
-	display: none !important;
-}
-
-/* ===== B50：前 10 个显示单元橙色发光边框（模糊光晕效果） ===== */
+/* ===== B50：前 10 个显示单元橙色发光边框 ===== */
 .song-result-unit.top10 {
 	border: 2px solid rgba(255, 140, 0, 0.95) !important;
 	box-shadow: 0 0 12px 3px rgba(255, 140, 0, 0.55) !important;
