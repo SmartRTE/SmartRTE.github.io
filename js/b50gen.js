@@ -9,7 +9,7 @@ let idx_constant = [];
 let finalOutputScore = [];
 let songlist = {}; //idx - songId 键值对
 let idData = {};
-let unitQuantity = 70;
+let unitQuantity = 80;
 let uidFlag = true;
 let loseScoreFlag = 0;
 let p30Flag = 0; //0=b 1=p 2=s
