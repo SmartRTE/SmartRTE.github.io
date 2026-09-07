@@ -459,7 +459,10 @@ function getRandomAiChan() {
 function toFloor(number, decimal) {
 	// console.log(number);
 	let multiplier = Math.pow(10, decimal);
-	return (Math.floor(number * multiplier) / multiplier).toFixed(decimal);
+	// 加与量级匹配的微小余量，抵消浮点数表示误差：
+	// 例如 9.7+2+0.2 在双精度下是 11.8999…99858，直接 floor 会少截一位变成 11.8999
+	let eps = Math.abs(number) * multiplier * Number.EPSILON * 8 + 1e-9;
+	return (Math.floor(number * multiplier + eps) / multiplier).toFixed(decimal);
 }
 
 
@@ -508,7 +511,8 @@ function calculateSingleRating(score, constant, decimal) {
 	if (score >= 7000000) {
 		rt += 0.2;
 	}
-	return rt;
+	// 规整到 9 位小数，消除累加带来的浮点尾差（如 9.7+2+0.2 = 11.899999999999999）
+	return Math.round(rt * 1e9) / 1e9;
 }
 
 /**
