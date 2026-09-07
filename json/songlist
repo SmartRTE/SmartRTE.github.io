@@ -34346,7 +34346,7 @@
                     "chartDesigner": "sidewavesチュウ",
                     "jacketDesigner": "",
                     "rating": 9,
-                    "ratingPlus": true 
+                    "ratingPlus": true
                 }
             ]
         },
@@ -35022,8 +35022,7 @@
                     "ratingClass": 1,
                     "chartDesigner": "絶滅「天道」",
                     "jacketDesigner": "あらへなす",
-                    "rating": 8,
-                    "ratingPlus": true
+                    "rating": 8
                 },
                 {
                     "ratingClass": 2,
@@ -35090,7 +35089,8 @@
                     "ratingClass": 1,
                     "chartDesigner": "én「The Resolute」",
                     "jacketDesigner": "_ziro",
-                    "rating": 7
+                    "rating": 7,
+                    "ratingPlus": true
                 },
                 {
                     "ratingClass": 2,
@@ -35412,6 +35412,75 @@
                     "chartDesigner": "Fate's End",
                     "jacketDesigner": "辷",
                     "rating": 9,
+                    "ratingPlus": true,
+                    "hidden_until_unlocked": true,
+                    "hidden_until": "song"
+                }
+            ]
+        },
+        {
+            "idx": 553,
+            "id": "sacrosanct",
+            "title_localized": {
+                "en": "⊥⊬"
+            },
+            "artist": "Silentroom Dismantled XOR かたぎり",
+            "search_title": {
+                "en": [
+                    "sacrosanct"
+                ],
+                "ja": [
+                    "さくろさんくと"
+                ],
+                "ko": [
+                    "사크로상트"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "さいれんとるーむ",
+                    "かたぎり"
+                ],
+                "ko": [
+                    "사일런트 룸 디스맨틀드",
+                    "카타기리",
+                    ""
+                ]
+            },
+            "bpm": "?",
+            "bpm_base": 211,
+            "set": "konzetsu",
+            "purchase": "konzetsu",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 4,
+            "bg": "sacrosanct",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1787788808,
+            "version": "7.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "▯",
+                    "jacketDesigner": "春昼京芒",
+                    "rating": 6,
+                    "hidden_until_unlocked": true,
+                    "hidden_until": "song"
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "▯",
+                    "jacketDesigner": "春昼京芒",
+                    "rating": 9,
+                    "hidden_until_unlocked": true,
+                    "hidden_until": "song"
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "▯",
+                    "jacketDesigner": "春昼京芒",
+                    "rating": 10,
                     "ratingPlus": true,
                     "hidden_until_unlocked": true,
                     "hidden_until": "song"
