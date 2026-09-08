@@ -25,6 +25,12 @@ let potentialFramePath = 'img/rating/rating_';
 let sqlWasmPath = "sql-wasm.wasm"; //sql.wasm路径
 let diffSongNameMapping = null; //差分曲名映射
 let diffIllMapping = null; //差分曲绘映射
+// B50 预览的双指缩放/平移状态（仅影响页面预览，#mainCapture 的布局不变，
+// 生成图片前会复位，因此不影响 html2canvas）
+let b50Pinch = { z: 1, tx: 0, ty: 0 };
+let b50PinchGesture = null;
+let b50PanStart = null;
+const B50_PINCH_MAX = 6;
 
 $(document).ready(async function() {
 	//首次加载保证transition生效
@@ -55,9 +61,10 @@ $(document).ready(async function() {
 	
 	filteredArray = currentArray;
 	$(window).on('resize', function() {
-		resizeWidth(1);
+		resetB50PinchZoom(true);
 	});
 	resizeWidth(1);
+	initB50PinchZoom();
 	// $('#main-capture').css('height', );
 	// switchLoseScore();
 	// 页面加载显示时间
@@ -82,7 +89,7 @@ function initializeDataArray() {
 		currentArray = getResultArray();
 		// console.log(currentArray);
 		unitQuantity = localStorage.unitQuantity;
-		unitQuantity = 60;
+		unitQuantity = 80;
 		generateUnits(currentArray, unitQuantity);
 		displayB30(currentArray);
 	} else {
@@ -518,6 +525,8 @@ async function generateUnits(array, unitQuantity) {
 	$('body').css('height', getCaptureHeight());
 	$('#background').css('height', getCaptureHeight());
 	$('#background-image').css('height', getCaptureHeight());
+	// 数据变化后回到初始视图（不改变上面设置的真实高度，只是去掉预览手势）
+	resetB50PinchZoom(false);
 	resizeWidth();
 }
 /**
@@ -754,17 +763,24 @@ function resizeWidth(flag = 1) {
 		scaleValue = document.documentElement.clientWidth / 1700;
 	} else {
 		scaleValue = 1;
+		// 生成图片前复位双指缩放的平移/倍率（见 saveAsImage）
+		b50Pinch.z = 1;
+		b50Pinch.tx = 0;
+		b50Pinch.ty = 0;
 	}
 	// console.log("resized" + document.documentElement.clientWidth + scaleValue);
+	b50SyncTouchAction();
+	b50ClampPan();
+	var pinchTransform = b50BuildZoomTransform(scaleValue);
 	$('#mainCapture').css({
 		'-moz-transform-origin': '0 0',
 		'-webkit-transform-origin': '0 0',
 		'-ms-transform-origin': '0 0',
 		'transform-origin': '0 0',
-		'-moz-transform': 'scale(' + scaleValue + ')',
-		'-webkit-transform': 'scale(' + scaleValue + ')',
-		'-ms-transform': 'scale(' + scaleValue + ')',
-		'transform': 'scale(' + scaleValue + ')',
+		'-moz-transform': pinchTransform,
+		'-webkit-transform': pinchTransform,
+		'-ms-transform': pinchTransform,
+		'transform': pinchTransform,
 		'height': getCaptureHeight() * scaleValue + 'px',
 		// 'zoom': scaleValue
 	});
@@ -773,18 +789,173 @@ function resizeWidth(flag = 1) {
 		'width': 1700 * scaleValue + 'px'
 	});
 	scaleValue = document.documentElement.clientWidth / 1700;
+	// 加载遮罩保持原有按屏幕宽度缩放即可，不跟随预览的双指缩放
+	var coverTransform = 'scale(' + scaleValue + ')';
 	$('#mainCover').css({
 		'-moz-transform-origin': '0 0',
 		'-webkit-transform-origin': '0 0',
 		'-ms-transform-origin': '0 0',
 		'transform-origin': '0 0',
-		'-moz-transform': 'scale(' + scaleValue + ')',
-		'-webkit-transform': 'scale(' + scaleValue + ')',
-		'-ms-transform': 'scale(' + scaleValue + ')',
-		'transform': 'scale(' + scaleValue + ')',
+		'-moz-transform': coverTransform,
+		'-webkit-transform': coverTransform,
+		'-ms-transform': coverTransform,
+		'transform': coverTransform,
 		'height': `calc(100vh/${scaleValue})`,
 		// 'zoom': scaleValue
 	});
+}
+
+/* ===== B50 预览：手机端双指缩放/平移（不改变捕获布局） ===== */
+function b50BaseScale() {
+	return document.documentElement.clientWidth / 1700;
+}
+
+function b50BuildZoomTransform(baseScale) {
+	return 'translate(' + b50Pinch.tx + 'px,' + b50Pinch.ty +
+		'px) scale(' + b50Pinch.z + ') scale(' + baseScale + ')';
+}
+
+function b50ClampPan() {
+	if (!document.getElementById('mainCapture')) return;
+	const z = Math.max(1, b50Pinch.z);
+	const s = b50BaseScale();
+	const contentW = z * s * 1700;
+	const contentH = z * s * getCaptureHeight();
+	const viewW = Math.max(document.documentElement.clientWidth || 0, 1);
+	const bodyH = document.body ? document.body.offsetHeight : 0;
+	const viewH = Math.max(document.documentElement.clientHeight || 0, bodyH || 0);
+
+	let minTx = Math.min(0, viewW - contentW);
+	let maxTx = Math.max(0, viewW - contentW);
+	if (maxTx < minTx) maxTx = minTx;
+	b50Pinch.tx = Math.max(minTx, Math.min(maxTx, b50Pinch.tx));
+
+	let minTy = Math.min(0, viewH - contentH);
+	let maxTy = Math.max(0, viewH - contentH);
+	if (maxTy < minTy) maxTy = minTy;
+	b50Pinch.ty = Math.max(minTy, Math.min(maxTy, b50Pinch.ty));
+}
+
+function resetB50PinchZoom(apply) {
+	b50Pinch.z = 1;
+	b50Pinch.tx = 0;
+	b50Pinch.ty = 0;
+	b50PinchGesture = null;
+	b50PanStart = null;
+	b50SyncTouchAction();
+	if (apply !== false) resizeWidth(1);
+}
+
+function b50SyncTouchAction() {
+	const cap = document.getElementById('mainCapture');
+	if (!cap) return;
+	// 放大时禁止浏览器原生滚动/双指页面缩放，平移完全交给自定义手势；
+	// 未放大时恢复为 pan-x pan-y，保证整页仍可正常纵向滚动
+	cap.style.touchAction = b50Pinch.z > 1.01 ? 'none' : '';
+}
+
+function b50DocPoint(touch) {
+	return {
+		x: touch.clientX + (window.scrollX || 0),
+		y: touch.clientY + (window.scrollY || 0)
+	};
+}
+
+function b50FingerDistance(a, b) {
+	const dx = a.x - b.x;
+	const dy = a.y - b.y;
+	return Math.sqrt(dx * dx + dy * dy);
+}
+
+function b50BeginPinch(touches) {
+	const p1 = b50DocPoint(touches[0]);
+	const p2 = b50DocPoint(touches[1]);
+	b50PinchGesture = {
+		dist0: Math.max(b50FingerDistance(p1, p2), 1),
+		z0: b50Pinch.z,
+		tx0: b50Pinch.tx,
+		ty0: b50Pinch.ty,
+		cx: (p1.x + p2.x) / 2,
+		cy: (p1.y + p2.y) / 2
+	};
+	b50PanStart = null;
+}
+
+function b50PinchTouchStart(e) {
+	if (!e.touches) return;
+	const cap = document.getElementById('mainCapture');
+	if (!cap || !cap.contains(e.target)) return;
+	if (e.touches.length === 2) {
+		b50BeginPinch(e.touches);
+		if (e.cancelable) e.preventDefault();
+	} else if (e.touches.length === 1 && b50Pinch.z > 1.01) {
+		b50PanStart = b50DocPoint(e.touches[0]);
+	}
+}
+
+function b50PinchTouchMove(e) {
+	if (!e.touches) return;
+	if (b50PinchGesture && e.touches.length >= 2) {
+		const p1 = b50DocPoint(e.touches[0]);
+		const p2 = b50DocPoint(e.touches[1]);
+		const dist = Math.max(b50FingerDistance(p1, p2), 1);
+		const rawZ = b50PinchGesture.z0 * dist / b50PinchGesture.dist0;
+		const z = Math.max(1, Math.min(B50_PINCH_MAX, rawZ));
+		const k = z / b50PinchGesture.z0;
+		b50Pinch.z = z;
+		b50Pinch.tx = (1 - k) * b50PinchGesture.cx + k * b50PinchGesture.tx0;
+		b50Pinch.ty = (1 - k) * b50PinchGesture.cy + k * b50PinchGesture.ty0;
+		b50SyncTouchAction();
+		b50ClampPan();
+		resizeWidth(1);
+		if (e.cancelable) e.preventDefault();
+	} else if (b50PanStart && e.touches.length === 1 && b50Pinch.z > 1.01) {
+		const p = b50DocPoint(e.touches[0]);
+		const dx = p.x - b50PanStart.x;
+		const dy = p.y - b50PanStart.y;
+		if (Math.abs(dx) + Math.abs(dy) > 4 && e.cancelable) e.preventDefault();
+		b50Pinch.tx += dx;
+		b50Pinch.ty += dy;
+		b50PanStart = p;
+		b50ClampPan();
+		resizeWidth(1);
+	}
+}
+
+function b50PinchTouchEnd(e) {
+	if (!e.touches) return;
+	if (e.touches.length >= 2) {
+		b50BeginPinch(e.touches);
+	} else {
+		b50PinchGesture = null;
+		if (e.touches.length === 1 && b50Pinch.z > 1.01) {
+			b50PanStart = b50DocPoint(e.touches[0]);
+		} else {
+			b50PanStart = null;
+		}
+	}
+}
+
+function initB50PinchZoom() {
+	const cap = document.getElementById('mainCapture');
+	if (!cap) return;
+	cap.addEventListener('touchstart', b50PinchTouchStart, { passive: false });
+	cap.addEventListener('touchmove', b50PinchTouchMove, { passive: false });
+	cap.addEventListener('touchend', b50PinchTouchEnd, { passive: false });
+	cap.addEventListener('touchcancel', b50PinchTouchEnd, { passive: false });
+	// 触屏设备提示一次（元素在 #mainCapture 之外，不会进入生成的图片）
+	const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+	const touchCapable = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+	if (coarse && touchCapable && !sessionStorage.getItem('b50-pinch-hint-shown')) {
+		try { sessionStorage.setItem('b50-pinch-hint-shown', '1'); } catch (err) { /* 忽略 */ }
+		const hint = document.createElement('div');
+		hint.className = 'b50-pinch-hint';
+		hint.textContent = '🔍 双指可缩放预览';
+		document.body.appendChild(hint);
+		setTimeout(function () {
+			if (hint.parentNode) hint.parentNode.removeChild(hint);
+		}, 3600);
+	}
 }
 
 /**

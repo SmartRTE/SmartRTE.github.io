@@ -943,6 +943,9 @@ button:active {
 #mainCapture {
 	width: 106.25rem;
 	height: 196.875rem;
+	/* 触屏设备上交给页面自己的双指手势处理，避免浏览器手势吞掉触摸事件；
+	   生成图片前 resizeWidth(0) 会把这里的变换一并复位，不影响 html2canvas */
+	touch-action: pan-x pan-y;
 }
 
 #container {
@@ -3083,4 +3086,23 @@ body,
 	border: 2px solid rgba(255, 140, 0, 0.95) !important;
 	box-shadow: 0 0 12px 3px rgba(255, 140, 0, 0.55) !important;
 	box-sizing: content-box;
+}
+
+/* 预览双指缩放手势的一次性提示（挂在 body 下，不属于 #mainCapture，不进图片） */
+.b50-pinch-hint {
+	position: fixed;
+	left: 50%;
+	bottom: 6rem;
+	transform: translateX(-50%);
+	z-index: 70;
+	padding: 8px 16px;
+	border-radius: 999px;
+	background: rgba(0, 0, 0, 0.62);
+	color: #fff;
+	font-size: 0.86rem;
+	font-weight: 700;
+	pointer-events: none;
+	user-select: none;
+	white-space: nowrap;
+	box-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
 }

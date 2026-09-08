@@ -1853,6 +1853,108 @@ label.tool-push-toggle {
 	font-size: .68rem; font-weight: 700; color: var(--warning);
 	border: 1px solid var(--warning); border-radius: 5px; padding: 1px 6px; white-space: nowrap;
 }
+.tool-push-pos {
+	display: inline-block;
+	font-size: .64rem; font-weight: 700;
+	padding: 1px 5px; border-radius: 5px; margin-right: 4px;
+	white-space: nowrap;
+}
+.tool-push-pos-b10 { background: #e07b39; color: #fff; }
+.tool-push-pos-b50 { background: #4a8fd4; color: #fff; }
+.tool-push-pos-out { background: #666; color: #fff; }
+.tool-push-arrow { color: var(--text-muted); font-size: .7rem; font-weight: 800; margin: 0 2px; }
+/* ---------- 全局统计 ---------- */
+.tool-stats-wrap { display: flex; flex-direction: column; gap: 12px; max-height: 58vh; }
+.tool-stats-scroll { overflow-y: auto; padding-right: 2px; }
+.tool-stats-cards {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	flex: 0 0 auto;
+}
+.tool-stats-card {
+	background: var(--surface-alt);
+	border: 1px solid var(--border);
+	border-radius: 10px;
+	padding: 9px 10px;
+	min-width: 0;
+}
+.tool-stats-card-label {
+	display: block;
+	font-size: .7rem;
+	color: var(--text-secondary);
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.tool-stats-card-value {
+	display: block;
+	margin-top: 3px;
+	font-size: 1.12rem;
+	font-weight: 800;
+	color: var(--accent);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+.tool-stats-card-value small { font-size: .62rem; color: var(--text-muted); font-weight: 600; }
+.tool-stats-card-wide { grid-column: 1 / -1; }
+.tool-stats-note {
+	font-size: .72rem;
+	color: var(--text-muted);
+	line-height: 1.5;
+	margin: 0;
+}
+.tool-stats-empty {
+	font-size: .85rem;
+	color: var(--text-muted);
+	text-align: center;
+	padding: 24px 8px;
+}
+.tool-stats-title {
+	font-size: .82rem;
+	font-weight: 700;
+	color: var(--text-primary);
+	padding: 8px 2px 2px;
+	border-top: 1px dashed var(--border);
+	margin-top: 2px;
+}
+.tool-stats-seg-row {
+	display: grid;
+	grid-template-columns: 3.6rem 1fr 2.2rem;
+	align-items: center;
+	gap: 7px;
+	padding: 2.5px 0;
+}
+.tool-stats-seg-label {
+	font-size: .7rem;
+	font-weight: 700;
+	color: var(--text-secondary);
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+}
+.tool-stats-bar-track {
+	height: 12px;
+	border-radius: 999px;
+	background: var(--surface-alt);
+	border: 1px solid var(--border);
+	overflow: hidden;
+}
+.tool-stats-bar {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+	min-width: 2px;
+	transition: width .25s ease;
+}
+.tool-stats-seg-count {
+	font-size: .74rem;
+	font-weight: 800;
+	color: var(--text-primary);
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+}
 `;
 		document.head.appendChild(styleEl);
 	}
@@ -1883,6 +1985,7 @@ label.tool-push-toggle {
 		'	<div class="tool-tabs" role="tablist">' +
 		'		<button type="button" class="tool-tab active" data-tool-panel="ptt-calc">单曲PTT计算器</button>' +
 		'		<button type="button" class="tool-tab" data-tool-panel="ptt-push">推分推荐</button>' +
+		'		<button type="button" class="tool-tab" data-tool-panel="global-stats">全局统计</button>' +
 		'	</div>' +
 		'	<div class="tool-panel active" data-tool-panel="ptt-calc">' +
 		'		<div class="tool-calc">' +
@@ -1901,7 +2004,12 @@ label.tool-push-toggle {
 	'				</label>' +
 	'				<button type="button" id="tool-push-refresh" class="tool-push-refresh">重新计算</button>' +
 	'			</div>' +
-	'			<div id="tool-push-list" class="tool-push-list"></div>' +
+		'			<div id="tool-push-list" class="tool-push-list"></div>' +
+		'		</div>' +
+		'	</div>' +
+		'	<div class="tool-panel" data-tool-panel="global-stats">' +
+		'		<div class="tool-stats-wrap">' +
+		'			<div id="tool-global-stats" class="tool-stats-scroll"></div>' +
 		'		</div>' +
 		'	</div>' +
 		'</div>';
@@ -1913,6 +2021,8 @@ label.tool-push-toggle {
 	// 打开 / 关闭
 	fab.addEventListener('click', function () {
 		modal.hidden = false;
+		const activePanel = modal.querySelector('.tool-panel.active');
+		if (activePanel && activePanel.getAttribute('data-tool-panel') === 'global-stats') renderGlobalStats();
 	});
 	function closeModal() {
 		modal.hidden = true;
@@ -1952,6 +2062,7 @@ label.tool-push-toggle {
 				p.classList.toggle('active', p.getAttribute('data-tool-panel') === panelId);
 			});
 			if (panelId === 'ptt-push') renderPttPush();
+			else if (panelId === 'global-stats') renderGlobalStats();
 		});
 	});
 	const pushRefresh = modal.querySelector('#tool-push-refresh');
@@ -1979,6 +2090,138 @@ function toolScoreFormat(n) {
 	return Math.round(n).toLocaleString('zh-CN').replaceAll(',', "'");
 }
 
+/* ---------- 全局统计：B1/B50、Best50/Best10 与单曲PTT分段 ---------- */
+function globalStatsRecords() {
+	const cached = readLocalStorage();
+	if (cached && cached.length) return cached;
+	if (typeof currentArray !== 'undefined' && currentArray && currentArray.length) {
+		return currentArray;
+	}
+	return [];
+}
+
+function toolTenthFloor(ptt) {
+	const eps = Math.abs(ptt) * 10 * Number.EPSILON * 8 + 1e-9;
+	return Math.floor(ptt * 10 + eps) / 10;
+}
+
+function computeGlobalStats() {
+	const records = globalStatsRecords();
+	if (!records.length) return null;
+	const sorted = records.slice().sort(function (a, b) {
+		const pa = (a.playRating === undefined || a.playRating === null) ? 0 : Number(a.playRating);
+		const pb = (b.playRating === undefined || b.playRating === null) ? 0 : Number(b.playRating);
+		return pb - pa;
+	});
+	const n = sorted.length;
+	const topN = Math.min(50, n);
+	const top10N = Math.min(10, n);
+	const top50 = sorted.slice(0, topN);
+	const top10 = sorted.slice(0, top10N);
+	const sum50 = top50.reduce(function (s, r) { return s + (Number(r.playRating) || 0); }, 0);
+	const sum10 = top10.reduce(function (s, r) { return s + (Number(r.playRating) || 0); }, 0);
+
+	// 单曲PTT分段：从最高实际值所在段向下，到“第60高单曲PTT”（页面所说的B60）所在段为止；
+	// 不足60首时显示到最低记录所在段
+	const B60_CUTOFF = 60;
+	const maxPtt = Number(sorted[0].playRating) || 0;
+	const cutoffIndex = Math.min(B60_CUTOFF, n) - 1;
+	const cutoffPtt = Number(sorted[cutoffIndex].playRating) || 0;
+	const topLower = toolTenthFloor(maxPtt);
+	const bottomLower = toolTenthFloor(cutoffPtt);
+	const segments = [];
+	for (let lower = topLower; lower >= bottomLower - 1e-12; lower = Math.round((lower - 0.1) * 1000) / 1000) {
+		const count = sorted.filter(function (r) {
+			return toolTenthFloor(Number(r.playRating) || 0) === lower;
+		}).length;
+		segments.push({ lower: lower, count: count });
+		if (segments.length > 150) break; // 安全上限，正常不会触发
+	}
+	const maxCount = segments.reduce(function (m, s) { return Math.max(m, s.count); }, 0);
+	const overallRaw = (sum50 + sum10) / 60;
+	return {
+		n: n,
+		topN: topN,
+		top10N: top10N,
+		enough50: n >= 50,
+		enough60: n >= 60,
+		b1: Number(sorted[0].playRating) || 0,
+		b50: n >= 50 ? (Number(sorted[49].playRating) || 0) : null,
+		gap: n >= 50 ? ((Number(sorted[0].playRating) || 0) - (Number(sorted[49].playRating) || 0)) : null,
+		sum50: sum50,
+		sum10: sum10,
+		overallRaw: overallRaw,
+		overallDisplay: toolTrunc3(overallRaw),
+		segments: segments,
+		maxCount: maxCount
+	};
+}
+
+function renderGlobalStats() {
+	const el = document.getElementById('tool-global-stats');
+	if (!el) return;
+	const d = computeGlobalStats();
+	if (!d) {
+		el.innerHTML = '<div class="tool-stats-empty">还没有可统计的成绩，请先在页面中载入 st3 或分数表文件。</div>';
+		if (!renderGlobalStats._retrying) {
+			renderGlobalStats._retrying = true;
+			let tries = 0;
+			const timer = setInterval(function () {
+				if (computeGlobalStats()) {
+					clearInterval(timer);
+					renderGlobalStats._retrying = false;
+					renderGlobalStats();
+				} else if (++tries > 40) {
+					clearInterval(timer);
+					renderGlobalStats._retrying = false;
+				}
+			}, 500);
+		}
+		return;
+	}
+	const fmt4 = function (x) { return toFloor(x, 4); };
+	let cards = '';
+	cards += '<div class="tool-stats-cards">';
+	if (d.enough50) {
+		cards += '<div class="tool-stats-card tool-stats-card-wide">' +
+			'<span class="tool-stats-card-label">天地差（B1 − B50 单曲PTT）</span>' +
+			'<span class="tool-stats-card-value">' + fmt4(d.gap) + '</span>' +
+			'</div>';
+		cards += '<div class="tool-stats-card"><span class="tool-stats-card-label">B1 单曲PTT</span>' +
+			'<span class="tool-stats-card-value">' + fmt4(d.b1) + '</span></div>';
+		cards += '<div class="tool-stats-card"><span class="tool-stats-card-label">B50 单曲PTT（第50首）</span>' +
+			'<span class="tool-stats-card-value">' + fmt4(d.b50) + '</span></div>';
+	} else {
+		cards += '<div class="tool-stats-card tool-stats-card-wide"><span class="tool-stats-card-label">天地差（B1 − B50）</span>' +
+			'<span class="tool-stats-card-value">— <small>成绩不足50首</small></span></div>';
+	}
+	cards += '<div class="tool-stats-card"><span class="tool-stats-card-label">B50 PTT 总和（不加 B10）</span>' +
+		'<span class="tool-stats-card-value">' + fmt4(d.sum50) + '</span></div>';
+	cards += '<div class="tool-stats-card"><span class="tool-stats-card-label">B10 PTT 总和</span>' +
+		'<span class="tool-stats-card-value">' + fmt4(d.sum10) + '</span></div>';
+	cards += '</div>';
+	cards += '<p class="tool-stats-note">共 ' + d.n + ' 条成绩 · 统计 B50 使用前 ' + d.topN +
+		' 首 · 整体 PTT（约）' + fmt4(d.overallRaw) + '，截断显示 ' + d.overallDisplay.toFixed(3) + '</p>';
+
+	const segTitle = '单曲PTT分段数量（每 0.1 一段）';
+	const segNote = d.enough60
+		? '分段范围：最高单曲PTT → 第60高单曲PTT（B60）所在段'
+		: '不足60首：分段范围显示到最低记录所在段';
+	let rows = '';
+	d.segments.forEach(function (s) {
+		const width = d.maxCount > 0 ? Math.max(2, Math.round(s.count / d.maxCount * 100)) : 0;
+		rows += '<div class="tool-stats-seg-row">' +
+			'<span class="tool-stats-seg-label">≥' + s.lower.toFixed(1) + '</span>' +
+			'<span class="tool-stats-bar-track"><i class="tool-stats-bar" style="width:' + width + '%"></i></span>' +
+			'<span class="tool-stats-seg-count">' + s.count + '</span>' +
+			'</div>';
+	});
+	el.innerHTML = cards +
+		'<div class="tool-stats-title">' + segTitle + '</div>' +
+		'<p class="tool-stats-note">' + segNote + '</p>' +
+		rows;
+}
+
 /* 由目标单曲PTT反推所需最低分数 */
 function scoreForPtt(targetPtt, constant) {
 	let s;
@@ -1991,9 +2234,22 @@ function scoreForPtt(targetPtt, constant) {
 	return Math.max(0, s);
 }
 
-/* 计算推分推荐（取20条，按所需加分从低到高） */
+/* 截断到三位小数（与 toFloor 的浮点容差一致），用于整体PTT档位判断 */
+function toolTrunc3(x) {
+	const eps = Math.abs(x) * 1000 * Number.EPSILON * 8 + 1e-9;
+	return Math.floor(x * 1000 + eps) / 1000;
+}
+
+/**
+ * 计算推分推荐（按所需加分从低到高）。
+ * 判定条件：
+ * 1. 该谱面提升后能处在 B50 中（原本在 B50 内的谱面提升后仍在 B50）；
+ * 2. 重排后的整体PTT截断到三位小数后比当前显示值至少 +0.001。
+ * 对每条谱面二分最小整数分数，再反推目标分数/物量，避免跨入 B10、
+ * 越过分段线等情况下按“固定增量”估算产生的偏差。
+ */
 function computePttPush() {
-	const records = readLocalStorage() || [];
+	const records = globalStatsRecords();
 	const recByKey = {};
 	records.forEach(function (r) {
 		recByKey[r.songId + '|' + r.difficulty] = r;
@@ -2004,15 +2260,26 @@ function computePttPush() {
 		const cat = songCatalog[songId];
 		Object.keys(cat.difficulties || {}).forEach(function (difficulty) {
 			const d = cat.difficulties[difficulty];
-			const constant = d.constant;
-			if (constant === null || constant === undefined || constant === '') return;
 			const rec = recByKey[songId + '|' + difficulty];
+			// 已游玩谱面的定数以成绩记录为准（含 scores 页面用户覆盖后回写、st3/导出文件自带的定数）；
+			// 未游玩时优先取页面级定数覆盖，其次取目录定数，保证模型与页面显示的 B50 口径一致。
+			let constant = null;
+			if (rec && rec.constant !== undefined && rec.constant !== null && rec.constant !== '') {
+				const rc = parseFloat(rec.constant);
+				if (!isNaN(rc) && rc > 0) constant = rc;
+			}
+			if (!(constant > 0)) {
+				const effective = effectiveConstant(songId, difficulty);
+				if (effective !== null) constant = effective;
+			}
+			if (!(constant > 0)) return;
 			const score = rec ? (Number(rec.score) || 0) : 0;
 			charts.push({
 				key: songId + '|' + difficulty,
+				songId: songId,
+				difficulty: difficulty,
 				title: d.title,
 				illustration: d.illustration,
-				difficulty: difficulty,
 				constant: constant,
 				score: score,
 				hasRecord: !!rec,
@@ -2021,53 +2288,122 @@ function computePttPush() {
 			});
 		});
 	});
+	if (!charts.length) {
+		return { results: [], currentOverall: 0, displayedOverall: 0, nextDisplay: 0, total: 0 };
+	}
 
-	// 按单曲PTT降序；整体PTT（7.0.0 新版）= (Best50总和 + Best10总和) / 60
-	charts.sort(function (a, b) { return b.ptt - a.ptt; });
-	const top50 = charts.slice(0, 50);
-	const best10 = {};
-	top50.slice(0, 10).forEach(function (c) { best10[c.key] = true; });
-	const inTop50 = {};
-	top50.forEach(function (c) { inTop50[c.key] = true; });
-	const border50 = top50.length ? top50[top50.length - 1].ptt : 0;
-	const currentOverall = (top50.reduce(function (s, c) { return s + c.ptt; }, 0) +
-		top50.slice(0, 10).reduce(function (s, c) { return s + c.ptt; }, 0)) / 60;
+	// 当前全谱面按单曲PTT降序，并做前缀和，便于“只改一条成绩”时 O(log n) 重算 Top50/Top10
+	const sorted = charts.slice().sort(function (a, b) { return b.ptt - a.ptt; });
+	const n = sorted.length;
+	const prefix = new Array(n + 1);
+	prefix[0] = 0;
+	for (let i = 0; i < n; i++) prefix[i + 1] = prefix[i] + sorted[i].ptt;
+	const rankOf = {};
+	sorted.forEach(function (c, i) { rankOf[c.key] = i; });
 
-	// 整体PTT显示为三位小数（截断，不四舍五入）：推分 = 让显示值 +0.001
-	const displayedOverall = Math.floor(currentOverall * 1000) / 1000;
-	// 加 1e-9 的浮点余量，确保达标后的整体PTT一定越过 0.001 截断档位（否则可能因浮点误差停在档位线上）
-	const nextDisplay = displayedOverall + 0.001 + 1e-9;
-	// 使整体PTT显示+0.001所需的单曲PTT增量（规整到9位小数，避免浮点噪声导致推分差1分）
-	const deltaBest10 = Math.round(30 * (nextDisplay - currentOverall) * 1e9) / 1e9; // 前10名同时计入Best50与Best10，Δ=30d（普通曲目的2倍）
-	const deltaNormal = Math.round(60 * (nextDisplay - currentOverall) * 1e9) / 1e9; // 仅计入Best50
-	const EPS = 1e-9;
+	const topN = Math.min(50, n);
+	const sum50Base = prefix[topN];
+	const sum10Base = prefix[Math.min(10, n)];
+	const border50 = topN > 0 ? sorted[topN - 1].ptt : 0;
+	const currentOverall = (sum50Base + sum10Base) / 60;
+	const displayedOverall = toolTrunc3(currentOverall);
+
 	const results = [];
-	charts.forEach(function (c) {
-		const cap = c.constant + 2.2; // 单曲潜力值上限：PM（≥10,000,000 且通关）= 定数 + 2 + 0.2
-		let target;
-		if (best10[c.key]) {
-			target = c.ptt + deltaBest10;
-		} else if (inTop50[c.key]) {
-			target = c.ptt + deltaNormal;
-		} else {
-			target = Math.max(border50 + deltaNormal, c.ptt + deltaNormal);
+	const PTT_EPS = 1e-9;
+	const capScore = 10000000; // 单曲PTT在 10,000,000 分封顶，超出不再提升
+
+	function sumTopKAfterUpdate(i0, oldPr, newPr, rank, k) {
+		if (k <= 0) return 0;
+		if (k <= rank) return prefix[k]; // 该谱面提升后仍不在前 k 名
+		if (rank < i0) {
+			// 前移：排名 r 之后立即是它；k-1 不超过旧位置时，等价于“新值 + 原前 k-1 项”
+			if (k <= i0 + 1) return newPr + prefix[k - 1];
+			return newPr + prefix[k] - oldPr;
 		}
-		if (target > cap + EPS) return; // 已达单曲PTT上限（Pure Memory），无法再提升
-		const targetScore = Math.ceil(scoreForPtt(target, c.constant) - EPS);
-		const delta = targetScore - c.score;
+		if (rank > i0) {
+			// 后移（理论上不会由提升触发，仅并列边界时保留）
+			if (k <= rank) return prefix[k + 1] - oldPr;
+			return newPr + prefix[k] - oldPr;
+		}
+		// 位置不变：用新值替换前缀和里的旧值
+		return newPr + prefix[k] - oldPr;
+	}
+
+	// 模拟某一谱面提升到 newPr 后的整体PTT与是否在 B50
+	function simulatePush(i0, oldPr, newPr) {
+		let lo = 0, hi = n;
+		while (lo < hi) {
+			const mid = (lo + hi) >> 1;
+			if (sorted[mid].ptt > newPr) lo = mid + 1;
+			else hi = mid;
+		}
+		const rank = lo;
+		const s50 = sumTopKAfterUpdate(i0, oldPr, newPr, rank, Math.min(50, n));
+		const s10 = sumTopKAfterUpdate(i0, oldPr, newPr, rank, Math.min(10, n));
+		const raw = (s50 + s10) / 60;
+		return {
+			raw: raw,
+			display: toolTrunc3(raw),
+			inTop50: rank < Math.min(50, n),
+			rank0: rank
+		};
+	}
+
+	charts.forEach(function (c) {
+		const oldScore = Number(c.score) || 0;
+		const oldPr = c.ptt;
+		const i0 = rankOf[c.key];
+		if (i0 === undefined) return;
+		const capPr = Number(c.constant) + 2.2;
+		if (oldPr >= capPr - PTT_EPS) return; // 已到单曲PTT上限（PM），无法继续推
+		if (oldScore >= capScore) return;
+		if (i0 >= topN && capPr <= border50 + PTT_EPS) return; // 进不了B50
+
+		// 二分最小可行整数分数（上界 10,000,000 已是单曲PTT上限）
+		let low = Math.floor(oldScore) + 1;
+		let high = capScore;
+		if (low > high) return;
+
+		function canAt(score) {
+			if (score < low || score > capScore) return false;
+			const newPr = calculateSingleRating(score, c.constant, 4);
+			if (newPr > capPr + PTT_EPS) return false;
+			const sim = simulatePush(i0, oldPr, newPr);
+			return sim.inTop50 && sim.display > displayedOverall + PTT_EPS * 0.001;
+		}
+
+		if (!canAt(high)) return;
+		while (low < high) {
+			const mid = Math.floor((low + high) / 2);
+			if (canAt(mid)) high = mid;
+			else low = mid + 1;
+		}
+		const targetScore = low;
+		const delta = targetScore - oldScore;
 		if (!(delta > 0)) return;
+
+		const targetPr = calculateSingleRating(targetScore, c.constant, 4);
+		const finalSim = simulatePush(i0, oldPr, targetPr);
 		results.push({
 			chart: c,
 			delta: delta,
-			targetScore: targetScore
+			targetScore: targetScore,
+			currentInB50: i0 < topN,
+			currentInB10: i0 < Math.min(10, n),
+			// 推分前位次：仍在 B50 内则给 1-based 名次，否则为 null（界面显示 B50外）
+			currentRank: i0 < topN ? i0 + 1 : null,
+			// 推分后位次：simulatePush 已保证最终在 B50 内
+			targetRank: (finalSim.rank0 === undefined ? null : finalSim.rank0 + 1),
+			border50: border50,
+			targetPr: targetPr
 		});
 	});
 	results.sort(function (a, b) { return a.delta - b.delta; });
 	return {
-		results: results, // 显示全部可行推荐，不再只取前20条
+		results: results,
 		currentOverall: currentOverall,
 		displayedOverall: displayedOverall,
-		nextDisplay: nextDisplay,
+		nextDisplay: toolTrunc3(currentOverall) + 0.001,
 		total: results.length
 	};
 }
@@ -2153,6 +2489,18 @@ function renderPttPush() {
 	const rows = pushItems.map(function (r, i) {
 		const c = r.chart;
 		const noplay = !c.hasRecord;
+		// 推分前位次（B50外 表示当前不在前50）/ 推分后位次
+		const fromCls = r.currentInB10 ? 'b10' : (r.currentInB50 ? 'b50' : 'out');
+		const fromText = r.currentRank !== null && r.currentRank !== undefined
+			? 'B' + r.currentRank
+			: 'B50外';
+		const toCls = (r.targetRank !== null && r.targetRank !== undefined && r.targetRank <= 10) ? 'b10' : 'b50';
+		const toText = (r.targetRank !== null && r.targetRank !== undefined)
+			? 'B' + r.targetRank
+			: '—';
+		const rankHtml = '<span class="tool-push-pos tool-push-pos-' + fromCls + '">' + fromText +
+			'</span><span class="tool-push-arrow">→</span>' +
+			'<span class="tool-push-pos tool-push-pos-' + toCls + '">' + toText + '</span>';
 		let rightHtml;
 		if (noteMode) {
 			const info = toolPushNoteInfo(c, r.delta);
@@ -2190,7 +2538,7 @@ function renderPttPush() {
 			'<div class="tool-push-main">' +
 			'	<div class="tool-push-title">' + toolEsc(c.title) + '</div>' +
 			'	<div class="tool-push-diff-line"><span class="tool-push-diff tool-push-diff-' + toolEsc(c.difficulty.toLowerCase()) + '">' + toolEsc(c.difficulty) + '</span></div>' +
-			'	<div class="tool-push-meta">定数 ' + toolEsc(c.constant) + ' · ' + (noplay
+			'	<div class="tool-push-meta">' + rankHtml + ' 定数 ' + toolEsc(c.constant) + ' · ' + (noplay
 				? '<span class="tool-push-noplay">未游玩（无记录）</span>'
 				: '当前 ' + toolScoreFormat(c.score)) + '</div>' +
 			'</div>' +
