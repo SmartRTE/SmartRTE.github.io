@@ -1314,7 +1314,7 @@ ul {
     /* #save-csv-btn-container { flex-direction: column; } */
     #save-csv-btn-container .btn-primary,
     #save-csv-btn-container .btn-secondary {
-        width: 49.2%;
+        width: 48%;
     }
 
     #filter-main,
