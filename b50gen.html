@@ -1,62 +1,66 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>b50图片生成</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="css/b50gen.css" type="text/css" />
-		<script src="js/html2canvas_min.js" type="text/javascript"></script>
-		<script src="js/xlsx-0.20.2.full.min.js" type="text/javascript"></script>
-		<script src="js/jquery-3.6.1.min.js"></script>
-		<script src="js/CommonFunctions.js"></script>
-		<script src="js/sql-wasm.js"></script>
-		<script src="js/b50gen.js"></script>		
-		<link rel="icon" href="favicon.ico" />
-	</head>
-	<body>
-		<div hidden="hidden" id="top-of-body"></div>
-		<div id="mainCover">
-			<img id="loadingGif" src="img/loading.gif" />
-			<h1> 正在生成，稍等一下</h1><br />
-			<h1> 如果生成时间超过30秒，请尝试刷新页面重试</h1>
-			<h1> 生成成功会自动唤起下载，</h1>
-			<h1> 如果没有，可以手动长按保存</h1>
-		</div>
 
-		<div id="mainCapture">
-			<div id="container">
-				<div id="background">
-					<img id="background-image" src="bgs/s9.webp" />
-				</div>
+<head>
+	<meta charset="utf-8">
+	<title>b50图片生成</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/b50gen.css" type="text/css" />
+	<script src="js/html2canvas_min.js" type="text/javascript"></script>
+	<script src="js/xlsx-0.20.2.full.min.js" type="text/javascript"></script>
+	<script src="js/jquery-3.6.1.min.js"></script>
+	<script src="js/CommonFunctions.js"></script>
+	<script src="js/sql-wasm.js"></script>
+	<script src="js/b50gen.js"></script>
+	<link rel="stylesheet" href="css/scrollbar.css">
 
-				<h1 id="notice" hidden="hidden">若页面显示不完整，请刷新几次</h1>
-				<div id="info-display">
-					<div id="player-info">
-						<div id="avatar">
-							<div id="iconblur">
-								<img src="img/blur.png" />
-							</div>
-							<div id="icon" onclick="displayWindow('setting-window')">
-								<img src="img/avatar/34u_icon.webp" />
-							</div>
-							<div id="potential-container">
-								<div id="potential">
-									<img id="potential-frame" src="img/rating/rating_6.png" />
-									<div id="potential-value">6.16</div>
-								</div>
+	<link rel="icon" href="favicon.ico" />
+</head>
+
+<body>
+	<div hidden="hidden" id="top-of-body"></div>
+	<div id="mainCover">
+		<img id="loadingGif" src="img/loading.gif" />
+		<h1> 正在生成，稍等一下</h1><br />
+		<h1> 如果生成时间超过30秒，请尝试刷新页面重试</h1>
+		<h1> 生成成功会自动唤起下载，</h1>
+		<h1> 如果没有，可以手动长按保存</h1>
+	</div>
+
+	<div id="mainCapture">
+		<div id="container">
+			<div id="background">
+				<img id="background-image" src="bgs/s9.webp" />
+			</div>
+
+			<h1 id="notice" hidden="hidden">若页面显示不完整，请刷新几次</h1>
+			<div id="info-display">
+				<div id="player-info">
+					<div id="avatar">
+						<div id="iconblur">
+							<img src="img/blur.png" />
+						</div>
+						<div id="icon" onclick="displayWindow('setting-window')">
+							<img src="img/avatar/34u_icon.webp" />
+						</div>
+						<div id="potential-container">
+							<div id="potential">
+								<img id="potential-frame" src="img/rating/rating_6.png" />
+								<div id="potential-value">6.16</div>
 							</div>
 						</div>
 					</div>
-					<div id="user-name-container">
-						<img id="user-course-dan" src="img/course/1.png" />
-						<div id="user-name">Hikari</div>
-					</div>
-					<div id="user-id-container">
-						<img id="id-course-dan" src="img/course/1.png" />
-						<div id="user-id">ID : <span>100 000 001</span></div>
-					</div>
-					<div id="ptt-display" onclick="displayAccuratePtt()">
-						<div id="ptt-max">Max : <span>6.16</span></div>
+				</div>
+				<div id="user-name-container">
+					<img id="user-course-dan" src="img/course/1.png" />
+					<div id="user-name">Hikari</div>
+				</div>
+				<div id="user-id-container">
+					<img id="id-course-dan" src="img/course/1.png" />
+					<div id="user-id">ID : <span>100 000 001</span></div>
+				</div>
+				<div id="ptt-display" onclick="displayAccuratePtt()">
+					<div id="ptt-max">Max : <span>6.16</span></div>
 					<div id="ptt-b30">B50 : <span>6.16</span></div>
 					<div id="ptt-r10">B10 : <span>6.16</span></div>
 					<div><span></span></div>
@@ -65,250 +69,267 @@
 					<img class="spliter-image" src="img/divider.png" />
 					<img id="spliter-text-best30" src="img/best50.png" />
 				</div>
-				</div>
 			</div>
+		</div>
 
-			<!-- 显示 b30 数据 主体在js里 -->
-			<div id="b30-data">
-			</div>
+		<!-- 显示 b30 数据 主体在js里 -->
+		<div id="b30-data">
+		</div>
 
-			<div id="copyright">
-				<span>Generated at http://SmartRTE.github.io @ </span>
-				<span>2024/xx/xx</span>
+		<div id="copyright">
+			<span>Generated at http://SmartRTE.github.io @ </span>
+			<span>2024/xx/xx</span>
+		</div>
+	</div>
+	<div id="setting-window" hidden="hidden">
+		<div id="setting-bg" onclick="closeSettings()"></div>
+		<div id="setting-close" onclick="closeSettings()">&times;</div>
+		<div id="setting-main">
+			<div class="modal-header">
+				<h3 class="modal-title">设置</h3>
+				<button class="theme-toggle-btn theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn">🌙
+					深色</button>
 			</div>
-		</div>		<div id="setting-window" hidden="hidden">
-			<div id="setting-bg" onclick="closeSettings()"></div>
-			<div id="setting-close" onclick="closeSettings()">&times;</div>
-			<div id="setting-main">
-				<div class="modal-header">
-					<h3 class="modal-title">设置</h3>
-					<button class="theme-toggle-btn theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn">🌙 深色</button>
+			<div hidden="hidden">
+				<img id="temp-avatar" src="img/avatar/0_icon.webp" alt="暂存自定义头像" />
+				<img id="temp-background" src="bgs/0.webp" alt="暂存自定义背景" />
+			</div>
+			<div class="setting-grid">
+				<div class="setting-card">
+					<span class="card-label">玩家名称</span>
+					<input id="user-name-input" placeholder="Hikari" />
 				</div>
-				<div hidden="hidden">
-					<img id="temp-avatar" src="img/avatar/0_icon.webp" alt="暂存自定义头像" />
-					<img id="temp-background" src="bgs/0.webp" alt="暂存自定义背景" />
+				<div class="setting-card">
+					<span class="card-label">好友码</span>
+					<input id="user-id-input" placeholder="100000001" />
+					<button class="btn-action" onclick="hideUID()" style="width:100%;">显示/隐藏好友码</button>
 				</div>
-				<div class="setting-grid">
-					<div class="setting-card">
-						<span class="card-label">玩家名称</span>
-						<input id="user-name-input" placeholder="Hikari" />
-					</div>
-					<div class="setting-card">
-						<span class="card-label">好友码</span>
-						<input id="user-id-input" placeholder="100000001" />
-						<button class="btn-action" onclick="hideUID()" style="width:100%;">显示/隐藏好友码</button>
-					</div>
-					<!-- 潜力值输入已隐藏：个人潜力值直接读取最高潜力值（代码保留，恢复时去掉 style="display:none" 即可） -->
-					<div class="setting-card" style="display:none">
-						<span class="card-label">潜力值</span>
-						<input id="potential-input" placeholder="6.16" />
-					</div>
-					<div class="setting-card">
-						<span class="card-label">段位框</span>
-						<input type="number" id="selected-dan" hidden="hidden" value="0" />
-						<div id="user-course-dan-display" onclick="displayWindow('user-course-dan-select')">不显示</div>
-						<button class="btn-action" onclick="displayWindow('id-course-dan')" style="width:100%;">显示/隐藏好友码段位框</button>
-					</div>
-					<div class="setting-card">
-						<span class="card-label">头像</span>
-						<div class="media-options">
-							<div class="media-option media-avatar">
-								<span class="media-option-label">从预设中选择</span>
-								<div id="avatar-display">
-									<img src="img/avatar/0_icon.webp" onclick="displayWindow('avatar-select')" />
-								</div>
-							</div>
-							<div class="media-option media-avatar">
-								<span class="media-option-label">自定义</span>
-								<div id="custom-avatar">
-									<img src="Processed_Illustration/random.jpg" />
-								</div>
+				<!-- 潜力值输入已隐藏：个人潜力值直接读取最高潜力值（代码保留，恢复时去掉 style="display:none" 即可） -->
+				<div class="setting-card" style="display:none">
+					<span class="card-label">潜力值</span>
+					<input id="potential-input" placeholder="6.16" />
+				</div>
+				<div class="setting-card">
+					<span class="card-label">段位框</span>
+					<input type="number" id="selected-dan" hidden="hidden" value="0" />
+					<div id="user-course-dan-display" onclick="displayWindow('user-course-dan-select')">不显示</div>
+					<button class="btn-action" onclick="displayWindow('id-course-dan')"
+						style="width:100%;">显示/隐藏好友码段位框</button>
+				</div>
+				<div class="setting-card">
+					<span class="card-label">头像</span>
+					<div class="media-options">
+						<div class="media-option media-avatar">
+							<span class="media-option-label">从预设中选择</span>
+							<div id="avatar-display">
+								<img src="img/avatar/0_icon.webp" onclick="displayWindow('avatar-select')" />
 							</div>
 						</div>
-						<div class="upload-toggle-row">
-							<button type="button" class="btn-action" onclick="inputFile('custom-avatar-input')">手动上传</button>
-							<label class="custom-toggle">
-								<input type="checkbox" id="use-custom-avatar">
-								<span>使用自定义头像</span>
-							</label>
-						</div>
-						<input type="file" id="custom-avatar-input" hidden="hidden">
-					</div>
-					<div class="setting-card">
-						<span class="card-label">背景图</span>
-						<div class="media-options">
-							<div class="media-option media-background">
-								<span class="media-option-label">从预设中选择</span>
-								<img id="background-display" onclick="displayWindow('background-select')" src="bgs/1.webp" />
-							</div>
-							<div class="media-option media-background">
-								<span class="media-option-label">自定义</span>
-								<div id="custom-background">
-									<img src="Processed_Illustration/random.jpg" />
-								</div>
+						<div class="media-option media-avatar">
+							<span class="media-option-label">自定义</span>
+							<div id="custom-avatar">
+								<img src="Processed_Illustration/random.jpg" />
 							</div>
 						</div>
-						<div class="upload-toggle-row">
-							<button type="button" class="btn-action" onclick="inputFile('custom-background-input')">手动上传</button>
-							<label class="custom-toggle">
-								<input type="checkbox" id="use-custom-background">
-								<span>使用自定义背景图</span>
-							</label>
+					</div>
+					<div class="upload-toggle-row">
+						<button type="button" class="btn-action"
+							onclick="inputFile('custom-avatar-input')">手动上传</button>
+						<label class="custom-toggle">
+							<input type="checkbox" id="use-custom-avatar">
+							<span>使用自定义头像</span>
+						</label>
+					</div>
+					<input type="file" id="custom-avatar-input" hidden="hidden">
+				</div>
+				<div class="setting-card">
+					<span class="card-label">背景图</span>
+					<div class="media-options">
+						<div class="media-option media-background">
+							<span class="media-option-label">从预设中选择</span>
+							<img id="background-display" onclick="displayWindow('background-select')"
+								src="bgs/1.webp" />
 						</div>
-						<input type="file" id="custom-background-input" hidden="hidden">
-					</div>
-					<div class="setting-card">
-						<span class="card-label">显示单元数</span>
-						<div style="display:flex;gap:6px;align-items:center;">
-							<input type="number" id="unit-quantity" placeholder="70" value="70" style="width:80px;" />
-							<button class="btn-action" onclick="changeUnitQuantity()">修改</button>
+						<div class="media-option media-background">
+							<span class="media-option-label">自定义</span>
+							<div id="custom-background">
+								<img src="Processed_Illustration/random.jpg" />
+							</div>
 						</div>
 					</div>
-					<div class="setting-card">
-						<span class="card-label">物量显示形式</span>
-						<select id="switch-losescore">
-							<option value="0">pure-far-lost</option>
-							<option value="1">仅丢失分数</option>
-							<option value="2">小P数/等效far数</option>
-						</select>
+					<div class="upload-toggle-row">
+						<button type="button" class="btn-action"
+							onclick="inputFile('custom-background-input')">手动上传</button>
+						<label class="custom-toggle">
+							<input type="checkbox" id="use-custom-background">
+							<span>使用自定义背景图</span>
+						</label>
 					</div>
-					<div class="setting-card">
+					<input type="file" id="custom-background-input" hidden="hidden">
+				</div>
+				<div class="setting-card">
+					<span class="card-label">显示单元数</span>
+					<div style="display:flex;gap:6px;align-items:center;">
+						<input type="number" id="unit-quantity" placeholder="70" value="70" style="width:80px;" />
+						<button class="btn-action" onclick="changeUnitQuantity()">修改</button>
+					</div>
+				</div>
+				<div class="setting-card">
+					<span class="card-label">物量显示形式</span>
+					<select id="switch-losescore">
+						<option value="0">pure-far-lost</option>
+						<option value="1">仅丢失分数</option>
+						<option value="2">小P数/等效far数</option>
+					</select>
+				</div>
+				<div class="setting-card">
 					<span class="card-label">操作</span>
 					<input type="file" id="file-input" hidden="hidden" />
-					<button class="btn-action primary" onclick="inputFile('file-input')" style="width:100%;">选择 st3 或分数表</button>
-					<button class="btn-action primary" onclick="saveAsImage('mainCapture')" style="width:100%;">生成图片</button>
+					<button class="btn-action primary" onclick="inputFile('file-input')" style="width:100%;">选择 st3
+						或分数表</button>
+					<button class="btn-action primary" onclick="saveAsImage('mainCapture')"
+						style="width:100%;">生成图片</button>
 					<!-- B30 生成页入口已隐藏（代码保留，恢复时去掉 display:none 即可） -->
-					<button class="btn-action" onclick="window.location.href='b30gen.html'" style="width:100%;display:none;">切到 B30</button>
-						<button class="btn-action" onclick="window.location.href='index.html'" style="width:100%;">返回主页</button>
-					</div>
-					<div class="setting-card">
-						<span class="card-label">管理</span>
-						
-						<button class="btn-action danger" id="delete-local-storage" onclick="deleteLocalStorage()" style="width:100%;">🗑 清空本地缓存</button>
-					</div>
+					<button class="btn-action" onclick="window.location.href='b30gen.html'"
+						style="width:100%;display:none;">切到 B30</button>
+					<button class="btn-action" onclick="window.location.href='index.html'"
+						style="width:100%;">返回主页</button>
+				</div>
+				<div class="setting-card">
+					<span class="card-label">管理</span>
+
+					<button class="btn-action danger" id="delete-local-storage" onclick="deleteLocalStorage()"
+						style="width:100%;">🗑 清空本地缓存</button>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<!-- ===== Popup: Avatar Select ===== -->
-		<div id="avatar-select" hidden="hidden">
-			<div class="popup-bg" onclick="displayWindow('avatar-select')"></div>
-			<div class="popup-content">
-				<div class="modal-header">
-					<h3 class="modal-title">选择头像</h3>
-					<span class="modal-close" onclick="displayWindow('avatar-select')" style="font-size:1.4rem;color:var(--text-muted);cursor:pointer;">&times;</span>
-				</div>
-				<ul id="avatar-list"></ul>
+	<!-- ===== Popup: Avatar Select ===== -->
+	<div id="avatar-select" hidden="hidden">
+		<div class="popup-bg" onclick="displayWindow('avatar-select')"></div>
+		<div class="popup-content">
+			<div class="modal-header">
+				<h3 class="modal-title">选择头像</h3>
+				<span class="modal-close" onclick="displayWindow('avatar-select')"
+					style="font-size:1.4rem;color:var(--text-muted);cursor:pointer;">&times;</span>
 			</div>
+			<ul id="avatar-list"></ul>
 		</div>
+	</div>
 
-		<!-- ===== Popup: Background Select ===== -->
-		<div id="background-select" hidden="hidden">
-			<div class="popup-bg" onclick="displayWindow('background-select')"></div>
-			<div class="popup-content">
-				<div class="modal-header">
-					<h3 class="modal-title">选择背景图</h3>
-					<span class="modal-close" onclick="displayWindow('background-select')" style="font-size:1.4rem;color:var(--text-muted);cursor:pointer;">&times;</span>
-				</div>
-				<ul id="background-list"></ul>
+	<!-- ===== Popup: Background Select ===== -->
+	<div id="background-select" hidden="hidden">
+		<div class="popup-bg" onclick="displayWindow('background-select')"></div>
+		<div class="popup-content">
+			<div class="modal-header">
+				<h3 class="modal-title">选择背景图</h3>
+				<span class="modal-close" onclick="displayWindow('background-select')"
+					style="font-size:1.4rem;color:var(--text-muted);cursor:pointer;">&times;</span>
 			</div>
+			<ul id="background-list"></ul>
 		</div>
+	</div>
 
-		<!-- ===== Popup: Course Dan Select ===== -->
-		<div id="user-course-dan-select" hidden="hidden">
-			<div class="popup-bg" onclick="displayWindow('user-course-dan-select')"></div>
-			<div class="popup-content">
-				<div class="modal-header">
-					<h3 class="modal-title">选择段位框</h3>
-					<span class="modal-close" onclick="displayWindow('user-course-dan-select')" style="font-size:1.4rem;color:var(--text-muted);cursor:pointer;">&times;</span>
-				</div>
-				<ul id="user-course-dan-list">
-					<li class="user-course-dan-option" value="0" onclick="changeCourseDanFrame(0)"><button>不显示</button></li>
-				</ul>
+	<!-- ===== Popup: Course Dan Select ===== -->
+	<div id="user-course-dan-select" hidden="hidden">
+		<div class="popup-bg" onclick="displayWindow('user-course-dan-select')"></div>
+		<div class="popup-content">
+			<div class="modal-header">
+				<h3 class="modal-title">选择段位框</h3>
+				<span class="modal-close" onclick="displayWindow('user-course-dan-select')"
+					style="font-size:1.4rem;color:var(--text-muted);cursor:pointer;">&times;</span>
 			</div>
+			<ul id="user-course-dan-list">
+				<li class="user-course-dan-option" value="0" onclick="changeCourseDanFrame(0)"><button>不显示</button></li>
+			</ul>
 		</div>
+	</div>
 
-		<div id="modify-window" hidden="hidden">
-			<div id="modify-window-background" onclick="displayWindow('modify-window')"></div>
-			<div id="modify-window-close" onclick="displayWindow('modify-window')">&times;</div>
-			<div id="modify-window-main">
-				<div class="modal-header">
-					<h3 id="modify-window-title" class="modal-title">修改<span></span>信息</h3>
-				</div>
-				<div id="modify-window-content">
-					<input type="number" hidden="hidden" value="0" id="modify-current-index" />
-					<div class="modify-row" id="modify-illustration-container">
-						<img src="Processed_Illustration/sayonarahatsukoi.jpg" />
-					</div>
-					<div class="modify-row" id="modify-song-name">
-						<label>修改显示的曲名</label>
-						<input placeholder="输入你想显示的曲名" />
-					</div>
-					<div class="modify-row" id="modify-song-id">
-						<label>修改歌曲的songid</label>
-						<input placeholder="不知道是什么请不要修改" />
-					</div>
-					<div class="modify-row" id="modify-song-score">
-						<label>修改分数</label>
-						<input type="number" placeholder="0" />
-					</div>
-					<div class="modify-row" id="modify-song-item">
-						<div class="modify-field">
-							<label for="modify-pure">Pure数</label>
-							<input type="number" id="modify-pure" />
-						</div>
-						<div class="modify-field">
-							<label for="modify-critical-pure">大P数</label>
-							<input type="number" id="modify-critical-pure" />
-						</div>
-						<div class="modify-field">
-							<label for="modify-far">Far数</label>
-							<input type="number" id="modify-far" />
-						</div>
-						<div class="modify-field">
-							<label for="modify-lost">Lost数</label>
-							<input type="number" id="modify-lost" />
-						</div>
-					</div>
-					<div class="modify-row">
-						<button class="modify-button" id="delete-result" onclick="deleteResult()">删除此条记录</button>
-					</div>
-				</div>
-				<div id="modify-window-buttons">
-					<button type="button" id="modify-window-accept" class="accept-btn" onclick="acceptModifyResult(currentArray)">保存修改</button>
-					<button type="button" id="modify-window-refuse" class="refuse-btn" onclick="abortModifyResult()">取消</button>
-				</div>
+	<div id="modify-window" hidden="hidden">
+		<div id="modify-window-background" onclick="displayWindow('modify-window')"></div>
+		<div id="modify-window-close" onclick="displayWindow('modify-window')">&times;</div>
+		<div id="modify-window-main">
+			<div class="modal-header">
+				<h3 id="modify-window-title" class="modal-title">修改<span></span>信息</h3>
 			</div>
-		</div>
-
-		<div id="ai-chan-dialog" hidden="hidden">
-			<div id="ai-chan-dialog-background" onclick="displayWindow('ai-chan-dialog')"></div>
-			<div id="ai-chan-dialog-close" onclick="displayWindow('ai-chan-dialog')">&times;</div>
-			<div id="ai-chan-dialog-main">
-				<div id="ai-chan-dialog-title">
-					<h3 class="modal-title" style="flex:1;margin:0;border:none;padding:0;">AI酱推荐</h3>
-					<button class="btn-action" id="ai-chan-roll" onclick="aiChanRoll(filteredArray)">再推荐一首给我吧！</button>
+			<div id="modify-window-content">
+				<input type="number" hidden="hidden" value="0" id="modify-current-index" />
+				<div class="modify-row" id="modify-illustration-container">
+					<img src="Processed_Illustration/sayonarahatsukoi.jpg" />
 				</div>
-				<div id="ai-chan-content">(=ↀωↀ=)
+				<div class="modify-row" id="modify-song-name">
+					<label>修改显示的曲名</label>
+					<input placeholder="输入你想显示的曲名" />
 				</div>
-				<div id="ai-chan-dialog-buttons">
-					<div id="ai-chan-dialog-accept" onclick="displayWindow('ai-chan-dialog')">彳</div>
-					<div id="ai-chan-dialog-refuse" onclick="displayWindow('ai-chan-dialog')">亍</div>
+				<div class="modify-row" id="modify-song-id">
+					<label>修改歌曲的songid</label>
+					<input placeholder="不知道是什么请不要修改" />
+				</div>
+				<div class="modify-row" id="modify-song-score">
+					<label>修改分数</label>
+					<input type="number" placeholder="0" />
+				</div>
+				<div class="modify-row" id="modify-song-item">
+					<div class="modify-field">
+						<label for="modify-pure">Pure数</label>
+						<input type="number" id="modify-pure" />
+					</div>
+					<div class="modify-field">
+						<label for="modify-critical-pure">大P数</label>
+						<input type="number" id="modify-critical-pure" />
+					</div>
+					<div class="modify-field">
+						<label for="modify-far">Far数</label>
+						<input type="number" id="modify-far" />
+					</div>
+					<div class="modify-field">
+						<label for="modify-lost">Lost数</label>
+						<input type="number" id="modify-lost" />
+					</div>
+				</div>
+				<div class="modify-row">
+					<button class="modify-button" id="delete-result" onclick="deleteResult()">删除此条记录</button>
 				</div>
 			</div>
+			<div id="modify-window-buttons">
+				<button type="button" id="modify-window-accept" class="accept-btn"
+					onclick="acceptModifyResult(currentArray)">保存修改</button>
+				<button type="button" id="modify-window-refuse" class="refuse-btn"
+					onclick="abortModifyResult()">取消</button>
+			</div>
 		</div>
+	</div>
 
-		<!-- ai-chan -->
-		<div id="ai-chan" onclick="displayWindow('ai-chan-dialog')">
-			<img src="img/ai-chan.png" />
+	<div id="ai-chan-dialog" hidden="hidden">
+		<div id="ai-chan-dialog-background" onclick="displayWindow('ai-chan-dialog')"></div>
+		<div id="ai-chan-dialog-close" onclick="displayWindow('ai-chan-dialog')">&times;</div>
+		<div id="ai-chan-dialog-main">
+			<div id="ai-chan-dialog-title">
+				<h3 class="modal-title" style="flex:1;margin:0;border:none;padding:0;">AI酱推荐</h3>
+				<button class="btn-action" id="ai-chan-roll" onclick="aiChanRoll(filteredArray)">再推荐一首给我吧！</button>
+			</div>
+			<div id="ai-chan-content">(=ↀωↀ=)
+			</div>
+			<div id="ai-chan-dialog-buttons">
+				<div id="ai-chan-dialog-accept" onclick="displayWindow('ai-chan-dialog')">彳</div>
+				<div id="ai-chan-dialog-refuse" onclick="displayWindow('ai-chan-dialog')">亍</div>
+			</div>
 		</div>
-		<!-- 生成图片 -->
-		<div id="generate-image-btn" onclick="saveAsImage('mainCapture')">生成<br />图片</div>
-		<!-- 返回到顶部 -->
-		<div id="back-to-top" onclick="scrollToElement('top-of-body')">
-			回到<br />顶部
-			<span></span>
-		</div>
-		<div id="tool-root" data-tool-label="小工具" data-tool-title="单曲PTT计算器" data-fab-variant="square"></div>
-	</body>
+	</div>
+
+	<!-- ai-chan -->
+	<div id="ai-chan" onclick="displayWindow('ai-chan-dialog')">
+		<img src="img/ai-chan.png" />
+	</div>
+	<!-- 生成图片 -->
+	<div id="generate-image-btn" onclick="saveAsImage('mainCapture')">生成<br />图片</div>
+	<!-- 返回到顶部 -->
+	<div id="back-to-top" onclick="scrollToElement('top-of-body')">
+		回到<br />顶部
+		<span></span>
+	</div>
+	<div id="tool-root" data-tool-label="小工具" data-tool-title="单曲PTT计算器" data-fab-variant="square"></div>
+</body>
+<script src="js/scrollbar.js"></script>
 </html>

@@ -709,29 +709,10 @@ function handleScroll(unitid, index) {
 
 // ─── 统计 ───
 function showStatistics(array) {
-    try {
-        if (!array) array = currentArray;
-        let sts = getStatistics(array);
-        let order = ["PM", "FR", "EX+", "EX", "AA", "A", "B", "C", "D"];
-        let total = 0;
-        order.forEach(function (l) {
-            let n = sts[l] ? sts[l].length : 0;
-            total += n;
-            $("#sts-" + l).text(n);
-        });
-        $("#sts-total").text(total);
-        // Show modal
-        $("#stats-window").removeAttr("hidden").css({ display: "block", opacity: 0 });
-        setTimeout(function () { $("#stats-window").css("opacity", 1); }, 20);
-    } catch (err) { console.warn("showStatistics error:", err); }
-}
-
-function closeStatsModal() {
-    $("#stats-window").css("opacity", 0);
-    setTimeout(function () { $("#stats-window").attr("hidden", "").css("display", "none"); }, 300);
-    try {
-        alert("在所有 " + total + " 条结果中，有: \n" + lines.join("\n"));
-    } catch (err) { console.warn("showStatistics error:", err); }
+    // 与工具箱“全局统计”合并：直接打开工具箱的全局统计页签
+    if (window.openToolPanel) {
+        window.openToolPanel('global-stats');
+    }
 }
 
 // ─── 保存 VH 版万能查分表（已停用，功能暂不使用）───

@@ -1,0 +1,48 @@
+/**
+ * 仿安卓沉浸式滚动条样式（增强版）
+ * 适用于复杂页面，避免样式冲突
+ */
+
+/* ========== 使用更具体的选择器 ========== */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.5);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 128, 128, 0.8);
+}
+
+/* ========== 显示状态 ========== */
+html.scrollbar-visible::-webkit-scrollbar,
+body.scrollbar-visible::-webkit-scrollbar,
+.scrollbar-visible::-webkit-scrollbar {
+  opacity: 1;
+}
+
+/* ========== Firefox 降级 ========== */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.5) transparent;
+}

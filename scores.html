@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,8 +11,11 @@
 	<script src="js/CommonFunctions.js" defer></script>
 	<script src="js/sql-wasm.js" defer></script>
 	<script src="js/scores.js" defer></script>
+	<link rel="stylesheet" href="css/scrollbar.css">
+
 	<link rel="icon" href="favicon.ico">
 </head>
+
 <body>
 	<div id="page">
 		<header id="toolbar">
@@ -26,8 +30,11 @@
 					<button class="btn-primary" id="export-btn" type="button">⬇ 导出全曲成绩</button>
 					<button class="btn-secondary" id="export-csv-btn" type="button">⬇ 导出为CSV</button>
 					<button class="btn-secondary" id="import-btn" type="button">⬆ 载入成绩文件</button>
-					<input type="file" id="import-file" accept=".json,.csv,.db,.st3,.jpg,.jpeg,.png,.webp,image/*,application/json,application/octet-stream" hidden>
-					<button class="btn-secondary theme-toggle" type="button" onclick="toggleTheme()" id="theme-toggle-btn">🌙 深色</button>
+					<input type="file" id="import-file"
+						accept=".json,.csv,.db,.st3,.jpg,.jpeg,.png,.webp,image/*,application/json,application/octet-stream"
+						hidden>
+					<button class="btn-secondary theme-toggle" type="button" onclick="toggleTheme()"
+						id="theme-toggle-btn">🌙 深色</button>
 				</div>
 			</div>
 			<div id="filter-row">
@@ -68,6 +75,8 @@
 			</div>
 		</div>
 	</div>
-	<div id="tool-root" data-tool-label="工具箱" data-tool-title="工具箱" data-fab-variant="index" data-fab-bottom="2rem"></div>
+	<div id="tool-root" data-tool-label="工具箱" data-tool-title="工具箱" data-fab-variant="index" data-fab-bottom="2rem">
+	</div>
 </body>
+<script src="js/scrollbar.js"></script>
 </html>

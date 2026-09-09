@@ -413,16 +413,16 @@ button:active {
 }
 
 #ptt-display {
-	width: 500px;
-	height: 300px;
-	/* background: #6E3A60; */
-	position: absolute;
-	display: block;
-	float: none;
-	right: 0;
-	top: 0;
-	transition-duration: 0.3s;
-	cursor: pointer;
+    width: 500px;
+    height: 300px;
+    /* background: #6E3A60; */
+    position: absolute;
+    display: block;
+    float: none;
+    right: 2rem;
+    top: 0;
+    transition-duration: 0.3s;
+    cursor: pointer;
 }
 
 #ptt-display:hover {

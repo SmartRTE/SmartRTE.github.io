@@ -273,9 +273,9 @@ function initializeSettings() {
 	$('#user-id span').text(formatUserID(localStorage.userId));
 	let t = localStorage.rbm.split(',');
 	rbm = t;
-	$('#ptt-max span').text(toFloor(parseFloat(t[2]), 4));
-	$('#ptt-b30 span').text(toFloor(parseFloat(t[1]), 4));
-	$('#ptt-r10 span').text(toFloor(parseFloat(t[0]), 4));
+	$('#ptt-max span').text(toFloor(parseFloat(t[2]), 5));
+	$('#ptt-b30 span').text(toFloor(parseFloat(t[1]), 5));
+	$('#ptt-r10 span').text(toFloor(parseFloat(t[0]), 5));
 	// 个人潜力值直接取最高潜力值（三位小数，截断），不再手动输入
 	$('#potential-value').text(toFloor(parseFloat(t[2]), 3));
 	changePotentialFrame(getPotentialFrame(t[2]));
@@ -543,9 +543,9 @@ function displayB30(array) {
 	rbm = calculateMax50(ary);
 	localStorage.rbm = rbm;
 	// generateUnits(array, unitQuantity);
-	$('#ptt-max span').text(toFloor(parseFloat(rbm[2]), 4));
-	$('#ptt-b30 span').text(toFloor(parseFloat(rbm[1]), 4));
-	$('#ptt-r10 span').text(toFloor(parseFloat(rbm[0]), 4));
+	$('#ptt-max span').text(toFloor(parseFloat(rbm[2]), 5));
+	$('#ptt-b30 span').text(toFloor(parseFloat(rbm[1]), 5));
+	$('#ptt-r10 span').text(toFloor(parseFloat(rbm[0]), 5));
 	// 个人潜力值：直接取最高潜力值（三位小数，截断）
 	$('#potential-value').text(toFloor(parseFloat(rbm[2]), 3));
 	changePotentialFrame(getPotentialFrame(rbm[2]));

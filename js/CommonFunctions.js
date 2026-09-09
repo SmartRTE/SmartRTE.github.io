@@ -1815,7 +1815,7 @@ function initToolWidgets() {
 .tool-push-meta { font-size: .72rem; color: var(--text-muted); margin-top: 2px; }
 .tool-push-right { text-align: right; flex: 0 0 auto; }
 .tool-push-delta { font-size: 1rem; font-weight: 800; color: var(--success); font-variant-numeric: tabular-nums; }
-.tool-push-target { font-size: .68rem; color: var(--text-muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+.tool-push-target { font-size: .68rem; color: var(--text-muted); margin-top: 2px; font-variant-numeric: tabular-nums; word-break: break-all;}
 .tool-push-item-noplay { border-style: dashed; opacity: .85; }
 .tool-push-toggle-row { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
 /* 需提高优先级：面板内的 label 会命中 .tool-calc label 的纵向布局规则 */
@@ -1955,6 +1955,34 @@ label.tool-push-toggle {
 	font-variant-numeric: tabular-nums;
 	text-align: right;
 }
+.tool-stats-grade-row {
+	display: grid;
+	grid-template-columns: 3rem 1fr 4.6rem;
+	align-items: center;
+	gap: 8px;
+	padding: 3px 0;
+}
+.tool-stats-grade-label {
+	font-size: .8rem;
+	font-weight: 800;
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+	letter-spacing: .02em;
+}
+.tool-stats-grade-count {
+	font-size: .74rem;
+	font-weight: 800;
+	color: var(--text-primary);
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+	white-space: nowrap;
+}
+.tool-stats-grade-count small {
+	font-size: .62rem;
+	color: var(--text-muted);
+	font-weight: 600;
+	margin-left: 3px;
+}
 `;
 		document.head.appendChild(styleEl);
 	}
@@ -2018,11 +2046,28 @@ label.tool-push-toggle {
 	document.body.appendChild(fab);
 	document.body.appendChild(modal);
 
+	// 统一切换页签：tab 点击与页面外部入口（如 index“查看统计”）都走这里
+	function openToolPanel(panelId) {
+		const tab = modal.querySelector('.tool-tab[data-tool-panel="' + panelId + '"]');
+		if (!tab) return;
+		modal.hidden = false;
+		const tabs = modal.querySelectorAll('.tool-tab');
+		const panels = modal.querySelectorAll('.tool-panel');
+		tabs.forEach(function (t) {
+			t.classList.toggle('active', t === tab);
+		});
+		panels.forEach(function (p) {
+			p.classList.toggle('active', p.getAttribute('data-tool-panel') === panelId);
+		});
+		if (panelId === 'ptt-push') renderPttPush();
+		else if (panelId === 'global-stats') renderGlobalStats();
+	}
+	window.openToolPanel = openToolPanel;
+
 	// 打开 / 关闭
 	fab.addEventListener('click', function () {
-		modal.hidden = false;
 		const activePanel = modal.querySelector('.tool-panel.active');
-		if (activePanel && activePanel.getAttribute('data-tool-panel') === 'global-stats') renderGlobalStats();
+		if (activePanel) openToolPanel(activePanel.getAttribute('data-tool-panel'));
 	});
 	function closeModal() {
 		modal.hidden = true;
@@ -2054,15 +2099,7 @@ label.tool-push-toggle {
 	const toolPanels = Array.prototype.slice.call(modal.querySelectorAll('.tool-panel'));
 	toolTabs.forEach(function (tab) {
 		tab.addEventListener('click', function () {
-			const panelId = tab.getAttribute('data-tool-panel');
-			toolTabs.forEach(function (t) {
-				t.classList.toggle('active', t === tab);
-			});
-			toolPanels.forEach(function (p) {
-				p.classList.toggle('active', p.getAttribute('data-tool-panel') === panelId);
-			});
-			if (panelId === 'ptt-push') renderPttPush();
-			else if (panelId === 'global-stats') renderGlobalStats();
+			openToolPanel(tab.getAttribute('data-tool-panel'));
 		});
 	});
 	const pushRefresh = modal.querySelector('#tool-push-refresh');
@@ -2090,7 +2127,20 @@ function toolScoreFormat(n) {
 	return Math.round(n).toLocaleString('zh-CN').replaceAll(',', "'");
 }
 
-/* ---------- 全局统计：B1/B50、Best50/Best10 与单曲PTT分段 ---------- */
+/* ---------- 全局统计：B1/B50、Best50/Best10、单曲PTT分段与成绩分级 ---------- */
+const GLOBAL_GRADE_ORDER = ['PM', 'FR', 'EX+', 'EX', 'AA', 'A', 'B', 'C', 'D'];
+const GLOBAL_GRADE_COLORS = {
+	'PM': '#d4af37',
+	'FR': '#6abf6a',
+	'EX+': '#c8a0e0',
+	'EX': '#a070c0',
+	'AA': '#6aaa6a',
+	'A': '#5a8aaa',
+	'B': '#8a7a5a',
+	'C': '#8a6a6a',
+	'D': '#6a6a6a'
+};
+
 function globalStatsRecords() {
 	const cached = readLocalStorage();
 	if (cached && cached.length) return cached;
@@ -2121,6 +2171,14 @@ function computeGlobalStats() {
 	const sum50 = top50.reduce(function (s, r) { return s + (Number(r.playRating) || 0); }, 0);
 	const sum10 = top10.reduce(function (s, r) { return s + (Number(r.playRating) || 0); }, 0);
 
+	// 成绩分级数量（评级口径与 B50/B30 图中的徽章一致：PM/FR/EX+/EX/AA/A/B/C/D）
+	const gradeCounts = {};
+	GLOBAL_GRADE_ORDER.forEach(function (label) { gradeCounts[label] = 0; });
+	sorted.forEach(function (r) {
+		const label = getSongRanking(Number(r.score) || 0, r.far, r.lost);
+		if (gradeCounts[label] !== undefined) gradeCounts[label]++;
+	});
+
 	// 单曲PTT分段：从最高实际值所在段向下，到“第60高单曲PTT”（页面所说的B60）所在段为止；
 	// 不足60首时显示到最低记录所在段
 	const B60_CUTOFF = 60;
@@ -2129,15 +2187,18 @@ function computeGlobalStats() {
 	const cutoffPtt = Number(sorted[cutoffIndex].playRating) || 0;
 	const topLower = toolTenthFloor(maxPtt);
 	const bottomLower = toolTenthFloor(cutoffPtt);
+	const bucketCounts = {};
+	sorted.forEach(function (r) {
+		const lower = toolTenthFloor(Number(r.playRating) || 0);
+		bucketCounts[lower] = (bucketCounts[lower] || 0) + 1;
+	});
 	const segments = [];
 	for (let lower = topLower; lower >= bottomLower - 1e-12; lower = Math.round((lower - 0.1) * 1000) / 1000) {
-		const count = sorted.filter(function (r) {
-			return toolTenthFloor(Number(r.playRating) || 0) === lower;
-		}).length;
-		segments.push({ lower: lower, count: count });
+		segments.push({ lower: lower, count: bucketCounts[lower] || 0 });
 		if (segments.length > 150) break; // 安全上限，正常不会触发
 	}
 	const maxCount = segments.reduce(function (m, s) { return Math.max(m, s.count); }, 0);
+	const maxGrade = GLOBAL_GRADE_ORDER.reduce(function (m, g) { return Math.max(m, gradeCounts[g]); }, 0);
 	const overallRaw = (sum50 + sum10) / 60;
 	return {
 		n: n,
@@ -2152,6 +2213,8 @@ function computeGlobalStats() {
 		sum10: sum10,
 		overallRaw: overallRaw,
 		overallDisplay: toolTrunc3(overallRaw),
+		gradeCounts: gradeCounts,
+		maxGrade: maxGrade,
 		segments: segments,
 		maxCount: maxCount
 	};
@@ -2203,6 +2266,20 @@ function renderGlobalStats() {
 	cards += '<p class="tool-stats-note">共 ' + d.n + ' 条成绩 · 统计 B50 使用前 ' + d.topN +
 		' 首 · 整体 PTT（约）' + fmt4(d.overallRaw) + '，截断显示 ' + d.overallDisplay.toFixed(3) + '</p>';
 
+	const gradeTitle = '成绩分级数量';
+	let gradeRows = '';
+	GLOBAL_GRADE_ORDER.forEach(function (label) {
+		const cnt = d.gradeCounts[label] || 0;
+		const pct = d.n > 0 ? cnt / d.n * 100 : 0;
+		const width = d.maxGrade > 0 ? Math.max(2, Math.round(cnt / d.maxGrade * 100)) : 0;
+		gradeRows += '<div class="tool-stats-grade-row">' +
+			'<span class="tool-stats-grade-label" style="color:' + GLOBAL_GRADE_COLORS[label] + '">' + label + '</span>' +
+			'<span class="tool-stats-bar-track"><i class="tool-stats-bar" style="width:' + width + '%;background:' + GLOBAL_GRADE_COLORS[label] + '"></i></span>' +
+			'<span class="tool-stats-grade-count">' + cnt +
+			'<small>' + (d.n > 0 && cnt > 0 ? pct.toFixed(1) + '%' : '') + '</small></span>' +
+			'</div>';
+	});
+
 	const segTitle = '单曲PTT分段数量（每 0.1 一段）';
 	const segNote = d.enough60
 		? '分段范围：最高单曲PTT → 第60高单曲PTT（B60）所在段'
@@ -2217,6 +2294,9 @@ function renderGlobalStats() {
 			'</div>';
 	});
 	el.innerHTML = cards +
+		'<div class="tool-stats-title">' + gradeTitle + '</div>' +
+		'<p class="tool-stats-note">评级口径与 B50/B30 图中徽章一致（FR = 无 Lost，PM = 10,000,000），其余按分数区间划分。</p>' +
+		gradeRows +
 		'<div class="tool-stats-title">' + segTitle + '</div>' +
 		'<p class="tool-stats-note">' + segNote + '</p>' +
 		rows;
