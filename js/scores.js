@@ -779,3 +779,12 @@ function showSongDetail(el) {
 function closeSongDetail() {
 	$('#song-detail-modal').attr('hidden', true);
 }
+
+
+/* ===== 识图工具窗：覆盖成绩后 → 重新读缓存 + 刷新显示单元 ===== */
+registerOcrAppliedHandler(function () {
+	currentArray = readLocalStorage() || [];
+	rebuildRecordsMap();
+	updateStats();
+	render();
+});

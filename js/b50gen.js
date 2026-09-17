@@ -1075,3 +1075,13 @@ function closeSettings() {
         }
     });
 }
+
+
+/* ===== 识图工具窗：覆盖成绩后 → 重新读缓存 + 刷新显示单元 ===== */
+registerOcrAppliedHandler(function () {
+	const arr = readLocalStorage();
+	if (!arr || !arr.length) return;
+	currentArray = arr;
+	// 排序 + 存回 + 重算 rbm + switchP30(0)（重新生成成绩单元并刷新潜在值显示）
+	reloadContent(currentArray);
+});

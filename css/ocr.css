@@ -1,0 +1,1084 @@
+@import url("theme.css");
+
+/* ==========================================================================
+   成绩识图（ocr.html）
+   与站内其它页面共用 css/theme.css 的变量体系，因此明暗主题自动跟随。
+   页面自身只依赖 theme.css，不 import index.css，避免带上别页的 #id 规则。
+   ========================================================================== */
+
+@font-face {
+    font-family: "Exo";
+    src: url("../Fonts/Exo-SemiBold.ttf");
+    unicode-range: U+0020-007E;
+}
+
+@font-face {
+    font-family: "L2";
+    src: url("../Fonts/L2-SemiBold.ttf");
+}
+
+/* ===== 基础 ===== */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Exo", "L2", -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+}
+
+input,
+select,
+button,
+textarea {
+    font-family: inherit;
+    font-size: 0.9rem;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+    color: inherit;
+}
+
+a {
+    color: var(--link);
+}
+
+code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.88em;
+}
+
+/* 背景图与其它页保持同一张，深色下压暗一点免得刺眼 */
+#bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: url("../img/11.webp") center / cover fixed;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+[data-theme="dark"] #bg {
+    opacity: 0.14;
+}
+
+/* [hidden] 必须压得住任何 display 声明：本页多个隐藏块自己是 flex 布局 */
+[hidden],
+.hidden {
+    display: none !important;
+}
+
+/* 给 <label> 当按钮用时用，以及真正需要隐藏的原生控件（如 file input） */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ===== 按钮：沿用 index.css 的一套命名与观感 ===== */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+    color: var(--btn-primary-text);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.15);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
+.btn-primary:disabled {
+    background: var(--btn-secondary-bg);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    cursor: not-allowed;
+    transform: none;
+    filter: none;
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--surface-alt);
+    color: var(--text-primary);
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-small {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 5px 10px;
+    background: var(--btn-secondary-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.78rem;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.btn-small:hover {
+    background: var(--surface-alt);
+    color: var(--text-primary);
+}
+
+.btn-link {
+    background: none;
+    color: var(--link);
+    font-size: 0.78rem;
+    padding: 2px 0;
+    text-align: left;
+    transition: 0.2s;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+/* ===== 顶栏 ===== */
+#page-head {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 20px;
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+}
+
+#page-head h1 {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    min-width: 0;
+}
+
+#page-head h1 .brand-sub {
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#head-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+}
+
+/* ===== 被别的页面嵌进「识图工具窗」（ocr.html?embed=1）=====
+   宿主模态窗自带标题栏（标题 + 关闭）且主题已经跟随同一个 localStorage，
+   所以这里把本页自己的顶栏整个收掉，只留识别区。 */
+html.embedded #page-head {
+    display: none;
+}
+
+html.embedded #main-content {
+    padding: 12px 12px 20px;
+}
+
+html.embedded #shot-panel {
+    top: 12px;   /* 没有本页顶栏了，吸顶不必再让出 62px */
+}
+
+html.embedded .panel,
+html.embedded #shot-panel,
+html.embedded details.section {
+    box-shadow: none;   /* 模态窗自己已经有阴影，里面再叠一层会发脏 */
+}
+
+/* ===== 主区域 / 两栏骨架 ===== */
+#main-content {
+    max-width: 1720px;
+    margin: 0 auto;
+    padding: 16px 20px 48px;
+}
+
+/* 桌面：左＝截图，右＝控制 / 选择 / 确认；窄屏：上下堆叠（见文件末尾媒体查询） */
+#ocr-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+    gap: 16px;
+    align-items: start;
+}
+
+/* ===== 面板卡片 ===== */
+.panel {
+    background: var(--card-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 2px 12px var(--shadow);
+}
+
+.panel-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.panel-title .panel-note {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+}
+
+/* #libStatus 的 className 会被 JS 整个改写（'note' / 'note warn'），
+   所以修正样式挂在 id 上，不受 className 变化影响。 */
+#libStatus {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    width: 100%;
+}
+
+.panel-title .spacer {
+    flex: 1;
+}
+
+.panel-head-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ===== 左栏：截图 ===== */
+#shot-panel {
+    position: sticky;
+    top: 62px;
+    align-self: start;
+    background: var(--card-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 2px 12px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+#shot-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#shot-head .panel-title {
+    margin-bottom: 0;
+}
+
+#shot-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: none;
+}
+
+/* 原生 file input 被 .sr-only 藏起来了，键盘 Tab 到它时焦点环要落在可见的 label 上。
+   :has() 不支持时这条整条失效，不会影响其它任何样式。 */
+#shot-panel:has(#fileInput:focus-visible) label[for="fileInput"] {
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* 未选图片时的占位 */
+#stageEmpty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 220px;
+    padding: 28px 16px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 10px;
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 0.82rem;
+    line-height: 1.7;
+}
+
+#stageEmpty .stage-empty-icon {
+    font-size: 1.9rem;
+    line-height: 1;
+    opacity: 0.7;
+}
+
+/* 字段开关 */
+.fieldToggles {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.fieldToggles label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+}
+
+.fieldToggles input {
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 0.25rem;
+    vertical-align: middle;
+}
+
+/* 截图舞台 */
+#editor {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#stageWrap {
+    position: relative;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface-alt);
+    max-height: calc(100vh - 250px);
+}
+
+#stageWrap::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+#stageWrap::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 3px;
+}
+
+#stage {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+}
+
+#stageImg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* ── 选区框 ─────────────────────────────────────────────────────────── */
+.region {
+    position: absolute;
+    box-sizing: border-box;
+    border: 2px solid var(--c);
+    background: var(--c-bg);
+    border-radius: 3px;
+    cursor: move;
+    touch-action: none;
+}
+
+.region.off {
+    opacity: 0.3;
+}
+
+.region.dragging {
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.18);
+}
+
+/* 名字标签必须放在选框「外面」：放进框里会盖住要看的画面，
+   导致没法判断到底框没框住目标位置。默认贴在框的上方，上方放不下就翻到下方
+   （由 JS 按选区顶部到图片顶边的距离加 .label-below，见 updateLabelPlacement）。 */
+.region-label {
+    position: absolute;
+    left: -2px;
+    bottom: calc(100% + 3px);
+    padding: 1px 6px;
+    background: var(--c);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+}
+
+/* 选区贴着图片顶边时，标签翻到框的下方外面 */
+.region.label-below .region-label {
+    top: calc(100% + 3px);
+    bottom: auto;
+}
+
+.region-handle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border: 2px solid var(--c);
+    border-radius: 2px;
+    cursor: nwse-resize;
+    touch-action: none;
+}
+
+/* ===== 右栏：控制区 ===== */
+#ctrl-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+/* 识别设置 */
+#ocrOptionsPanel {
+    margin-top: 0;
+}
+
+#ocrOptions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+}
+
+.opt {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.opt-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+
+.opt select {
+    width: 100%;
+    padding: 7px 9px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--input-text);
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+.opt select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.opt-wide {
+    grid-column: 1 / -1;
+}
+
+/* 复选框那一格：没有 label 文本，垂直居中即可 */
+.opt-check {
+    justify-content: center;
+}
+
+.check-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+}
+
+.check-label input {
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+#ocrOptions .btn-secondary {
+    grid-column: 1 / -1;
+    width: 100%;
+}
+
+/* 识别按钮 + 状态 */
+#runBtn {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 0.9rem;
+}
+
+#status {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+#status.error {
+    color: var(--danger);
+}
+
+/* ===== 识别结果表 ===== */
+#resultTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#resultTable th,
+#resultTable td {
+    padding: 7px 4px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px dashed var(--border);
+}
+
+#resultTable tr:last-child th,
+#resultTable tr:last-child td {
+    border-bottom: none;
+}
+
+#resultTable th {
+    width: 3.6rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+#resultTable td {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+input[data-result] {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.95rem;
+    padding: 6px 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 11rem;
+    color: var(--input-text);
+    background: var(--input-bg);
+}
+
+input[data-result]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.note {
+    font-family: "Exo", "L2", -apple-system, sans-serif;
+    color: var(--text-muted);
+    font-size: 0.76rem;
+    line-height: 1.6;
+}
+
+.note.warn {
+    color: var(--warning);
+}
+
+.note.ok {
+    color: var(--success);
+}
+
+.hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+.hint.small {
+    font-size: 0.76rem;
+}
+
+.hint strong {
+    color: var(--text-secondary);
+}
+
+/* ===== 曲名匹配候选 ===== */
+.matchList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.matchCard {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: 100%;
+    padding: 0.45rem 0.6rem;
+    text-align: left;
+    font: inherit;
+    color: var(--text-primary);
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--dc, #999);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.15s;
+}
+
+.matchCard:hover {
+    background: var(--surface);
+    transform: translateX(2px);
+}
+
+.matchCard.active {
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    border-left-color: var(--dc, #999);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.matchJacket {
+    flex: none;
+    display: block;
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid var(--dc, #999);
+    background: var(--surface-alt);
+}
+
+.matchBody {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.matchTitle {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.matchArtist {
+    display: block;
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    overflow-wrap: anywhere;
+}
+
+.matchDiff {
+    flex: none;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: var(--dc, #999);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.matchScore {
+    flex: none;
+    min-width: 3.4em;
+    text-align: right;
+    color: var(--text-muted);
+    font-size: 0.74rem;
+}
+
+.matchEmpty {
+    padding: 0.6rem 0.2rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+/* ===== 成绩对比与覆盖 ===== */
+.compareHead {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.compareHead img {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid var(--dc, #999);
+}
+
+table.cmpTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.cmpTable th,
+table.cmpTable td {
+    padding: 0.34rem 0.3rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    vertical-align: middle;
+    text-align: left;
+}
+
+table.cmpTable tr:last-child th,
+table.cmpTable tr:last-child td {
+    border-bottom: none;
+}
+
+table.cmpTable thead th {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid var(--border);
+}
+
+table.cmpTable th:first-child {
+    width: 4.2rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.82rem;
+    font-family: "Exo", "L2", sans-serif;
+}
+
+.cmpOld,
+.cmpNew {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.88rem;
+}
+
+.cmpOld {
+    color: var(--text-secondary);
+}
+
+.cmpNew input {
+    width: 100%;
+    max-width: 7.5rem;
+    padding: 5px 7px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    color: var(--input-text);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+}
+
+.cmpNew input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.cmpDelta {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* 「新增成绩」表：第三列是说明文字，不是数值 */
+.cmpHint {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+}
+
+/* 成绩提升按国内习惯用红色，下降用绿色 */
+.cmpDelta.up {
+    color: var(--danger);
+    font-weight: 700;
+}
+
+.cmpDelta.down {
+    color: var(--success);
+    font-weight: 700;
+}
+
+.cmpActions {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    margin-top: 0.75rem;
+}
+
+/* 这个按钮由 JS 生成、只带 id，所以用 id 选择器给它按钮外观 */
+#applyScoreBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+    color: var(--btn-primary-text);
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+#applyScoreBtn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.15);
+}
+
+#applyScoreBtn:active {
+    transform: scale(0.97);
+}
+
+/* ===== details：默认收起，把说明藏起来 ===== */
+details.section {
+    background: var(--card-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-top: 12px;
+}
+
+details.section>summary {
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    list-style: none;
+    user-select: none;
+    padding: 2px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+details.section>summary::-webkit-details-marker {
+    display: none;
+}
+
+details.section>summary::before {
+    content: "▸";
+    display: inline-block;
+    transition: transform 0.2s;
+    color: var(--text-muted);
+}
+
+details.section[open]>summary::before {
+    transform: rotate(90deg);
+}
+
+details.section>summary:hover {
+    color: var(--text-primary);
+}
+
+details.section .section-body {
+    padding-top: 10px;
+}
+
+details.section .hint+.hint {
+    margin-top: 8px;
+}
+
+details.section ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+pre {
+    background: var(--code-bg);
+    padding: 0.9rem;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-height: 40vh;
+    overflow: auto;
+}
+
+/* ===== 窄屏：单栏堆叠，截图不再吸顶 ===== */
+@media (max-width: 980px) {
+    #main-content {
+        padding: 12px 12px 40px;
+    }
+
+    #ocr-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    #shot-panel {
+        position: static;
+    }
+
+    /* 单栏时不再给舞台限高：让整页自然滚动，避免在图片里再套一层内部滚动条
+       （内部滚动在触屏上和页面滚动很容易打架）。 */
+    #stageWrap {
+        max-height: none;
+    }
+
+    #page-head {
+        padding: 8px 12px;
+    }
+
+    #page-head h1 .brand-sub {
+        display: none;
+    }
+}
+
+@media (max-width: 520px) {
+    #ocrOptions {
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        padding: 10px 11px;
+        border-radius: 12px;
+    }
+
+    #shot-panel {
+        padding: 10px;
+        border-radius: 12px;
+    }
+
+    table.cmpTable th:first-child {
+        width: 3.2rem;
+        font-size: 0.74rem;
+    }
+
+    .matchJacket {
+        width: 40px;
+        height: 40px;
+    }
+
+    .matchScore {
+        display: none;
+    }
+
+    .cmpDelta {
+        font-size: 0.72rem;
+    }
+
+    #applyScoreBtn {
+        width: 100%;
+    }
+
+    /* 窄屏上图片被压得很小，选区框也跟着小：标签缩一号避免互相压住，
+       拖拽手柄放大一点，手指更容易抓到。 */
+    .region-label {
+        font-size: 10px;
+        padding: 0 4px;
+    }
+
+    .region {
+        border-width: 1.5px;
+    }
+
+    .region-handle {
+        width: 16px;
+        height: 16px;
+    }
+}

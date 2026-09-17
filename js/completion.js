@@ -1045,3 +1045,12 @@ function closeSettings() {
 		}
 	});
 }
+
+
+/* ===== 识图工具窗：覆盖成绩后 → 重新读缓存 + 刷新显示单元 ===== */
+registerOcrAppliedHandler(function () {
+	const arr = getResultArray();
+	if (!arr || !arr.length) return;
+	// 把新记录合并回「全曲定数模板」并重新生成单元
+	refillCurrentArray(arr);
+});

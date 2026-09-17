@@ -738,3 +738,14 @@ function initializeSticker() {
 
 /* ===== 定数表/曲目列表加载（VHZEK，已停用） ===== */
 // 定数表现由 json/constants.json + json/songlist 在 initializeSongData 中派生
+
+
+/* ===== 识图工具窗：覆盖成绩后 → 重新读缓存 + 刷新显示单元 ===== */
+registerOcrAppliedHandler(function () {
+	const arr = readLocalStorage();
+	if (!arr || !arr.length) return;
+	currentArray = arr;
+	filteredArray = currentArray;
+	displayB30(currentArray);
+	renderIndexList();
+});

@@ -1,0 +1,1997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>成绩识图 - Arcaea 查分工具</title>
+    <link rel="stylesheet" href="css/ocr.css">
+    <link rel="stylesheet" href="css/scrollbar.css">
+    <link rel="icon" href="favicon.ico">
+    <script>
+        /* 主题系统：与 js/CommonFunctions.js 里那套保持一致（localStorage 键名 theme、按钮勾 .theme-toggle），
+           但本页是独立 ES module 页面、不加载 CommonFunctions.js，所以这里内联一份。
+           放在 <head> 里同步执行，首屏就不会先闪一下浅色再跳到深色。 */
+        (function () {
+            var t;
+            try { t = localStorage.getItem('theme'); } catch (e) { }
+            if (!t || ['light', 'dark'].indexOf(t) === -1) t = 'light';
+            document.documentElement.dataset.theme = t;
+        })();
+
+        /* 被别的页面用 iframe 嵌进「识图工具窗」时（ocr.html?embed=1）：
+           - 打上 .embedded，把本页自己的顶栏收掉（宿主模态窗自带标题栏和关闭按钮）
+           - 主题跟随宿主页面：宿主改 localStorage.theme 时本页会收到 storage 事件 */
+        var OCR_EMBEDDED = window.self !== window.top ||
+            /(^|[?&])embed=1(&|$)/.test(window.location.search);
+        if (OCR_EMBEDDED) document.documentElement.classList.add('embedded');
+
+        window.addEventListener('storage', function (e) {
+            if (e.key !== 'theme') return;
+            document.documentElement.dataset.theme = (e.newValue === 'dark') ? 'dark' : 'light';
+            updateThemeButton();
+        });
+
+        /** 给宿主页面发消息（没被嵌入时是空操作） */
+        function postToHost(type, payload) {
+            if (!OCR_EMBEDDED) return;
+            try {
+                var msg = { type: type };
+                if (payload) for (var k in payload) msg[k] = payload[k];
+                window.parent.postMessage(msg, window.location.origin === 'null' ? '*' : window.location.origin);
+            } catch (e) { }
+        }
+
+        function getCurrentTheme() {
+            return document.documentElement.dataset.theme || 'light';
+        }
+
+        function updateThemeButton() {
+            var t = getCurrentTheme();
+            document.querySelectorAll('.theme-toggle').forEach(function (el) {
+                el.textContent = t === 'dark' ? '\u2600\uFE0F \u6D45\u8272' : '\uD83C\uDF19 \u6DF1\u8272';
+                el.setAttribute('data-theme-label', t);
+            });
+        }
+
+        function toggleTheme() {
+            var next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
+            document.documentElement.dataset.theme = next;
+            try { localStorage.setItem('theme', next); } catch (e) { }
+            updateThemeButton();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            updateThemeButton();
+            postToHost('arcaea-ocr:ready');
+        });
+    </script>
+</head>
+
+<body>
+    <div id="bg"></div>
+
+    <header id="page-head">
+        <h1>成绩识图<span class="brand-sub">Arcaea 结算截图 · 曲名 / 难度 / 分数</span></h1>
+        <div id="head-actions">
+            <button type="button" class="btn-secondary theme-toggle" id="theme-toggle-btn"
+                onclick="toggleTheme()">🌙 深色</button>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <div id="ocr-layout">
+
+            <!-- ═══ 左栏：截图与选区 ═══ -->
+            <section id="shot-panel">
+                <!-- 原生 file input 保留原样（含 id）：自动化测试直接往这个节点塞文件 -->
+                <input type="file" id="fileInput" accept="image/*" class="sr-only">
+
+                <div id="shot-head">
+                    <h2 class="panel-title">结算截图</h2>
+                    <div id="shot-actions">
+                        <label class="btn-primary" for="fileInput">选择截图</label>
+                    </div>
+                </div>
+
+                <div id="stageEmpty">
+                    <span class="stage-empty-icon">🖼</span>
+                    <span>还没有载入截图<br>点上方「选择截图」选一张 Arcaea 结算图</span>
+                </div>
+
+                <div id="editor" hidden>
+                    <div class="fieldToggles">
+                        <label><input type="checkbox" data-field="title" checked><span class="dot"
+                                style="background:#185FA5"></span>曲名</label>
+                        <label><input type="checkbox" data-field="diff" checked><span class="dot"
+                                style="background:#854F0B"></span>难度</label>
+                        <label><input type="checkbox" data-field="score" checked><span class="dot"
+                                style="background:#0F6E56"></span>分数</label>
+                    </div>
+                    <div id="stageWrap">
+                        <div id="stage">
+                            <img id="stageImg" alt="待识别图片">
+                        </div>
+                    </div>
+                    <p class="hint small">
+                        拖动选框移动位置，拖右下角小方块缩放。标签贴在<strong>框外</strong>，不会挡住画面。
+                    </p>
+                </div>
+            </section>
+
+            <!-- ═══ 右栏：控制 / 选择 / 确认 ═══ -->
+            <div id="ctrl-panel">
+
+                <section class="panel">
+                    <h2 class="panel-title">识别设置</h2>
+                    <div id="ocrOptions">
+                        <div class="opt opt-wide">
+                            <span class="opt-label">曲名识别语言</span>
+                            <select id="langSelect"></select>
+                        </div>
+                        <div class="opt">
+                            <span class="opt-label">放大</span>
+                            <select id="scaleSelect">
+                                <option value="1">1×</option>
+                                <option value="2" selected>2×</option>
+                                <option value="3">3×</option>
+                            </select>
+                        </div>
+                        <div class="opt opt-check">
+                            <label class="check-label"><input type="checkbox" id="singleLine"> 单行识别</label>
+                        </div>
+                        <button id="resetBtn" class="btn-secondary" disabled>重置选区</button>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <button id="ocrBtn" class="btn-primary" disabled>识别所选区域</button>
+                    <p id="status">请先选择一张图片</p>
+                </section>
+
+                <section class="panel">
+                    <h2 class="panel-title">识别结果</h2>
+                    <table id="resultTable">
+                        <tbody>
+                            <tr>
+                                <th>曲名</th>
+                                <td><span data-result="title">—</span> <span class="note" data-note="title"></span></td>
+                            </tr>
+                            <tr>
+                                <th>难度</th>
+                                <td><span data-result="diff">—</span> <span class="note" data-note="diff"></span></td>
+                            </tr>
+                            <tr>
+                                <th>分数</th>
+                                <td>
+                                    <input type="text" data-result="score" placeholder="—" inputmode="numeric"
+                                        aria-label="分数" title="分数框可直接编辑，认错时手动改一下即可">
+                                    <span class="note" data-note="score"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="panel">
+                    <h2 class="panel-title">曲名匹配 <span class="note" id="libStatus">曲目库加载中…</span></h2>
+                    <div id="matchList" class="matchList"></div>
+                </section>
+
+                <section class="panel" id="comparePanel" hidden>
+                    <h2 class="panel-title" id="compareTitle">成绩对比与写入</h2>
+                    <div id="scoreCompare" class="compare" hidden></div>
+                </section>
+
+            </div>
+        </div>
+
+        <!-- ═══ 折叠区：排查用的原始文本 ═══ -->
+        <details class="section">
+            <summary>各区域原始文本与分数投票明细（用于排查识别问题）</summary>
+            <div class="section-body">
+                <pre id="rawOutput">—</pre>
+            </div>
+        </details>
+
+    </main>
+
+    <script type="module">
+        // ✅ 本项目的 tesseract-wasm ESM 入口在 js/ 目录下，浏览器可直接 import，无需打包工具。
+        import { OCRClient, supportsFastBuild } from './js/tesseract-wasm.js';
+
+        // ── 语言表 ──────────────────────────────────────────────────────────
+        // traineddata 放在项目根目录。新增语言：把 xxx.traineddata 丢到根目录，
+        // 再在下面加一行即可（code 必须与文件名一致）。
+        const LANGUAGES = [
+            { code: 'jpn', label: '默认' },
+            { code: 'eng', label: '纯英文' },
+        ];
+        const DEFAULT_LANG = 'jpn';
+
+        // ── 要识别的三个区域 ────────────────────────────────────────────────
+        // rect 用「占图片宽高的比例」(0~1) 表示，因此在任意显示尺寸下都有效。
+        // lang：该字段用哪个模型的 traineddata。null = 用下拉框选的语言。
+        //   ⚠️ 实测（真实 Arcaea 结算截图）：难度 / 分数必须用 eng。
+        //      用 jpn 认分数会把数字认成汉字（447 → 衝、7 → 少…），整串几乎全错；
+        //      难度同理（Past/Present/Future/Beyond/Eternal 都是拉丁字符）。
+        // prep：'plain' = 原样裁剪（只做灰度 + 极性修正）；'score' = 走分数专用流水线
+        //       （极性修正 + 多参数各认一次 + 用分数格式择优 + 形近字归一成 10'001'447）。
+        //       「结果怎么整理」由 prep 决定，不再单独配一个字段。
+        // 额外：难度（key = 'diff'）走 plain 裁剪，但结果会做「纯英文字母 + 比对难度表」的规范化。
+        const FIELDS = [
+            { key: 'title', label: '曲名', color: '#185FA5', bg: 'rgba(24,95,165,0.14)', lang: null, prep: 'plain', rect: { x: 0.05, y: 0.08, w: 0.90, h: 0.12 } },
+            { key: 'diff', label: '难度', color: '#854F0B', bg: 'rgba(133,79,11,0.14)', lang: 'eng', prep: 'plain', rect: { x: 0.05, y: 0.22, w: 0.32, h: 0.08 } },
+            { key: 'score', label: '分数', color: '#0F6E56', bg: 'rgba(15,110,86,0.14)', lang: 'eng', prep: 'score', rect: { x: 0.05, y: 0.32, w: 0.55, h: 0.10 } },
+        ];
+        const DEFAULT_RECTS = FIELDS.map((f) => ({ ...f.rect }));
+        const MIN_SIZE = 0.02;   // 选区最小尺寸（比例）
+        const PAD_PX = 12;       // 裁剪时四周补的白边（放大后的像素），Tesseract 有留白更稳
+        // PSM_SINGLE_LINE：单行模式（选区只含一行文字时更准）。
+        // 实测拉丁文字与日文假名单行都能正确识别；但选区里若有多行内容会严重漏字，
+        // 所以默认关闭，由用户按需勾选。
+        const PSM_SINGLE_LINE = '7';
+
+        // ── DOM ────────────────────────────────────────────────────────────
+        const fileInput = document.getElementById('fileInput');
+        const langSelect = document.getElementById('langSelect');
+        const scaleSelect = document.getElementById('scaleSelect');
+        const singleLineCb = document.getElementById('singleLine');
+        const resetBtn = document.getElementById('resetBtn');
+        const editor = document.getElementById('editor');
+        const stageEmpty = document.getElementById('stageEmpty');
+        const stage = document.getElementById('stage');
+        const stageImg = document.getElementById('stageImg');
+        const ocrBtn = document.getElementById('ocrBtn');
+        const status = document.getElementById('status');
+        const rawOutput = document.getElementById('rawOutput');
+        const libStatus = document.getElementById('libStatus');
+        const matchList = document.getElementById('matchList');
+        const scoreCompare = document.getElementById('scoreCompare');
+        const compareTitle = document.getElementById('compareTitle');
+        const comparePanel = document.getElementById('comparePanel');
+        const resultCells = {};
+        const resultNotes = {};
+        for (const f of FIELDS) {
+            resultCells[f.key] = document.querySelector(`[data-result="${f.key}"]`);
+            resultNotes[f.key] = document.querySelector(`[data-note="${f.key}"]`);
+            f.enabled = true;
+        }
+
+        /** 写曲目库加载状态小字 */
+        function setLibraryStatus(text, isError) {
+            if (!libStatus) return;
+            libStatus.textContent = text;
+            libStatus.className = 'note' + (isError ? ' warn' : '');
+        }
+
+        /** 写「结果备注」小字（元素可能不存在，防御一下） */
+        function setNote(key, text, cls) {
+            const el = resultNotes[key];
+            if (!el) return;
+            el.textContent = text || '';
+            if (cls) el.className = cls;
+        }
+
+        /** 写结果：分数格是可编辑的 <input>，其余是 <span> */
+        function setResult(key, text) {
+            const el = resultCells[key];
+            if (!el) return;
+            if (el.tagName === 'INPUT') el.value = text === '—' ? '' : (text || '');
+            else el.textContent = text;
+        }
+
+        for (const lang of LANGUAGES) {
+            const opt = document.createElement('option');
+            opt.value = lang.code;
+            opt.textContent = lang.label;
+            langSelect.appendChild(opt);
+        }
+        langSelect.value = DEFAULT_LANG;
+
+        // ── 资源路径（全部相对本页面，部署到子目录同样有效）──────────────────
+        const WORKER_URL = new URL('./js/tesseract-worker.js', import.meta.url).href;
+        // ⚠️ worker 内部按「worker 脚本自身位置」解析 ./tesseract-core.wasm（会变成 /js/… → 404），
+        //    所以这里主动取回二进制再交给 OCRClient。同时按 SIMD 支持选 fast / fallback。
+        const WASM_URL = new URL(
+            supportsFastBuild() ? './tesseract-core.wasm' : './tesseract-core-fallback.wasm',
+            import.meta.url
+        ).href;
+        const modelUrl = (code) => new URL(`./${code}.traineddata`, import.meta.url).href;
+
+        let imageBitmap = null;
+        let imageObjectURL = null;
+        let wasmBinary = null;    // 缓存的 wasm 二进制，重建引擎时复用
+        let currentAspect = null; // 当前图片的宽高比
+        let storedAspect = null;  // 上次调整选区时所用图片的宽高比
+
+        function setStatus(msg, isError = false) {
+            status.textContent = msg;
+            status.classList.toggle('error', isError);
+        }
+
+        const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+        // ── 设置持久化（localStorage）────────────────────────────────────────
+        // 选区位置 / 启停状态 / 语言 / 放大倍数 / 单行模式都记住，减少重复调整。
+        const STORAGE_KEY = 'arcaea-ocr-settings-v1';
+
+        /** 校验并夹住读出来的矩形，避免脏数据把选区弄到图片外 */
+        function sanitizeRect(rect, fallback) {
+            const num = (v, d) => (typeof v === 'number' && Number.isFinite(v) ? v : d);
+            const x = clamp(num(rect && rect.x, fallback.x), 0, 1 - MIN_SIZE);
+            const y = clamp(num(rect && rect.y, fallback.y), 0, 1 - MIN_SIZE);
+            const w = clamp(num(rect && rect.w, fallback.w), MIN_SIZE, 1 - x);
+            const h = clamp(num(rect && rect.h, fallback.h), MIN_SIZE, 1 - y);
+            return { x, y, w, h };
+        }
+
+        function saveSettings() {
+            const data = {
+                rects: Object.fromEntries(FIELDS.map((f) => [f.key, f.rect])),
+                enabled: Object.fromEntries(FIELDS.map((f) => [f.key, f.enabled])),
+                lang: langSelect.value,
+                scale: scaleSelect.value,
+                singleLine: singleLineCb.checked,
+                // 没加载过图片时保留上次记录的比例，避免被 null 覆盖掉
+                imageAspect: currentAspect ?? storedAspect,
+            };
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (_) { /* 隐私模式 / 存储被禁用时静默跳过 */ }
+        }
+
+        /** @returns {boolean} 是否成功恢复了设置 */
+        function restoreSettings() {
+            let data = null;
+            try {
+                data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+            } catch (_) { data = null; }
+            if (!data || typeof data !== 'object') return false;
+
+            FIELDS.forEach((field, i) => {
+                field.rect = sanitizeRect(data.rects && data.rects[field.key], DEFAULT_RECTS[i]);
+                if (data.enabled && typeof data.enabled[field.key] === 'boolean') {
+                    field.enabled = data.enabled[field.key];
+                }
+            });
+
+            if (data.lang && LANGUAGES.some((l) => l.code === data.lang)) langSelect.value = data.lang;
+            if (data.scale && [...scaleSelect.options].some((o) => o.value === String(data.scale))) {
+                scaleSelect.value = String(data.scale);
+            }
+            if (typeof data.singleLine === 'boolean') singleLineCb.checked = data.singleLine;
+
+            storedAspect = typeof data.imageAspect === 'number' && data.imageAspect > 0 ? data.imageAspect : null;
+            return true;
+        }
+
+        async function fetchBinary(url, label) {
+            const res = await fetch(url);
+            if (!res.ok) {
+                if (res.status === 404) {
+                    throw new Error(`${label} 不存在（HTTP 404）。请确认文件已放在项目根目录：\n${url}`);
+                }
+                throw new Error(`${label} 加载失败：HTTP ${res.status} ${res.statusText}\n${url}`);
+            }
+            return res.arrayBuffer();
+        }
+
+        // ── 引擎池 ─────────────────────────────────────────────────────────
+        // 关键点：同一个 OCRClient 无法换语言（底层 Init 只在第一次生效），
+        // 所以每种语言各持有一个引擎，按需懒创建、常驻复用。
+        const engines = new Map();   // lang -> OCRClient
+
+        async function ensureEngine(lang) {
+            if (engines.has(lang)) return engines.get(lang);
+
+            if (!wasmBinary || wasmBinary.byteLength === 0) {
+                setStatus(`正在加载 OCR 内核 wasm${supportsFastBuild() ? '' : '（兼容版）'} ...`);
+                wasmBinary = await fetchBinary(WASM_URL, 'OCR 内核 wasm');
+            }
+
+            setStatus(`正在加载 ${lang}.traineddata ...`);
+            // OCRClient 支持的参数只有 createWorker / wasmBinary / workerURL。
+            const engine = new OCRClient({ workerURL: WORKER_URL, wasmBinary });
+            await engine.loadModel(modelUrl(lang));
+            engines.set(lang, engine);
+            return engine;
+        }
+
+        // 单行模式是否真的生效（首次失败后不再重试，避免刷屏）
+        let engineVariablesUsable = true;
+
+        /**
+         * 设置 Tesseract 参数。
+         *
+         * ⚠️ 高层 API `OCRClient` 并没有暴露 setVariable（只有底层 OCREngine 有），
+         *    所以要拿到它内部的 comlink 引擎代理来调用。`_ocrEngine` 是库的私有字段，
+         *    升级 tesseract-wasm 后需要重新确认它还在。
+         *
+         * 注意：现在只用它设 PSM（单行模式）。分数区域**不再使用字符白名单** ——
+         * 实测白名单会把结果变得更差（限制候选集后 LSTM 会整段丢字），详见记忆里的实验记录。
+         */
+        async function setEngineVariable(engine, lang, name, value) {
+            if (!engineVariablesUsable) return;
+            try {
+                const remote = await engine._ocrEngine;
+                const res = await remote.setVariable(name, value);
+                if (res && res.error) throw new Error(res.error);
+            } catch (err) {
+                engineVariablesUsable = false;
+                console.warn(`[ocr] 无法设置 Tesseract 变量（lang=${lang}, ${name}），已跳过该增强：`, err);
+            }
+        }
+
+        // ── 选区（拖拽 / 缩放）──────────────────────────────────────────────
+        const regionEls = {};
+        let dragState = null;
+
+        // 名字标签贴着框外面放：默认在框上方，框顶贴到图片顶边时翻到下方。
+        // 需要留出的高度 = 标签自身高度 + 间距；这里给个够用的固定阈值。
+        const LABEL_SAFE_TOP = 22;
+
+        function updateLabelPlacement(field) {
+            const el = regionEls[field.key];
+            const stageH = stage.clientHeight;
+            if (!el || !stageH) return;
+            el.classList.toggle('label-below', field.rect.y * stageH < LABEL_SAFE_TOP);
+        }
+
+        function applyRect(field) {
+            const el = regionEls[field.key];
+            const r = field.rect;
+            el.style.left = `${r.x * 100}%`;
+            el.style.top = `${r.y * 100}%`;
+            el.style.width = `${r.w * 100}%`;
+            el.style.height = `${r.h * 100}%`;
+            updateLabelPlacement(field);
+        }
+
+        function buildRegions() {
+            for (const field of FIELDS) {
+                const el = document.createElement('div');
+                el.className = 'region';
+                el.dataset.field = field.key;
+                el.style.setProperty('--c', field.color);
+                el.style.setProperty('--c-bg', field.bg);
+
+                const label = document.createElement('span');
+                label.className = 'region-label';
+                label.textContent = field.label;
+
+                const handle = document.createElement('span');
+                handle.className = 'region-handle';
+
+                el.append(label, handle);
+                stage.appendChild(el);
+                regionEls[field.key] = el;
+
+                el.addEventListener('pointerdown', (e) => startDrag(e, field, 'move'));
+                handle.addEventListener('pointerdown', (e) => startDrag(e, field, 'resize'));
+                // 用 pointer capture 把 move/up 都收在选区元素上，指针移出图片也不会丢事件
+                el.addEventListener('pointermove', onDragMove);
+                el.addEventListener('pointerup', endDrag);
+                el.addEventListener('pointercancel', endDrag);
+            }
+            FIELDS.forEach(applyRect);
+            // 图片加载完成 / 窗口缩放都会改变 stage 高度，标签该上该下要跟着重算
+            if (window.ResizeObserver) {
+                new ResizeObserver(() => FIELDS.forEach(updateLabelPlacement)).observe(stage);
+            }
+        }
+
+        function startDrag(e, field, mode) {
+            e.preventDefault();
+            e.stopPropagation();
+            const box = stage.getBoundingClientRect();
+            if (!box.width || !box.height) return;
+
+            const el = regionEls[field.key];
+            dragState = {
+                field,
+                mode,
+                el,
+                startX: e.clientX,
+                startY: e.clientY,
+                startRect: { ...field.rect },
+                boxW: box.width,
+                boxH: box.height,
+            };
+            try { el.setPointerCapture(e.pointerId); } catch (_) { /* 合成事件可能不支持 */ }
+            el.classList.add('dragging');
+        }
+
+        function onDragMove(e) {
+            if (!dragState) return;
+            e.preventDefault();
+
+            const dx = (e.clientX - dragState.startX) / dragState.boxW;
+            const dy = (e.clientY - dragState.startY) / dragState.boxH;
+            const r = dragState.startRect;
+            const field = dragState.field;
+
+            if (dragState.mode === 'move') {
+                field.rect = {
+                    x: clamp(r.x + dx, 0, 1 - r.w),
+                    y: clamp(r.y + dy, 0, 1 - r.h),
+                    w: r.w,
+                    h: r.h,
+                };
+            } else {
+                field.rect = {
+                    x: r.x,
+                    y: r.y,
+                    w: clamp(r.w + dx, MIN_SIZE, 1 - r.x),
+                    h: clamp(r.h + dy, MIN_SIZE, 1 - r.y),
+                };
+            }
+            applyRect(field);
+        }
+
+        function endDrag() {
+            if (!dragState) return;
+            dragState.el.classList.remove('dragging');
+            dragState = null;
+            saveSettings();   // 拖完就记住位置
+        }
+
+        /** 把 FIELDS 的状态同步到界面（复选框勾选状态 + 选区淡显） */
+        function syncFieldToggles() {
+            for (const field of FIELDS) {
+                const cb = document.querySelector(`input[data-field="${field.key}"]`);
+                if (cb) cb.checked = field.enabled;
+                const el = regionEls[field.key];
+                if (el) el.classList.toggle('off', !field.enabled);
+            }
+        }
+
+        // ── 图像预处理 ─────────────────────────────────────────────────────
+        /**
+         * 按选区从原图上裁出像素并放大（不含白边）。
+         * 返回 { canvas, ctx, width, height }。
+         */
+        function drawCrop(bitmap, rect, scale) {
+            const sx = Math.round(rect.x * bitmap.width);
+            const sy = Math.round(rect.y * bitmap.height);
+            const sw = Math.max(1, Math.round(rect.w * bitmap.width));
+            const sh = Math.max(1, Math.round(rect.h * bitmap.height));
+
+            const dw = Math.max(1, Math.round(sw * scale));
+            const dh = Math.max(1, Math.round(sh * scale));
+
+            const canvas = document.createElement('canvas');
+            canvas.width = dw;
+            canvas.height = dh;
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, dw, dh);
+            return { canvas, ctx, width: dw, height: dh };
+        }
+
+        /** 亮度均值（用来判断「浅字压深底」还是「深字压浅底」） */
+        function meanLuma(data) {
+            let sum = 0;
+            for (let i = 0; i < data.length; i += 4) {
+                sum += 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+            }
+            return sum / (data.length / 4);
+        }
+
+        /** 就地灰度化（r=g=b=亮度） */
+        function toGrayInPlace(data) {
+            for (let i = 0; i < data.length; i += 4) {
+                const v = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+                data[i] = data[i + 1] = data[i + 2] = v;
+            }
+        }
+
+        function invertInPlace(data) {
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = 255 - data[i];
+                data[i + 1] = 255 - data[i + 1];
+                data[i + 2] = 255 - data[i + 2];
+            }
+        }
+
+        /** Otsu 阈值（放在灰度图上算） */
+        function otsuThreshold(data) {
+            const hist = new Uint32Array(256);
+            let n = 0;
+            for (let i = 0; i < data.length; i += 4) { hist[data[i]]++; n++; }
+            let sumAll = 0;
+            for (let v = 0; v < 256; v++) sumAll += v * hist[v];
+            let wB = 0, sumB = 0, best = -1, thr = 127;
+            for (let v = 0; v < 256; v++) {
+                wB += hist[v];
+                if (!wB) continue;
+                const wF = n - wB;
+                if (!wF) break;
+                sumB += v * hist[v];
+                const d = sumB / wB - (sumAll - sumB) / wF;
+                const between = wB * wF * d * d;
+                if (between > best) { best = between; thr = v; }
+            }
+            return thr;
+        }
+
+        function binarizeInPlace(data, thr) {
+            for (let i = 0; i < data.length; i += 4) {
+                const v = data[i] > thr ? 255 : 0;
+                data[i] = data[i + 1] = data[i + 2] = v;
+            }
+        }
+
+        /**
+         * 形态学「加粗」：对深色笔画做半径 r 的 min 滤波（可分离实现，O(n)）。
+         * Arcaea 的分数用的是极细的几何字体，笔画只有几个像素宽，Tesseract 的 LSTM
+         * 对这种细笔画识别率明显偏低；加粗 1~2px 能显著提升（实测有效）。
+         */
+        function boldenInPlace(canvas, ctx, r) {
+            if (!r) return;
+            const w = canvas.width, h = canvas.height;
+            const img = ctx.getImageData(0, 0, w, h);
+            const g = new Uint8ClampedArray(w * h);
+            for (let i = 0, p = 0; i < img.data.length; i += 4, p++) g[p] = img.data[i];
+
+            const tmp = new Uint8ClampedArray(g.length);
+            for (let y = 0; y < h; y++) {
+                const row = y * w;
+                for (let x = 0; x < w; x++) {
+                    let m = 255;
+                    const a = Math.max(0, x - r), b = Math.min(w - 1, x + r);
+                    for (let k = a; k <= b; k++) { const v = g[row + k]; if (v < m) m = v; }
+                    tmp[row + x] = m;
+                }
+            }
+            for (let x = 0; x < w; x++) {
+                for (let y = 0; y < h; y++) {
+                    let m = 255;
+                    const a = Math.max(0, y - r), b = Math.min(h - 1, y + r);
+                    for (let k = a; k <= b; k++) { const v = tmp[k * w + x]; if (v < m) m = v; }
+                    g[y * w + x] = m;
+                }
+            }
+            for (let i = 0, p = 0; i < img.data.length; i += 4, p++) {
+                img.data[i] = img.data[i + 1] = img.data[i + 2] = g[p];
+            }
+            ctx.putImageData(img, 0, 0);
+        }
+
+        /**
+         * 裁剪 + 预处理 + 补白边，得到可以喂给 OCR 的 ImageData。
+         *
+         * opts:
+         *   autoInvert  自动判断极性并反相（浅色字压深色底 → 反成深色字压浅色底）
+         *   bin         二值化（Otsu）
+         *   bold        笔画加粗半径（0 = 不加粗）
+         *
+         * ⚠️ 极性判定必须在「不含白边」的原图上做：补的白边会把整幅图的亮度均值拉高，
+         *    导致「浅字压深底」被误判成已经是「深字压浅底」而不反相（踩过这个坑）。
+         *    所以流程是：先裁 + 放大 → 判极性/二值化/加粗 → 最后再补白边。
+         */
+        function cropToImageData(bitmap, rect, scale, opts = {}) {
+            const { canvas, ctx, width, height } = drawCrop(bitmap, rect, scale);
+            const img = ctx.getImageData(0, 0, width, height);
+
+            toGrayInPlace(img.data);
+            if (opts.autoInvert && meanLuma(img.data) < 128) invertInPlace(img.data);
+            if (opts.bin) binarizeInPlace(img.data, otsuThreshold(img.data));
+            ctx.putImageData(img, 0, 0);
+            if (opts.bold) boldenInPlace(canvas, ctx, opts.bold);
+
+            // 最后补白边：Tesseract 对四周有留白的图更稳
+            const pad = Math.max(2, Math.round(PAD_PX * scale));
+            const out = document.createElement('canvas');
+            out.width = width + pad * 2;
+            out.height = height + pad * 2;
+            const octx = out.getContext('2d', { willReadFrequently: true });
+            octx.fillStyle = '#fff';
+            octx.fillRect(0, 0, out.width, out.height);
+            octx.drawImage(canvas, pad, pad);
+            return octx.getImageData(0, 0, out.width, out.height);
+        }
+
+        // ── 分数专用：字符归一 + 分组 ────────────────────────────────────────
+        // Arcaea 分数是「数字 + 用撇号做千位分隔符」：如 10'001'447。
+        // 这个细体字体下 Tesseract 经常把形近字符认错，但错得很有规律：
+        //   O/o/Q/D → 0    l/I/i/|/! → 1
+        // 所以按「形近表」归一即可修回来。只保留这两组 ——
+        // 其它形近映射（Z→2、S→5 等）在实测里出现过反向误伤（同一个字形既被当成 4 又被当成 7），
+        // 加上去反而会把对的答案改错，故不采用。
+        const DIGIT_LOOKALIKE = { O: '0', o: '0', Q: '0', D: '0', U: '0', l: '1', I: '1', i: '1', '|': '1', '!': '1' };
+        // 各种可能的千位分隔符写法（不同字体/编码下都试一遍）
+        const SCORE_SEPARATORS = ["'", '\u2019', '\u2018', '\u2032', '\u00b4', ',', '\u3001'];
+
+        // 分数的位数是固定的：2 + 3 + 3 = 8 位（K 位分隔），上限到千万（10'001'447）。
+        // ✅ 首组「可以」以 0 开头（用户确认）—— 所以不能用「首组非 0」去筛候选，
+        //    那样会把合法的 0X'NNN'NNN 直接判死。
+        const SCORE_SHAPE = [2, 3, 3];
+        const SCORE_DIGITS = SCORE_SHAPE.reduce((a, b) => a + b, 0);   // 8
+
+        /**
+         * 从 OCR 原文抽出分数候选，例如 "1O'OO!'447_" → ['10','001','447']。
+         *
+         * 返回 null（整串没认到数字）或：
+         *   groups     按 2/3/3 分好的三组
+         *   digits     8 位数字（去分隔符）
+         *   shape      3 = 原文分组就正好是 2/3/3（最可信）
+         *              2 = 位数正好 8，但分隔符漏认/错位 → 按 2/3/3 重切
+         *              1 = 位数也不对（多半是丢字/多认）
+         *   lookalikes 归一形近字时替换掉的字符数（越少越可信）
+         */
+        function parseScore(raw) {
+            const groups = [];
+            let cur = '';
+            let lookalikes = 0;
+            for (const ch of (raw || '')) {
+                if (ch >= '0' && ch <= '9') { cur += ch; continue; }
+                if (SCORE_SEPARATORS.includes(ch)) { groups.push(cur); cur = ''; continue; }
+                if (DIGIT_LOOKALIKE[ch]) { cur += DIGIT_LOOKALIKE[ch]; lookalikes++; continue; }
+                // 其它字符（空格、汉字、句点、下划线…）一律丢弃
+            }
+            groups.push(cur);
+            const parts = groups.filter((g) => g.length);
+            const digits = parts.join('');
+            if (!digits) return null;
+
+            // ① 原文分组正好 2/3/3
+            if (parts.length === 3 && parts[0].length === 2 && parts[1].length === 3 && parts[2].length === 3) {
+                return { groups: parts, digits, shape: 3, lookalikes };
+            }
+            // ② 位数正好 8 位 → 分隔符丢了或错位，按固定格式重切
+            if (digits.length === SCORE_DIGITS) {
+                return {
+                    groups: [digits.slice(0, 2), digits.slice(2, 5), digits.slice(5, 8)],
+                    digits, shape: 2, lookalikes,
+                };
+            }
+            return { groups: parts, digits, shape: 1, lookalikes };
+        }
+
+        // ── 难度专用：只留英文字母 + 比对已知难度表 ──────────────────────────
+        // Arcaea 的难度名是固定的纯英文单词，不会出现数字或符号（用户确认），
+        // 一共只有六种，直接硬编码。
+        // 所以①把混进来的数字/符号全部剔除，②再和难度表比对收敛。
+        // ② 顺带能救「选区框大了一点、把旁边那行一起框进来」的情况：
+        //    例如截图上难度下面是「MAX RECALL」，一起框进来会得到
+        //    "ETERNAL MAX RECALL"，比对后能收敛回 "ETERNAL"。
+        const DIFFICULTY_NAMES = ['PAST', 'PRESENT', 'FUTURE', 'BEYOND', 'ETERNAL', 'INSCRIBED'];
+
+        function normalizeDifficulty(raw) {
+            const letters = (raw || '').replace(/[^A-Za-z]+/g, '').toUpperCase();
+            // 命中多个时取最长的那个（避免短名被别的词误伤）
+            const hit = DIFFICULTY_NAMES.filter((n) => letters.includes(n))
+                .sort((a, b) => b.length - a.length)[0];
+            if (hit) return { text: hit, matched: true };
+            return {
+                text: (raw || '').replace(/[^A-Za-z]+/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase(),
+                matched: false,
+            };
+        }
+
+        // ── 曲目库（json/songlist）───────────────────────────────────────────
+        // 页面加载时读 songlist，派生「一条 = 一个谱面（曲目 × 难度）」的索引，
+        // 用来把 OCR 出的曲名匹配回具体曲目。
+        //
+        // songlist 每首的结构：
+        //   { id, title_localized: { en, ja, zh-Hans… }, artist, difficulties: [
+        //       { ratingClass, rating, ratingPlus?, jacketOverride?,
+        //         ratingClassAlias?, title_localized?, artist? }, … ] }
+        //
+        // ⚠️ 难度与 ratingClass 的对应，以及两个特例（用户确认，且与 js/CommonFunctions.js 的
+        //    DIF_BY_CLASS / ratingClassAlias 处理保持一致）：
+        //     0 → PAST   1 → PRESENT   2 → FUTURE   3 → BEYOND   4 → ETERNAL
+        //     ① INSCRIBED 与 BEYOND 共用 ratingClass 3；
+        //     ② 谱面带 ratingClassAlias: 1 时，无论 ratingClass 是多少都算 INSCRIBED。
+        // 曲绘：默认 Processed_Illustration/<id>.jpg；
+        //   谱面标了 jacketOverride: true 的用该难度专属曲绘 <id>_<ratingClass>.jpg。
+        const SONGLIST_PATH = 'json/songlist';
+        const ILLUSTRATION_PATH = 'Processed_Illustration/';
+        // 谱面定数表（唯一手维护文件：idx -> 各难度定数）。
+        // 新增成绩时必须带上定数，否则单曲潜力值算不出来 —— 见 buildNewRecord()。
+        const CONSTANTS_PATH = 'json/constants.json';
+        // 难度 → constants.json 行里的键（与 js/CommonFunctions.js 的 CONST_KEY_BY_DIF 一致）
+        const CONST_KEY_BY_DIF = {
+            PAST: 'PST', PRESENT: 'PRS', FUTURE: 'FTR',
+            BEYOND: 'BYD', ETERNAL: 'ETR', INSCRIBED: 'INS',
+        };
+        let songConstantsByIdx = {};   // idx(字符串) -> { PST, PRS, FTR, BYD, ETR, INS }
+        const DIFF_BY_RATING_CLASS = { 0: 'PAST', 1: 'PRESENT', 2: 'FUTURE', 3: 'BEYOND', 4: 'ETERNAL' };
+        // 与 css/index.css 的难度色条保持一致
+        const DIFF_COLORS = {
+            PAST: '#4a7fff', PRESENT: '#44c844', FUTURE: '#a060d0',
+            BEYOND: '#e05050', ETERNAL: '#c88ad0', INSCRIBED: '#6d28d9',
+        };
+
+        let songLibrary = [];          // 一条 = 一个谱面
+        let libraryState = 'loading';  // loading | ready | failed
+
+        function buildSongLibrary(rawSongs) {
+            const rows = [];
+            for (const song of rawSongs) {
+                const songId = song.id;
+                const localized = song.title_localized || {};
+                const localizedTitles = Object.values(localized).filter((t) => typeof t === 'string' && t);
+                const baseTitle = localized.en || localized.ja || songId;
+                for (const d of (song.difficulties || [])) {
+                    const diff = (d.ratingClassAlias === 1) ? 'INSCRIBED' : DIFF_BY_RATING_CLASS[d.ratingClass];
+                    if (!diff) continue;
+                    const diffTitles = Object.values(d.title_localized || {}).filter((t) => typeof t === 'string' && t);
+                    const title = diffTitles[0] || baseTitle;
+                    // 参与匹配的别名：歌曲级各语言名 + 难度级专属名 + 最终显示名 + songId
+                    const titles = new Set([...localizedTitles, ...diffTitles, title, songId]);
+                    const base = `${ILLUSTRATION_PATH}${songId}.jpg`;
+                    const constRow = songConstantsByIdx[String(song.idx)] || null;
+                    rows.push({
+                        songId,
+                        diff,
+                        title,
+                        artist: d.artist || song.artist || '',
+                        rating: d.rating,
+                        ratingPlus: !!d.ratingPlus,
+                        jacketOverride: !!d.jacketOverride,
+                        illustration: d.jacketOverride ? `${ILLUSTRATION_PATH}${songId}_${d.ratingClass}.jpg` : base,
+                        fallbackIllustration: base,
+                        titles: [...titles],
+                        // ↓ 新增成绩记录时要用到的字段（与 js/CommonFunctions.js 的曲目目录保持一致）
+                        ratingClass: d.ratingClass,
+                        // 定数：优先 INS，未单列时回退 BYD（与 buildQuerySQL 的 class3 处理一致）
+                        constant: readConstantFrom(constRow, diff),
+                        // 写进缓存的曲名，规则同 CommonFunctions 的 PlayResult：
+                        // 难度有专属英文名就用它，否则用歌曲级英文名（不是匹配用的 title，那个可能取到别的语言）
+                        recordTitle: (d.title_localized && d.title_localized.en) ? d.title_localized.en : baseTitle,
+                        // 写进缓存的曲绘文件名（PlayResult 的 illustration 只是文件名，路径由各页面自己拼）
+                        illustrationFile: d.jacketOverride ? `${songId}_${d.ratingClass}.jpg` : `${songId}.jpg`,
+                    });
+                }
+            }
+            return rows;
+        }
+
+        /** 从 constants.json 的一行里取某难度的定数，取不到返回 null */
+        function readConstantFrom(constRow, diff) {
+            if (!constRow) return null;
+            let raw = constRow[CONST_KEY_BY_DIF[diff]];
+            if ((raw === undefined || raw === null || raw === '') && diff === 'INSCRIBED') {
+                raw = constRow.BYD;   // 定数表未单列 INS 时，兼容存放在 BYD 的情况
+            }
+            if (raw === undefined || raw === null || raw === '' || raw === '-') return null;
+            const n = parseFloat(raw);
+            return isFinite(n) ? n : null;
+        }
+
+        async function loadSongLibrary() {
+            setLibraryStatus('曲目库加载中…');
+            try {
+                // constants.json 与 songlist 一起取：新增成绩记录时需要谱面定数。
+                // 它取不到也不该让整页瘫痪 —— 只是新增成绩时定数要人工填。
+                const [res, constRes] = await Promise.all([
+                    fetch(SONGLIST_PATH),
+                    fetch(CONSTANTS_PATH).catch(() => null),
+                ]);
+                if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
+                const data = await res.json();
+                const songs = (data && data.songs) || [];
+                if (constRes && constRes.ok) {
+                    try {
+                        const cj = await constRes.json();
+                        songConstantsByIdx = (cj && cj.songConstants) || {};
+                    } catch (e) {
+                        console.warn('[定数] constants.json 解析失败，新增成绩需手工填定数', e);
+                    }
+                } else {
+                    console.warn('[定数] constants.json 加载失败，新增成绩需手工填定数');
+                }
+                songLibrary = buildSongLibrary(songs);
+                libraryState = 'ready';
+                setLibraryStatus(`曲目库已加载：${songs.length} 首 / ${songLibrary.length} 个谱面`);
+            } catch (err) {
+                console.error('[曲目库] 加载失败', err);
+                libraryState = 'failed';
+                setLibraryStatus(`曲目库加载失败，曲名匹配不可用（OCR 识别本身不受影响）：${err.message}`, true);
+            }
+        }
+
+        // ── 相似度：Jaro-Winkler + 归一化编辑距离 ────────────────────────────
+        /**
+         * 匹配前的归一化：NFKC → 小写 → 只留字母数字。
+         * 只留字母数字对 OCR 最鲁棒 —— 标点/花体符号被认错是常态，
+         * 而曲名之间的区分度几乎全在字母数字上。
+         */
+        function normalizeForMatch(s) {
+            return String(s == null ? '' : s).normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g, '');
+        }
+
+        /** Jaro 相似度（含匹配窗口与换位统计） */
+        function jaro(a, b) {
+            if (a === b) return 1;
+            const la = a.length, lb = b.length;
+            if (!la || !lb) return 0;
+            const win = Math.max(0, Math.floor(Math.max(la, lb) / 2) - 1);
+            const ma = new Array(la).fill(false), mb = new Array(lb).fill(false);
+            let m = 0;
+            for (let i = 0; i < la; i++) {
+                const lo = Math.max(0, i - win), hi = Math.min(lb - 1, i + win);
+                for (let j = lo; j <= hi; j++) {
+                    if (mb[j] || a[i] !== b[j]) continue;
+                    ma[i] = true; mb[j] = true; m++;
+                    break;
+                }
+            }
+            if (!m) return 0;
+            // 换位：匹配字符里顺序不一致的成对数 / 2
+            let t = 0, k = 0;
+            for (let i = 0; i < la; i++) {
+                if (!ma[i]) continue;
+                while (!mb[k]) k++;
+                if (a[i] !== b[k]) t++;
+                k++;
+            }
+            t /= 2;
+            return (m / la + m / lb + (m - t) / m) / 3;
+        }
+
+        /** Jaro-Winkler：Jaro 已经比较像（>0.7）时，再给共同前缀一点奖励 */
+        function jaroWinkler(a, b) {
+            const j = jaro(a, b);
+            if (j < 0.7) return j;
+            const max = Math.min(4, a.length, b.length);
+            let p = 0;
+            while (p < max && a[p] === b[p]) p++;
+            return j + p * 0.1 * (1 - j);
+        }
+
+        /** 编辑距离（滚动数组，O(min) 空间） */
+        function levenshtein(a, b) {
+            if (a === b) return 0;
+            const la = a.length, lb = b.length;
+            if (!la) return lb;
+            if (!lb) return la;
+            let prev = new Array(lb + 1);
+            for (let j = 0; j <= lb; j++) prev[j] = j;
+            for (let i = 1; i <= la; i++) {
+                const cur = [i];
+                for (let j = 1; j <= lb; j++) {
+                    cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+                }
+                prev = cur;
+            }
+            return prev[lb];
+        }
+
+        /**
+         * 两个曲名的相似度（0~1）= Jaro-Winkler 与「归一化编辑距离」的加权平均。
+         *
+         * 为什么不是取较大值：Jaro-Winkler 对短串非常宽容 —— 实测 "synthes" 与毫不相干的
+         * "blythe" 能算出 0.75，直接展示百分比会误导用户以为它有戏。
+         * 加权平均能把正确项和干扰项拉开（同一例：正确答案 0.87，干扰项 0.45），
+         * 同时对「OCR 把曲名截断」仍然友好（截断靠 JW 保底，不会掉太低）。
+         */
+        const JW_WEIGHT = 0.5;
+
+        function titleSimilarity(a, b) {
+            if (!a || !b) return 0;
+            if (a === b) return 1;
+            const jw = jaroWinkler(a, b);
+            const lev = 1 - levenshtein(a, b) / Math.max(a.length, b.length);
+            return JW_WEIGHT * jw + (1 - JW_WEIGHT) * lev;
+        }
+
+        /** 难度过滤后最佳相似度仍低于此值 → 认为难度可能认错了，回退到全库再匹配 */
+        const MATCH_FALLBACK_THRESHOLD = 0.6;
+        /** 相似度低于此值的候选不再列出（凑数没意义）；但第 1 名永远保留 */
+        const MATCH_MIN_SCORE = 0.42;
+
+        function scorePool(pool, q) {
+            const out = [];
+            for (const row of pool) {
+                let best = 0;
+                for (const t of row.titles) {
+                    const s = titleSimilarity(q, normalizeForMatch(t));
+                    if (s > best) best = s;
+                }
+                out.push({ row, score: best });
+            }
+            out.sort((a, b) => b.score - a.score);
+            return out;
+        }
+
+        /**
+         * 用 OCR 出的曲名 + 难度在曲目库里找最像的谱面。
+         * 难度优先当过滤器（「读取到曲名之后拿难度匹配」）；但难度本身也可能认错，
+         * 所以过滤后最佳相似度过低时会回退到全库重算一次，并在界面上说明。
+         */
+        function matchSongs(ocrTitle, ocrDiff, limit = 5) {
+            const q = normalizeForMatch(ocrTitle);
+            if (!q) return { items: [], filtered: false, fallback: false, reason: 'no-title' };
+            if (libraryState !== 'ready') return { items: [], filtered: false, fallback: false, reason: libraryState };
+
+            const byDiff = ocrDiff ? songLibrary.filter((r) => r.diff === ocrDiff) : [];
+            let filtered = byDiff.length > 0;
+            let scored = scorePool(filtered ? byDiff : songLibrary, q);
+            let fallback = false;
+            if (filtered && (!scored.length || scored[0].score < MATCH_FALLBACK_THRESHOLD)) {
+                scored = scorePool(songLibrary, q);
+                fallback = true;
+            }
+            // 同一首歌只留分最高的那个难度，避免一首歌的不同难度刷屏
+            const seen = new Set();
+            const items = [];
+            for (const s of scored) {
+                if (seen.has(s.row.songId)) continue;
+                seen.add(s.row.songId);
+                // 第 1 名无论如何都保留；之后的低于 MATCH_MIN_SCORE 就不再凑数了
+                if (items.length && s.score < MATCH_MIN_SCORE) break;
+                items.push(s);
+                if (items.length >= limit) break;
+            }
+            return { items, filtered, fallback, reason: 'ok' };
+        }
+
+        /** 难度徽章文字：rating + ratingPlus 时补一个 '+'（如 9、10+、11+） */
+        function diffLabel(row) {
+            const r = (row.rating === undefined || row.rating === null || row.rating === '') ? '' : row.rating;
+            return `${row.diff} ${r}${row.ratingPlus ? '+' : ''}`.trim();
+        }
+
+        // ── 候选卡片渲染 ────────────────────────────────────────────────────
+        /** 渲染曲名匹配候选；点任意一张卡片即把曲名 / 难度回填到结果字段 */
+        function renderMatches(result, ocrTitle, ocrDiff) {
+            if (!matchList) return;
+            matchList.textContent = '';
+
+            const empty = (msg) => {
+                const d = document.createElement('div');
+                d.className = 'matchEmpty';
+                d.textContent = msg;
+                matchList.appendChild(d);
+            };
+
+            if (libraryState === 'loading') return empty('曲目库还在加载中，稍后重新识别即可…');
+            if (libraryState === 'failed') return empty('曲目库加载失败，无法匹配（OCR 识别结果不受影响）。');
+            if (result.reason === 'no-title') return empty('没有识别到曲名，无法匹配。');
+            if (!result.items.length) return empty(`没有找到与「${ocrTitle}」相似的曲目。`);
+
+            if (result.fallback) {
+                empty(`⚠️ 在「${ocrDiff}」难度内没有足够接近的结果，已回退到全库匹配 —— 难度可能识别错了。`);
+            } else if (result.filtered) {
+                empty(`已在「${ocrDiff}」难度内筛选，共 ${songLibrary.filter((r) => r.diff === ocrDiff).length} 个谱面参与匹配。`);
+            }
+
+            result.items.forEach((it) => {
+                const row = it.row;
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.className = 'matchCard';
+                card.style.setProperty('--dc', DIFF_COLORS[row.diff] || '#999');
+                card.dataset.songId = row.songId;
+                card.dataset.diff = row.diff;
+                card.title = `${row.title}\n${row.artist || '—'}\n${diffLabel(row)}｜相似度 ${(it.score * 100).toFixed(1)}%`;
+
+                const img = document.createElement('img');
+                img.className = 'matchJacket';
+                img.loading = 'lazy';
+                img.alt = '';
+                img.src = row.illustration;
+                // jacketOverride 的专属曲绘缺失时退回基础曲绘
+                let fellBack = false;
+                img.addEventListener('error', () => {
+                    if (!fellBack && row.fallbackIllustration !== row.illustration) {
+                        fellBack = true;
+                        img.src = row.fallbackIllustration;
+                    }
+                });
+
+                const body = document.createElement('span');
+                body.className = 'matchBody';
+                const titleEl = document.createElement('span');
+                titleEl.className = 'matchTitle';
+                titleEl.textContent = row.title;
+                const artistEl = document.createElement('span');
+                artistEl.className = 'matchArtist';
+                artistEl.textContent = row.artist || '—';
+                body.append(titleEl, artistEl);
+
+                const diffEl = document.createElement('span');
+                diffEl.className = 'matchDiff';
+                diffEl.textContent = diffLabel(row);
+
+                const scoreEl = document.createElement('span');
+                scoreEl.className = 'matchScore';
+                scoreEl.textContent = `${Math.round(it.score * 100)}%`;
+
+                card.append(img, body, diffEl, scoreEl);
+                card.addEventListener('click', () => applyMatch(row));
+                matchList.appendChild(card);
+            });
+        }
+
+        /** 点选候选：回填曲名 / 难度（分数不自动改），并展开该谱面的成绩对比 */
+        function applyMatch(row) {
+            setResult('title', row.title);
+            setNote('title', '（来自曲目库）', 'note ok');
+            setResult('diff', row.diff);
+            setNote('diff', `（来自曲目库：${diffLabel(row)}）`, 'note ok');
+            if (matchList) {
+                for (const c of matchList.querySelectorAll('.matchCard')) {
+                    c.classList.toggle('active', c.dataset.songId === row.songId && c.dataset.diff === row.diff);
+                }
+            }
+            setStatus(`已选用：${row.title} — ${row.artist || '—'}（${diffLabel(row)}）`);
+            renderCompare(row);
+        }
+
+        // ── 成绩缓存对比（localStorage.savedArrayData）────────────────────────
+        // index 页面上传 st3 / CSV / 成绩导出后，App 会把成绩对象数组写进
+        //   localStorage.savedArrayData（+ savedArrayDataVersion，见 js/CommonFunctions.js）。
+        // 这里读同一份缓存，做「当前缓存成绩 vs 本次识别成绩」的对比与覆盖；
+        // 缓存里没有该谱面时走「新增」流程（见 renderAddSection）而不是直接报错。
+        // 版本号必须与那边的 DATA_VERSION 一致（不一致时 App 自己也会丢弃缓存）。
+        const SCORE_CACHE_KEY = 'savedArrayData';
+        const SCORE_CACHE_VERSION_KEY = 'savedArrayDataVersion';
+        const SCORE_CACHE_VERSION = 2;
+        // App 内部用的是首字母大写形式（CommonFunctions.js 的 DIF_BY_CLASS / PTT2 视图）
+        const DIFF_DISPLAY = {
+            PAST: 'Past', PRESENT: 'Present', FUTURE: 'Future',
+            BEYOND: 'Beyond', ETERNAL: 'Eternal', INSCRIBED: 'Inscribed',
+        };
+
+        function readScoreCache() {
+            try {
+                if (localStorage.getItem(SCORE_CACHE_VERSION_KEY) != String(SCORE_CACHE_VERSION)) return null;
+                const raw = localStorage.getItem(SCORE_CACHE_KEY);
+                if (!raw) return null;
+                const arr = JSON.parse(raw);
+                return Array.isArray(arr) ? arr : [arr];
+            } catch (err) {
+                console.error('[成绩缓存] 解析失败', err);
+                return null;
+            }
+        }
+
+        // 读记录字段：同时兼容「完整字段」与缓存图片导入用的「最小字段」(i/d/s/p/c/f/l/k)
+        function recGet(rec, full, mini, dflt) {
+            const v = (rec[full] !== undefined && rec[full] !== null) ? rec[full] : rec[mini];
+            return (v === undefined || v === null) ? dflt : v;
+        }
+        const numOr0 = (v) => { const n = Number(v); return isFinite(n) ? n : 0; };
+        const recSongId = (r) => String(recGet(r, 'songId', 'i', ''));
+        const recDiffUpper = (r) => String(recGet(r, 'difficulty', 'd', '')).toUpperCase();
+        const recScore = (r) => numOr0(recGet(r, 'score', 's', 0));
+        const recPerfect = (r) => numOr0(recGet(r, 'perfect', 'p', 0));
+        const recCritical = (r) => numOr0(recGet(r, 'criticalPerfect', 'c', 0));
+        const recFar = (r) => numOr0(recGet(r, 'far', 'f', 0));
+        const recLost = (r) => numOr0(recGet(r, 'lost', 'l', 0));
+        const recConstant = (r) => numOr0(recGet(r, 'constant', 'k', 0));
+
+        function findCachedIndex(cache, songId, diffUpper) {
+            if (!cache) return -1;
+            return cache.findIndex((r) => recSongId(r) === songId && recDiffUpper(r) === diffUpper);
+        }
+
+        // ⚠️ 下面两个公式是从 js/CommonFunctions.js 抄过来的（那边改了要同步）：
+        //    calculateSingleRating() / getLoseScore()
+        function singleRating(score, constant) {
+            let rt;
+            if (score >= 10000000) rt = constant + 2;
+            else if (score > 9800000) rt = constant + 1 + (score - 9800000) / 200000;
+            else rt = Math.max(constant + (score - 9500000) / 300000, 0);
+            if (score >= 7000000) rt += 0.2;   // 7.0.0 起：分数 ≥7,000,000 单曲潜力 +0.2
+            return Math.round(rt * 1e9) / 1e9;
+        }
+
+        function loseScoreOf(constant, score, amount, criticalPerfect) {
+            const amountNum = Number(amount), cpNum = Number(criticalPerfect);
+            const scoreBonus = Math.max(0, Math.min((Number(score) / 10000000 - 0.99), 0.01));
+            if (!isFinite(amountNum) || amountNum <= 0 || !isFinite(cpNum)) {
+                return constant * 38 - constant * 100 * (28.5 * scoreBonus);
+            }
+            return constant * 38 - constant * 100 *
+                (Math.max(0, Math.min((cpNum / amountNum - 0.9), 0.095)) + 28.5 * scoreBonus);
+        }
+
+        /** 分数显示成游戏内的千位分隔写法：10'001'447 */
+        const formatScore = (n) => String(Math.round(numOr0(n))).replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+
+        let compareRow = null;     // 当前对比的候选谱面
+        let compareInputs = {};    // 新计数的输入框
+        let compareNewScoreEl = null;
+        let compareNoteEl = null;
+        let compareOldScore = 0;
+
+        function setCompareNote(text, isError) {
+            if (!compareNoteEl) return;
+            compareNoteEl.textContent = text;
+            compareNoteEl.className = 'note' + (isError ? ' warn' : (text ? ' ok' : ''));
+        }
+
+        function renderCompare(row, note) {
+            if (!scoreCompare) return;
+            compareRow = row;
+            compareInputs = {};
+            compareNewScoreEl = null;
+
+            if (comparePanel) comparePanel.hidden = false;
+            compareTitle.hidden = false;
+            scoreCompare.hidden = false;
+            scoreCompare.textContent = '';
+
+            const cache = readScoreCache();
+            const idx = findCachedIndex(cache, row.songId, row.diff);
+            const rec = idx >= 0 ? cache[idx] : null;
+
+            // 头部：曲绘 + 曲名 + 难度
+            const head = document.createElement('div');
+            head.className = 'compareHead';
+            head.style.setProperty('--dc', DIFF_COLORS[row.diff] || '#999');
+            const himg = document.createElement('img');
+            himg.alt = '';
+            himg.src = row.illustration;
+            let hFell = false;
+            himg.addEventListener('error', () => {
+                if (!hFell && row.fallbackIllustration !== row.illustration) { hFell = true; himg.src = row.fallbackIllustration; }
+            });
+            const htext = document.createElement('span');
+            htext.textContent = `${row.title} — ${diffLabel(row)}`;
+            head.append(himg, htext);
+            scoreCompare.appendChild(head);
+
+            if (!rec) {
+                // 缓存里没有这个谱面 —— 不挡路，直接把本次识别的结果列出来，问用户要不要新增
+                renderAddSection(row, cache, note);
+                return;
+            }
+
+            const oldVals = {
+                score: recScore(rec),
+                perfect: recPerfect(rec),
+                criticalPerfect: recCritical(rec),
+                far: recFar(rec),
+                lost: recLost(rec),
+            };
+            const diffDisplay = DIFF_DISPLAY[row.diff] || row.diff;
+
+            const table = document.createElement('table');
+            table.className = 'cmpTable';
+            table.innerHTML =
+                '<thead><tr><th>项目</th><th>当前缓存</th><th>新识别</th><th>变化</th></tr></thead>';
+            const tbody = document.createElement('tbody');
+            table.appendChild(tbody);
+
+            const makeRow = (label, oldText, newCellBuilder) => {
+                const tr = document.createElement('tr');
+                const th = document.createElement('th');
+                th.textContent = label;
+                const tdOld = document.createElement('td');
+                tdOld.className = 'cmpOld';
+                tdOld.textContent = oldText;
+                const tdNew = document.createElement('td');
+                tdNew.className = 'cmpNew';
+                const tdDelta = document.createElement('td');
+                tdDelta.className = 'cmpDelta';
+                tr.append(th, tdOld, tdNew, tdDelta);
+                tbody.appendChild(tr);
+                const parts = { tr, tdOld, tdNew, tdDelta };
+                // 先把行结构建好再调 builder，这样 builder 里能安全拿到本行的单元格
+                if (newCellBuilder) newCellBuilder(tdNew, parts);
+                return parts;
+            };
+
+            // 分数：新值直接用上方「分数」结果框里的内容，不重复填
+            compareOldScore = oldVals.score;
+            makeRow('分数', formatScore(oldVals.score), (cell, parts) => {
+                const span = document.createElement('span');
+                span.textContent = formatScore(String(resultCells.score?.value ?? '').replace(/[^0-9]/g, ''));
+                cell.appendChild(span);
+                compareNewScoreEl = span;
+                updateCompareDelta(parts.tdDelta, oldVals.score, span);
+            });
+
+            // 计数：留空 = 不动该项
+            const counts = [
+                { key: 'perfect', label: 'PURE', old: oldVals.perfect },
+                { key: 'criticalPerfect', label: '大 P', old: oldVals.criticalPerfect },
+                { key: 'far', label: 'FAR', old: oldVals.far },
+                { key: 'lost', label: 'LOST', old: oldVals.lost },
+            ];
+            for (const c of counts) {
+                makeRow(c.label, String(c.old), (cell, parts) => {
+                    const inp = document.createElement('input');
+                    inp.type = 'text';
+                    inp.inputMode = 'numeric';
+                    inp.placeholder = '可不填';
+                    inp.setAttribute('aria-label', `新 ${c.label}`);
+                    inp.addEventListener('input', () => {
+                        updateCompareDelta(parts.tdDelta, c.old, inp);
+                    });
+                    cell.appendChild(inp);
+                    compareInputs[c.key] = inp;
+                });
+            }
+            scoreCompare.appendChild(table);
+
+            const actions = document.createElement('div');
+            actions.className = 'cmpActions';
+            const btn = document.createElement('button');
+            btn.id = 'applyScoreBtn';
+            btn.type = 'button';
+            btn.textContent = '确认并覆盖缓存成绩';
+            btn.addEventListener('click', () => commitScoreUpdate());
+            actions.appendChild(btn);
+            scoreCompare.appendChild(actions);
+
+            compareNoteEl = document.createElement('span');
+            compareNoteEl.className = 'note';
+            scoreCompare.appendChild(compareNoteEl);
+
+            setCompareNote(
+                note ||
+                `缓存中该谱面定数 ${numOr0(recConstant(rec)) || '—'}｜难度按「${diffDisplay}」匹配。` +
+                '新识别一栏留空表示该项不改动，只写你填了的内容。'
+            );
+        }
+
+        // ── 新增成绩（缓存里还没有这个谱面时）────────────────────────────────
+        // 缓存里没有旧成绩不该是死路：直接把本次识别的结果列出来，让用户确认后「添加」进缓存，
+        // 而不是丢一句「无法覆盖」就把人堵在这里。
+
+        /** 读本地「定数覆盖」（localStorage.constantOverrides，键 "songId|Difficulty"）。
+         *  与 js/CommonFunctions.js 的 effectiveConstant() 用同一套键 —— scores 页面就是这么存的。 */
+        function readConstantOverrides() {
+            try {
+                const raw = localStorage.getItem('constantOverrides');
+                const map = raw ? JSON.parse(raw) : {};
+                return (map && typeof map === 'object') ? map : {};
+            } catch (e) { return {}; }
+        }
+
+        /** 取某谱面的本地定数覆盖值，没有则返回 null */
+        function constantOverrideFor(songId, diffDisplay) {
+            const v = readConstantOverrides()[songId + '|' + diffDisplay];
+            if (v === undefined || v === null || v === '') return null;
+            const n = parseFloat(v);
+            return (isFinite(n) && n > 0) ? n : null;
+        }
+
+        /** 用户填的定数与曲目库默认值不同时写进本地「定数覆盖」（App 读取定数时优先用它） */
+        function saveConstantOverrideIfNeeded(row, constant) {
+            if (constant === null) return;
+            const lib = (row.constant === undefined || row.constant === null) ? null : Number(row.constant);
+            if (lib !== null && Math.abs(lib - constant) < 1e-9) return;   // 没改，不必写
+            try {
+                const map = readConstantOverrides();
+                map[row.songId + '|' + (DIFF_DISPLAY[row.diff] || row.diff)] = constant;
+                localStorage.setItem('constantOverrides', JSON.stringify(map));
+            } catch (e) {
+                console.warn('[定数覆盖] 写入失败', e);
+            }
+        }
+
+        /**
+         * 造一条新的成绩记录，结构与 js/CommonFunctions.js 的 PlayResult 对齐。
+         * 各页面直接读 r.songName / r.illustration / r.constant / r.playRating 来渲染，
+         * 而本页没有 PlayResult 类可用，所以这几个字段必须自己算好。
+         */
+        function buildNewRecord(row, vals, constant, innerIndex) {
+            const hasConst = constant !== null && isFinite(constant) && constant > 0;
+            const amount = vals.perfect + vals.far + vals.lost;
+            const rec = {
+                songName: row.recordTitle || row.title,
+                songId: row.songId,
+                difficulty: DIFF_DISPLAY[row.diff] || row.diff,
+                score: vals.score,
+                perfect: vals.perfect,
+                criticalPerfect: vals.criticalPerfect,
+                normalPerfect: vals.perfect - vals.criticalPerfect,
+                criticalRate: vals.perfect > 0 ? vals.criticalPerfect / vals.perfect : 0,
+                far: vals.far,
+                lost: vals.lost,
+                constant: hasConst ? constant : null,
+                playRating: hasConst ? singleRating(vals.score, constant) : 0,
+                loseScore: 0,
+                percentage: 0,
+                objectAmount: amount,
+                equivalentFar: vals.far + vals.lost * 2,
+                illustration: row.illustrationFile,
+                innerIndex,
+            };
+            if (hasConst) {
+                const ls = loseScoreOf(constant, vals.score, amount, vals.criticalPerfect);
+                rec.loseScore = ls;
+                rec.percentage = (constant * 38 - ls) / (constant * 38) * 100;
+            }
+            return rec;
+        }
+
+        /**
+         * 缓存里没有该谱面的分支：把识别结果列成一张表供确认，并询问是否新增进缓存。
+         * @param {Object} row       曲目库条目
+         * @param {Array|null} cache 现有缓存（null = 本地没有可用缓存，确认后会新建一份）
+         * @param {String} [note]    提交后回显的备注文案
+         */
+        function renderAddSection(row, cache, note) {
+            const diffDisplay = DIFF_DISPLAY[row.diff] || row.diff;
+            const libConstant = (row.constant === undefined || row.constant === null) ? null : Number(row.constant);
+            const ov = constantOverrideFor(row.songId, diffDisplay);
+            const initConstant = ov !== null ? ov : libConstant;
+
+            const table = document.createElement('table');
+            table.className = 'cmpTable';
+            table.innerHTML =
+                '<thead><tr><th>项目</th><th>本次识别 / 填写</th><th>说明</th></tr></thead>';
+            const tbody = document.createElement('tbody');
+            table.appendChild(tbody);
+
+            const addRow = (label, buildCell, noteText) => {
+                const tr = document.createElement('tr');
+                const th = document.createElement('th');
+                th.textContent = label;
+                const td = document.createElement('td');
+                td.className = 'cmpNew';
+                const tdNote = document.createElement('td');
+                tdNote.className = 'cmpHint';
+                tdNote.textContent = noteText || '';
+                tr.append(th, td, tdNote);
+                tbody.appendChild(tr);
+                buildCell(td);
+            };
+
+            // 分数：直接用上方「分数」结果框里的内容
+            addRow('分数', (td) => {
+                const digits = String(resultCells.score?.value ?? '').replace(/[^0-9]/g, '');
+                const span = document.createElement('span');
+                span.textContent = digits ? formatScore(digits) : '—';
+                td.appendChild(span);
+                compareNewScoreEl = span;
+            }, '来自上面的识别结果');
+
+            // 计数：新增时必须给出，否则物量 / 失分数算不出来；留空按 0 处理
+            const counts = [
+                { key: 'perfect', label: 'PURE' },
+                { key: 'criticalPerfect', label: '大 P' },
+                { key: 'far', label: 'FAR' },
+                { key: 'lost', label: 'LOST' },
+            ];
+            for (const c of counts) {
+                addRow(c.label, (td) => {
+                    const inp = document.createElement('input');
+                    inp.type = 'text';
+                    inp.inputMode = 'numeric';
+                    inp.placeholder = '留空按 0';
+                    inp.setAttribute('aria-label', c.label);
+                    td.appendChild(inp);
+                    compareInputs[c.key] = inp;
+                }, '');
+            }
+
+            // 定数：曲目库里没登记（新曲 / constants.json 未收录）时可在此手填，
+            // 填了且与目录不同会写进本地「定数覆盖」，App 读取定数时优先用它。
+            addRow('定数', (td) => {
+                const inp = document.createElement('input');
+                inp.type = 'text';
+                inp.inputMode = 'decimal';
+                inp.placeholder = '如 10.5';
+                inp.setAttribute('aria-label', '谱面定数');
+                if (initConstant !== null) inp.value = String(initConstant);
+                td.appendChild(inp);
+                compareInputs.constant = inp;
+            }, (libConstant === null && ov === null)
+                ? 'constants.json 未登记，请手填（否则算不出单曲潜力值）'
+                : '来自曲目数据，可改');
+
+            scoreCompare.appendChild(table);
+
+            const actions = document.createElement('div');
+            actions.className = 'cmpActions';
+            const btn = document.createElement('button');
+            btn.id = 'applyScoreBtn';
+            btn.type = 'button';
+            btn.textContent = '确认并添加到缓存';
+            btn.addEventListener('click', () => commitScoreAdd());
+            actions.appendChild(btn);
+            scoreCompare.appendChild(actions);
+
+            compareNoteEl = document.createElement('span');
+            compareNoteEl.className = 'note';
+            scoreCompare.appendChild(compareNoteEl);
+
+            setCompareNote(
+                note ||
+                (cache === null
+                    ? '本地还没有成绩缓存 —— 确认后会新建一份缓存，只含这一条成绩（之后可在 index 页面导入完整成绩）。'
+                    : `缓存里没有「${row.title}（${diffLabel(row)}）」的成绩。确认后会作为一条新成绩加进缓存，其它记录不受影响。`)
+            );
+        }
+
+        /** 「添加」提交：把识别结果作为一条新成绩写进缓存 */
+        function commitScoreAdd() {
+            const row = compareRow;
+            if (!row) return;
+
+            const score = Number(String(resultCells.score?.value ?? '').replace(/[^0-9]/g, ''));
+            if (!score) { setCompareNote('「分数」是空的 —— 先识别，或在上面分数框里手填一个再添加。', true); return; }
+
+            const readCount = (key) => {
+                const el = compareInputs[key];
+                const raw = el ? el.value.replace(/[^0-9]/g, '') : '';
+                return raw === '' ? 0 : Number(raw);
+            };
+            const vals = {
+                score,
+                perfect: readCount('perfect'),
+                criticalPerfect: readCount('criticalPerfect'),
+                far: readCount('far'),
+                lost: readCount('lost'),
+            };
+            if (vals.criticalPerfect > vals.perfect) {
+                setCompareNote('大 P 不可能多于 PURE，请检查计数后再添加。', true);
+                return;
+            }
+
+            const constantEl = compareInputs.constant;
+            const constantRaw = constantEl ? constantEl.value.trim() : '';
+            const constant = constantRaw === '' ? null : parseFloat(constantRaw);
+            if (constant !== null && (!isFinite(constant) || constant <= 0)) {
+                setCompareNote('定数要填正数（如 10.5），或留空不填。', true);
+                return;
+            }
+
+            const cache = readScoreCache();
+            const arr = cache ? cache.slice() : [];
+            // 双保险：真的写之前再查一次，避免重复添加（例如用户连点两次）
+            if (findCachedIndex(arr, row.songId, row.diff) >= 0) {
+                renderCompare(row);
+                setCompareNote('缓存里已经有这个谱面的成绩了，已切换为「覆盖」模式，请再确认一次。', true);
+                return;
+            }
+
+            arr.push(buildNewRecord(row, vals, constant, arr.length));
+            try {
+                localStorage.setItem(SCORE_CACHE_KEY, JSON.stringify(arr));
+                localStorage.setItem(SCORE_CACHE_VERSION_KEY, String(SCORE_CACHE_VERSION));
+            } catch (err) {
+                console.error('[成绩缓存] 写入失败', err);
+                setCompareNote('写入浏览器缓存失败（可能是存储配额已满）：' + err.message, true);
+                return;
+            }
+            saveConstantOverrideIfNeeded(row, constant);
+
+            renderCompare(row,
+                `已添加新成绩：${row.title}（${diffLabel(row)}）分数 ${formatScore(vals.score)}，` +
+                `PURE ${vals.perfect}，大 P ${vals.criticalPerfect}，FAR ${vals.far}，LOST ${vals.lost}。`
+            );
+            setStatus(`已把新成绩添加进缓存：${row.title}（${diffLabel(row)}）`);
+
+            // 被宿主页面嵌进模态窗时，通知它「缓存已变，请刷新显示单元」
+            postToHost('arcaea-ocr:applied', {
+                songId: row.songId,
+                difficulty: DIFF_DISPLAY[row.diff] || row.diff,
+                title: row.title,
+                score: vals.score,
+                perfect: vals.perfect,
+                criticalPerfect: vals.criticalPerfect,
+                far: vals.far,
+                lost: vals.lost,
+                added: true,
+            });
+        }
+
+        /** 变化列：分数涨了标红（国内习惯），跌了标绿 */
+        function updateCompareDelta(td, oldVal, inputOrSpan) {
+            const raw = inputOrSpan.tagName === 'INPUT'
+                ? inputOrSpan.value.replace(/[^0-9]/g, '')
+                : (compareNewScoreEl ? compareNewScoreEl.textContent.replace(/[^0-9]/g, '') : '');
+            td.className = 'cmpDelta';
+            if (raw === '') { td.textContent = ''; return; }
+            const diff = Number(raw) - oldVal;
+            if (!isFinite(diff) || diff === 0) { td.textContent = '±0'; return; }
+            td.textContent = (diff > 0 ? '+' : '') + diff.toLocaleString('en-US').replace(/,/g, "'");
+            td.classList.add(diff > 0 ? 'up' : 'down');
+        }
+
+        /** 把新成绩写回缓存记录（同时维护完整字段与最小字段两套命名） */
+        function writeCachedRecord(rec, row, vals) {
+            const constant = recConstant(rec);
+            const amount = vals.perfect + vals.far + vals.lost;
+            Object.assign(rec, {
+                songId: row.songId,
+                difficulty: DIFF_DISPLAY[row.diff] || row.diff,
+                score: vals.score,
+                perfect: vals.perfect,
+                criticalPerfect: vals.criticalPerfect,
+                far: vals.far,
+                lost: vals.lost,
+                normalPerfect: vals.perfect - vals.criticalPerfect,
+                criticalRate: vals.perfect > 0 ? vals.criticalPerfect / vals.perfect : 0,
+                objectAmount: amount,
+                equivalentFar: vals.far + vals.lost * 2,
+            });
+            if (constant > 0) {
+                const ls = loseScoreOf(constant, vals.score, amount, vals.criticalPerfect);
+                rec.loseScore = ls;
+                rec.percentage = (constant * 38 - ls) / (constant * 38) * 100;
+                rec.playRating = singleRating(vals.score, constant);
+            }
+            // 兼容「最小字段」形态的记录：两边都更新，无论读取方用哪套命名都对
+            if ('i' in rec || 's' in rec) {
+                Object.assign(rec, {
+                    i: row.songId,
+                    d: DIFF_DISPLAY[row.diff] || row.diff,
+                    s: vals.score,
+                    p: vals.perfect,
+                    c: vals.criticalPerfect,
+                    f: vals.far,
+                    l: vals.lost,
+                    k: constant,
+                });
+            }
+        }
+
+        function commitScoreUpdate() {
+            const row = compareRow;
+            if (!row) return;
+            const cache = readScoreCache();
+            const idx = findCachedIndex(cache, row.songId, row.diff);
+            if (idx < 0) {
+                // 渲染之后缓存又变了（例如另一个标签页清了缓存）—— 切回「新增」流程，别把用户堵住
+                renderCompare(row);
+                setCompareNote('缓存里已经找不到这个谱面的成绩，已切换为「新增」模式，请再确认一次。', true);
+                return;
+            }
+            const rec = cache[idx];
+
+            const score = Number(String(resultCells.score?.value ?? '').replace(/[^0-9]/g, ''));
+            if (!score) { setCompareNote('「分数」是空的 —— 先识别，或在上面分数框里手填一个再覆盖。', true); return; }
+
+            // 计数留空 → 沿用缓存里的旧值（用户说可以不填）
+            const readCount = (key, old) => {
+                const el = compareInputs[key];
+                const raw = el ? el.value.replace(/[^0-9]/g, '') : '';
+                return raw === '' ? old : Number(raw);
+            };
+            const vals = {
+                score,
+                perfect: readCount('perfect', recPerfect(rec)),
+                criticalPerfect: readCount('criticalPerfect', recCritical(rec)),
+                far: readCount('far', recFar(rec)),
+                lost: readCount('lost', recLost(rec)),
+            };
+            if (vals.criticalPerfect > vals.perfect) {
+                setCompareNote('大 P 不可能多于 PURE，请检查计数后再覆盖。', true);
+                return;
+            }
+
+            const before = { score: recScore(rec), perfect: recPerfect(rec), far: recFar(rec), lost: recLost(rec) };
+            writeCachedRecord(rec, row, vals);
+            try {
+                localStorage.setItem(SCORE_CACHE_KEY, JSON.stringify(cache));
+                localStorage.setItem(SCORE_CACHE_VERSION_KEY, String(SCORE_CACHE_VERSION));
+            } catch (err) {
+                console.error('[成绩缓存] 写入失败', err);
+                setCompareNote('写入浏览器缓存失败（可能是存储配额已满）：' + err.message, true);
+                return;
+            }
+            renderCompare(row,
+                `已覆盖缓存：${row.title}（${diffLabel(row)}）分数 ${formatScore(before.score)} → ${formatScore(vals.score)}，` +
+                `PURE ${before.perfect} → ${vals.perfect}，FAR ${before.far} → ${vals.far}，LOST ${before.lost} → ${vals.lost}。`
+            );
+            setStatus(`已把新成绩覆盖进缓存：${row.title}（${diffLabel(row)}）`);
+
+            // 被宿主页面嵌进模态窗时，通知它「缓存已变，请刷新显示单元」
+            postToHost('arcaea-ocr:applied', {
+                songId: row.songId,
+                difficulty: DIFF_DISPLAY[row.diff] || row.diff,
+                title: row.title,
+                score: vals.score,
+                perfect: vals.perfect,
+                criticalPerfect: vals.criticalPerfect,
+                far: vals.far,
+                lost: vals.lost,
+            });
+        }
+
+        /**
+         * 分数专用的「多参数识别 + 选择」。
+         *
+         * 真实截图（细体浅色字压深色底 + JPEG 压缩）对 Tesseract 属于偏难样本：
+         * 没有任何单一参数组合能在所有截图/分辨率下都认对，不同参数会错在不同地方，
+         * 所以用几套组合各认一次，再从候选里挑一个最可信的。
+         *
+         * 挑选规则（实测调出来的，顺序很重要）：
+         *   ① 只保留「位数 = 8 且能凑成 2/3/3」的候选（shape ≥ 2）；
+         *      一个都没有时才退而求其次，任何带数字的读数都收进来（并在备注里标低可信）。
+         *   ② 合规候选里：分组是否原本就对 → 形近字改动是否更少 → 票数是否更多。
+         * 为什么「结构优先于票数」：分数格式是刚性的（2+3+3 = 8 位），
+         * 一个「结构完全对得上」的读数远比一个「多投了一票但结构对不上」的读数可信 ——
+         * 实测里错误的读数经常因为形近字符被多次投成同一个畸形串而票数更高。
+         */
+        const SCORE_VARIANTS = [
+            { tag: '原样', scale: 1, bin: false, bold: 0 },
+            { tag: '原样 1.25×', scale: 1.25, bin: false, bold: 0 },
+            { tag: '原样+加粗1', scale: 1, bin: false, bold: 1 },
+            { tag: '二值化+加粗1', scale: 1, bin: true, bold: 1 },
+            { tag: '二值化+加粗2 / 1.25×', scale: 1.25, bin: true, bold: 2 },
+        ];
+
+        /** 分数候选排序：分组原始度 → 形近字改动少 → 票数多（打平时保留先出现的） */
+        function scoreCandidateBetter(a, b) {
+            if (a.shape !== b.shape) return a.shape > b.shape;
+            if (a.lookalikes !== b.lookalikes) return a.lookalikes < b.lookalikes;
+            return a.votes > b.votes;
+        }
+
+        async function recognizeScore(engine, lang, bitmap, field, baseScale, singleLine) {
+            const details = [];
+            for (const v of SCORE_VARIANTS) {
+                const scale = baseScale * v.scale;
+                const imageData = cropToImageData(bitmap, field.rect, scale, { autoInvert: true, bin: v.bin, bold: v.bold });
+                // 注意顺序：loadImage 内部会强制 PSM_AUTO，所以变量必须在它之后设置
+                await engine.loadImage(imageData);
+                if (singleLine) await setEngineVariable(engine, lang, 'tessedit_pageseg_mode', PSM_SINGLE_LINE);
+
+                const text = await engine.getText((p) => {
+                    setStatus(`正在识别「${field.label}」... ${v.tag} ${Math.round(p || 0)}%`);
+                });
+                const c = parseScore(text);
+                details.push({
+                    tag: v.tag,
+                    raw: (text || '').replace(/\s+/g, ' ').trim(),
+                    groups: c ? c.groups : [],
+                    digits: c ? c.digits : '',
+                    shape: c ? c.shape : 0,
+                    lookalikes: c ? c.lookalikes : 0,
+                });
+            }
+
+            // ① 结构合规的候选：位数 8 且能凑成 2/3/3
+            const withDigits = details.filter((d) => d.digits);
+            const valid = withDigits.filter((d) => d.shape >= 2);
+            const scope = valid.length ? valid : withDigits;
+            // 合规候选里有几种不同的读数 —— 只有一种时可信度最高
+            const distinctValid = new Set(valid.map((d) => d.digits)).size;
+
+            // ② 在候选池里按 结构 → 形近字改动 → 票数 选。
+            //    完全打平时保留「先出现的」—— SCORE_VARIANTS 的顺序就是可信度顺序
+            //    （越靠前的处理越少、信息损失越小）。
+            const tally = new Map();
+            for (const d of scope) tally.set(d.digits, (tally.get(d.digits) || 0) + 1);
+
+            let winner = null;
+            for (const d of scope) {
+                const cand = { ...d, votes: tally.get(d.digits) };
+                if (!winner || scoreCandidateBetter(cand, winner)) winner = cand;
+            }
+            return {
+                details,
+                winner,
+                votes: winner ? winner.votes : 0,
+                scope: scope.length,
+                total: details.length,
+                structurallyValid: valid.length > 0,
+                distinctValid,
+            };
+        }
+
+        // ── 普通字段识别 ────────────────────────────────────────────────────
+        async function recognizePlain(engine, lang, bitmap, field, scale, singleLine) {
+            const imageData = cropToImageData(bitmap, field.rect, scale, { autoInvert: true });
+            await engine.loadImage(imageData);
+            if (singleLine) await setEngineVariable(engine, lang, 'tessedit_pageseg_mode', PSM_SINGLE_LINE);
+            const text = await engine.getText((p) => {
+                setStatus(`正在识别「${field.label}」... ${Math.round(p || 0)}%`);
+            });
+            return { text: text || '', imageData };
+        }
+
+        // ── 事件绑定 ───────────────────────────────────────────────────────
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            try {
+                const bitmap = await createImageBitmap(file);
+                imageBitmap = bitmap;
+                if (imageObjectURL) URL.revokeObjectURL(imageObjectURL);
+                imageObjectURL = URL.createObjectURL(file);
+                stageImg.src = imageObjectURL;
+                editor.hidden = false;
+                if (stageEmpty) stageEmpty.hidden = true;
+                ocrBtn.disabled = false;
+                resetBtn.disabled = false;
+
+                currentAspect = bitmap.width / bitmap.height;
+                // 恢复的选区是按「比例」存的，图片比例差太多时位置大概率对不上，提醒一下
+                let note = '';
+                if (storedAspect && Math.abs(currentAspect - storedAspect) / storedAspect > 0.05) {
+                    note = `｜注意：图片比例与上次调整选区时不同（上次 ${storedAspect.toFixed(2)}，本次 ${currentAspect.toFixed(2)}），请核对选区位置`;
+                }
+                setStatus(`已加载图片（${bitmap.width} × ${bitmap.height}），请确认选区后点「识别所选区域」${note}`);
+            } catch (err) {
+                setStatus('图片解码失败：' + err.message, true);
+            }
+        });
+
+        document.querySelectorAll('input[data-field]').forEach((cb) => {
+            cb.addEventListener('change', () => {
+                const field = FIELDS.find((f) => f.key === cb.dataset.field);
+                field.enabled = cb.checked;
+                regionEls[field.key].classList.toggle('off', !cb.checked);
+                setResult(field.key, '—');
+                setNote(field.key, '');
+                saveSettings();
+            });
+        });
+
+        resetBtn.addEventListener('click', () => {
+            FIELDS.forEach((f, i) => {
+                f.rect = { ...DEFAULT_RECTS[i] };
+                applyRect(f);
+            });
+            saveSettings();
+            setStatus('选区已重置为默认位置（已同步保存）');
+        });
+
+        langSelect.addEventListener('change', () => {
+            saveSettings();
+            setStatus(`曲名识别语言已切换为 ${langSelect.value}，点「识别所选区域」生效`);
+        });
+
+        // 放大倍数 / 单行模式：改了也记住
+        [scaleSelect, singleLineCb].forEach((el) => el.addEventListener('change', saveSettings));
+
+        // 分数框改动时，同步刷新成绩对比里的「新识别 分数 / 变化」列
+        resultCells.score?.addEventListener('input', () => {
+            if (!compareRow || !compareNewScoreEl) return;
+            compareNewScoreEl.textContent = formatScore(String(resultCells.score.value).replace(/[^0-9]/g, ''));
+            const tdDelta = compareNewScoreEl.closest('tr')?.querySelector('.cmpDelta');
+            if (tdDelta) updateCompareDelta(tdDelta, compareOldScore, compareNewScoreEl);
+        });
+
+        ocrBtn.addEventListener('click', async () => {
+            if (!imageBitmap) return;
+            const uiLang = langSelect.value;
+            const scale = Number(scaleSelect.value);
+            const singleLine = singleLineCb.checked;
+
+            ocrBtn.disabled = true;
+            langSelect.disabled = true;
+            scaleSelect.disabled = true;
+            singleLineCb.disabled = true;
+
+            const rawTexts = {};
+            const scoreReport = [];
+            let ocrTitleText = '';   // 归一化后的曲名（喂给曲目库匹配）
+            let ocrDiffText = '';    // 归一化后的难度名
+            try {
+                for (const field of FIELDS) {
+                    setResult(field.key, field.key === 'score' ? '' : '…');
+                    setNote(field.key, '');
+                    if (!field.enabled) {
+                        setResult(field.key, '（未启用）');
+                        rawTexts[field.key] = '';
+                        continue;
+                    }
+
+                    // 字段自己指定语言就用它，否则跟随下拉框
+                    const lang = field.lang || uiLang;
+                    const engine = await ensureEngine(lang);
+
+                    if (field.prep === 'score') {
+                        const res = await recognizeScore(engine, lang, imageBitmap, field, scale, singleLine);
+                        if (!res.winner) {
+                            setResult(field.key, '');
+                            setNote(field.key, `（${res.total} 次识别都没认出数字，请把选区收得更贴合数字后重试）`, 'note warn');
+                            rawTexts[field.key] = res.details.map((d) => `${d.tag}：${d.raw || '(空)'}`).join('\n');
+                            scoreReport.push({ field, res });
+                            continue;
+                        }
+                        setResult(field.key, res.winner.groups.join("'"));
+                        // 可信度：① 有「8 位 + 2/3/3」的合规读数；② 合规读数只有一种 → 最可信；
+                        //         ③ 有多种时看票数是否过半。
+                        const good = res.structurallyValid && (res.distinctValid === 1 || res.votes >= 2);
+                        let note;
+                        if (!res.structurallyValid) {
+                            note = `（没得到 8 位 / 2+3+3 的合规读数（${res.votes}/${res.scope}），可靠性低，请核对）`;
+                        } else if (res.distinctValid === 1) {
+                            note = '（结构唯一匹配 ✓）';
+                        } else {
+                            note = `（${res.votes}/${res.scope} 一致${res.votes >= 2 ? '' : '，可靠性低，请核对'}｜合规读数 ${res.distinctValid} 种）`;
+                        }
+                        // 分隔符是补回来的（原文分组不是 2/3/3）→ 说明这一位有一定推断成分
+                        if (res.winner.shape === 2) note = note.replace(/）$/, '｜分隔符自动补正）');
+                        setNote(field.key, note, 'note ' + (good ? 'ok' : 'warn'));
+                        rawTexts[field.key] = res.details
+                            .map((d) => {
+                                const flag = d.digits === res.winner.digits ? '  ← 采用' : (d.shape >= 2 ? '' : '  (结构不符)');
+                                return `${d.tag}：${JSON.stringify(d.raw)} → ${d.groups.join("'") || '(空)'}${flag}`;
+                            })
+                            .join('\n');
+                        scoreReport.push({ field, res });
+                    } else if (field.key === 'diff') {
+                        // 难度只可能是纯英文的固定难度名（没有数字/符号）：
+                        // 直接把数字与符号剔掉，再和难度表比对收敛。
+                        const r = await recognizePlain(engine, lang, imageBitmap, field, scale, singleLine);
+                        const cleaned = (r.text || '').replace(/\s+/g, ' ').trim();
+                        const d = normalizeDifficulty(cleaned);
+                        rawTexts[field.key] = cleaned
+                            ? cleaned + (d.matched && d.text !== cleaned ? `  → ${d.text}（比对难度表）` : '')
+                            : '';
+                        setResult(field.key, d.text || '(空)');
+                        if (d.matched) ocrDiffText = d.text;
+                        if (!cleaned) setNote(field.key, '（没认到文字，请核对选区）', 'note warn');
+                        else if (d.matched) setNote(field.key, '（已按难度表规范化 ✓）', 'note ok');
+                        else setNote(field.key, '（没匹配到已知难度名，请核对）', 'note warn');
+                    } else {
+                        const r = await recognizePlain(engine, lang, imageBitmap, field, scale, singleLine);
+                        const cleaned = (r.text || '').replace(/\s+/g, ' ').trim();
+                        rawTexts[field.key] = cleaned;
+                        setResult(field.key, cleaned || '(空)');
+                        if (field.key === 'title') ocrTitleText = cleaned;
+                    }
+                }
+
+                // 曲名匹配：用识别到的曲名（+ 难度缩小范围）去曲目库里找候选
+                renderMatches(matchSongs(ocrTitleText, ocrDiffText), ocrTitleText, ocrDiffText);
+
+                rawOutput.textContent = FIELDS
+                    .filter((f) => f.enabled)
+                    .map((f) => {
+                        const prepNote = f.prep === 'score'
+                            ? '分数专用（极性修正 + 多参数 + 2/3/3 结构校验 + 形近字归一）'
+                            : (f.key === 'diff' ? '原样裁剪 + 只留英文字母 + 比对难度表' : '原样');
+                        const engineNote = `引擎：${f.lang || uiLang}｜处理：${prepNote}`;
+                        return `【${f.label}】${engineNote}\n${rawTexts[f.key] || '(空)'}`;
+                    })
+                    .join('\n\n');
+
+                const low = scoreReport.some((s) => s.res && s.res.winner && !(s.res.structurallyValid && (s.res.distinctValid === 1 || s.res.votes >= 2)));
+                setStatus(
+                    `识别完成 ✓${low ? '｜⚠️ 分数多次识别不一致，建议核对或手动改正' : ''}` +
+                    `${engineVariablesUsable ? '' : '｜提示：单行模式未生效，详见控制台'}`
+                );
+            } catch (err) {
+                console.error(err);
+                setStatus('识别出错：' + err.message, true);
+                rawOutput.textContent = String(err.stack || err);
+                // 出错说明引擎状态可能已损坏，全部丢掉，下次点击重建
+                for (const engine of engines.values()) { try { await engine.destroy(); } catch (_) { } }
+                engines.clear();
+            } finally {
+                ocrBtn.disabled = false;
+                langSelect.disabled = false;
+                scaleSelect.disabled = false;
+                singleLineCb.disabled = false;
+            }
+        });
+
+        // 引擎常驻（避免每次识别都重新编译 wasm / 重载模型），离开页面时收尾
+        window.addEventListener('beforeunload', () => { for (const engine of engines.values()) engine.destroy(); });
+
+        // ── 初始化：先恢复上次保存的设置，再按最终状态构建选区 ────────────────
+        const restored = restoreSettings();
+        buildRegions();
+        syncFieldToggles();
+        if (restored) setStatus('已恢复上次保存的选区位置与设置');
+
+        // 曲目库和图片无关，进页面就开始加载（不阻塞选区/OCR）
+        loadSongLibrary();
+
+        // 纯函数（分数/难度文本整理、相似度、曲目库派生）挂出来，方便自动化回归测试直接断言，
+        // 不必依赖截图跑整条 OCR 流水线。对页面本身无副作用。
+        window.__ocrInternals = {
+            parseScore, normalizeDifficulty, DIFFICULTY_NAMES, SCORE_SHAPE, SCORE_DIGITS,
+            buildSongLibrary, matchSongs, titleSimilarity, jaroWinkler, levenshtein,
+            normalizeForMatch, diffLabel, DIFF_BY_RATING_CLASS,
+            // 成绩缓存相关（对比 / 覆盖 / 新增）
+            singleRating, loseScoreOf, formatScore, readScoreCache, findCachedIndex,
+            DIFF_DISPLAY, SCORE_CACHE_KEY, SCORE_CACHE_VERSION,
+            readConstantFrom, buildNewRecord, constantOverrideFor, readConstantOverrides,
+            getLibrary: () => songLibrary,
+            getLibraryState: () => libraryState,
+            getSongConstants: () => songConstantsByIdx,
+        };
+    </script>
+</body>
+
+</html>

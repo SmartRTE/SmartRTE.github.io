@@ -1648,7 +1648,7 @@ function initToolWidgets() {
 		const styleEl = document.createElement('style');
 		styleEl.id = STYLE_ID;
 		styleEl.textContent = `
-#tool-fab {
+:is(#tool-fab, #ocr-tool-fab) {
 	position: fixed; right: 22px; bottom: 22px; z-index: 90;
 	padding: 11px 18px; border-radius: 999px; border: 1px solid var(--border);
 	background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
@@ -1657,10 +1657,10 @@ function initToolWidgets() {
 	transition: transform .2s ease, box-shadow .2s ease;
 	font-family: "Exo", "L2", sans-serif;
 }
-#tool-fab:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,0,0,.3); }
-#tool-fab:active { transform: translateY(0) scale(.97); }
+:is(#tool-fab, #ocr-tool-fab):hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,0,0,.3); }
+:is(#tool-fab, #ocr-tool-fab):active { transform: translateY(0) scale(.97); }
 /* 方形变体：与“回到顶部/生成图片”按钮同风格（b30gen/completion），位于生成图片按钮上方 */
-#tool-fab[data-fab-variant="square"] {
+:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="square"] {
 	right: 1rem;
 	bottom: 14rem;
 	z-index: 80;
@@ -1685,20 +1685,20 @@ function initToolWidgets() {
 	opacity: 0.3;
 	transition: opacity 0.3s, transform 0.3s;
 }
-#tool-fab[data-fab-variant="square"]:hover {
+:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="square"]:hover {
 	transform: scale(1.1);
 	opacity: 0.9;
 }
-#tool-fab[data-fab-variant="square"]:active {
+:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="square"]:active {
 	transform: scale(0.6);
 }
 @media screen and (max-width: 600px) {
-	#tool-fab[data-fab-variant="square"] {
+	:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="square"] {
 		right: 0.75rem;
 	}
 }
 /* index 首页专用：与页面“返回顶部”按钮同风格 */
-#tool-fab[data-fab-variant="index"] {
+:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="index"] {
     right: 20px;
     bottom: 3rem;
     z-index: 80;
@@ -1722,12 +1722,12 @@ function initToolWidgets() {
     transition: opacity 0.2s ease, transform 0.2s ease;
     font-family: "Exo", "L2", sans-serif;
 }
-#tool-fab[data-fab-variant="index"]:hover {
+:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="index"]:hover {
 	opacity: 1;
 	color: var(--text-primary);
 	transform: scale(1.1);
 }
-#tool-fab[data-fab-variant="index"]:active {
+:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="index"]:active {
 	transform: scale(0.85);
 }
 #tool-modal { position: fixed; inset: 0; z-index: 200; }
@@ -1982,6 +1982,79 @@ label.tool-push-toggle {
 	color: var(--text-muted);
 	font-weight: 600;
 	margin-left: 3px;
+}
+/* ---------- 识图工具窗（内嵌 ocr.html） ---------- */
+/* 位置由 JS 按「工具箱」按钮的实际位置算出来（right/bottom 走内联样式），
+   这里只补一点和工具箱按钮区分开的外观。 */
+#ocr-tool-fab {
+	font-family: "Exo", "L2", sans-serif;
+}
+#ocr-tool-fab[data-fab-variant="index"],
+#ocr-tool-fab[data-fab-variant="square"] {
+	font-weight: 700;
+}
+#ocr-modal { position: fixed; inset: 0; z-index: 210; }
+#ocr-modal[hidden] { display: none; }
+html.ocr-modal-open { overflow: hidden; }
+#ocr-modal-bg { position: fixed; inset: 0; background: var(--overlay); z-index: 211; }
+#ocr-modal-box {
+	position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+	z-index: 212;
+	width: min(1280px, calc(100vw - 20px));
+	height: min(900px, calc(100vh - 20px));
+	display: flex; flex-direction: column; overflow: hidden;
+	background: var(--modal-bg); backdrop-filter: blur(16px);
+	border: 1px solid var(--border); border-radius: 16px;
+	box-shadow: 0 8px 40px rgba(0, 0, 0, .35);
+	box-sizing: border-box;
+}
+#ocr-modal-box .tool-modal-header {
+	flex: 0 0 auto;
+	padding: 10px 14px;
+	margin-bottom: 0;
+	gap: 10px;
+}
+.ocr-modal-hint {
+	flex: 1 1 auto;
+	min-width: 0;
+	font-size: .74rem;
+	color: var(--text-muted);
+	font-family: "Exo", "L2", sans-serif;
+	text-align: right;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#ocr-modal-body { position: relative; flex: 1 1 auto; min-height: 0; background: var(--bg-primary); }
+#ocr-modal-frame { display: block; width: 100%; height: 100%; border: 0; }
+#ocr-modal-loading {
+	position: absolute; inset: 0; z-index: 1;
+	display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+	background: var(--bg-primary); color: var(--text-secondary);
+	font-size: .88rem; font-family: "Exo", "L2", sans-serif; text-align: center;
+}
+#ocr-modal-loading span { font-size: .74rem; color: var(--text-muted); }
+#ocr-modal-loading[hidden] { display: none; }
+#ocr-tool-toast {
+	position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 12px);
+	z-index: 260; max-width: min(560px, calc(100vw - 32px));
+	padding: 10px 16px; border-radius: 10px;
+	background: var(--modal-bg); backdrop-filter: blur(12px);
+	border: 1px solid var(--border); box-shadow: 0 8px 30px rgba(0, 0, 0, .3);
+	color: var(--text-primary); font-size: .84rem; font-family: "Exo", "L2", sans-serif;
+	opacity: 0; pointer-events: none;
+	transition: opacity .25s ease, transform .25s ease;
+}
+#ocr-tool-toast.show { opacity: 1; transform: translate(-50%, 0); }
+#ocr-tool-toast::before { content: "✓ "; color: var(--success); font-weight: 800; }
+@media screen and (max-width: 700px) {
+	#ocr-modal-box {
+		width: calc(100vw - 8px);
+		height: calc(100vh - 8px);
+		border-radius: 12px;
+	}
+	.ocr-modal-hint { display: none; }
+	#ocr-modal-close { width: 40px; height: 40px; line-height: 40px; }
 }
 `;
 		document.head.appendChild(styleEl);
@@ -2632,6 +2705,178 @@ function renderPttPush() {
 	listEl.innerHTML = '<div class="tool-push-summary">' + summary + '</div>' + rows;
 }
 
+/* ===== 识图工具窗：把 ocr.html 当成随点随用的模态窗嵌进来 =====
+ *
+ * 页面只要放置了 <div id="tool-root" …>（即右下角「工具箱」按钮），就会自动多出一个
+ * 「识别」按钮，位置在工具箱按钮正上方；点开是一个内嵌 ocr.html 的大模态窗。
+ *
+ * 覆盖成绩成功后 ocr.html 会 postMessage 回来，本页负责「刷新缓存 + 刷新显示单元」：
+ *     registerOcrAppliedHandler(function (payload) { …重新渲染… });
+ * 页面没注册任何 handler 时退化为整页 reload —— 宁可重载，也不能让屏幕上留着旧成绩。
+ *
+ * 注意：缓存（localStorage.savedArrayData）本来就是共享的，子页面已经写进去了，
+ * 这里要做的是「按本页自己的方式重新渲染一遍 DOM」。
+ */
+const OCR_TOOL_URL = 'ocr.html?embed=1';
+const ocrAppliedHandlers = [];
+
+/**
+ * 注册「识图覆盖成绩之后」的刷新回调
+ * @param {Function} fn function (payload) {…}，payload = {songId, difficulty, score, title, perfect, far, lost}
+ */
+function registerOcrAppliedHandler(fn) {
+	if (typeof fn === 'function' && ocrAppliedHandlers.indexOf(fn) === -1) {
+		ocrAppliedHandlers.push(fn);
+	}
+}
+
+/** 把「识别」按钮摆到工具箱按钮正上方（工具箱各页的 bottom/right 不一样，所以按实测位置算） */
+function placeOcrToolFab() {
+	const fab = document.getElementById('ocr-tool-fab');
+	if (!fab) return;
+	const toolFab = document.getElementById('tool-fab');
+	if (!toolFab) { fab.style.right = '20px'; fab.style.bottom = '5.5rem'; return; }
+	// 直接读工具箱按钮的「计算后」right/bottom：
+	//   - 不用 innerWidth 去反推，页面有没有竖向滚动条都不会差那几个像素
+	//   - 窄屏媒体查询改了 right 也照样跟着走
+	const cs = window.getComputedStyle(toolFab);
+	const right = parseFloat(cs.right);
+	const bottom = parseFloat(cs.bottom);
+	// offsetHeight 而不是 getBoundingClientRect().height：后者会被 hover 的 scale 影响
+	const h = toolFab.offsetHeight;
+	if (!isFinite(right) || !isFinite(bottom) || !h) return;
+	fab.style.right = right + 'px';
+	fab.style.bottom = (bottom + h + 8) + 'px';
+}
+
+function ensureOcrModal() {
+	let modal = document.getElementById('ocr-modal');
+	if (modal) return modal;
+	modal = document.createElement('div');
+	modal.id = 'ocr-modal';
+	modal.hidden = true;
+	modal.innerHTML =
+		'<div id="ocr-modal-bg"></div>' +
+		'<div id="ocr-modal-box" role="dialog" aria-modal="true" aria-label="识图">' +
+		'	<div class="tool-modal-header">' +
+		'		<span class="tool-modal-title">识图 · 结算截图识别</span>' +
+		'		<span class="ocr-modal-hint">选图 → 拖框 → 识别 → 选曲目 → 确认覆盖（覆盖后本页自动刷新）</span>' +
+		'		<button type="button" id="ocr-modal-close" aria-label="关闭">✕</button>' +
+		'	</div>' +
+		'	<div id="ocr-modal-body">' +
+		'		<div id="ocr-modal-loading">识图工具加载中…<span>首次打开要编译 wasm 与载入曲目库，之后就秒开了</span></div>' +
+		'	</div>' +
+		'</div>';
+	modal.querySelector('#ocr-modal-bg').addEventListener('click', closeOcrTool);
+	modal.querySelector('#ocr-modal-close').addEventListener('click', closeOcrTool);
+	document.body.appendChild(modal);
+	return modal;
+}
+
+function openOcrTool() {
+	const modal = ensureOcrModal();
+	// iframe 按需创建，但创建后一直留在 DOM 里：wasm 引擎与曲目库都还在里面，再点开就是秒开
+	if (!document.getElementById('ocr-modal-frame')) {
+		const frame = document.createElement('iframe');
+		frame.id = 'ocr-modal-frame';
+		frame.title = '识图工具';
+		frame.src = OCR_TOOL_URL;
+		document.getElementById('ocr-modal-body').appendChild(frame);
+	}
+	modal.hidden = false;
+	document.documentElement.classList.add('ocr-modal-open');
+	placeOcrToolFab();
+	setTimeout(function () {
+		const btn = document.getElementById('ocr-modal-close');
+		if (btn) { try { btn.focus(); } catch (e) { } }
+	}, 30);
+}
+
+function closeOcrTool() {
+	const modal = document.getElementById('ocr-modal');
+	if (modal) modal.hidden = true;
+	document.documentElement.classList.remove('ocr-modal-open');
+}
+
+/** 覆盖成功后在宿主页面弹一个小提示 */
+let ocrToastTimer = null;
+function showOcrToolToast(text) {
+	let el = document.getElementById('ocr-tool-toast');
+	if (!el) {
+		el = document.createElement('div');
+		el.id = 'ocr-tool-toast';
+		document.body.appendChild(el);
+	}
+	el.textContent = text;
+	el.classList.add('show');
+	clearTimeout(ocrToastTimer);
+	ocrToastTimer = setTimeout(function () { el.classList.remove('show'); }, 3200);
+}
+
+/** 收到子页面「成绩已写入」通知（覆盖或新增）：刷新缓存 + 刷新显示单元 */
+function handleOcrApplied(payload) {
+	let handled = 0;
+	ocrAppliedHandlers.forEach(function (fn) {
+		try { fn(payload); handled++; }
+		catch (err) { console.error('[识图] 页面刷新回调出错：', err); }
+	});
+	if (!handled) {
+		showOcrToolToast('成绩已更新，正在刷新页面…');
+		setTimeout(function () { location.reload(); }, 400);
+		return;
+	}
+	const name = (payload && payload.title) ? payload.title : ((payload && payload.songId) || '该谱面');
+	showOcrToolToast((payload && payload.added ? '已添加「' : '已覆盖「') + name + '」的成绩，列表已刷新');
+}
+
+// 只认自己那个 iframe 发来的消息：比对 e.source 比比对 origin 更严，别人嵌的 iframe 冒充不了
+window.addEventListener('message', function (e) {
+	const frame = document.getElementById('ocr-modal-frame');
+	if (!frame || e.source !== frame.contentWindow) return;
+	const d = e.data;
+	if (!d || typeof d !== 'object') return;
+	if (d.type === 'arcaea-ocr:ready') {
+		const loading = document.getElementById('ocr-modal-loading');
+		if (loading) loading.hidden = true;
+	} else if (d.type === 'arcaea-ocr:applied') {
+		handleOcrApplied(d);
+	} else if (d.type === 'arcaea-ocr:close') {
+		closeOcrTool();
+	}
+});
+
+document.addEventListener('keydown', function (e) {
+	if (e.key !== 'Escape') return;
+	const modal = document.getElementById('ocr-modal');
+	if (modal && !modal.hidden) closeOcrTool();
+});
+
+/** 在工具箱按钮上方挂一个「识别」按钮 */
+function initOcrTool() {
+	if (document.getElementById('ocr-tool-fab')) return;
+	const toolRoot = document.getElementById('tool-root');
+	if (!toolRoot) return;                              // 页面没启用工具箱 → 也不挂识图
+	if (!document.getElementById('tool-fab')) return;   // 工具箱按钮还没建出来
+
+	const variant = toolRoot.getAttribute('data-fab-variant') || 'pill';
+	const fab = document.createElement('div');
+	fab.id = 'ocr-tool-fab';
+	fab.setAttribute('data-fab-variant', variant);
+	fab.setAttribute('role', 'button');
+	fab.setAttribute('tabindex', '0');
+	fab.title = '识别结算截图（打开识图工具窗）';
+	fab.innerHTML = (variant === 'square') ? '识<br>别' : '识别';
+	fab.addEventListener('click', openOcrTool);
+	fab.addEventListener('keydown', function (e) {
+		if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openOcrTool(); }
+	});
+	document.body.appendChild(fab);
+	placeOcrToolFab();
+	window.addEventListener('resize', placeOcrToolFab);
+	window.addEventListener('load', placeOcrToolFab);
+}
+
 $(function () {
 	initToolWidgets();
+	initOcrTool();
 });
