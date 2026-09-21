@@ -66,6 +66,8 @@ html, body {
 }
 
 #view-select,
+#group-select,
+#lang-select,
 #search-input {
 	background: var(--input-bg);
 	color: var(--input-text);
@@ -74,6 +76,8 @@ html, body {
 	padding: 6px 10px;
 	font-size: 0.85rem;
 }
+
+#collapse-actions[hidden] { display: none !important; }
 
 #search-input {
 	width: 210px;
@@ -269,6 +273,17 @@ html, body {
 
 .row-const.missing { color: var(--warning); }
 
+/* 曲师（「按作曲家」排序时要看得见才有意义） */
+.row-artist {
+	font-size: 0.74rem;
+	color: var(--text-muted);
+	max-width: 14rem;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .inp-const {
 	width: 76px;
 	background: var(--input-bg);
@@ -412,7 +427,8 @@ html, body {
 
 @media (max-width: 640px) {
 	#toolbar {
-		max-height: 520px;
+		/* 窄屏工具栏内容较多（视图/分组/语言三个下拉 + 六档难度），留足高度避免被裁掉 */
+		max-height: 620px;
 		overflow: hidden;
 		transition: max-height 0.35s ease, padding 0.35s ease;
 	}

@@ -41,18 +41,34 @@
 				<label class="tool-label">视图</label>
 				<select id="view-select">
 					<option value="default">默认排序</option>
-					<option value="pack">按曲包分组</option>
-					<option value="version">按版本</option>
-					<option value="name">按全曲名</option>
+					<option value="title">按标题</option>
 					<option value="constant">按全曲定数</option>
+					<option value="date">按日期</option>
+					<option value="grade">按评级</option>
+					<option value="artist">按作曲家</option>
+				</select>
+				<label class="tool-label">分组</label>
+				<select id="group-select">
+					<option value="none">无</option>
+					<option value="pack">按曲包</option>
+					<option value="version">按游戏版本</option>
+					<option value="level">按等级</option>
+					<option value="grade">按评级</option>
+				</select>
+				<label class="tool-label">语言</label>
+				<select id="lang-select">
+					<option value="en">English</option>
+					<option value="zh-Hans">简体中文</option>
+					<option value="zh-Hant">繁體中文</option>
+					<option value="ko">한국어</option>
 				</select>
 				<label class="tool-label">难度</label>
 				<span id="difficulty-filters"></span>
-				<input id="search-input" type="search" placeholder="搜索曲名 / 曲目ID">
+				<input id="search-input" type="search" placeholder="搜索曲名 / 曲目ID / 曲师" title="支持曲名（四种语言）、曲目ID、曲师">
 				<label class="check-label"><input type="checkbox" id="only-unrecorded"> 仅显示未记录</label>
 				<label class="check-label"><input type="checkbox" id="only-recorded"> 只显示有记录</label>
 				<label class="check-label"><input type="checkbox" id="sort-reversed"> 逆向排序</label>
-				<span id="collapse-actions">
+				<span id="collapse-actions" hidden>
 					<button class="btn-small" id="collapse-all-btn" type="button">全部收起</button>
 					<button class="btn-small" id="expand-all-btn" type="button">全部展开</button>
 				</span>

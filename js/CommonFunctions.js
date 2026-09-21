@@ -2760,7 +2760,7 @@ function ensureOcrModal() {
 		'<div id="ocr-modal-box" role="dialog" aria-modal="true" aria-label="识图">' +
 		'	<div class="tool-modal-header">' +
 		'		<span class="tool-modal-title">识图 · 结算截图识别</span>' +
-		'		<span class="ocr-modal-hint">选图 → 拖框 → 识别 → 选曲目 → 确认覆盖（覆盖后本页自动刷新）</span>' +
+		// '		<span class="ocr-modal-hint">选图 → 拖框 → 识别 → 选曲目 → 确认覆盖（覆盖后本页自动刷新）</span>' +
 		'		<button type="button" id="ocr-modal-close" aria-label="关闭">✕</button>' +
 		'	</div>' +
 		'	<div id="ocr-modal-body">' +

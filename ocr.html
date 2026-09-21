@@ -100,13 +100,23 @@
                 </div>
 
                 <div id="editor" hidden>
-                    <div class="fieldToggles">
-                        <label><input type="checkbox" data-field="title" checked><span class="dot"
-                                style="background:#185FA5"></span>曲名</label>
-                        <label><input type="checkbox" data-field="diff" checked><span class="dot"
-                                style="background:#854F0B"></span>难度</label>
-                        <label><input type="checkbox" data-field="score" checked><span class="dot"
-                                style="background:#0F6E56"></span>分数</label>
+                    <div class="editorBar">
+                        <div class="fieldToggles">
+                            <label><input type="checkbox" data-field="title" checked><span class="dot"
+                                    style="background:#185FA5"></span>曲名</label>
+                            <label><input type="checkbox" data-field="diff" checked><span class="dot"
+                                    style="background:#854F0B"></span>难度</label>
+                            <label><input type="checkbox" data-field="score" checked><span class="dot"
+                                    style="background:#0F6E56"></span>分数</label>
+                        </div>
+                        <!-- 画面缩放：没有鼠标的移动端全指靠这里 + 双指捏合 -->
+                        <div class="zoomBar" id="zoomBar">
+                            <button type="button" class="zoomBtn" id="zoomOut" aria-label="缩小画面">−</button>
+                            <button type="button" class="zoomBtn zoomVal" id="zoomVal"
+                                title="点击恢复为「适应宽度」">100%</button>
+                            <button type="button" class="zoomBtn" id="zoomIn" aria-label="放大画面">＋</button>
+                            <button type="button" class="zoomBtn zoomFit" id="zoomFit">适应</button>
+                        </div>
                     </div>
                     <div id="stageWrap">
                         <div id="stage">
@@ -114,7 +124,9 @@
                         </div>
                     </div>
                     <p class="hint small">
-                        拖动选框移动位置，拖右下角小方块缩放。标签贴在<strong>框外</strong>，不会挡住画面。
+                        <strong>双指捏合 / Ctrl+鼠标滚轮可缩放图片</strong><br>
+                        <strong>双击画面可快速切换自适应 / 2倍缩放</strong><br>
+                        <strong>建议线框边缘不要跨多种颜色区域，否则识别率降低</strong>   
                     </p>
                 </div>
             </section>
@@ -132,13 +144,13 @@
                         <div class="opt">
                             <span class="opt-label">放大</span>
                             <select id="scaleSelect">
-                                <option value="1">1×</option>
-                                <option value="2" selected>2×</option>
+                                <option value="1" selected>1×</option>
+                                <option value="2">2×</option>
                                 <option value="3">3×</option>
                             </select>
                         </div>
                         <div class="opt opt-check">
-                            <label class="check-label"><input type="checkbox" id="singleLine"> 单行识别</label>
+                            <label class="check-label"><input type="checkbox" id="singleLine" checked> 单行识别</label>
                         </div>
                         <button id="resetBtn" class="btn-secondary" disabled>重置选区</button>
                     </div>
@@ -159,7 +171,19 @@
                             </tr>
                             <tr>
                                 <th>难度</th>
-                                <td><span data-result="diff">—</span> <span class="note" data-note="diff"></span></td>
+                                <td>
+                                    <span data-result="diff">—</span> <span class="note" data-note="diff"></span>
+                                    <!-- 识别出的难度不在已知难度表内（或压根没认到 / 没启用）时才出现：
+                                         让用户手动指定难度，并按该难度重新筛选曲名匹配候选。 -->
+                                    <div class="manualDiff" id="manualDiffBox" hidden>
+                                        <label class="manualDiffLabel" id="manualDiffLabel" for="manualDiffSelect">手动指定难度后重新筛选候选：</label>
+                                        <div class="manualDiffRow">
+                                            <select id="manualDiffSelect" aria-label="手动选择难度"></select>
+                                            <button type="button" class="btn-secondary manualDiffClear" id="manualDiffClear"
+                                                hidden>不限难度</button>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <th>分数</th>
@@ -228,9 +252,17 @@
         const MIN_SIZE = 0.02;   // 选区最小尺寸（比例）
         const PAD_PX = 12;       // 裁剪时四周补的白边（放大后的像素），Tesseract 有留白更稳
         // PSM_SINGLE_LINE：单行模式（选区只含一行文字时更准）。
-        // 实测拉丁文字与日文假名单行都能正确识别；但选区里若有多行内容会严重漏字，
-        // 所以默认关闭，由用户按需勾选。
+        // 实测拉丁文字与日文假名单行都能正确识别；但选区里若有多行内容会严重漏字。
+        // 现在有了画面缩放，用户能轻松把选区框到「只剩一行」，所以默认开启。
         const PSM_SINGLE_LINE = '7';
+
+        // ── 默认值（HTML 里也写了同一套，改这里要跟着改那边）──────────────────
+        const DEFAULT_SCALE = '1';
+        const DEFAULT_SINGLE_LINE = true;
+        // ⚠️ 改了上面两个默认值就把 DEFAULTS_REV 加 1：
+        //    老用户浏览器里已经存了旧设置，不加这个「修订号」的话新默认永远轮不到他们。
+        //    只重置这两个开关，**不动他们调好的选区位置**。
+        const DEFAULTS_REV = 2;
 
         // ── DOM ────────────────────────────────────────────────────────────
         const fileInput = document.getElementById('fileInput');
@@ -247,6 +279,10 @@
         const rawOutput = document.getElementById('rawOutput');
         const libStatus = document.getElementById('libStatus');
         const matchList = document.getElementById('matchList');
+        const manualDiffBox = document.getElementById('manualDiffBox');
+        const manualDiffSelect = document.getElementById('manualDiffSelect');
+        const manualDiffClear = document.getElementById('manualDiffClear');
+        const manualDiffLabel = document.getElementById('manualDiffLabel');
         const scoreCompare = document.getElementById('scoreCompare');
         const compareTitle = document.getElementById('compareTitle');
         const comparePanel = document.getElementById('comparePanel');
@@ -335,6 +371,8 @@
                 singleLine: singleLineCb.checked,
                 // 没加载过图片时保留上次记录的比例，避免被 null 覆盖掉
                 imageAspect: currentAspect ?? storedAspect,
+                // 记下「这份设置是按哪版默认值存的」，供 restoreSettings 判断要不要覆盖旧默认
+                defaultsRev: DEFAULTS_REV,
             };
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -357,10 +395,19 @@
             });
 
             if (data.lang && LANGUAGES.some((l) => l.code === data.lang)) langSelect.value = data.lang;
-            if (data.scale && [...scaleSelect.options].some((o) => o.value === String(data.scale))) {
-                scaleSelect.value = String(data.scale);
+
+            // 默认值改过（DEFAULTS_REV 变大）→ 这两个开关一律用新默认，其余照旧。
+            // 这样「改默认值」对老用户也生效，而他们辛苦调好的选区位置不受影响。
+            const staleDefaults = Number(data.defaultsRev || 0) < DEFAULTS_REV;
+            if (staleDefaults) {
+                scaleSelect.value = DEFAULT_SCALE;
+                singleLineCb.checked = DEFAULT_SINGLE_LINE;
+            } else {
+                if (data.scale && [...scaleSelect.options].some((o) => o.value === String(data.scale))) {
+                    scaleSelect.value = String(data.scale);
+                }
+                if (typeof data.singleLine === 'boolean') singleLineCb.checked = data.singleLine;
             }
-            if (typeof data.singleLine === 'boolean') singleLineCb.checked = data.singleLine;
 
             storedAspect = typeof data.imageAspect === 'number' && data.imageAspect > 0 ? data.imageAspect : null;
             return true;
@@ -492,6 +539,7 @@
                 field,
                 mode,
                 el,
+                pointerId: e.pointerId,
                 startX: e.clientX,
                 startY: e.clientY,
                 startRect: { ...field.rect },
@@ -535,6 +583,198 @@
             dragState = null;
             saveSettings();   // 拖完就记住位置
         }
+
+        /**
+         * 撤销正在进行的拖拽，把选区放回按下时的位置。
+         * 用于「第二根手指落下 → 要开始捏合了」：不撤销的话，手指 1 会一边拖选区、
+         * 捏合又一边改缩放，两边同时写 state，选区会被甩到莫名其妙的地方。
+         * 注意不调 saveSettings —— 这一拖本来就不算数。
+         */
+        function cancelDrag() {
+            if (!dragState) return;
+            const st = dragState;
+            dragState = null;
+            st.el.classList.remove('dragging');
+            try { st.el.releasePointerCapture(st.pointerId); } catch (_) { /* 可能已自动释放 */ }
+            st.field.rect = { ...st.startRect };
+            applyRect(st.field);
+        }
+
+        // ── 画面缩放 / 平移（画布视口）────────────────────────────────────
+        // 移动端没有鼠标，靠「两指捏合 + 单指拖动」把选区拖准；桌面端则是滚轮/滚动条 + Ctrl 滚轮。
+        //
+        // 两个刻意的设计决定：
+        //  ① 平移**交给浏览器原生滚动**（#stageWrap 的 overflow:auto），不用 JS 搬 transform。
+        //     好处：惯性、滚动链（内层滚到底自动接着滚页面）、滚动条、触摸板双指滚动全部免费，
+        //     而且各浏览器行为一致。缺点是没有，所以没必要自己造轮子。
+        //  ② 缩放**改 #stage 的宽度**，不用 transform: scale()。
+        //     选区是按百分比定位的，宽度一变它就跟着缩放 —— 而边框 / 缩放手柄 / 名字标签
+        //     这些「装饰」不会被一起拉大（用 transform 的话它们会跟着变形，得再反向补偿）。
+        const stageWrap = document.getElementById('stageWrap');
+        const zoomInBtn = document.getElementById('zoomIn');
+        const zoomOutBtn = document.getElementById('zoomOut');
+        const zoomValBtn = document.getElementById('zoomVal');
+        const zoomFitBtn = document.getElementById('zoomFit');
+
+        // 1 = 适应宽度。0.5×~8× 足以覆盖各种截图分辨率。
+        const ZOOM_MIN = 0.5, ZOOM_MAX = 8;
+        const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8];
+        let zoomLevel = 1;
+
+        function updateZoomBar() {
+            if (zoomValBtn) zoomValBtn.textContent = Math.round(zoomLevel * 100) + '%';
+            if (zoomOutBtn) zoomOutBtn.disabled = zoomLevel <= ZOOM_MIN + 1e-6;
+            if (zoomInBtn) zoomInBtn.disabled = zoomLevel >= ZOOM_MAX - 1e-6;
+        }
+
+        /**
+         * 把当前缩放倍数贴到 #stage 上。
+         *
+         * 用 min(百分比, 像素) 是为了保住原有的一个行为：1× 时图片不超过它的**原始像素宽**
+         * （小截图不放大、不糊）。两分支都正比于倍数，所以宽度比 === 倍数比，锚点换算才准确。
+         * OCR 永远从原图 imageBitmap 裁，所以显示放大不影响识别质量。
+         */
+        function applyZoom() {
+            if (!stage) return;
+            const pct = (zoomLevel * 100).toFixed(4) + '%';
+            stage.style.width = pct;   // 兜底：老浏览器不认 min() 时用这个（CSSOM 会忽略非法值）
+            const natW = imageBitmap ? imageBitmap.width : 0;
+            if (natW > 0) stage.style.width = `min(${pct}, ${Math.round(zoomLevel * natW)}px)`;
+            FIELDS.forEach(updateLabelPlacement);   // 高度变了，标签该上该下要重算
+            updateZoomBar();
+        }
+
+        /**
+         * 缩放到指定倍数，并让「锚点」在视口里的位置保持不动。
+         * @param {Number} next 目标倍数
+         * @param {{x:Number,y:Number}} [anchor] 锚点，相对 #stageWrap 视口左上角（默认视口中心）
+         */
+        function setZoom(next, anchor) {
+            if (!stageWrap || !stage) return;
+            const target = clamp(next, ZOOM_MIN, ZOOM_MAX);
+            if (Math.abs(target - zoomLevel) < 1e-4) { updateZoomBar(); return; }
+
+            const ax = anchor ? anchor.x : stageWrap.clientWidth / 2;
+            const ay = anchor ? anchor.y : stageWrap.clientHeight / 2;
+            // 锚点换算成内容坐标：缩放后要让它重新落回视口里的同一处
+            const contentX = stageWrap.scrollLeft + ax;
+            const contentY = stageWrap.scrollTop + ay;
+
+            const oldW = stage.offsetWidth || 1;
+            zoomLevel = target;
+            applyZoom();
+            const k = (stage.offsetWidth || 1) / oldW;
+
+            stageWrap.scrollLeft = contentX * k - ax;
+            stageWrap.scrollTop = contentY * k - ay;
+        }
+
+        /** 按阶梯放大 / 缩小一档（按钮用） */
+        function stepZoom(dir) {
+            let next;
+            if (dir > 0) {
+                next = ZOOM_STEPS.find((v) => v > zoomLevel + 1e-4);
+                if (next === undefined) next = ZOOM_STEPS[ZOOM_STEPS.length - 1];
+            } else {
+                next = ZOOM_STEPS[0];
+                for (let i = ZOOM_STEPS.length - 1; i >= 0; i--) {
+                    if (ZOOM_STEPS[i] < zoomLevel - 1e-4) { next = ZOOM_STEPS[i]; break; }
+                }
+            }
+            setZoom(next);
+        }
+
+        zoomInBtn?.addEventListener('click', () => stepZoom(1));
+        zoomOutBtn?.addEventListener('click', () => stepZoom(-1));
+        // 百分数按钮兼「回到适应宽度」
+        zoomValBtn?.addEventListener('click', () => setZoom(1));
+        zoomFitBtn?.addEventListener('click', () => setZoom(1));
+
+        // Ctrl / ⌘ + 滚轮缩放。触摸板的「捏合」浏览器也会转成 ctrlKey=true 的 wheel，
+        // 所以 Mac / Windows 精密触摸板上捏合是白送的。普通滚轮保持原生滚动 = 平移。
+        stageWrap?.addEventListener('wheel', (e) => {
+            if (!e.ctrlKey && !e.metaKey) return;
+            e.preventDefault();
+            const rect = stageWrap.getBoundingClientRect();
+            setZoom(zoomLevel * Math.exp(-e.deltaY * 0.0025),
+                { x: e.clientX - rect.left, y: e.clientY - rect.top });
+        }, { passive: false });
+
+        // 双击（移动端在 touch-action 禁掉浏览器缩放后也会派发 dblclick）在 适应 ↔ 2× 之间切换
+        stageWrap?.addEventListener('dblclick', (e) => {
+            if (e.target && e.target.closest && e.target.closest('.region')) return;   // 别干扰选区操作
+            const rect = stageWrap.getBoundingClientRect();
+            setZoom(Math.abs(zoomLevel - 1) < 1e-3 ? 2 : 1,
+                { x: e.clientX - rect.left, y: e.clientY - rect.top });
+        });
+
+        // ── 双指捏合 ───────────────────────────────────────────────────────
+        // 用 Pointer Events（iOS Safari 13+ / Chrome / Firefox 都支持，各浏览器一套代码）。
+        const activePointers = new Map();   // pointerId -> {x, y}
+        let pinchState = null;              // { dist, midX, midY }
+
+        function pinchMetrics() {
+            const pts = [...activePointers.values()];
+            if (pts.length < 2) return null;
+            const [a, b] = pts;
+            return {
+                dist: Math.hypot(b.x - a.x, b.y - a.y),
+                midX: (a.x + b.x) / 2,
+                midY: (a.y + b.y) / 2,
+            };
+        }
+
+        // 捕获阶段：要抢在选区的 pointerdown 之前判断「这是不是第二根手指」
+        stageWrap?.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'mouse') return;   // 鼠标走滚轮 / 滚动条 / 双击，不参与捏合
+            activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (activePointers.size >= 2) {
+                cancelDrag();                        // 手指 1 可能正在拖选区，先撤销
+                pinchState = pinchMetrics();
+                // 拦住这次事件，免得它又给某个选区开一次新拖拽
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        }, true);
+
+        stageWrap?.addEventListener('pointermove', (e) => {
+            if (!activePointers.has(e.pointerId)) return;
+            activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (!pinchState || activePointers.size < 2) return;
+            const now = pinchMetrics();
+            if (!now || !now.dist) return;
+            e.preventDefault();
+            const rect = stageWrap.getBoundingClientRect();
+            setZoom(zoomLevel * (now.dist / pinchState.dist),
+                { x: now.midX - rect.left, y: now.midY - rect.top });
+            // 中点整体位移 = 平移（双指同向拖动）
+            stageWrap.scrollLeft -= (now.midX - pinchState.midX);
+            stageWrap.scrollTop -= (now.midY - pinchState.midY);
+            pinchState = now;
+        }, { passive: false });
+
+        function releasePointer(e) {
+            if (!activePointers.delete(e.pointerId)) return;
+            if (activePointers.size < 2) pinchState = null;
+        }
+        stageWrap?.addEventListener('pointerup', releasePointer);
+        stageWrap?.addEventListener('pointercancel', releasePointer);
+
+        // 双指触摸时禁掉浏览器自己的手势（滚动 / 页面缩放），保证捏合完全归我们处理。
+        // 显式声明 passive:false —— 某些浏览器会把 touch* 监听当 passive，那样 preventDefault 会被忽略。
+        stageWrap?.addEventListener('touchstart', (e) => {
+            if (e.touches.length >= 2) e.preventDefault();
+        }, { passive: false });
+        stageWrap?.addEventListener('touchmove', (e) => {
+            if (e.touches.length >= 2) e.preventDefault();
+        }, { passive: false });
+
+        /** 换图片时回到「适应宽度」 */
+        function resetZoom() {
+            zoomLevel = 1;
+            applyZoom();
+        }
+
 
         /** 把 FIELDS 的状态同步到界面（复选框勾选状态 + 选区淡显） */
         function syncFieldToggles() {
@@ -1002,17 +1242,23 @@
          * 用 OCR 出的曲名 + 难度在曲目库里找最像的谱面。
          * 难度优先当过滤器（「读取到曲名之后拿难度匹配」）；但难度本身也可能认错，
          * 所以过滤后最佳相似度过低时会回退到全库重算一次，并在界面上说明。
+         *
+         * @param {boolean} [manual] 这次筛选用的难度是「用户手动指定」的而不是识别出来的，
+         *                           只影响界面文案（回退时提醒的是「可能选错难度了」）。
          */
-        function matchSongs(ocrTitle, ocrDiff, limit = 5) {
+        function matchSongs(ocrTitle, ocrDiff, limit = 5, manual = false) {
             const q = normalizeForMatch(ocrTitle);
-            if (!q) return { items: [], filtered: false, fallback: false, reason: 'no-title' };
-            if (libraryState !== 'ready') return { items: [], filtered: false, fallback: false, reason: libraryState };
+            if (!q) return { items: [], filtered: false, fallback: false, manual, reason: 'no-title' };
+            if (libraryState !== 'ready') return { items: [], filtered: false, fallback: false, manual, reason: libraryState };
 
             const byDiff = ocrDiff ? songLibrary.filter((r) => r.diff === ocrDiff) : [];
             let filtered = byDiff.length > 0;
             let scored = scorePool(filtered ? byDiff : songLibrary, q);
             let fallback = false;
-            if (filtered && (!scored.length || scored[0].score < MATCH_FALLBACK_THRESHOLD)) {
+            // ⚠️ 手动指定的难度**不自动回退到全库**：用户已经明确说了「就是这个难度」，
+            //    再悄悄换成全库、把别的难度塞进候选，等于把他的选择当没看见。
+            //    相似度低就在界面文案里提醒，让他自己决定要不要换难度（旁边有「不限难度」）。
+            if (!manual && filtered && (!scored.length || scored[0].score < MATCH_FALLBACK_THRESHOLD)) {
                 scored = scorePool(songLibrary, q);
                 fallback = true;
             }
@@ -1027,7 +1273,7 @@
                 items.push(s);
                 if (items.length >= limit) break;
             }
-            return { items, filtered, fallback, reason: 'ok' };
+            return { items, filtered, fallback, manual, reason: 'ok' };
         }
 
         /** 难度徽章文字：rating + ratingPlus 时补一个 '+'（如 9、10+、11+） */
@@ -1057,7 +1303,17 @@
             if (result.fallback) {
                 empty(`⚠️ 在「${ocrDiff}」难度内没有足够接近的结果，已回退到全库匹配 —— 难度可能识别错了。`);
             } else if (result.filtered) {
-                empty(`已在「${ocrDiff}」难度内筛选，共 ${songLibrary.filter((r) => r.diff === ocrDiff).length} 个谱面参与匹配。`);
+                const poolSize = songLibrary.filter((r) => r.diff === ocrDiff).length;
+                if (result.manual) {
+                    // 手动指定时不回退（见 matchSongs），所以「相似度都低」这件事必须在这里说清楚
+                    const weak = result.items.length > 0 && result.items[0].score < MATCH_FALLBACK_THRESHOLD;
+                    empty(
+                        `已按手动指定的「${ocrDiff}」难度筛选，共 ${poolSize} 个谱面参与匹配。` +
+                        (weak ? '⚠️ 相似度都不高 —— 若曲名也认错了，换个难度或用「不限难度」再试。' : '')
+                    );
+                } else {
+                    empty(`已在「${ocrDiff}」难度内筛选，共 ${poolSize} 个谱面参与匹配。`);
+                }
             }
 
             result.items.forEach((it) => {
@@ -1119,9 +1375,100 @@
                     c.classList.toggle('active', c.dataset.songId === row.songId && c.dataset.diff === row.diff);
                 }
             }
+            // 难度已经由候选卡确定 → 手动选择框（若已出现）降级成「想换难度随时换」的通用工具
+            if (manualDiffOpen) { manualDiffReason = MANUAL_DIFF_LABEL_PICK; syncManualDiffUI(); }
             setStatus(`已选用：${row.title} — ${row.artist || '—'}（${diffLabel(row)}）`);
             renderCompare(row);
         }
+
+        // ── 手动指定难度 ────────────────────────────────────────────────────
+        // 什么时候需要：识别出来的难度落在 DIFFICULTY_NAMES 之外 —— 糊成了 "FUTUREX"、
+        // 把旁边那行小字（如 MAX RECALL）一起框进来了、或者干脆没认到字。
+        // 这时 ocrDiffText 是空的，matchSongs 只能全库匹配 → 候选里各难度混在一起，
+        // 用户也没法自己纠正。所以在「难度」这一行下面挂一个下拉框：
+        // 选定难度后按该难度重新筛一遍候选。
+        //
+        // 设计取舍：
+        //   ① 只在识别失败时主动出现（识别对了不打扰用户）；
+        //   ② 一旦出现就一直留着，点过候选卡后降级成通用的「换难度」工具；
+        //   ③ 改动筛选条件会收起对比面板 —— 旧对比表跟新筛选对不上，留着是误导。
+        const MANUAL_DIFF_LABEL_PICK = '手动指定难度后重新筛选候选：';
+        const MANUAL_DIFF_LABEL_EMPTY = '没认到难度，手动指定后可按难度重新筛选候选：';
+        const MANUAL_DIFF_LABEL_DISABLED = '难度识别未启用，手动指定后可按难度筛选候选：';
+        const MANUAL_DIFF_OPTION_NONE = '— 不限难度（全库匹配）—';
+
+        let manualDiff = '';          // '' = 不手动指定；否则是用户选定的难度名
+        let manualDiffReason = '';    // 下拉框上方那句解释（说明它为什么会冒出来）
+        let manualDiffOpen = false;   // 本次识别是否需要这个下拉框
+        let lastMatch = { title: '', diff: '' };                    // 本次匹配的输入，供重新筛选复用
+        let lastOcrDiff = { display: '—', note: '', cls: 'note' };  // 识别原始显示，供「不限难度」还原
+
+        /** 可选难度：曲目库里真实存在的（库里还没载入就退回标准六档） */
+        function manualDiffChoices() {
+            const present = DIFFICULTY_NAMES.filter((n) => songLibrary.some((r) => r.diff === n));
+            return present.length ? present : DIFFICULTY_NAMES.slice();
+        }
+
+        /** 按曲目库现状重建下拉选项（选项没变就不动 DOM，避免把用户的展开状态打断） */
+        function buildManualDiffOptions() {
+            if (!manualDiffSelect) return;
+            const want = manualDiffChoices();
+            const have = [...manualDiffSelect.options].map((o) => o.value);
+            if (have.length === want.length + 1 && have[0] === '' && want.every((n, i) => have[i + 1] === n)) return;
+            manualDiffSelect.textContent = '';
+            const none = document.createElement('option');
+            none.value = '';
+            none.textContent = MANUAL_DIFF_OPTION_NONE;
+            manualDiffSelect.appendChild(none);
+            for (const n of want) {
+                const o = document.createElement('option');
+                o.value = n;
+                o.textContent = n;
+                manualDiffSelect.appendChild(o);
+            }
+        }
+
+        /** 同步下拉框的显隐 / 选项 / 文案（不负责重新筛选候选） */
+        function syncManualDiffUI() {
+            if (!manualDiffBox) return;
+            if (!manualDiffOpen) { manualDiffBox.hidden = true; return; }
+            manualDiffBox.hidden = false;
+            buildManualDiffOptions();
+            manualDiffSelect.value = manualDiff;
+            if (manualDiffLabel) manualDiffLabel.textContent = manualDiff ? MANUAL_DIFF_LABEL_PICK : manualDiffReason;
+            if (manualDiffClear) manualDiffClear.hidden = !manualDiff;
+        }
+
+        /**
+         * 设定手动难度 → 回填「难度」结果字段 + 按新难度重新筛选候选。
+         * @param {string} value 难度名；传 '' 表示「不限难度」，回到识别结果
+         */
+        function setManualDiff(value) {
+            manualDiff = value || '';
+            if (manualDiffSelect) manualDiffSelect.value = manualDiff;
+
+            if (manualDiff) {
+                setResult('diff', manualDiff);
+                setNote('diff', '（手动指定，优先于识别结果）', 'note ok');
+            } else {
+                // 还原识别出来的原始显示 —— 否则用户会以为刚选的难度还在生效
+                setResult('diff', lastOcrDiff.display);
+                setNote('diff', lastOcrDiff.note, lastOcrDiff.cls);
+            }
+            syncManualDiffUI();
+
+            const effDiff = manualDiff || lastMatch.diff;
+            const dropped = !!compareRow && compareRow.diff !== effDiff;
+            if (dropped) closeCompare();
+            renderMatches(matchSongs(lastMatch.title, effDiff, 5, !!manualDiff), lastMatch.title, effDiff);
+            setStatus(
+                (manualDiff ? `已按手动指定的「${manualDiff}」难度重新筛选候选（见下方「曲名匹配」）` : '已取消难度筛选，回到识别结果') +
+                (dropped ? '｜⚠️ 对比面板已收起，请重新点选曲目' : '')
+            );
+        }
+
+        manualDiffSelect?.addEventListener('change', () => setManualDiff(manualDiffSelect.value));
+        manualDiffClear?.addEventListener('click', () => setManualDiff(''));
 
         // ── 成绩缓存对比（localStorage.savedArrayData）────────────────────────
         // index 页面上传 st3 / CSV / 成绩导出后，App 会把成绩对象数组写进
@@ -1205,6 +1552,21 @@
             if (!compareNoteEl) return;
             compareNoteEl.textContent = text;
             compareNoteEl.className = 'note' + (isError ? ' warn' : (text ? ' ok' : ''));
+        }
+
+        /**
+         * 收起对比面板并清掉它的状态。
+         * 用途：筛选条件变了（比如用户换了手动难度）之后，原来那张对比表跟当前筛选已经对不上，
+         * 留着会让用户以为「表里的难度 = 现在选中的难度」。
+         */
+        function closeCompare() {
+            compareRow = null;
+            compareInputs = {};
+            compareNewScoreEl = null;
+            compareNoteEl = null;
+            compareOldScore = 0;
+            if (scoreCompare) { scoreCompare.hidden = true; scoreCompare.textContent = ''; }
+            if (comparePanel) comparePanel.hidden = true;
         }
 
         function renderCompare(row, note) {
@@ -1786,8 +2148,8 @@
         }
 
         // ── 事件绑定 ───────────────────────────────────────────────────────
-        fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
+        // 载入一张图片：手动选文件和外壳 App 分享进来，都走这一条路
+        async function applyImageFile(file) {
             if (!file) return;
             try {
                 const bitmap = await createImageBitmap(file);
@@ -1799,6 +2161,7 @@
                 if (stageEmpty) stageEmpty.hidden = true;
                 ocrBtn.disabled = false;
                 resetBtn.disabled = false;
+                resetZoom();   // 换了图片就回到「适应宽度」，别把上一张图的缩放带过来
 
                 currentAspect = bitmap.width / bitmap.height;
                 // 恢复的选区是按「比例」存的，图片比例差太多时位置大概率对不上，提醒一下
@@ -1810,7 +2173,15 @@
             } catch (err) {
                 setStatus('图片解码失败：' + err.message, true);
             }
+        }
+
+        fileInput.addEventListener('change', (e) => {
+            applyImageFile(e.target.files[0]);
         });
+
+        // 外壳 App（SmartRTE_App）把「分享」进来的截图喂到这里，页面上没有对应的按钮。
+        // 见 APP-SHELL.md：注入脚本会优先用它，拿不到才退回「造 DataTransfer 塞 fileInput」。
+        window.__ocrLoadImage = applyImageFile;
 
         document.querySelectorAll('input[data-field]').forEach((cb) => {
             cb.addEventListener('change', () => {
@@ -1863,6 +2234,11 @@
             const scoreReport = [];
             let ocrTitleText = '';   // 归一化后的曲名（喂给曲目库匹配）
             let ocrDiffText = '';    // 归一化后的难度名
+            // 每次识别都从头判定「要不要手动选难度」，别把上一次的结论带过来
+            manualDiff = '';
+            manualDiffOpen = false;
+            manualDiffReason = MANUAL_DIFF_LABEL_PICK;
+            lastOcrDiff = { display: '—', note: '', cls: 'note' };
             try {
                 for (const field of FIELDS) {
                     setResult(field.key, field.key === 'score' ? '' : '…');
@@ -1870,6 +2246,8 @@
                     if (!field.enabled) {
                         setResult(field.key, '（未启用）');
                         rawTexts[field.key] = '';
+                        // 没启用难度识别 → 想按难度筛候选就只能手动指定
+                        if (field.key === 'diff') { manualDiffOpen = true; manualDiffReason = MANUAL_DIFF_LABEL_DISABLED; }
                         continue;
                     }
 
@@ -1917,11 +2295,24 @@
                         rawTexts[field.key] = cleaned
                             ? cleaned + (d.matched && d.text !== cleaned ? `  → ${d.text}（比对难度表）` : '')
                             : '';
-                        setResult(field.key, d.text || '(空)');
-                        if (d.matched) ocrDiffText = d.text;
-                        if (!cleaned) setNote(field.key, '（没认到文字，请核对选区）', 'note warn');
-                        else if (d.matched) setNote(field.key, '（已按难度表规范化 ✓）', 'note ok');
-                        else setNote(field.key, '（没匹配到已知难度名，请核对）', 'note warn');
+                        const display = d.text || '(空)';
+                        setResult(field.key, display);
+                        let noteText, noteCls;
+                        if (!cleaned) { noteText = '（没认到文字，请核对选区）'; noteCls = 'note warn'; }
+                        else if (d.matched) { noteText = '（已按难度表规范化 ✓）'; noteCls = 'note ok'; }
+                        else { noteText = '（没匹配到已知难度名，请核对）'; noteCls = 'note warn'; }
+                        setNote(field.key, noteText, noteCls);
+                        // 记下原始显示：「不限难度」时要把这一行还原回识别结果
+                        lastOcrDiff = { display, note: noteText, cls: noteCls };
+                        if (d.matched) {
+                            ocrDiffText = d.text;
+                        } else {
+                            // 认出来的难度不在已知表里 → 让用户自己指定，再按该难度重新筛候选
+                            manualDiffOpen = true;
+                            manualDiffReason = cleaned
+                                ? `识别到的「${display}」不在已知难度表内，手动指定后重新筛选候选：`
+                                : MANUAL_DIFF_LABEL_EMPTY;
+                        }
                     } else {
                         const r = await recognizePlain(engine, lang, imageBitmap, field, scale, singleLine);
                         const cleaned = (r.text || '').replace(/\s+/g, ' ').trim();
@@ -1932,6 +2323,10 @@
                 }
 
                 // 曲名匹配：用识别到的曲名（+ 难度缩小范围）去曲目库里找候选
+                // 没有曲名就没有候选可筛，「手动指定难度」也就没意义了 → 不显示
+                if (!ocrTitleText) manualDiffOpen = false;
+                lastMatch = { title: ocrTitleText, diff: ocrDiffText };
+                syncManualDiffUI();
                 renderMatches(matchSongs(ocrTitleText, ocrDiffText), ocrTitleText, ocrDiffText);
 
                 rawOutput.textContent = FIELDS
@@ -1987,6 +2382,26 @@
             singleRating, loseScoreOf, formatScore, readScoreCache, findCachedIndex,
             DIFF_DISPLAY, SCORE_CACHE_KEY, SCORE_CACHE_VERSION,
             readConstantFrom, buildNewRecord, constantOverrideFor, readConstantOverrides,
+            // 画面缩放 / 平移（自动化测试用）
+            setZoom, stepZoom, resetZoom,
+            ZOOM_STEPS, ZOOM_MIN, ZOOM_MAX,
+            getZoom: () => zoomLevel,
+            getStageWidth: () => (stage ? stage.offsetWidth : 0),
+            getWrapScroll: () => (stageWrap ? { left: stageWrap.scrollLeft, top: stageWrap.scrollTop } : null),
+            getRectOf: (key) => {
+                const f = FIELDS.find((x) => x.key === key);
+                return f ? { ...f.rect } : null;
+            },
+            DEFAULTS_REV, DEFAULT_SCALE, DEFAULT_SINGLE_LINE,
+            // 手动指定难度（识别不出难度时的补救）
+            setManualDiff, syncManualDiffUI, manualDiffChoices,
+            isManualDiffOpen: () => manualDiffOpen,
+            isManualDiffVisible: () => !!(manualDiffBox && !manualDiffBox.hidden),
+            getManualDiff: () => manualDiff,
+            getLastMatch: () => ({ ...lastMatch }),
+            getManualDiffLabel: () => (manualDiffLabel ? manualDiffLabel.textContent : null),
+            getManualDiffOptions: () => (manualDiffSelect ? [...manualDiffSelect.options].map((o) => o.value) : []),
+            getManualDiffOptionsText: () => (manualDiffSelect ? [...manualDiffSelect.options].map((o) => o.textContent) : []),
             getLibrary: () => songLibrary,
             getLibraryState: () => libraryState,
             getSongConstants: () => songConstantsByIdx,

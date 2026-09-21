@@ -390,7 +390,15 @@ html.embedded details.section {
     opacity: 0.7;
 }
 
-/* 字段开关 */
+/* 字段开关 + 画面缩放 */
+.editorBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem 1rem;
+    flex-wrap: wrap;
+}
+
 .fieldToggles {
     display: flex;
     gap: 1rem;
@@ -421,6 +429,68 @@ html.embedded details.section {
     vertical-align: middle;
 }
 
+/* 画面缩放条：移动端没有鼠标，全靠这几个按钮 + 双指捏合 */
+.zoomBar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+    flex: none;
+}
+
+.zoomBtn {
+    appearance: none;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: "Exo", "L2", sans-serif;
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0 0.6rem;
+    min-width: 2.1rem;
+    height: 2rem;
+    cursor: pointer;
+    /* 触屏上别把单击当双击、别长按弹菜单 */
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.zoomBtn + .zoomBtn {
+    border-left: 1px solid var(--border);
+}
+
+.zoomBtn:hover {
+    background: var(--surface-alt);
+    color: var(--text);
+}
+
+.zoomBtn:active {
+    background: var(--accent-soft, var(--surface-alt));
+}
+
+.zoomBtn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+/* 百分数按钮同时兼「回到适应宽度」的入口 */
+.zoomVal {
+    min-width: 3.6rem;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.82rem;
+    color: var(--text);
+}
+
+.zoomFit {
+    font-size: 0.78rem;
+}
+
 /* 截图舞台 */
 #editor {
     display: flex;
@@ -435,6 +505,11 @@ html.embedded details.section {
     border-radius: 10px;
     background: var(--surface-alt);
     max-height: calc(100vh - 250px);
+    /* 平移交给浏览器原生滚动（惯性、滚动链、滚动条全都免费且各浏览器一致）；
+       缩放走 JS。这里只放行平移、禁掉浏览器自己的缩放，好让双指捏合归我们处理。 */
+    touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: auto;
 }
 
 #stageWrap::-webkit-scrollbar {
@@ -455,10 +530,13 @@ html.embedded details.section {
 
 #stageImg {
     display: block;
-    max-width: 100%;
+    /* 宽度交给 #stage（由 JS 按缩放倍数设定），高度按比例跟随。
+       注意这里必须是 width 而不是 max-width：缩放时图片要跟着放大。 */
+    width: 100%;
     height: auto;
     user-select: none;
     -webkit-user-drag: none;
+    -webkit-touch-callout: none;
 }
 
 /* ── 选区框 ─────────────────────────────────────────────────────────── */
@@ -681,6 +759,66 @@ input[data-result]:focus {
 
 .note.ok {
     color: var(--success);
+}
+
+/* ===== 手动指定难度（识别出的难度不在已知难度表内时出现） ===== */
+.manualDiff {
+    margin-top: 6px;
+    padding: 7px 8px;
+    border: 1px dashed var(--warning);
+    border-radius: 8px;
+    background: var(--btn-secondary-bg);
+}
+
+.manualDiff[hidden] {
+    display: none !important;
+}
+
+.manualDiffLabel {
+    display: block;
+    /* td 里是等宽字体，说明文字换回无衬线更好读 */
+    font-family: "Exo", "L2", -apple-system, sans-serif;
+    font-size: 0.74rem;
+    line-height: 1.55;
+    color: var(--warning);
+    margin-bottom: 5px;
+}
+
+.manualDiffRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.manualDiffRow select {
+    flex: 1 1 8rem;
+    min-width: 8rem;
+    padding: 6px 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    font-family: "Exo", "L2", -apple-system, sans-serif;
+    font-size: 0.84rem;
+    color: var(--input-text);
+    background: var(--input-bg);
+    /* 触屏上没有 hover，选完即生效，避免误触后不知道发生了什么 */
+    touch-action: manipulation;
+}
+
+.manualDiffRow select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.manualDiffClear {
+    flex: 0 0 auto;
+    font-size: 0.74rem;
+    padding: 5px 9px;
+}
+
+.manualDiffClear[hidden] {
+    display: none !important;
 }
 
 .hint {
@@ -1014,10 +1152,24 @@ pre {
         position: static;
     }
 
-    /* 单栏时不再给舞台限高：让整页自然滚动，避免在图片里再套一层内部滚动条
-       （内部滚动在触屏上和页面滚动很容易打架）。 */
+    /* 单栏时也要给舞台一个「视口高度」—— 现在有缩放/平移了，
+       视口必须有限高，否则放大后整页被拉得无限长、根本pan不动。
+       靠 touch-action: pan-x pan-y 让浏览器在「内部滚到底」时自然接管页面滚动。 */
     #stageWrap {
-        max-height: none;
+        max-height: 58vh;
+    }
+
+    /* 触屏上把缩放按钮做大，手指点得准 */
+    .zoomBtn {
+        height: 2.5rem;
+        min-width: 2.6rem;
+        padding: 0 0.75rem;
+        font-size: 1rem;
+    }
+
+    .zoomVal {
+        min-width: 4.1rem;
+        font-size: 0.86rem;
     }
 
     #page-head {
