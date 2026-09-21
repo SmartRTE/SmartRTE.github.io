@@ -24,7 +24,9 @@
             <span class="sidebar-toggle-text sidebar-toggle-collapse">收起</span>
             <span class="sidebar-toggle-text sidebar-toggle-expand">展开</span>
         </button>
-        <aside id="sidebar">
+        <!-- class="no-data"：还没上传文件/读缓存时的空状态，藏起统计面板、筛选控件、
+             清除缓存按钮和它们的分割线（见 css/index.css）。index.js 的 displayB30() 里去掉这个类 -->
+        <aside id="sidebar" class="no-data">
             <div id="loading-status">
                 <span class="loading-notice" id="load-db" style="color:#ff6b6b">⚠ 数据库文件未加载</span>
                 <span class="loading-notice" id="load-il" style="color:#ff6b6b">⚠ 曲绘差分文件未加载</span>
@@ -102,7 +104,7 @@
             <div id="bottom-actions">
                 <button class="btn-secondary theme-toggle" onclick="toggleTheme()" id="theme-toggle-btn">🌙 深色</button>
                 <div class="divider"></div>
-                <button class="btn-danger" onclick="deleteLocalStorage()">🗑 清除本地缓存</button>
+                <button class="btn-danger" onclick="deleteLocalStorage()" id="clear-cache-btn">🗑 清除本地缓存</button>
             </div>
         </aside>
         <main id="main-content">
@@ -115,15 +117,39 @@
                         <span><strong>新功能！</strong></span>
                     </div><br>
                     <div class="version-row">
-                        <strong>新增成绩图识别功能！
+                        <strong>2026-09<br> 安卓app优化<br>
+                            现在，打完歌用游戏内结算界面的“分享”功能，可以快速调起APP进行成绩识别！<br>
+                            <a href = "https://wwaqy.lanzouq.com/b0067a0fwh" target="_blank" rel="noopener">点击这里下载</a>  访问密码: e491
+                            <br>
+                            （若提示手机不能下载，把浏览器设置为电脑模式，或者把UA设置为电脑即可绕过）
+                            <br><br>
+                            但是！我没有iOS设备也没有iOS开发经验所以没有iOS版（
+                            <br><br>
+                        </strong>
+
+                    </div>
+                    <div class="version-row">
+                        <strong>2026-09<br> 分数管理页面优化<br>
+                            全曲成绩管理页面现在与游戏内排序机制和分组机制对应，没有st3的小伙伴们也可以手动快速的逐行录入分数啦
+                            <br>
+                            （感谢deepseek老师
+                            <br><br>
+                        </strong>
+
+                    </div>
+                    <div class="version-row">
+                        <strong>2026-09<br> 新增成绩图识别功能！<br>
                             点击页面右下角“识别”按钮，可选成绩截图进行识图，并进行成绩记录或更新！</strong>
                         <br>
-                        </div>
-                        <div class="version-row"><strong>目前还处于测试，有问题或意见建议欢迎来我的B站评论区或私信发送！</strong>
-                        
+                    </div>
+                    <div class="version-row"><strong>目前还处于测试，有问题或意见建议欢迎来我的B站评论区或私信发送！
+                            <a href="https://www.bilibili.com/video/BV1kp4y1F7Jw" target="_blank"
+                                rel="noopener">[点这里传送]</a></strong>
 
                         <br>
-                        <strong>现在，保存的B30图片中能携带所有的缓存信息啦！可以将生成的图片上传到首页、b30、完成表、全曲成绩管理的任一页面进行回读！不用担心弄丢缓存了，原图还在就能读取。（只能是原图，不能是被软件或平台进行压缩过的图片。通过QQ、微信等软件传输时须要勾选“发送原图”否则会丢失图片的附加数据）</strong>
+                        <strong>2026-08<br>
+                            现在，保存的B50图片中能携带所有的缓存信息啦！<br>
+                            可以将生成的图片上传到首页、b50、完成表、全曲成绩管理的任一页面进行回读！不用担心弄丢缓存了，原图还在就能读取。（只能是原图，不能是被软件或平台进行压缩过的图片。通过QQ、微信等软件传输时须要勾选“发送原图”否则会丢失图片的附加数据）</strong>
                     </div>
                 </div>
                 <!-- <div id="download-area"><a href="sample/Arcaea 万能查分表6.7.0空白.xlsx" download><button class="btn-primary">📥 下载万能查分表</button></a><p class="hint">手填表只填写分数即可，单曲潜力值会自动计算！</p><p class="hint">推荐使用 <a href="https://space.bilibili.com/18710009" target="_blank">V.H.Zek</a> 制作的查分表进行手填更新！</p></div> -->

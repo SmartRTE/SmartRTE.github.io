@@ -466,9 +466,18 @@ function rollAiRecommend() {
     }, 180);
 }
 
+// ─── 空状态 → 有数据 ───
+/* 页面默认隐藏统计面板 / 筛选控件 / 清除缓存按钮及它们的分割线（#sidebar 的 no-data 类，见 css/index.css）。
+   所有「真正拿到成绩」的路径最后都会落到 displayB30()，所以在这里统一去掉那个类。 */
+function revealDataPanels() {
+    const el = document.getElementById("sidebar");
+    if (el) el.classList.remove("no-data");
+}
+
 // ─── UI: 显示 B30/PTT 信息 ───
 function displayB30(array) {
     try {
+        revealDataPanels();
         $("#select-file").text("重新选择文件");
         $("#notice").slideUp("slow");
         $("#save-csv-btn-container").show("slow");

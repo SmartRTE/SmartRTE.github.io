@@ -248,6 +248,17 @@ ul {
     margin: 6px 0;
 }
 
+/* ===== 空状态：还没有成绩数据时侧边栏只留上传/导航/主题 =====
+   页面加载默认就是这个状态（#sidebar 的 class 写在 index.html 里，所以不会闪一下）；
+   任何一次真正拿到成绩数据的路径都会走 index.js 的 displayB30()，那里把 no-data 去掉。
+   选择器都带上 #sidebar.no-data 是为了在特异性上压过 #stats-panel{display:flex} 这类原有规则。 */
+#sidebar.no-data #stats-panel,
+#sidebar.no-data #filter-controls,
+#sidebar.no-data #clear-cache-btn,
+#sidebar.no-data .divider {
+    display: none;
+}
+
 /* ===== 统计面板 ===== */
 #stats-panel {
     padding: 4px 0;
