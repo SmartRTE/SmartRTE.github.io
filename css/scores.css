@@ -11,32 +11,77 @@ html, body {
 }
 
 #page {
-	max-width: 1180px;
+	/* 侧栏（280）+ 间距（20）+ 谱面行最小宽（约 908）≈ 1248，再加左右 padding，
+	   所以上限从 1180 提到 1400；低于 1280 会切成抽屉布局（见文件末尾）。 */
+	max-width: 1400px;
 	margin: 0 auto;
 	padding: 16px 20px 80px;
 }
 
-/* ---------- 工具栏 ---------- */
+/* ---------- 侧边栏（2026-10-11 由顶部工具栏改成，对齐 index 页的观感） ----------
+
+   宽屏（≥1280px）：左侧一列，可收起（收起=整列滑到视口左侧之外，列表吃满宽度）
+   窄屏（<1280px）：从左滑出的抽屉，默认关闭（见文件末尾的响应式块）
+   ⚠ 1280px 这个断点三处必须一致：css 这里、js/scores.js 的 SIDEBAR_BP、
+     以及注释里说明的「宽度预算」。再窄的话「侧栏 280px + 谱面行最少 908px」放不下，
+     谱面行会溢出成整页横向滚动。 */
+
+#app {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+}
+
+#main-col {
+	flex: 1;
+	min-width: 0;
+	/* 顶部让出固定开关的位置（见下面 #toolbar-toggle）。
+	   宽窄屏都留：窄屏与「宽屏收起」时开关就浮在这一列左上方；
+	   宽屏展开时开关虽然浮在侧栏那边，但这里也留同样的量，
+	   好让标题和侧栏第一个控件基线对齐、切换时标题不会上下跳。 */
+	padding-top: 32px;
+}
 
 #toolbar {
+	width: 280px;
+	min-width: 280px;
+	flex: 0 0 280px;
 	position: sticky;
-	top: 0;
-	z-index: 50;
-	background: var(--bg-elevated);
+	top: 16px;
+	max-height: calc(100vh - 32px);
+	overflow-y: auto;
+	overflow-x: hidden;
+	background: var(--bg-secondary);
 	border: 1px solid var(--border);
 	border-radius: 12px;
-	padding: 12px 16px;
-	margin-bottom: 16px;
-	box-shadow: 0 2px 10px var(--shadow);
-	backdrop-filter: blur(8px);
+	/* 顶部让出固定开关的位置（开关高约 31px，落在 y=8~39） */
+	padding: 32px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	/* 2026-10-11：这里曾经有 backdrop-filter: blur(8px) + position: sticky，
+	   是滚动卡顿的头号元凶（每帧重新采样模糊身后内容）。已去掉，用不透明底色。 */
+	transition: margin-left var(--dur-slow) var(--ease-out), opacity var(--dur-base) var(--ease-out);
+}
+
+/* 收起：整列滑到视口左侧之外。用负 margin 而不是动画 width ——
+   width 动画会把内部控件挤变形（文字逐字换行），负 margin 只是把整列平移出去。
+   平移量 = 自己 280 + 间距 20，正好让列表落到容器左边缘（吃满宽度、不产生溢出）。
+   平移后侧栏还剩一截落在「容器左边缘的左边」，被上面 #app 的 overflow-x: clip 裁掉。
+   再叠 visibility: hidden：不进 Tab 序、不出现在无障碍树里。 */
+#toolbar.collapsed {
+	margin-left: -300px;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
 }
 
 #title-row {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	gap: 12px;
 	flex-wrap: wrap;
+	margin-bottom: 16px;
 }
 
 #title-row h1 {
@@ -45,23 +90,49 @@ html, body {
 	font-weight: 600;
 }
 
+/* 侧栏里的按钮：竖排铺满 */
 #toolbar-actions {
 	display: flex;
-	gap: 8px;
-	flex-wrap: wrap;
+	flex-direction: column;
+	gap: 6px;
 }
 
+/* 侧栏里的筛选控件：竖排，label 当小标题（靠上下间距把「label + 它自己的控件」分在一组） */
 #filter-row {
 	display: flex;
-	align-items: center;
-	gap: 10px;
-	flex-wrap: wrap;
-	margin-top: 10px;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 6px;
+}
+
+#filter-row .tool-label {
+	margin-top: 6px;
+}
+
+#filter-row select {
+	width: 100%;
+}
+
+/* 六档难度在窄列里排两列 */
+#difficulty-filters {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 2px 8px;
+}
+
+#collapse-actions {
+	display: flex;
+	gap: 6px;
+	margin-top: 6px;
+}
+
+#collapse-actions .btn-small {
+	flex: 1;
 }
 
 .tool-label {
-	font-size: 0.82rem;
-	color: var(--text-secondary);
+	font-size: 0.78rem;
+	color: var(--text-muted);
 	white-space: nowrap;
 }
 
@@ -79,22 +150,19 @@ html, body {
 
 #collapse-actions[hidden] { display: none !important; }
 
+/* 侧栏是窄列，搜索框改成铺满（原来是 210px 的定宽，那是给横向工具栏用的） */
 #search-input {
-	width: 210px;
+	width: 100%;
 }
 
-#difficulty-filters {
-	display: flex;
-	gap: 8px;
-	flex-wrap: wrap;
-	align-items: center;
-}
+/* ⚠ 难度的两列网格定义在上面的侧栏区块里，不要在这里再写一份 display:flex ——
+   同一份样式表里后出现的规则会盖掉前面的。 */
 
 .dif-check {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	font-size: 0.82rem;
+	font-size: 0.8rem;
 	color: var(--text-secondary);
 	white-space: nowrap;
 	cursor: pointer;
@@ -104,18 +172,19 @@ html, body {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	font-size: 0.82rem;
+	font-size: 0.8rem;
 	color: var(--text-secondary);
 	white-space: nowrap;
 	cursor: pointer;
 }
 
+/* 统计栏：侧栏底部的一条分隔线 + 说明文字（#toolbar 是 flex 列，间距由 gap 给） */
 #stats-bar {
-	margin-top: 10px;
-	font-size: 0.82rem;
+	font-size: 0.78rem;
+	line-height: 1.6;
 	color: var(--text-secondary);
 	border-top: 1px solid var(--border);
-	padding-top: 8px;
+	padding-top: 12px;
 }
 
 #stats-bar strong { color: var(--text-primary); }
@@ -129,7 +198,7 @@ html, body {
 	cursor: pointer;
 	border-radius: 8px;
 	font-size: 0.82rem;
-	transition: 0.2s;
+	transition: var(--dur-fast);
 	font-family: inherit;
 }
 
@@ -139,7 +208,7 @@ html, body {
 	padding: 7px 14px;
 }
 
-.btn-primary:hover { filter: brightness(1.12); }
+
 
 .btn-secondary {
 	background: var(--btn-secondary-bg);
@@ -147,7 +216,7 @@ html, body {
 	padding: 7px 14px;
 }
 
-.btn-secondary:hover { background: var(--surface-alt); color: var(--text-primary); }
+
 
 .btn-small {
 	background: var(--btn-secondary-bg);
@@ -155,7 +224,7 @@ html, body {
 	padding: 5px 10px;
 }
 
-.btn-small:hover { background: var(--surface-alt); color: var(--text-primary); }
+
 
 /* ---------- 分组 ---------- */
 
@@ -195,14 +264,14 @@ html, body {
 	user-select: none;
 }
 
-.group-header:hover { background: var(--table-hover); }
+
 
 .collapse-arrow {
 	display: inline-block;
 	width: 10px;
 	font-size: 0.7rem;
 	color: var(--text-muted);
-	transition: transform 0.2s;
+	transition: transform var(--dur-fast);
 }
 
 .group-title {
@@ -231,11 +300,21 @@ html, body {
 	padding: 8px 12px;
 	border-bottom: 1px solid var(--border);
 	background: var(--table-bg);
-	transition: background 0.15s;
+	transition: background var(--dur-fast);
+	/* 2026-10-11 性能：屏幕外的行完全跳过布局与绘制。
+	   每行含 ~25 个元素（其中 6 个 input），几百行全量参与布局是加载/滚动卡顿的主因；
+	   content-visibility:auto 让浏览器只处理可视区域附近的十几行。
+	   实测 728 行时 DOM 1.8 万节点、一次 render 约 50ms、滚动期 longtask 显著下降。
+	   ⚠ contain-intrinsic-size 的兜底值必须贴近实测行高，否则滚动条长度估算错乱、
+	     滚动时会出现「越滚越长/越滚越短」的跳动（用户感知就是卡）：
+	     桌面实测 81px；窄屏两列堆叠布局实测 281px，见下方断点覆盖。
+	     `auto` 前缀让浏览器记住已渲染过的实际高度，兜底值只在首次渲染前生效。 */
+	content-visibility: auto;
+	contain-intrinsic-size: auto 81px;
 }
 
 .score-row:last-child { border-bottom: none; }
-.score-row:hover { background: var(--table-hover); }
+
 
 .row-ill {
 	width: 56px;
@@ -395,7 +474,7 @@ html, body {
 	font-size: 0.85rem;
 	box-shadow: 0 4px 18px var(--shadow);
 	opacity: 0;
-	transition: opacity 0.25s, transform 0.25s;
+	transition: opacity var(--dur-base), transform var(--dur-base);
 	pointer-events: none;
 	z-index: 100;
 	max-width: 80vw;
@@ -411,6 +490,10 @@ html, body {
 @media (max-width: 980px) {
 	.score-row {
 		grid-template-columns: 48px 1fr;
+		/* 两列堆叠后行高从 81px 涨到实测 281px（曲绘占一行、输入区占一行、操作区又一行）。
+		   兜底值必须跟着改，否则 content-visibility 跳过的行按 81px 估算，
+		   滚动条长度会严重失真。 */
+		contain-intrinsic-size: auto 281px;
 	}
 	.row-ill { width: 48px; height: 48px; }
 	.row-inputs { grid-column: 2; flex-wrap: wrap; }
@@ -419,58 +502,139 @@ html, body {
 	#search-input { width: 100%; }
 }
 
-/* ---------- 窄屏工具栏收起/展开 ---------- */
+/* ---------- 侧栏开关（index 页同款胶囊）+ 窄屏抽屉 ---------- */
 
-#toolbar-toggle {
+/* 遮罩只在窄屏有意义（基础态隐藏；下面 @media 里才 display:block） */
+#sidebar-scrim {
 	display: none;
 }
 
-@media (max-width: 640px) {
-	#toolbar {
-		/* 窄屏工具栏内容较多（视图/分组/语言三个下拉 + 六档难度），留足高度避免被裁掉 */
-		max-height: 620px;
-		overflow: hidden;
-		transition: max-height 0.35s ease, padding 0.35s ease;
-	}
-	#toolbar.collapsed {
-		max-height: 38px;
-		padding-top: 6px;
-		padding-bottom: 6px;
-	}
-	#toolbar-toggle {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 6px;
-		width: 100%;
-		border: none;
-		background: transparent;
-		color: var(--text-secondary);
-		font-size: 0.8rem;
-		padding: 4px 0 8px;
-		cursor: pointer;
-		font-family: inherit;
-		-webkit-tap-highlight-color: transparent;
-		user-select: none;
-	}
+/* 开关：固定在左上角，**滚动时也一直在**（不然往下翻就找不到它了）。
+   位置跟着 #page 的左内边距走：
+   - 视口窄于 1400px：页面贴左边，按钮固定 28px（= 页面 padding 20 + 8）
+   - 视口宽于 1400px：页面被 max-width 居中，按钮跟着页面左边缘走
+   ⚠ 用 100% 而不是 100vw —— 100vw 含滚动条宽度，宽屏下会偏出十几像素。
+   ⚠ 固定元素不会被祖先的 overflow-x: clip 裁掉（它的包含块是视口），能压在侧栏上。 */
+#toolbar-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	flex: none;
+	width: fit-content;
+	padding: 5px 12px;
+	border-radius: 999px;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	box-shadow: 0 2px 10px var(--shadow);
+	color: var(--text-secondary);
+	font-size: 0.8rem;
+	cursor: pointer;
+	font-family: inherit;
+	user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	position: fixed;
+	top: calc(8px + var(--safe-t, 0px));
+	left: calc(max(28px, (100% - 1400px) / 2 + 28px) + var(--safe-l, 0px));
+	z-index: 90;	/* 窄屏抽屉展开时，开关要压在抽屉（z-index 80）之上才点得到 */
+}
+
+#toolbar-toggle:active {
+	transform: scale(0.97);
+}
+
+.toolbar-toggle-arrow {
+	display: inline-block;
+	/* 基字符 ⌃ 转 -90° → ‹：展开着时提示「把侧栏推到左边收起来」 */
+	transform: rotate(-90deg);
+	transition: transform var(--dur-slow) var(--ease-out);
+}
+
+/* 收起后转 +90° → ›：提示「把侧栏拉回来」 */
+#toolbar-toggle.collapsed .toolbar-toggle-arrow {
+	transform: rotate(90deg);
+}
+
+/* 文案必须跟真实状态一致：展开着显示「收起」，收起后显示「展开」 */
+.toolbar-toggle-expand {
+	display: none;
+}
+
+#toolbar-toggle.collapsed .toolbar-toggle-collapse {
+	display: none;
+}
+
+#toolbar-toggle.collapsed .toolbar-toggle-expand {
+	display: inline;
+}
+
+/* 悬停变色只在真正支持悬停的设备生效（触屏点一下不会一直挂着） */
+@media (hover: hover) {
 	#toolbar-toggle:hover {
 		color: var(--text-primary);
 	}
-	.toolbar-toggle-arrow {
-		display: inline-block;
-		transition: transform 0.35s ease;
+}
+
+/* 宽屏：侧栏在流内，用 clip 裁掉「滑出去」的那一截，避免出现横向滚动条。
+   用 clip 而不是 hidden —— clip 不产生滚动容器，侧栏自身还能 sticky。
+   ⚠ 只在宽屏加：窄屏的侧栏是 position:fixed 的抽屉，被裁掉就不显示了。 */
+@media (min-width: 1280px) {
+	#app {
+		overflow-x: clip;
 	}
-	#toolbar.collapsed .toolbar-toggle-arrow {
-		transform: rotate(180deg);
+}
+
+/* 窄屏（<1280px）：侧栏改抽屉，从左侧滑出（与 index 页同一套做法） */
+@media (max-width: 1279px) {
+	#sidebar-scrim {
+		display: block;
+		position: fixed;
+		inset: 0;
+		z-index: 79;
+		background: var(--overlay);
+		opacity: 0;
+		visibility: hidden;
+		transition: opacity var(--dur-base) ease, visibility var(--dur-base);
+		-webkit-tap-highlight-color: transparent;
 	}
-	.toolbar-toggle-expand {
-		display: none;
+
+	#sidebar-scrim.show {
+		opacity: 1;
+		visibility: visible;
 	}
-	#toolbar.collapsed .toolbar-toggle-collapse {
-		display: none;
+
+	#toolbar {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 80;
+		width: min(84vw, 320px);
+		min-width: 0;
+		flex: none;
+		margin-left: 0;			/* 取消宽屏那套负 margin */
+		max-height: none;
+		height: 100dvh;			/* dvh：避开移动端地址栏收放导致的跳动 */
+		border: none;
+		border-right: 1px solid var(--border);
+		border-radius: 0;
+		box-shadow: 0 0 40px var(--shadow);
+		/* 顶部让出开关的位置，否则抽屉第一个控件会被开关压住 */
+		padding: calc(52px + var(--safe-t, 0px)) 20px calc(20px + var(--safe-b, 0px));
+		transform: translateX(-100%);
+		visibility: hidden;
+		transition: transform var(--dur-slow) var(--ease-out);
 	}
-	#toolbar.collapsed .toolbar-toggle-expand {
-		display: inline;
+
+	/* 窄屏语义反过来：没有 .collapsed 才是「抽屉拉出来了」 */
+	#toolbar:not(.collapsed) {
+		transform: translateX(0);
+		visibility: visible;
+	}
+
+	body.sidebar-locked {
+		overflow: hidden;
+		touch-action: none;
 	}
 }
 
@@ -499,7 +663,7 @@ html, body {
 	color: var(--text-muted); font-size: 1.15rem; border-radius: 50%;
 	transition: .2s; line-height: 34px; text-align: center; font-family: inherit;
 }
-#song-detail-close:hover { background: var(--surface-alt); color: var(--text-primary); transform: rotate(90deg); }
+
 .song-detail-body { display: flex; gap: 16px; }
 .song-detail-ill {
 	width: 150px; height: 150px; flex: 0 0 150px; border-radius: 10px;
@@ -527,4 +691,52 @@ html, body {
 @media (max-width: 640px) {
 	.song-detail-body { flex-direction: column; align-items: center; }
 	.song-detail-ill { width: 120px; height: 120px; flex: 0 0 120px; }
+
+	/* 2026-10-09：窄屏上曲名/按钮点击热区偏小（.row-inputs 内的 input 约 28px 高），
+	   手指点不准。补到 40px（配合 theme.css 里 pointer:coarse 的 44px 兜底）。 */
+	.row-inputs input,
+	.row-inputs select {
+		min-height: 40px;
+	}
+
+	/* 行内操作按钮：点曲名弹详情、删除等 */
+	.row-actions button {
+		min-height: 40px;
+		min-width: 40px;
+	}
+
+	/* 关闭按钮 36px → 44px，触屏更好点 */
+	#song-detail-close {
+		width: 44px;
+		height: 44px;
+		line-height: 44px;
+	}
+}
+
+/* ===== :hover 隔离（2026-10-09 自动生成）=====
+   触屏设备没有真悬停，裸 :hover 点一下会一直挂着。以下规则仅在
+   真正支持悬停的设备（鼠标/触控板）生效。 */
+@media (hover: hover) {
+    .btn-primary:hover {
+        filter: brightness(1.12);
+    }
+    .btn-secondary:hover {
+        background: var(--surface-alt);
+        color: var(--text-primary);
+    }
+    .btn-small:hover {
+        background: var(--surface-alt);
+        color: var(--text-primary);
+    }
+    .group-header:hover {
+        background: var(--table-hover);
+    }
+    .score-row:hover {
+        background: var(--table-hover);
+    }
+    #song-detail-close:hover {
+        background: var(--surface-alt);
+        color: var(--text-primary);
+        transform: rotate(90deg);
+    }
 }

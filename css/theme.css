@@ -69,3 +69,99 @@
     --link: #9eaaff;
     --code-bg: rgba(255, 255, 255, 0.03);
 }
+
+/* ===== 动画 token（2026-10-09）=====
+   此前各页散落着 0.15s / 0.2s / 0.25s / 0.3s / 0.35s / jQuery "slow"(600ms)
+   六种时长，缓动也只有 ease 一种。统一到下面四个 token。 */
+:root {
+    --dur-fast: 0.15s;
+    --dur-base: 0.25s;
+    --dur-slow: 0.35s;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== 主题切换动画窗口 =====
+   toggleTheme() 会在 <html> 上挂 .theme-animating，260ms 后摘掉。
+   窗口内：全文档启用颜色过渡（.theme-animating *，见各页 css），
+          并临时关掉所有 backdrop-filter —— 模糊必须逐帧重采样，
+          底层颜色连续变化时无法复用，是卡顿的第二来源。
+   窗口外：零过渡开销 + 毛玻璃照常。 */
+.theme-animating #sidebar,
+.theme-animating #notice,
+.theme-animating #result-table,
+.theme-animating #result-card,
+.theme-animating .single-card,
+.theme-animating #filter-main,
+.theme-animating #modify-window-main,
+.theme-animating #confirm-dialog-main,
+.theme-animating #stats-main,
+.theme-animating #sidebar-toggle,
+.theme-animating #tool-fab,
+.theme-animating .modal {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* ===== 无障碍：尊重系统的「减少动态效果」设置 ===== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ===== 移动端基建（2026-10-09）=====
+   此前全站 0 处。以下几条是所有页面共享的基础，放theme.css 里一次到位。 */
+
+/* ① 安全区内边距：刘海屏 / 底部小白条不再压住悬浮按钮与固定栏。
+      用 env() 的页面必须有 viewport-fit=cover，否则恒为 0（各页 head 已补）。 */
+:root {
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-l: env(safe-area-inset-left, 0px);
+    --safe-r: env(safe-area-inset-right, 0px);
+}
+
+/* ② 点击高亮：移动端点按钮/卡片默认会闪一块灰蓝色方块，很廉价。 */
+button,
+a,
+input,
+select,
+summary,
+label[for],
+.single-card,
+.card-ill-container,
+.table-ill,
+.score-row,
+.sticker-item {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ③ 触控热区：触屏设备上主要可点元素补到 44px（iOS HIG 建议值）。
+      只在 pointer:coarse 时生效，不影响桌面端紧凑排版。 */
+@media (pointer: coarse) {
+    button,
+    .btn-primary,
+    .btn-secondary,
+    .btn-nav,
+    .btn-small,
+    .btn-danger,
+    .btn-link {
+        min-height: 44px;
+    }
+}
+
+/* ④ 悬停效果隔离：触屏没有真悬停，点一下高亮会一直挂着（index.css 原有 21 处裸 :hover）。
+      把 :hover 规则包进 @media (hover: hover) 由各页 css 处理，这里只备好变量。 */
+
+/* ⑤ 移动端关闭平滑滚动：点击锚点/回顶时 smooth 会明显滞后一帧以上。 */
+@media (max-width: 768px) {
+    html {
+        scroll-behavior: auto;
+    }
+}

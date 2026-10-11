@@ -61,10 +61,10 @@ $(document).ready(async function () {
 	buildSectionPacks();
 	rebuildRecordsMap();
 	restorePrefs(); // 先恢复上次的视图/分组/语言/筛选，再据此渲染难度勾选框
+	applySidebarForViewport(); // 侧栏/抽屉：窄屏一律从「抽屉关着」开始，宽屏才用偏好
 	buildDifficultyFilter();
 	bindEvents();
-	updateStats();
-	render();
+	render(); // render() 内部已调 updateStats(rows)，不必再单独调一次
 });
 
 /* ---------- 数据准备 ---------- */
@@ -132,6 +132,7 @@ function toTimestamp(v) {
 function buildChartRows() {
 	chartRows = [];
 	rowsByKey = {};
+	statsTotals = null; // 谱面集合变了，统计缓存必须作废
 	Object.keys(songCatalog).forEach(function (songId) {
 		const cat = songCatalog[songId];
 		const song = songlistDetail[songId] || {};
@@ -396,10 +397,17 @@ function groupRowsHtml(rows) {
 	return '<div class="group-rows">' + rows.map(rowHtml).join('') + '</div>';
 }
 
+/* 2026-10-11 性能：改成「一次遍历 + Set 查表」。
+   原实现是 forEach 折叠组、每组做一次 `$list.find('[data-group="…"]')` 全表查询，
+   折叠几十个曲包时会反复扫描几百行 DOM。现在只走一遍 group-block。 */
 function applyCollapsed($list) {
-	collapsedGroups.forEach(function (gid) {
-		$list.find('[data-group="' + gid + '"]').addClass('collapsed');
-	});
+	if (!collapsedGroups.size) return; // 没有折叠项时直接跳过（绝大多数情况）
+	const blocks = $list[0] ? $list[0].querySelectorAll('[data-group]') : [];
+	for (let i = 0; i < blocks.length; i++) {
+		if (collapsedGroups.has(blocks[i].getAttribute('data-group'))) {
+			blocks[i].classList.add('collapsed');
+		}
+	}
 }
 
 function rowHtml(r) {
@@ -420,9 +428,13 @@ function rowHtml(r) {
 		: '<span class="row-const missing">定数未收录</span>'
 			+ '<input class="inp-const" type="number" step="0.1" min="1" max="12.5" placeholder="填定数" value="'
 			+ esc(overrides[key] === undefined ? '' : overrides[key]) + '">';
+	/* 曲绘 img 带 decoding="async"：170×170 的 JPEG 显示在 56×56 里，解码不便宜。
+	   不加的话快速滚动会攒一批图片集中解码，主线程出现几百毫秒尖峰
+	   （2026-10-11 实测单帧最差 574ms；async 让解码移出主线程）。
+	   同时保留 loading="lazy" 与 onerror 藏图（藏图必须写成属性，见 UI-NOTES）。 */
 	return '<div class="score-row" data-key="' + esc(key) + '">'
 		+ '<img class="row-ill" src="Processed_Illustration/' + esc(r.illustration)
-		+ '" loading="lazy" onerror="this.style.visibility=\'hidden\'">'
+		+ '" loading="lazy" decoding="async" onerror="this.style.visibility=\'hidden\'">'
 		+ '<div class="row-info">'
 		+ '<div class="row-title">' + esc(shownTitle(r)) + '</div>'
 		+ '<div class="row-meta"><span class="diff-badge diff-' + r.difficulty.toLowerCase() + '">' + r.difficulty + '</span>' + constHtml
@@ -452,9 +464,11 @@ function render() {
 	updateStats(rows);
 	savePrefs(); // 所有改动视图设置的入口最后都会走到这里，单点保存不会漏
 	$('#collapse-actions').attr('hidden', groupMode === 'none');
-	const $list = $('#chart-list').empty();
+	/* 2026-10-11 性能：不再先 .empty() 再 .html() —— jQuery 的 .html(str) 内部
+	   本来就会先清空，多一次清空等于让浏览器多做一轮 DOM 拆除。 */
+	const $list = $('#chart-list');
 	if (!rows.length) {
-		$list.append('<div class="empty-tip">没有符合筛选条件的谱面</div>');
+		$list.html('<div class="empty-tip">没有符合筛选条件的谱面</div>');
 		return;
 	}
 	if (groupMode === 'none') {
@@ -583,17 +597,27 @@ function packGroupHtml(rows) {
 
 /* ---------- 统计 ---------- */
 
-/* rows 为当前筛选结果；省略时自行计算（保存/清空等编辑器入口调用） */
+/* rows 为当前筛选结果；省略时自行计算（保存/清空等编辑器入口调用）
+   2026-10-11 性能：packCount / songCount 只取决于 chartRows（建成后不变），
+   缓存起来，避免每次渲染都新建两个 1830 元素的数组 + Set。
+   `recorded` 依赖 recordsByKey（会随编辑变化），每次重算 —— 一轮 forEach 很便宜。
+   ⚠ chartRows 重建时必须把缓存置空（见 buildChartRows）。 */
+let statsTotals = null;
+
 function updateStats(rows) {
-	const packCount = new Set(chartRows.map(function (r) { return r.packId; })).size;
-	const songCount = new Set(chartRows.map(function (r) { return r.songId; })).size;
+	if (!statsTotals) {
+		statsTotals = {
+			packCount: new Set(chartRows.map(function (r) { return r.packId; })).size,
+			songCount: new Set(chartRows.map(function (r) { return r.songId; })).size
+		};
+	}
 	let recorded = 0;
 	chartRows.forEach(function (r) {
 		if (recordsByKey[r.songId + '|' + r.difficulty]) recorded++;
 	});
 	const visible = (rows || getVisibleRows()).length;
 	$('#stats-bar').html(
-		'曲包 <strong>' + packCount + '</strong> · 曲目 <strong>' + songCount + '</strong> · 谱面 <strong>' + chartRows.length + '</strong>'
+		'曲包 <strong>' + statsTotals.packCount + '</strong> · 曲目 <strong>' + statsTotals.songCount + '</strong> · 谱面 <strong>' + chartRows.length + '</strong>'
 		+ ' · 已记录 <strong class="stat-ok">' + recorded + '</strong> · 未记录 <strong class="stat-warn">' + (chartRows.length - recorded) + '</strong>'
 		+ ' · 当前显示 <strong>' + visible + '</strong> 行'
 	);
@@ -661,8 +685,7 @@ function saveRowByEl(el) {
 		currentArray.push(mkRecord(currentArray.length));
 	}
 	sortAndPersistScores();
-	updateStats();
-	render();
+	render(); // 内含 updateStats(rows)
 	showToast('已保存：' + row.title + ' ' + row.difficulty);
 }
 
@@ -680,8 +703,7 @@ function clearRowByEl(el) {
 		return !(r.songId === row.songId && r.difficulty === row.difficulty);
 	});
 	sortAndPersistScores();
-	updateStats();
-	render();
+	render(); // 内含 updateStats(rows)
 	showToast('已清空：' + row.title + ' ' + row.difficulty);
 }
 
@@ -709,8 +731,7 @@ function saveConstOverrideByEl(el) {
 		sortAndPersistScores();
 	}
 	const row = rowsByKey[key];
-	updateStats();
-	render();
+	render(); // 内含 updateStats(rows)
 	showToast('定数已更新：' + row.title + ' ' + row.difficulty + ' → ' + (overrides[key] !== undefined ? overrides[key] : '未收录'));
 }
 
@@ -802,20 +823,34 @@ function exportScoresCsv() {
 // 统一成绩文件上传：st3 / CSV / score.json / 带缓存的图片
 function onScoresLoaded(arr) {
 	rebuildRecordsMap();
-	updateStats();
-	render();
+	render(); // 内含 updateStats(rows)
 }
 
 /* ---------- 偏好设置持久化（视图 / 分组 / 语言 / 筛选条件） ---------- */
 
 /**
  * 存下当前的视图设置，下次打开本页时接续（localStorage 键 arcaea-scores-view-v1）。
- * 只在 render() 里调用 —— 所有会改这些设置的入口最后都会走 render()，单点保存不会漏。
+ * 只在 render() 里调用 —— 所有会改这些设置的入口最后都会走到 render()，单点保存不会漏。
  * 搜索框内容与分组折叠状态属于「临时查询/浏览状态」，不持久化。
+ *
+ * 2026-10-11 性能：加了「内容没变就不写」的短路。
+ * render() 会被搜索框每次按键触发，而搜索词并不进 prefs ——
+ * 原来每次按键都要 JSON.stringify + 同步写一次 localStorage（写盘是同步 I/O）。
+ * 保留「render() 里单点调用」这个约定不变，只把重复写入挡掉。
  */
+let lastPrefsJson = null;
+
+/**
+ * 侧栏（#toolbar）在**宽屏**下的折叠状态。
+ * ⚠ 单独存一份、而不是每次读 DOM 上的 class：
+ * 窄屏的侧栏是抽屉、默认就是「收起」状态，直接读 class 会把「抽屉关着」
+ * 当成用户偏好写进存储，反过来污染宽屏下的侧栏状态。
+ */
+let sidebarCollapsedPref = false;
+
 function savePrefs() {
 	try {
-		localStorage.setItem(PREFS_KEY, JSON.stringify({
+		const json = JSON.stringify({
 			v: 1,
 			view: viewMode,
 			group: groupMode,
@@ -824,8 +859,11 @@ function savePrefs() {
 			onlyUnrecorded: onlyUnrecorded,
 			onlyRecorded: onlyRecorded,
 			sortReversed: sortReversed,
-			toolbarCollapsed: $('#toolbar').hasClass('collapsed')
-		}));
+			toolbarCollapsed: sidebarCollapsedPref
+		});
+		if (json === lastPrefsJson) return; // 无变化：省掉一次同步写盘
+		localStorage.setItem(PREFS_KEY, json);
+		lastPrefsJson = json;
 	} catch (e) {
 		console.warn('savePrefs error:', e);
 	}
@@ -868,10 +906,9 @@ function restorePrefs() {
 	$('#only-unrecorded').prop('checked', onlyUnrecorded);
 	$('#only-recorded').prop('checked', onlyRecorded);
 	$('#sort-reversed').prop('checked', sortReversed);
-	if (p.toolbarCollapsed === true) {
-		$('#toolbar').addClass('collapsed');
-		$('#toolbar-toggle').attr('aria-expanded', 'false');
-	}
+	// 侧栏折叠状态先只记在变量里，实际套用交给 applySidebarForViewport()
+	// ——窄屏是抽屉、一律从「关着」开始，不能照搬宽屏的偏好
+	sidebarCollapsedPref = p.toolbarCollapsed === true;
 }
 
 async function importScoresFile(file) {
@@ -890,6 +927,69 @@ function showToast(msg) {
 		$t.removeClass('show').attr('hidden', true);
 	}, 1800);
 }
+
+/* ---------- 侧栏（2026-10-11 由顶部工具栏改成）：宽屏可收起 / 窄屏抽屉 ---------- */
+
+/**
+ * 窄屏断点。
+ * ⚠ 必须与 css/scores.css 里的 1280px 一致：再窄的话
+ * 「侧栏 280px + 谱面行最少约 908px」就放不下，谱面行会溢出成整页横向滚动。
+ */
+const SIDEBAR_BP = window.matchMedia('(max-width: 1279px)');
+
+/* 抽屉打开时用的背景遮罩。
+   ⚠ 这里要「保证存在 + 保证绑过事件」两件事：HTML 里本来就有一份遮罩，
+     如果只在「创建」分支里绑点击，走 HTML 那份时永远绑不上 —— 点遮罩关不掉抽屉。 */
+let scrimBound = false;
+
+function ensureSidebarScrim() {
+	let scrim = document.getElementById('sidebar-scrim');
+	if (!scrim) {
+		scrim = document.createElement('div');
+		scrim.id = 'sidebar-scrim';
+		document.body.appendChild(scrim);
+	}
+	if (!scrimBound) {
+		scrimBound = true;
+		scrim.addEventListener('click', function () { setSidebarCollapsed(true); });
+	}
+	return scrim;
+}
+
+/**
+ * collapsed = 侧栏收起来。
+ * 宽屏：整列滑出视口左侧，列表吃满宽度；**只有这个状态会进偏好**。
+ * 窄屏：= 抽屉关着（默认状态，与 index 页一致）——注意这里是「没有 .collapsed
+ * 才是抽屉拉出来」，语义在 css 里用 #toolbar:not(.collapsed) 写的。
+ */
+function setSidebarCollapsed(collapsed) {
+	const tb = document.getElementById('toolbar');
+	const tg = document.getElementById('toolbar-toggle');
+	if (!tb || !tg) return;
+	const narrow = SIDEBAR_BP.matches;
+	tb.classList.toggle('collapsed', collapsed);
+	tg.classList.toggle('collapsed', collapsed);
+	tg.setAttribute('aria-expanded', String(!collapsed));
+	document.body.classList.toggle('sidebar-locked', narrow && !collapsed);
+	ensureSidebarScrim().classList.toggle('show', narrow && !collapsed);
+	if (!narrow) {
+		sidebarCollapsedPref = collapsed;
+		savePrefs();
+	}
+}
+
+/* 进页面 / 跨断点时套用：窄屏一律从「抽屉关着」开始，宽屏才按偏好复位 */
+function applySidebarForViewport() {
+	setSidebarCollapsed(SIDEBAR_BP.matches ? true : sidebarCollapsedPref);
+}
+
+/* 从宽屏拖窄（或反过来）时，抽屉/侧栏状态必须跟着清干净，
+   否则会留下一个遮罩挡住整个页面，或者侧栏莫名消失 */
+(function watchSidebarBreakpoint() {
+	const onChange = function () { applySidebarForViewport(); };
+	if (SIDEBAR_BP.addEventListener) SIDEBAR_BP.addEventListener('change', onChange);
+	else if (SIDEBAR_BP.addListener) SIDEBAR_BP.addListener(onChange);   // 旧 Safari
+})();
 
 /* ---------- 事件绑定 ---------- */
 
@@ -937,9 +1037,8 @@ function bindEvents() {
 		render();
 	});
 	$('#toolbar-toggle').on('click', function () {
-		const collapsed = $('#toolbar').toggleClass('collapsed').hasClass('collapsed');
-		$(this).attr('aria-expanded', String(!collapsed));
-		savePrefs(); // 工具栏收起状态也只在这里变，render() 覆盖不到
+		/* 宽屏＝收起侧栏；窄屏＝开关抽屉。持久化与新状态同步都在 setSidebarCollapsed 里。 */
+		setSidebarCollapsed(!$('#toolbar').hasClass('collapsed'));
 	});
 	$('#export-btn').on('click', exportScores);
 	$('#export-csv-btn').on('click', exportScoresCsv);
@@ -983,7 +1082,12 @@ function bindEvents() {
 	$('#song-detail-close').on('click', closeSongDetail);
 	$('#song-detail-bg').on('click', closeSongDetail);
 	$(document).on('keydown', function (e) {
-		if (e.key === 'Escape') closeSongDetail();
+		if (e.key !== 'Escape') return;
+		closeSongDetail();
+		/* 窄屏抽屉开着时，Esc 也把它关掉（宽屏侧栏是常驻的，不用 Esc） */
+		if (SIDEBAR_BP.matches && !$('#toolbar').hasClass('collapsed')) {
+			setSidebarCollapsed(true);
+		}
 	});
 }
 
@@ -996,6 +1100,7 @@ const SONG_DETAIL_DIF = {
 	3: { short: 'BYD', long: 'Beyond' },
 	4: { short: 'ETR', long: 'Eternal' }
 };
+const SONG_DETAIL_MAX_LOSE_DIFFS = { FTR: true, BYD: true, ETR: true, INS: true };
 
 function showSongDetail(el) {
 	const key = rowElToKey(el);
@@ -1031,6 +1136,10 @@ function showSongDetail(el) {
 	html += infoRow('曲目ID', song.id);
 	if (song.artist) html += infoRow('曲师', song.artist);
 	if (song.bpm) html += infoRow('BPM', song.bpm);
+	const durationParts = [];
+	if (cat.duration) durationParts.push(cat.duration);
+	if (cat.beyondDuration) durationParts.push('Beyond ' + cat.beyondDuration);
+	html += infoRow('时长', durationParts.length ? durationParts.join(' / ') : '—');
 	html += infoRow('所属曲包', packNameStr);
 	if (song.version) html += infoRow('版本', song.version);
 	html += infoRow('主题', sideStr);
@@ -1045,10 +1154,16 @@ function showSongDetail(el) {
 		const longName = m ? m.long : shortName;
 		const diffCat = cat.difficulties[longName];
 		const constant = (diffCat && diffCat.constant !== null && diffCat.constant !== undefined) ? diffCat.constant : '—';
+		const noteCount = (diffCat && diffCat.noteCount !== null && diffCat.noteCount !== undefined) ? diffCat.noteCount : '—';
+		const maxLoseScore = (diffCat && diffCat.maxLoseScore !== null && diffCat.maxLoseScore !== undefined)
+			? Number(diffCat.maxLoseScore).toFixed(2)
+			: '—';
 		const active = m && row.difficulty === m.long ? ' diff-line-active' : '';
 		html += '<div class="diff-line' + active + '">'
 			+ '<span class="diff-badge diff-' + shortName.toLowerCase() + '">' + shortName + '</span>'
 			+ '<span>定数 ' + constant + '</span>'
+			+ '<span>物量 ' + noteCount + '</span>'
+			+ (SONG_DETAIL_MAX_LOSE_DIFFS[shortName] ? '<span>最大失分 ' + maxLoseScore + '</span>' : '')
 			+ (d.chartDesigner ? '<span class="diff-designer">谱师</span><span class="diff-designer-name">' + esc(d.chartDesigner) + '</span>' : '')
 			+ (d.jacketDesigner ? '<span class="diff-designer">曲绘</span><span class="diff-designer-name">' + esc(d.jacketDesigner) + '</span>' : '')
 			+ '</div>';
@@ -1070,6 +1185,5 @@ function closeSongDetail() {
 registerOcrAppliedHandler(function () {
 	currentArray = readLocalStorage() || [];
 	rebuildRecordsMap();
-	updateStats();
-	render();
+	render(); // 内含 updateStats(rows)
 });

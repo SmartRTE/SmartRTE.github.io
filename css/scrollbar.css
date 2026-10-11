@@ -25,14 +25,10 @@ body::-webkit-scrollbar-thumb,
 *::-webkit-scrollbar-thumb {
   background: rgba(128, 128, 128, 0.5);
   border-radius: 10px;
-  transition: background 0.3s ease;
+  transition: background var(--dur-base) ease;
 }
 
-html::-webkit-scrollbar-thumb:hover,
-body::-webkit-scrollbar-thumb:hover,
-*::-webkit-scrollbar-thumb:hover {
-  background: rgba(128, 128, 128, 0.8);
-}
+
 
 /* ========== 显示状态 ========== */
 html.scrollbar-visible::-webkit-scrollbar,
@@ -45,4 +41,15 @@ body.scrollbar-visible::-webkit-scrollbar,
 html {
   scrollbar-width: thin;
   scrollbar-color: rgba(128, 128, 128, 0.5) transparent;
+}
+
+/* ===== :hover 隔离（2026-10-09 自动生成）=====
+   触屏设备没有真悬停，裸 :hover 点一下会一直挂着。以下规则仅在
+   真正支持悬停的设备（鼠标/触控板）生效。 */
+@media (hover: hover) {
+    html::-webkit-scrollbar-thumb:hover,
+    body::-webkit-scrollbar-thumb:hover,
+    *::-webkit-scrollbar-thumb:hover {
+        background: rgba(128, 128, 128, 0.8);
+    }
 }

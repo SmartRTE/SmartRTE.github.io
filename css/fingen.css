@@ -2,15 +2,18 @@
 	font-family: "geosans";
 	src: url("../Fonts/GeosansLight.ttf"),
 		url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.otf') format('opentype');
+		font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "Exo";
 	src: url("../Fonts/Exo-SemiBold.ttf");
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 @font-face {
 	font-family: "MiSans";
 	src: url("../Fonts/MiSans-Regular.ttf");
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 html{
 	background: black;

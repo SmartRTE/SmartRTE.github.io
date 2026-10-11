@@ -3,13 +3,20 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>st3 解析 - Arcaea 查分工具</title>
     <link rel="stylesheet" href="css/index.css">
+    <!-- 2026-10-09：首屏必需的大文件提前发起，缩短串行等待。
+         songlist 约 1.1MB，页面初始化时立刻就要读；B站播放器 iframe 用 preconnect。 -->
+    <link rel="preload" as="fetch" href="json/songlist" type="application/json" crossorigin>
+    <link rel="preconnect" href="https://player.bilibili.com" crossorigin>
     <script src="js/jquery-3.6.1.min.js" defer></script>
     <script src="js/CommonFunctions.js" defer></script>
     <script src="js/sql-wasm.js" defer></script>
-    <script src="js/xlsx-0.20.2.full.min.js" defer></script>
+    <!-- js/xlsx-0.20.2.full.min.js（945KB）已于 2026-10-09 移除引用：
+         万能查分表功能早已停用（CommonFunctions.js 里的 readVHZek() 整段注释），
+         全站再无 XLSX 调用点。恢复时把下面这行加回：
+         <script src="js/xlsx-0.20.2.full.min.js" defer></script> -->
     <script src="js/index.js" defer></script>
     <link rel="stylesheet" href="css/scrollbar.css">
     <link rel="icon" href="favicon.ico">
@@ -17,9 +24,13 @@
 
 <body>
     <div id="bg"></div>
+    <!-- 窄屏侧栏抽屉的遮罩（2026-10-09）。仅在 max-width:768px 下有意义：
+         抽屉拉出时淡入挡住背景，点击即关闭；桌面端永远不可见。
+         同一份DOM 会被 js/index.js 的 setSidebarOpen() 复用（同 id 不重复创建）。 -->
+    <div id="sidebar-scrim"></div>
     <input type="file" id="file-input" hidden>
     <div id="app">
-        <button type="button" id="sidebar-toggle" aria-label="收起侧边栏" aria-expanded="true">
+        <button type="button" id="sidebar-toggle" aria-label="展开侧边栏" aria-expanded="false">
             <span class="sidebar-toggle-arrow">⌃</span>
             <span class="sidebar-toggle-text sidebar-toggle-collapse">收起</span>
             <span class="sidebar-toggle-text sidebar-toggle-expand">展开</span>
@@ -32,6 +43,7 @@
                 <span class="loading-notice" id="load-il" style="color:#ff6b6b">⚠ 曲绘差分文件未加载</span>
                 <span class="loading-notice" id="load-sn" style="color:#ff6b6b">⚠ 曲名差分文件未加载</span>
                 <span class="loading-notice" id="load-sl" style="color:#ff6b6b">⚠ 曲目列表文件未加载</span>
+                <span class="loading-notice" id="load-cm" style="color:#ff6b6b">⚠ 物量/时长文件未加载</span>
             </div>
             <div id="action-buttons">
                 <button class="btn-primary" onclick="inputFile()" id="select-file">选择 st3 或分数表文件</button>
@@ -124,6 +136,17 @@
                             （若提示手机不能下载，把浏览器设置为电脑模式，或者把UA设置为电脑即可绕过）
                             <br><br>
                             但是！我没有iOS设备也没有iOS开发经验所以没有iOS版（
+                            <br><br>
+                        </strong>
+
+                    </div>
+                    <div class="version-row">
+                        <strong>2026-10<br> 页面优化<br>
+                            优化了移动端浏览时的页面效果和流畅度。
+                            新增部分统计信息。
+                            底层新增曲目时长和物量信息，以及最高失分数等。
+                            <br>
+                            （感谢deepseek老师
                             <br><br>
                         </strong>
 

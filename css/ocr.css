@@ -10,11 +10,13 @@
     font-family: "Exo";
     src: url("../Fonts/Exo-SemiBold.ttf");
     unicode-range: U+0020-007E;
+    font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
     font-family: "L2";
     src: url("../Fonts/L2-SemiBold.ttf");
+    font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 /* ===== 基础 ===== */
@@ -24,7 +26,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+/* 2026-10-09 性能修复：原本也是给每个元素都挂 transition，
+   切主题时整页（含 OCR 结果表格）逐帧重算 + backdrop-filter 重模糊 → 掉帧。
+   现在只在 .theme-animating 窗口内生效，详见 index.css 同名一节。 */
+.theme-animating *,
+.theme-animating *::before,
+.theme-animating *::after {
+    transition: background-color var(--dur-base) ease, color var(--dur-base) ease, border-color var(--dur-base) ease;
 }
 
 html {
@@ -114,14 +124,11 @@ code {
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 600;
-    transition: 0.2s;
+    transition: var(--dur-fast);
     cursor: pointer;
 }
 
-.btn-primary:hover:not(:disabled) {
-    transform: translateY(-1px);
-    filter: brightness(1.15);
-}
+
 
 .btn-primary:active:not(:disabled) {
     transform: scale(0.97);
@@ -147,14 +154,11 @@ code {
     border: 1px solid var(--border);
     border-radius: 8px;
     font-size: 0.82rem;
-    transition: 0.2s;
+    transition: var(--dur-fast);
     cursor: pointer;
 }
 
-.btn-secondary:hover:not(:disabled) {
-    background: var(--surface-alt);
-    color: var(--text-primary);
-}
+
 
 .btn-secondary:disabled {
     opacity: 0.5;
@@ -172,14 +176,11 @@ code {
     border: 1px solid var(--border);
     border-radius: 6px;
     font-size: 0.78rem;
-    transition: 0.2s;
+    transition: var(--dur-fast);
     cursor: pointer;
 }
 
-.btn-small:hover {
-    background: var(--surface-alt);
-    color: var(--text-primary);
-}
+
 
 .btn-link {
     background: none;
@@ -187,12 +188,10 @@ code {
     font-size: 0.78rem;
     padding: 2px 0;
     text-align: left;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-.btn-link:hover {
-    text-decoration: underline;
-}
+
 
 /* ===== 顶栏 ===== */
 #page-head {
@@ -465,10 +464,7 @@ html.embedded details.section {
     border-left: 1px solid var(--border);
 }
 
-.zoomBtn:hover {
-    background: var(--surface-alt);
-    color: var(--text);
-}
+
 
 .zoomBtn:active {
     background: var(--accent-soft, var(--surface-alt));
@@ -856,13 +852,10 @@ input[data-result]:focus {
     border-left: 5px solid var(--dc, #999);
     border-radius: 8px;
     cursor: pointer;
-    transition: 0.15s;
+    transition: var(--dur-fast);
 }
 
-.matchCard:hover {
-    background: var(--surface);
-    transform: translateX(2px);
-}
+
 
 .matchCard.active {
     background: color-mix(in srgb, var(--accent) 14%, transparent);
@@ -1052,13 +1045,10 @@ table.cmpTable th:first-child {
     border-radius: 8px;
     font-size: 0.84rem;
     font-weight: 600;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-#applyScoreBtn:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.15);
-}
+
 
 #applyScoreBtn:active {
     transform: scale(0.97);
@@ -1094,7 +1084,7 @@ details.section>summary::-webkit-details-marker {
 details.section>summary::before {
     content: "▸";
     display: inline-block;
-    transition: transform 0.2s;
+    transition: transform var(--dur-fast);
     color: var(--text-muted);
 }
 
@@ -1102,9 +1092,7 @@ details.section[open]>summary::before {
     transform: rotate(90deg);
 }
 
-details.section>summary:hover {
-    color: var(--text-primary);
-}
+
 
 details.section .section-body {
     padding-top: 10px;
@@ -1233,4 +1221,40 @@ pre {
         width: 16px;
         height: 16px;
     }
+}
+
+/* ===== :hover 隔离（2026-10-09 自动生成）=====
+   触屏设备没有真悬停，裸 :hover 点一下会一直挂着。以下规则仅在
+   真正支持悬停的设备（鼠标/触控板）生效。 */
+@media (hover: hover) {
+    .btn-primary:hover:not(:disabled) {
+        transform: translateY(-1px);
+        filter: brightness(1.15);
+    }
+}
+    .btn-secondary:hover:not(:disabled) {
+    background: var(--surface-alt);
+    color: var(--text-primary);
+}
+    .btn-small:hover {
+    background: var(--surface-alt);
+    color: var(--text-primary);
+}
+    .btn-link:hover {
+    text-decoration: underline;
+}
+    .zoomBtn:hover {
+    background: var(--surface-alt);
+    color: var(--text);
+}
+    .matchCard:hover {
+    background: var(--surface);
+    transform: translateX(2px);
+}
+    #applyScoreBtn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.15);
+}
+    details.section>summary:hover {
+    color: var(--text-primary);
 }

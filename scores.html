@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 	<title>全曲成绩管理</title>
 	<link rel="stylesheet" href="css/theme.css">
 	<link rel="stylesheet" href="css/scores.css">
@@ -17,15 +17,16 @@
 </head>
 
 <body>
+	<!-- 窄屏侧栏变抽屉时的背景遮罩（宽屏用不到；与 index 页同一套做法） -->
+	<div id="sidebar-scrim"></div>
 	<div id="page">
-		<header id="toolbar">
-			<button type="button" id="toolbar-toggle" aria-label="收起工具栏" aria-expanded="true">
-				<span class="toolbar-toggle-arrow">⌃</span>
-				<span class="toolbar-toggle-text toolbar-toggle-collapse">收起</span>
-				<span class="toolbar-toggle-text toolbar-toggle-expand">展开</span>
-			</button>
-			<div id="title-row">
-				<h1>📝 全曲成绩管理</h1>
+		<div id="app">
+			<!-- 侧边栏（2026-10-11 由顶部工具栏改成）。
+			     宽屏 ≥1280px：左侧一列，可收起（收起=整列滑出视口左侧，列表吃满宽度）
+			     窄屏 <1280px：从左滑出的抽屉，默认关闭
+			     ⚠ 1280px 这个断点在 css/scores.css、js/scores.js 的 SIDEBAR_BP
+			     和这里三处必须一致。 -->
+			<aside id="toolbar">
 				<div id="toolbar-actions">
 					<button class="btn-primary" id="export-btn" type="button">⬇ 导出全曲成绩</button>
 					<button class="btn-secondary" id="export-csv-btn" type="button">⬇ 导出为CSV</button>
@@ -36,46 +37,58 @@
 					<button class="btn-secondary theme-toggle" type="button" onclick="toggleTheme()"
 						id="theme-toggle-btn">🌙 深色</button>
 				</div>
+				<div id="filter-row">
+					<label class="tool-label">视图</label>
+					<select id="view-select">
+						<option value="default">默认排序</option>
+						<option value="title">按标题</option>
+						<option value="constant">按全曲定数</option>
+						<option value="date">按日期</option>
+						<option value="grade">按评级</option>
+						<option value="artist">按作曲家</option>
+					</select>
+					<label class="tool-label">分组</label>
+					<select id="group-select">
+						<option value="none">无</option>
+						<option value="pack">按曲包</option>
+						<option value="version">按游戏版本</option>
+						<option value="level">按等级</option>
+						<option value="grade">按评级</option>
+					</select>
+					<label class="tool-label">语言</label>
+					<select id="lang-select">
+						<option value="en">English</option>
+						<option value="zh-Hans">简体中文</option>
+						<option value="zh-Hant">繁體中文</option>
+						<option value="ko">한국어</option>
+					</select>
+					<label class="tool-label">难度</label>
+					<span id="difficulty-filters"></span>
+					<input id="search-input" type="search" placeholder="搜索曲名 / 曲目ID / 曲师" title="支持曲名（四种语言）、曲目ID、曲师">
+					<label class="check-label"><input type="checkbox" id="only-unrecorded"> 仅显示未记录</label>
+					<label class="check-label"><input type="checkbox" id="only-recorded"> 只显示有记录</label>
+					<label class="check-label"><input type="checkbox" id="sort-reversed"> 逆向排序</label>
+					<span id="collapse-actions" hidden>
+						<button class="btn-small" id="collapse-all-btn" type="button">全部收起</button>
+						<button class="btn-small" id="expand-all-btn" type="button">全部展开</button>
+					</span>
+				</div>
+				<div id="stats-bar"></div>
+			</aside>
+			<div id="main-col">
+				<div id="title-row">
+					<!-- 侧栏开关。放 #toolbar 外面才不会被一起收走；
+					     z-index 90 让它窄屏压在抽屉之上。 -->
+					<button type="button" id="toolbar-toggle" aria-expanded="true">
+						<span class="toolbar-toggle-arrow">⌃</span>
+						<span class="toolbar-toggle-text toolbar-toggle-collapse">收起</span>
+						<span class="toolbar-toggle-text toolbar-toggle-expand">展开</span>
+					</button>
+					<h1>📝 全曲成绩管理</h1>
+				</div>
+				<main id="chart-list"></main>
 			</div>
-			<div id="filter-row">
-				<label class="tool-label">视图</label>
-				<select id="view-select">
-					<option value="default">默认排序</option>
-					<option value="title">按标题</option>
-					<option value="constant">按全曲定数</option>
-					<option value="date">按日期</option>
-					<option value="grade">按评级</option>
-					<option value="artist">按作曲家</option>
-				</select>
-				<label class="tool-label">分组</label>
-				<select id="group-select">
-					<option value="none">无</option>
-					<option value="pack">按曲包</option>
-					<option value="version">按游戏版本</option>
-					<option value="level">按等级</option>
-					<option value="grade">按评级</option>
-				</select>
-				<label class="tool-label">语言</label>
-				<select id="lang-select">
-					<option value="en">English</option>
-					<option value="zh-Hans">简体中文</option>
-					<option value="zh-Hant">繁體中文</option>
-					<option value="ko">한국어</option>
-				</select>
-				<label class="tool-label">难度</label>
-				<span id="difficulty-filters"></span>
-				<input id="search-input" type="search" placeholder="搜索曲名 / 曲目ID / 曲师" title="支持曲名（四种语言）、曲目ID、曲师">
-				<label class="check-label"><input type="checkbox" id="only-unrecorded"> 仅显示未记录</label>
-				<label class="check-label"><input type="checkbox" id="only-recorded"> 只显示有记录</label>
-				<label class="check-label"><input type="checkbox" id="sort-reversed"> 逆向排序</label>
-				<span id="collapse-actions" hidden>
-					<button class="btn-small" id="collapse-all-btn" type="button">全部收起</button>
-					<button class="btn-small" id="expand-all-btn" type="button">全部展开</button>
-				</span>
-			</div>
-			<div id="stats-bar"></div>
-		</header>
-		<main id="chart-list"></main>
+		</div>
 	</div>
 	<div id="toast" hidden></div>
 	<div id="song-detail-modal" hidden>

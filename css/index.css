@@ -4,23 +4,27 @@
 @font-face {
     font-family: "geosans";
     src: url("../Fonts/GeosansLight.ttf");
+    font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
     font-family: "Exo";
     src: url("../Fonts/Exo-SemiBold.ttf");
     unicode-range: U+0020-007E;
+    font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
     font-family: "L2";
     src: url("../Fonts/L2-SemiBold.ttf");
+    font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
     font-family: "GeosansLightModified";
     src: url("../Fonts/GeosansLight-Modified.otf");
     unicode-range: U+0020-007E;
+    font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 *,
@@ -29,7 +33,19 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+/* 2026-10-09 性能修复：这里原本给「每一个元素」都挂了
+   transition: background-color / color / border-color 0.25s ease。
+   问题不是有 transition，而是所有元素都有：切主题时一次性导入的
+   1000+ 行 × 11 列表格里，每个 td 都要新建过渡动画并逐帧重算样式表，
+   再叠加 6 处 backdrop-filter 逐帧重模糊 → 明显掉帧。
+   现在改成：过渡只在 .theme-animating（切换进行中的 260ms 窗口）生效，
+   见 css/theme.css「主题切换动画窗口」一节；静止状态下完全零过渡开销。 */
+.theme-animating *,
+.theme-animating *::before,
+.theme-animating *::after {
+    transition: background-color var(--dur-base) ease, color var(--dur-base) ease, border-color var(--dur-base) ease;
 }
 
 html {
@@ -82,9 +98,16 @@ ul {
 #bg {
     position: fixed;
     inset: 0;
-    background: url("../img/11.webp") center / cover fixed;
+    /* 2026-10-09：去掉 background-attachment 的 fixed 关键字。
+       本元素本身就是 position:fixed + inset:0（永远不随滚动移动），
+       再让背景图 fixed 是移动端公认的贵项（每帧重新对齐/重采样），
+       纯浪费。视觉完全等价。 */
+    background: url("../img/11.webp") center / cover;
     opacity: 0.35;
     z-index: -1;
+    /* 固定背景层不参与内容层合成变化，避免无谓的重绘 */
+    will-change: opacity;
+    pointer-events: none;
 }
 
 #app {
@@ -158,13 +181,10 @@ ul {
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 600;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-.btn-primary:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.15);
-}
+
 
 .btn-primary:active {
     transform: scale(0.97);
@@ -177,13 +197,10 @@ ul {
     border: 1px solid var(--border);
     border-radius: 8px;
     font-size: 0.82rem;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-.btn-secondary:hover {
-    background: var(--surface-alt);
-    color: var(--text-primary);
-}
+
 
 .btn-nav {
     padding: 8px 14px;
@@ -191,12 +208,10 @@ ul {
     color: var(--btn-primary-text);
     border-radius: 8px;
     font-size: 0.82rem;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-.btn-nav:hover {
-    filter: brightness(1.2);
-}
+
 
 .btn-small {
     padding: 5px 10px;
@@ -205,13 +220,10 @@ ul {
     border: 1px solid var(--border);
     border-radius: 6px;
     font-size: 0.78rem;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-.btn-small:hover {
-    background: var(--surface-alt);
-    color: var(--text-primary);
-}
+
 
 .btn-link {
     background: none;
@@ -219,13 +231,10 @@ ul {
     font-size: 0.78rem;
     padding: 2px 0;
     text-align: left;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-.btn-link:hover {
-    color: var(--link);
-    text-decoration: underline;
-}
+
 
 .btn-danger {
     padding: 8px 14px;
@@ -235,12 +244,10 @@ ul {
     border: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
     border-radius: 8px;
     font-size: 0.8rem;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-.btn-danger:hover {
-    background: color-mix(in srgb, var(--danger) 18%, transparent);
-}
+
 
 .divider {
     height: 1px;
@@ -494,8 +501,21 @@ ul {
     margin-bottom: 16px;
 }
 
+/* 新功能列表：限高 + 内部滚动（2026-10-11）。
+   这段文案越堆越长（现在内容高 968px，接近 1.5 屏），之前会把下方的
+   sticker 和「AI 酱推荐」整块顶出屏幕。现在给它一个高度上限自己滚。
+   高度按「首屏预算」倒推：视口 - 上下留白 - sticker(136) - 推荐区(约 300)，
+   844px 高的手机上约 270~300px，取 32vh 兼顾长短屏。
+   ⚠ 不要加 overscroll-behavior: contain —— 滚到底时会把整页滚动吃掉（见 UI-NOTES 的教训）。 */
 #version {
     margin-bottom: 16px;
+    max-height: min(32vh, 300px);
+    overflow-y: auto;
+    padding: 8px 10px;
+    background: var(--surface-alt);
+    border-radius: 8px;
+    /* 老 iOS 的惯性滚动 */
+    -webkit-overflow-scrolling: touch;
 }
 
 .version-row {
@@ -534,12 +554,10 @@ ul {
     background-repeat: no-repeat;
     background-position: center;
     cursor: pointer;
-    transition: 0.15s;
+    transition: var(--dur-fast);
 }
 
-#sticker:hover {
-    transform: scale(1.08);
-}
+
 
 #sticker:active {
     transform: scale(0.9);
@@ -560,10 +578,7 @@ ul {
     user-select: none;
 }
 
-#help-toggle:hover {
-    background: var(--surface);
-    color: var(--text-primary);
-}
+
 
 #help {
     padding: 12px 8px;
@@ -641,13 +656,11 @@ ul {
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: 0.2s;
+    transition: var(--dur-fast);
     overflow: hidden;
 }
 
-.single-card:hover {
-    transform: translateY(-2px);
-}
+
 
 .single-card:nth-child(-n+30) {
     background: var(--card-bg);
@@ -687,12 +700,10 @@ ul {
     cursor: pointer;
     border-radius: 6px;
     overflow: hidden;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-.card-ill-container:hover {
-    transform: scale(1.05);
-}
+
 
 .card-ill {
     width: 100%;
@@ -840,9 +851,7 @@ ul {
     color: var(--text-primary);
 }
 
-#result tbody tr:hover {
-    background: var(--table-hover);
-}
+
 
 #result tbody tr:last-child td {
     border-bottom: none;
@@ -856,12 +865,10 @@ ul {
     object-fit: cover;
     border-radius: 4px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-.table-ill:hover {
-    transform: scale(1.1);
-}
+
 
 .t-song-name {
     max-width: 150px;
@@ -981,7 +988,7 @@ ul {
     position: fixed;
     inset: 0;
     z-index: 100;
-    transition: opacity 0.3s;
+    transition: opacity var(--dur-base);
 }
 
 #filter-window[hidden],
@@ -1023,8 +1030,8 @@ ul {
 #filter-close,
 #modify-window-close {
     position: fixed;
-    top: 12px;
-    right: 12px;
+    top: calc(12px + var(--safe-t, 0px));
+    right: calc(12px + var(--safe-r, 0px));
     width: 36px;
     height: 36px;
     line-height: 36px;
@@ -1033,16 +1040,11 @@ ul {
     color: var(--text-muted);
     cursor: pointer;
     z-index: 103;
-    transition: 0.2s;
+    transition: var(--dur-fast);
     border-radius: 50%;
 }
 
-#filter-close:hover,
-#modify-window-close:hover {
-    background: var(--surface-alt);
-    color: var(--text-primary);
-    transform: rotate(90deg);
-}
+
 
 .modal-title {
     font-size: 1.1rem;
@@ -1160,12 +1162,10 @@ ul {
     font-size: 0.82rem;
     font-weight: 700;
     cursor: pointer;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
-#delete-result:hover {
-    background: color-mix(in srgb, var(--danger) 20%, transparent);
-}
+
 
 /* ===== Confirm Dialog ===== */
 #confirm-dialog-main {
@@ -1203,7 +1203,7 @@ ul {
     border-radius: 8px;
     font-size: 0.85rem;
     font-weight: 700;
-    transition: 0.2s;
+    transition: var(--dur-fast);
     cursor: pointer;
     border: none;
 }
@@ -1214,10 +1214,7 @@ ul {
     color: #fff;
 }
 
-.accept-btn:hover,
-.btn-accept:hover {
-    filter: brightness(1.15);
-}
+
 
 .refuse-btn,
 .btn-refuse {
@@ -1225,42 +1222,68 @@ ul {
     color: #fff;
 }
 
-.refuse-btn:hover,
-.btn-refuse:hover {
-    filter: brightness(1.15);
-}
+
 
 /* ===== Stress 动画 ===== */
 @keyframes stress {
     0% {
-        filter: blur(0);
+        opacity: 1;
         transform: scale(1);
     }
 
+    /* 2026-10-09：原本这里是 filter: blur(4px)。
+       blur 每帧都要重新做一次模糊运算（不是合成属性），移动端开销极大。
+       改成 opacity 凹陷 + scale，同样有"闪一下"的效果，但只走合成层。 */
     20% {
-        filter: blur(4px);
+        opacity: 0.45;
         transform: scale(1.15);
     }
 
     80% {
-        filter: blur(0);
+        opacity: 1;
     }
 
     100% {
-        filter: blur(0);
+        opacity: 1;
         transform: scale(1);
     }
 }
 
 .stressed-unit {
-    animation: stress 0.8s ease;
+    animation: stress 0.8s var(--ease-in-out);
+}
+
+/* ===== 结果区淡入淡出（2026-10-09）=====
+   替代 jQuery 的 show("slow") / slideUp("slow")：600ms 线性慢动作太慢，
+   且jQuery 动画期间逐帧读 offsetHeight 会触发布局。
+   这里只用 opacity + transform（合成层属性），时长走 --dur-base token。 */
+.reveal,
+.reveal-active,
+.hide-anim {
+    transition: opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out);
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(8px);
+}
+
+.reveal-active {
+    opacity: 1;
+    transform: none;
+}
+
+.hide-anim {
+    opacity: 0;
+    transform: translateY(-6px);
 }
 
 /* ===== 回到顶部 ===== */
 #back-to-top {
     position: fixed;
-    right: 20px;
-    bottom: 20px;
+    right: calc(20px + var(--safe-r, 0px));
+    bottom: calc(20px + var(--safe-b, 0px));
     width: 40px;
     height: 40px;
     line-height: 40px;
@@ -1270,43 +1293,93 @@ ul {
     border-radius: 10px;
     font-size: 1.4rem;
     cursor: pointer;
-    transition: 0.2s;
+    transition: var(--dur-fast);
     z-index: 50;
     user-select: none;
     opacity: 0.4;
     border: 1px solid var(--border);
 }
 
-#back-to-top:hover {
-    opacity: 1;
-    background: var(--surface);
-    color: var(--text-primary);
-    transform: scale(1.1);
-}
+
 
 #back-to-top:active {
     transform: scale(0.85);
 }
 
-/* ===== 响应式 ===== */
+/* ===== 响应式 =====
+   2026-10-09 重构：侧栏在窄屏不再是「max-height:50vh 的半高面板」。
+   原方案的问题：页面本身在滚，侧栏内部还 overflow-y:auto 同时在滚，
+   两层滚动条互相打架，且侧栏内的滚动区域被压在一半屏里。
+   现在改为抽屉：从左侧滑出、覆盖内容、打开时锁住 body 滚动。 */
 @media (max-width: 768px) {
     #app {
         flex-direction: column;
     }
 
+    /* 抽屉本体 */
     #sidebar {
-        width: 100%;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 80;
+        width: min(84vw, 320px);
         min-width: 0;
-        height: auto;
-        position: static;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        max-height: 50vh;
-        transition: max-height 0.35s ease, padding 0.35s ease;
+        /* dvh：避开移动端地址栏收放导致 vh 跳动 */
+        height: 100dvh;
+        max-height: none;
+        /* 顶部让出开关按钮的高度（按钮固定在 8px 处、高约 31px），
+           否则抽屉第一个元素会被按钮压住。 */
+        padding-top: calc(52px + var(--safe-t, 0px));
+        padding-bottom: calc(16px + var(--safe-b, 0px));
+        border-right: 1px solid var(--border);
+        border-bottom: none;
+        box-shadow: 0 0 40px var(--shadow);
+        transform: translateX(-100%);
+        transition: transform var(--dur-slow) var(--ease-out);
+        /* 抽屉关着时不要接收点击/焦点，也不要参与 Tab 序 */
+        visibility: hidden;
+    }
+
+    /* 打开状态（由 index.js 的 #sidebar-toggle 点击切换 .open） */
+    #sidebar.open {
+        transform: translateX(0);
+        visibility: visible;
+    }
+
+    /* 背景遮罩：抽屉打开时出现，点击即关闭 */
+    #sidebar-scrim {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 79;
+        background: var(--overlay);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity var(--dur-base) ease, visibility var(--dur-base);
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #sidebar-scrim.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* 抽屉内元素要能正常滚动 */
+    #sidebar {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* body 锁定（由 JS 加.sidebar-locked）*/
+    body.sidebar-locked {
+        overflow: hidden;
+        touch-action: none;
     }
 
     #main-content {
-        padding: 16px;
+        /* 顶部让出固定的抽屉开关按钮的高度，否则按钮会压在 #notice 左上角 */
+        padding: calc(52px + var(--safe-t, 0px)) 16px 16px;
     }
 
     #result-card {
@@ -1334,6 +1407,54 @@ ul {
         width: 92vw;
     }
 
+    /* 窄屏藏掉判定数列；剩下 6 列靠首列吸附 + 横向滚动查看 */
+    .t-perfect,
+    .t-critical-perfect,
+    .t-normal-perfect,
+    .t-far,
+    .t-lost {
+        display: none;
+    }
+
+    /* 首列（NO.）吸附，横向滚动时始终可见 —— 代替原来难用的横向嵌套滚动 */
+    #result th:first-child,
+    #result td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background: var(--table-bg);
+        box-shadow: 1px 0 0 var(--border);
+    }
+
+    #result thead th:first-child {
+        z-index: 3;
+        background: var(--table-bg);
+    }
+
+    [data-theme="dark"] #result th:first-child,
+    [data-theme="dark"] #result td:first-child {
+        background: #141220;
+    }
+
+    /* 曲名列放宽，把空间让给分数列 */
+    .t-song-name {
+        max-width: 120px;
+    }
+}
+
+/* ===== 中间断点：平板竖屏 / 小笔记本（768~1024px）=====
+   此前只有 768px 一个断点，侧栏固定 280px + 主区表格 → 被挤成一条。 */
+@media (min-width: 769px) and (max-width: 1024px) {
+    #sidebar {
+        width: 240px;
+        min-width: 240px;
+    }
+
+    #main-content {
+        padding: 20px;
+    }
+
+    /* 与 768px 一致的藏列策略，只是断点不同 */
     .t-perfect,
     .t-critical-perfect,
     .t-normal-perfect,
@@ -1343,25 +1464,20 @@ ul {
     }
 }
 
-/* ===== 窄屏：侧边栏收起 + 按钮两列 ===== */
+/* ===== 窄屏：抽屉开关按钮 + 按钮两列 ===== */
 @media (max-width: 768px) {
-    #sidebar.collapsed {
-        max-height: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-        overflow: hidden;
-        border-bottom: none;
-    }
-
     #sidebar-toggle {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 6px;
         position: fixed;
-        top: 8px;
-        right: 8px;
-        z-index: 70;
+        top: calc(8px + var(--safe-t, 0px));
+        /* 2026-10-11 修：抽屉从左侧滑出，按钮也搬到左上角。
+           原来固定在右上角（right:8px），方向感和操作位置都对不上。 */
+        left: calc(8px + var(--safe-l, 0px));
+        right: auto;
+        z-index: 90;
         padding: 7px 12px;
         border-radius: 999px;
         background: var(--surface);
@@ -1376,29 +1492,34 @@ ul {
         backdrop-filter: blur(8px);
     }
 
-    #sidebar-toggle:hover {
-        color: var(--text-primary);
-    }
+    /* 抽屉打开时按钮仍留在左上角，以 z-index 90（> 抽屉的 80）压在抽屉顶部当「收起」用。
+       抽屉内容由 #sidebar 的 padding-top 让位，两者不重叠。 */
 
+    /* 箭头指向「抽屉接下来会往哪走」：
+       关着 → 朝右（点它把抽屉拉出来）；打开 → 朝左（点它推回去）。
+       基字符是 ⌃（朝上），转 +90° 得右、转 -90° 得左。 */
     .sidebar-toggle-arrow {
         display: inline-block;
-        transition: transform 0.35s ease;
+        transform: rotate(90deg);
+        transition: transform var(--dur-slow) var(--ease-out);
     }
 
-    #sidebar-toggle.collapsed .sidebar-toggle-arrow {
-        transform: rotate(180deg);
+    #sidebar-toggle.open .sidebar-toggle-arrow {
+        transform: rotate(-90deg);
     }
 
-    .sidebar-toggle-expand {
+    /* 文案必须跟真实状态一致：抽屉关着显示「展开」，打开后显示「收起」。
+       2026-10-11 修：原先这两档是反的（默认关着却写着「收起」）。 */
+    .sidebar-toggle-collapse {
         display: none;
     }
 
-    #sidebar-toggle.collapsed .sidebar-toggle-collapse {
-        display: none;
-    }
-
-    #sidebar-toggle.collapsed .sidebar-toggle-expand {
+    #sidebar-toggle.open .sidebar-toggle-collapse {
         display: inline;
+    }
+
+    #sidebar-toggle.open .sidebar-toggle-expand {
+        display: none;
     }
 
     #action-buttons,
@@ -1416,7 +1537,7 @@ ul {
     border-radius: 10px;
     background: var(--surface-alt);
     border: 1px solid var(--border);
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity var(--dur-base) ease, transform var(--dur-base) ease;
 }
 
 #ai-recommend[hidden] {
@@ -1445,7 +1566,7 @@ ul {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity var(--dur-base) ease, transform var(--dur-base) ease;
 }
 
 .ai-recommend-ill {
@@ -1518,10 +1639,80 @@ ul {
     font-size: 0.8rem;
     line-height: 1.6;
     color: var(--text-secondary);
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity var(--dur-base) ease, transform var(--dur-base) ease;
 }
 
 .ai-fade {
     opacity: 0;
     transform: translateY(4px);
+}
+
+/* ===== :hover 隔离（2026-10-09 自动生成）=====
+   触屏设备没有真悬停，裸 :hover 点一下会一直挂着。以下规则仅在
+   真正支持悬停的设备（鼠标/触控板）生效。 */
+@media (hover: hover) {
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.15);
+    }
+}
+    .btn-secondary:hover {
+    background: var(--surface-alt);
+    color: var(--text-primary);
+}
+    .btn-nav:hover {
+    filter: brightness(1.2);
+}
+    .btn-small:hover {
+    background: var(--surface-alt);
+    color: var(--text-primary);
+}
+    .btn-link:hover {
+    color: var(--link);
+    text-decoration: underline;
+}
+    .btn-danger:hover {
+    background: color-mix(in srgb, var(--danger) 18%, transparent);
+}
+    #sticker:hover {
+    transform: scale(1.08);
+}
+    #help-toggle:hover {
+    background: var(--surface);
+    color: var(--text-primary);
+}
+    .single-card:hover {
+    transform: translateY(-2px);
+}
+    .card-ill-container:hover {
+    transform: scale(1.05);
+}
+    #result tbody tr:hover {
+    background: var(--table-hover);
+}
+    .table-ill:hover {
+    transform: scale(1.1);
+}
+    #filter-close:hover,
+#modify-window-close:hover {
+    background: var(--surface-alt);
+    color: var(--text-primary);
+    transform: rotate(90deg);
+}
+    #delete-result:hover {
+    background: color-mix(in srgb, var(--danger) 20%, transparent);
+}
+    .accept-btn:hover,
+.btn-accept:hover {
+    filter: brightness(1.15);
+}
+    .refuse-btn:hover,
+.btn-refuse:hover {
+    filter: brightness(1.15);
+}
+    #back-to-top:hover {
+    opacity: 1;
+    background: var(--surface);
+    color: var(--text-primary);
+    transform: scale(1.1);
 }

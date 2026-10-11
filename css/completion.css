@@ -4,23 +4,27 @@
 	font-family: "geosans";
 	src: url("../Fonts/GeosansLight.ttf"),
 		url('https://get.fontspace.co/webfont/gl3q/MzdhMmU2ZTU0NTM2NGYwMmJiZWU4ZDg2YjlmZWY4ZTAudHRm/geosanslight.otf') format('opentype');
+		font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "Exo";
 	src: url("../Fonts/Exo-SemiBold.ttf");
 	unicode-range: U+0020-007E;
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "L2";
 	src: url('../Fonts/L2-SemiBold.ttf');
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "GeosansLightModified";
 	src: url('../Fonts/GeosansLight-Modified.otf');
 	unicode-range: U+0020-007E;
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @keyframes rotate-1-round {
@@ -282,15 +286,9 @@ button:active {
 	scale: 1.15;
 }
 
-#avatar:hover>#icon {
-	scale: 1.1;
-}
 
-#avatar:hover>#iconblur {
-	rotate: 90deg;
-	scale: 1.3;
-	left: -12px;
-}
+
+
 
 
 #potential-container {
@@ -425,9 +423,7 @@ button:active {
     cursor: pointer;
 }
 
-#ptt-display:hover {
-	scale: 1.1;
-}
+
 
 #ptt-display:active {
 	scale: 0.9;
@@ -535,9 +531,7 @@ button:active {
 	transition-duration: 0.3s;
 }
 
-.song-illustration-container:hover {
-	scale: 1.05;
-}
+
 
 .song-illustration-container:active {
 	scale: 0.8;
@@ -918,11 +912,7 @@ button:active {
     /* animation: backwards ease-out rotate-1-round 0.5s; */
 }
 
-#setting-close:hover {
-	cursor: pointer;
-	transform: scale(1.3);
-	animation: forwards ease-out rotate-1-round 0.5s;
-}
+
 
 #setting-close:active {
 	transform: scale(0.6);
@@ -1064,10 +1054,7 @@ button:active {
 	transition-duration: 0.3s;
 }
 
-.user-course-dan-option:hover {
-	scale: 1.1;
-	cursor: pointer;
-}
+
 
 /* .user-course-dan-option:active, */
 .user-course-dan-option:active {
@@ -1081,10 +1068,7 @@ button:active {
 	cursor: pointer;
 }
 
-#avatar-display:hover,
-#custom-avatar:hover {
-	scale: 1.1;
-}
+
 
 #avatar-display:active,
 #custom-avatar:active {
@@ -1126,9 +1110,7 @@ button:active {
 	cursor: pointer;
 }
 
-.avatar-option:hover {
-	scale: 1.1;
-}
+
 
 .avatar-option:active {
 	scale: 0.9;
@@ -1166,10 +1148,7 @@ button:active {
 	transition-duration: 0.3s;
 }
 
-#background-display:hover,
-#custom-background:hover {
-	scale: 1.1;
-}
+
 
 #background-display:active,
 #custom-background:active {
@@ -1185,9 +1164,7 @@ button:active {
 	transition-duration: 0.3s;
 }
 
-.background-option:hover {
-	scale: 1.1;
-}
+
 
 .background-option:active {
 	scale: 0.9;
@@ -1268,11 +1245,7 @@ button:active {
     
 }
 
-#modify-window-close:hover {
-    cursor: pointer;
-    transform: scale(1.3);
-    animation: forwards ease-out rotate-1-round 0.5s;
-}
+
 
 #modify-window-close:active {
 	transform: scale(0.6);
@@ -1347,11 +1320,7 @@ button:active {
 	transition-duration: 0.2s;
 }
 
-.accept-btn:hover,
-.refuse-btn:hover {
-	cursor: pointer;
-	transform: scale(1.1);
-}
+
 
 .accept-btn:active,
 .refuse-btn:active {
@@ -1500,13 +1469,7 @@ button:active {
 	outline: none;
 }
 
-#back-to-top:hover {
-	cursor: pointer;
-	transform: scale(1.1);
-	user-select: none;
-	outline: none;
-	opacity: 0.9;
-}
+
 
 #back-to-top:active {
 	transform: scale(0.6);
@@ -1515,15 +1478,7 @@ button:active {
 	opacity: 80;
 }
 
-#back-to-top:hover span::before {
-	content: "^";
-	font-size: 5rem;
-	position: relative;
-	bottom: 25%;
-	opacity: 90%;
-	user-select: none;
-	outline: none;
-}
+
 
 @keyframes floating {
 	0% {
@@ -1563,9 +1518,7 @@ button:active {
 	transition-duration: 0.4s;
 }
 
-#ai-chan:hover {
-	scale: 1.1;
-}
+
 
 #ai-chan:active {
 	scale: 0.8;
@@ -1644,11 +1597,7 @@ button:active {
 	/* animation: backwards ease-out rotate-1-round 0.5s; */
 }
 
-#ai-chan-dialog-close:hover {
-	cursor: pointer;
-	transform: scale(1.3);
-	animation: forwards ease-out rotate-1-round 0.5s;
-}
+
 
 #ai-chan-dialog-close:active {
 	transform: scale(0.6);
@@ -1708,9 +1657,7 @@ button:active {
 	cursor: pointer;
 }
 
-#ai-chan-dialog-buttons div:hover {
-	scale: 1.1;
-}
+
 #ai-chan-dialog-buttons div:active{
 	scale: 0.7;
 }
@@ -1766,7 +1713,7 @@ button:active {
     position: fixed;
     inset: 0;
     z-index: 100;
-    transition: opacity 0.3s;
+    transition: opacity var(--dur-base);
 }
 
 #setting-bg,
@@ -1818,7 +1765,7 @@ button:active {
     z-index: 103;
     font-size: 1.4rem;
     line-height: 1;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
 #setting-close:hover,
@@ -1857,7 +1804,7 @@ button:active {
     font-size: 1.4rem;
     line-height: 1;
     cursor: pointer;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
 .modal-close:hover {
@@ -1930,7 +1877,7 @@ button:active {
     border-radius: 8px;
     font-size: 0.85rem;
     cursor: pointer;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
 .setting-grid .setting-card .btn-action:hover {
@@ -1961,7 +1908,7 @@ button:active {
     border-radius: 8px;
     font-size: 0.82rem;
     cursor: pointer;
-    transition: 0.2s;
+    transition: var(--dur-fast);
 }
 
 .theme-toggle-btn:hover {
@@ -2105,7 +2052,7 @@ button:active {
     inset: 0;
     z-index: 120;
     box-sizing: border-box;
-    transition: opacity 0.3s;
+    transition: opacity var(--dur-base);
 }
 
 #avatar-select .popup-bg,
@@ -2543,7 +2490,7 @@ button:active {
     cursor: pointer;
     user-select: none;
     outline: none;
-    transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+    transition: opacity var(--dur-fast) ease, transform var(--dur-fast) ease, background-color var(--dur-fast) ease;
 }
 
 #generate-image-btn:hover {
@@ -2620,4 +2567,85 @@ body,
         right: 0.75rem;
         bottom: 11rem;
     }
+}
+
+/* ===== :hover 隔离（2026-10-09 自动生成）=====
+   触屏设备没有真悬停，裸 :hover 点一下会一直挂着。以下规则仅在
+   真正支持悬停的设备（鼠标/触控板）生效。 */
+@media (hover: hover) {
+    #avatar:hover>#icon {
+        scale: 1.1;
+    }
+}
+    #avatar:hover>#iconblur {
+	rotate: 90deg;
+	scale: 1.3;
+	left: -12px;
+}
+    #ptt-display:hover {
+	scale: 1.1;
+}
+    .song-illustration-container:hover {
+	scale: 1.05;
+}
+    #setting-close:hover {
+	cursor: pointer;
+	transform: scale(1.3);
+	animation: forwards ease-out rotate-1-round 0.5s;
+}
+    .user-course-dan-option:hover {
+	scale: 1.1;
+	cursor: pointer;
+}
+    #avatar-display:hover,
+#custom-avatar:hover {
+	scale: 1.1;
+}
+    .avatar-option:hover {
+	scale: 1.1;
+}
+    #background-display:hover,
+#custom-background:hover {
+	scale: 1.1;
+}
+    .background-option:hover {
+	scale: 1.1;
+}
+    #modify-window-close:hover {
+    cursor: pointer;
+    transform: scale(1.3);
+    animation: forwards ease-out rotate-1-round 0.5s;
+}
+    .accept-btn:hover,
+.refuse-btn:hover {
+	cursor: pointer;
+	transform: scale(1.1);
+}
+    #back-to-top:hover {
+	cursor: pointer;
+	transform: scale(1.1);
+	user-select: none;
+	outline: none;
+	opacity: 0.9;
+}
+    #back-to-top:hover span::before {
+	content: "^";
+	font-size: 5rem;
+	position: relative;
+	bottom: 25%;
+	opacity: 90%;
+	user-select: none;
+	outline: none;
+}
+    #ai-chan:hover {
+	scale: 1.1;
+}
+    #ai-chan-dialog-close:hover {
+	cursor: pointer;
+	transform: scale(1.3);
+	animation: forwards ease-out rotate-1-round 0.5s;
+}
+    #ai-chan-dialog-buttons div:hover {
+	scale: 1.1;
+}
 }

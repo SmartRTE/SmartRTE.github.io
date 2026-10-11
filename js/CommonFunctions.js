@@ -1,5 +1,7 @@
 let songlistPath = 'json/songlist';      // 游戏解包全量曲目（版本更新时整体替换）
 let constantsPath = 'json/constants.json'; // 唯一手维护文件：idx -> 各难度定数
+let chartMetaPath = 'json/chartmeta.json'; // 由 wiki 数据生成：idx -> 时长与各难度物量
+let chartMeta = {}; // chartmeta.json 原始数据（用于全曲失分汇总等）
 let aiChanPath = 'json/AiChan.json'
 // let difficultyPair = {'Past': 'PST', 'Present': 'PRS', 'Future': 'FTR', 'Beyond': 'BYD', 'Eternal': 'ETR'};
 let aiChanList = [];
@@ -136,16 +138,21 @@ function initializeSqliteJs() {
  */
 async function initializeSongData() {
 	try {
-		const [slResponse, cResponse] = await Promise.all([
+		const [slResponse, cResponse, cmResponse] = await Promise.all([
 			fetch(songlistPath),
-			fetch(constantsPath)
+			fetch(constantsPath),
+			fetch(chartMetaPath)
 		]);
 		if (!slResponse.ok || !cResponse.ok) {
 			throw new Error(`HTTP error! songlist: ${slResponse.status}, constants: ${cResponse.status}`);
 		}
 		const rawSonglist = (await slResponse.json()).songs;
 		const constantsFile = await cResponse.json();
+		const chartMetaLoaded = cmResponse.ok;
+		const chartMetaFile = chartMetaLoaded ? await cmResponse.json() : { songChartInfo: {} };
+		chartMeta = chartMetaFile;
 		const constantsByIdx = constantsFile.songConstants || {};
+		const chartMetaByIdx = chartMetaFile.songChartInfo || {};
 		dataVersion = constantsFile.version || '';
 		dataUpdatedAt = constantsFile.updatedAt || '';
 
@@ -160,12 +167,20 @@ async function initializeSongData() {
 		rawSonglist.forEach(function (song) {
 			const songId = song.id;
 			const baseTitle = pickTitle(song);
+			const chartMetaRow = chartMetaByIdx[String(song.idx)] || null;
 			const cat = {
 				idx: song.idx,
 				title: baseTitle,
 				artist: song.artist || '',
 				set: song.set || '',
 				version: song.version || '',
+				deleted: Boolean(song.deleted),
+				duration: (chartMetaRow && chartMetaRow.duration) || null,
+				durationSec: (chartMetaRow && chartMetaRow.durationSec != null) ? chartMetaRow.durationSec : null,
+				beyondDuration: (chartMetaRow && chartMetaRow.beyondDuration) || null,
+				beyondDurationSec: (chartMetaRow && chartMetaRow.beyondDurationSec != null) ? chartMetaRow.beyondDurationSec : null,
+				notes: (chartMetaRow && chartMetaRow.notes) || null,
+				maxLoseScores: (chartMetaRow && chartMetaRow.maxLoseScores) || null,
 				difficulties: {}
 			};
 			songlist[song.idx] = songId;
@@ -186,7 +201,13 @@ async function initializeSongData() {
 				cat.difficulties[key] = {
 					title: diffTitle,
 					illustration: illustration,
-					constant: constant
+					constant: constant,
+					noteCount: (chartMetaRow && chartMetaRow.notes && chartMetaRow.notes[constKey] !== undefined)
+						? chartMetaRow.notes[constKey]
+						: null,
+					maxLoseScore: (chartMetaRow && chartMetaRow.maxLoseScores && chartMetaRow.maxLoseScores[constKey] !== undefined)
+						? chartMetaRow.maxLoseScores[constKey]
+						: null
 				};
 				if (diffTitle !== baseTitle) {
 					if (!diffSongNameMapping[songId]) diffSongNameMapping[songId] = {};
@@ -209,10 +230,19 @@ async function initializeSongData() {
 			console.warn('[数据一致性] constants.json 中有 ' + unknownIdx.length +
 				' 个 idx 在当前 songlist 中不存在（songlist 可能已过期）: ' + unknownIdx.join(', '));
 		}
+		const unknownChartMetaIdx = [];
+		Object.keys(chartMetaByIdx).forEach(function (idx) {
+			if (!(idx in songlist)) unknownChartMetaIdx.push(idx);
+		});
+		if (unknownChartMetaIdx.length) {
+			console.warn('[数据一致性] chartmeta.json 中有 ' + unknownChartMetaIdx.length +
+				' 个 idx 在当前 songlist 中不存在（songlist 可能已过期）: ' + unknownChartMetaIdx.join(', '));
+		}
 		if (dataVersion) {
 			console.log('[曲目数据] 数据版本 ' + dataVersion +
 				'，songlist 曲目 ' + rawSonglist.length +
-				'，已登记定数曲目 ' + Object.keys(constantsByIdx).length);
+				'，已登记定数曲目 ' + Object.keys(constantsByIdx).length +
+				'，已登记物量/时长曲目 ' + Object.keys(chartMetaByIdx).length);
 		}
 
 		// 生成SQL查询文本：allsongs 建表+INSERT 由定数表生成，查询模板与旧 query.sql 保持一致
@@ -227,6 +257,12 @@ async function initializeSongData() {
 		$('#load-il').hide('slow').css('height', '0');
 		$('#load-sn').text('✅曲名信息已派生').css('color', 'green');
 		$('#load-sn').hide('slow').css('height', '0');
+		if (chartMetaLoaded) {
+			$('#load-cm').text('✅物量/时长文件已加载').css('color', 'green');
+			$('#load-cm').hide('slow').css('height', '0');
+		} else {
+			$('#load-cm').text('⚠ 物量/时长文件未加载').css('color', '#ff6b6b');
+		}
 		return songCatalog;
 	} catch (error) {
 		console.error('Error initializing song data:', error);
@@ -234,6 +270,7 @@ async function initializeSongData() {
 		$('#load-sl').text('✖曲目列表文件加载失败').css('color', 'red');
 		$('#load-il').text('✖曲绘信息派生失败').css('color', 'red');
 		$('#load-sn').text('✖曲名信息派生失败').css('color', 'red');
+		$('#load-cm').text('✖物量/时长文件加载失败').css('color', 'red');
 		return null;
 	}
 }
@@ -1606,12 +1643,29 @@ function calculateEquivalentFarAndAccuracy(score, objectAmount) {
     } catch (e) {}
 })();
 
+/* 主题切换的动画窗口时长（ms）。要略大于 css 里 .theme-animating 的 0.25s，
+   让过渡跑完再摘 class，避免最后一帧被硬切。 */
+var THEME_ANIM_MS = 260;
+
 function toggleTheme() {
-    var current = document.documentElement.dataset.theme || 'light';
+    var root = document.documentElement;
+    var current = root.dataset.theme || 'light';
     var next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
+    root.dataset.theme = next;
     try { localStorage.setItem('theme', next); } catch (e) {}
     updateThemeButton();
+
+    /* 2026-10-09 性能修复：过渡只在切换进行中的这 260ms 内存在。
+       此前 index.css / ocr.css 给 * 通配挂了常驻 transition，导致：
+       切主题时上千行表格的每个 td 都跑一遍 0.25s 颜色插值，
+       再叠加 6 处 backdrop-filter 逐帧重模糊 → 明显掉帧。
+       .theme-animating 同时让 css 临时关掉毛玻璃（见 theme.css）。
+       连续快速点击时：重新计时，不会叠加多个定时器。 */
+    root.classList.add('theme-animating');
+    clearTimeout(window.__themeAnimTimer);
+    window.__themeAnimTimer = setTimeout(function () {
+        root.classList.remove('theme-animating');
+    }, THEME_ANIM_MS);
 }
 
 function getCurrentTheme() {
@@ -1649,7 +1703,9 @@ function initToolWidgets() {
 		styleEl.id = STYLE_ID;
 		styleEl.textContent = `
 :is(#tool-fab, #ocr-tool-fab) {
-	position: fixed; right: 22px; bottom: 22px; z-index: 90;
+	/* 2026-10-09：right/bottom 叠加安全区，刘海屏 / 底部小白条不再压住悬浮按钮。
+	   --safe-r / --safe-b 定义在 css/theme.css（依赖 viewport-fit=cover）。 */
+	position: fixed; right: calc(22px + var(--safe-r, 0px)); bottom: calc(22px + var(--safe-b, 0px)); z-index: 90;
 	padding: 11px 18px; border-radius: 999px; border: 1px solid var(--border);
 	background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
 	color: #fff; font-weight: 700; font-size: .92rem; letter-spacing: .02em;
@@ -1657,12 +1713,15 @@ function initToolWidgets() {
 	transition: transform .2s ease, box-shadow .2s ease;
 	font-family: "Exo", "L2", sans-serif;
 }
+/* 2026-10-09：隔离 :hover —— 触屏点一下会一直保持 translateY(-2px) 不放 */
+@media (hover: hover) {
 :is(#tool-fab, #ocr-tool-fab):hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,0,0,.3); }
+}
 :is(#tool-fab, #ocr-tool-fab):active { transform: translateY(0) scale(.97); }
 /* 方形变体：与“回到顶部/生成图片”按钮同风格（b30gen/completion），位于生成图片按钮上方 */
 :is(#tool-fab, #ocr-tool-fab)[data-fab-variant="square"] {
-	right: 1rem;
-	bottom: 14rem;
+	right: calc(1rem + var(--safe-r, 0px));
+	bottom: calc(14rem + var(--safe-b, 0px));
 	z-index: 80;
 	display: flex;
 	align-items: center;
@@ -1685,9 +1744,11 @@ function initToolWidgets() {
 	opacity: 0.3;
 	transition: opacity 0.3s, transform 0.3s;
 }
-:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="square"]:hover {
-	transform: scale(1.1);
-	opacity: 0.9;
+@media (hover: hover) {
+	:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="square"]:hover {
+		transform: scale(1.1);
+		opacity: 0.9;
+	}
 }
 :is(#tool-fab, #ocr-tool-fab)[data-fab-variant="square"]:active {
 	transform: scale(0.6);
@@ -1699,8 +1760,8 @@ function initToolWidgets() {
 }
 /* index 首页专用：与页面“返回顶部”按钮同风格 */
 :is(#tool-fab, #ocr-tool-fab)[data-fab-variant="index"] {
-    right: 20px;
-    bottom: 3rem;
+    right: calc(20px + var(--safe-r, 0px));
+    bottom: calc(3rem + var(--safe-b, 0px));
     z-index: 80;
     display: flex;
     align-items: center;
@@ -1722,10 +1783,12 @@ function initToolWidgets() {
     transition: opacity 0.2s ease, transform 0.2s ease;
     font-family: "Exo", "L2", sans-serif;
 }
-:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="index"]:hover {
-	opacity: 1;
-	color: var(--text-primary);
-	transform: scale(1.1);
+@media (hover: hover) {
+	:is(#tool-fab, #ocr-tool-fab)[data-fab-variant="index"]:hover {
+		opacity: 1;
+		color: var(--text-primary);
+		transform: scale(1.1);
+	}
 }
 :is(#tool-fab, #ocr-tool-fab)[data-fab-variant="index"]:active {
 	transform: scale(0.85);
@@ -1748,7 +1811,9 @@ function initToolWidgets() {
 	color: var(--text-muted); font-size: 1.15rem; border-radius: 50%;
 	transition: .2s; line-height: 34px; text-align: center; font-family: "Exo", "L2", sans-serif;
 }
-#tool-modal-close:hover { background: var(--surface-alt); color: var(--text-primary); transform: rotate(90deg); }
+@media (hover: hover) {
+	#tool-modal-close:hover { background: var(--surface-alt); color: var(--text-primary); transform: rotate(90deg); }
+}
 .tool-calc { display: flex; flex-direction: column; gap: 14px; }
 .tool-calc label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; font-weight: 600; color: var(--text-secondary); }
 .tool-calc input {
@@ -1773,7 +1838,9 @@ function initToolWidgets() {
 	cursor: pointer; transition: .2s; font-family: "Exo", "L2", sans-serif;
 }
 .tool-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.tool-tab:hover:not(.active) { color: var(--text-primary); }
+@media (hover: hover) {
+	.tool-tab:hover:not(.active) { color: var(--text-primary); }
+}
 .tool-panel { display: none; }
 .tool-panel.active { display: block; }
 .tool-push-refresh {
@@ -1781,7 +1848,9 @@ function initToolWidgets() {
 	background: var(--surface-alt); color: var(--text-primary); font-size: .82rem; font-weight: 600; cursor: pointer;
 	transition: .2s; font-family: "Exo", "L2", sans-serif;
 }
-.tool-push-refresh:hover { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) {
+	.tool-push-refresh:hover { border-color: var(--accent); color: var(--accent); }
+}
 .tool-push-list { display: flex; flex-direction: column; gap: 8px; max-height: 46vh; overflow-y: auto; padding-right: 2px; }
 .tool-push-summary { font-size: .78rem; color: var(--text-secondary); font-weight: 600; }
 .tool-push-empty { font-size: .85rem; color: var(--text-muted); text-align: center; padding: 18px 8px; }
@@ -1848,7 +1917,9 @@ label.tool-push-toggle {
 }
 .tool-switch input:checked + .tool-switch-slider { background: var(--accent); border-color: var(--accent); }
 .tool-switch input:checked + .tool-switch-slider::before { transform: translateY(-50%) translateX(20px); background: #fff; }
-.tool-push-toggle:hover .tool-switch-slider { border-color: var(--accent); }
+@media (hover: hover) {
+	.tool-push-toggle:hover .tool-switch-slider { border-color: var(--accent); }
+}
 .tool-push-noplay {
 	font-size: .68rem; font-weight: 700; color: var(--warning);
 	border: 1px solid var(--warning); border-radius: 5px; padding: 1px 6px; white-space: nowrap;
@@ -2214,6 +2285,43 @@ const GLOBAL_GRADE_COLORS = {
 	'D': '#6a6a6a'
 };
 
+/* 失分统计只算这些难度（Future 及以上）。小写存放，比对时把记录里的难度名也转小写。 */
+const LOSE_SCORE_DIFFS = ['future', 'beyond', 'eternal', 'inscribed'];
+
+/**
+ * 取一条记录的**失分数（loseScore）**。
+ * ⚠ 是 loseScore，不是 lost —— lost 是「Lost 音符个数」，loseScore 是游戏那套
+ *   加权失分（含大P率与 10,000,000 加成项），两者完全不是一回事。
+ * 完整缓存里存着这个字段（saveLocalStorage 整体 JSON.stringify，PlayResult 上带着它），
+ * 直接读；但「最小形态」缓存只存 i/d/s/p/c/f/l/k（见 buildCachePayload），
+ * 读出来没有这个字段，得按同一公式补算 —— 否则会被统统当成 0 失分。
+ */
+function loseScoreOf(rec) {
+	const raw = rec.loseScore;
+	if (raw !== undefined && raw !== null && raw !== '' && isFinite(Number(raw))) return Number(raw);
+	const amount = Number(rec.objectAmount)
+		|| (Number(rec.perfect) || 0) + (Number(rec.far) || 0) + (Number(rec.lost) || 0);
+	return Number(getLoseScore(rec.constant, rec.score, amount, rec.criticalPerfect)) || 0;
+}
+
+function totalChartMetaLoseScore() {
+	const buckets = [];
+	if (chartMeta && chartMeta.songChartInfo) buckets.push(chartMeta.songChartInfo);
+	if (chartMeta && chartMeta.unmapped) buckets.push(chartMeta.unmapped);
+	let total = 0;
+	buckets.forEach(function (bucket) {
+		Object.keys(bucket).forEach(function (id) {
+			const scores = bucket[id] && bucket[id].maxLoseScores;
+			if (!scores) return;
+			Object.keys(scores).forEach(function (key) {
+				const value = Number(scores[key]);
+				if (isFinite(value)) total += value;
+			});
+		});
+	});
+	return total;
+}
+
 function globalStatsRecords() {
 	const cached = readLocalStorage();
 	if (cached && cached.length) return cached;
@@ -2272,6 +2380,46 @@ function computeGlobalStats() {
 	}
 	const maxCount = segments.reduce(function (m, s) { return Math.max(m, s.count); }, 0);
 	const maxGrade = GLOBAL_GRADE_ORDER.reduce(function (m, g) { return Math.max(m, gradeCounts[g]); }, 0);
+
+	/* 总失分数 / 0 失分谱面数（2026-10-11 新增）：
+	   口径是 loseScore（失分数），**不是 lost（Lost 音符个数）**，见 loseScoreOf 的说明。
+	   ⚠ 0 失分 ≠ PM（2026-10-11 用户订正）：PM 的定义是 far=0 且 lost=0（只有 Pure），
+	   而 loseScore 只看分数与大P率 —— 同一个 loseScore=0 可能对应 FR 也可能对应 PM，
+	   两者不能划等号，这里只按 loseScore 本身统计，不掺分数/判定兜底。
+	   只统计 Future 及以上难度：低难度混进来会把两个数字都稀释掉。 */
+	let totalLoseScore = 0;
+	let zeroLoseScoreCount = 0;
+	let loseScoreStatN = 0;
+	records.forEach(function (r) {
+		if (LOSE_SCORE_DIFFS.indexOf(String(r.difficulty || '').toLowerCase()) === -1) return;
+		loseScoreStatN++;
+		const ls = loseScoreOf(r);
+		totalLoseScore += ls;
+		/* ⚠ 别写成 `ls === 0`：定数 × 38 与 定数 × 100 × 0.38 在浮点下不总相等，
+		   实测 405 个（定数, 物量）组合里有 85 个会让真正的满分记录算出 ±2.84e-14。
+		   真正非零的失分数最小也有 ~0.002（低定数差 1 分时），所以 1e-6 的容差很安全。
+		   这个容差只是修浮点毛刺，不是把判据放宽到「分数满分」—— 0 失分只看 loseScore。 */
+		if (Math.abs(ls) < 1e-6) zeroLoseScoreCount++;
+	});
+
+	/* EX+ 及以上平均准度 / 性歌数（2026-10-11 新增）：
+	   平均准度：结算等级（getSongRanking 口径，FR = 无 Lost、PM = 10,000,000 分）为
+	   EX+ / FR / PM 的记录，每条算 准度 = 大P数(criticalPerfect) / 总Pure数(perfect)，
+	   再取算术平均显示百分比。perfect <= 0 的脏数据跳过。
+	   性歌数：far/lost 恰好一开一零（1 far 0 lost 或 0 far 1 lost）的记录条数，全难度。 */
+	let accSum = 0, accN = 0, ichiChartCount = 0;
+	records.forEach(function (r) {
+		const far = Number(r.far) || 0;
+		const lost = Number(r.lost) || 0;
+		if ((far === 1 && lost === 0) || (far === 0 && lost === 1)) ichiChartCount++;
+		const label = getSongRanking(Number(r.score) || 0, r.far, r.lost);
+		if (label !== 'EX+' && label !== 'FR' && label !== 'PM') return;
+		const pf = Number(r.perfect) || 0;
+		if (pf <= 0) return;
+		accSum += (Number(r.criticalPerfect) || 0) / pf;
+		accN++;
+	});
+
 	const overallRaw = (sum50 + sum10) / 60;
 	return {
 		n: n,
@@ -2289,7 +2437,14 @@ function computeGlobalStats() {
 		gradeCounts: gradeCounts,
 		maxGrade: maxGrade,
 		segments: segments,
-		maxCount: maxCount
+		maxCount: maxCount,
+		totalLoseScore: totalLoseScore,
+		zeroLoseScoreCount: zeroLoseScoreCount,
+		loseScoreStatN: loseScoreStatN,
+		exPlusAccAvg: accN > 0 ? accSum / accN * 100 : null,
+		exPlusAccN: accN,
+		ichiChartCount: ichiChartCount,
+		totalMaxLoseScore: totalChartMetaLoseScore()
 	};
 }
 
@@ -2335,9 +2490,25 @@ function renderGlobalStats() {
 		'<span class="tool-stats-card-value">' + fmt4(d.sum50) + '</span></div>';
 	cards += '<div class="tool-stats-card"><span class="tool-stats-card-label">B10 PTT 总和</span>' +
 		'<span class="tool-stats-card-value">' + fmt4(d.sum10) + '</span></div>';
+	/* 失分两项只算 Future 及以上难度，卡片上标缩写、范围写进下面那行注释里。
+	   总失分数保留两位小数（与 index.js 里 loseScore 的显示口径一致）。 */
+	cards += '<div class="tool-stats-card"><span class="tool-stats-card-label">已记录的总失分数（FTR/BYD/ETR/INS）</span>' +
+		'<span class="tool-stats-card-value">' + d.totalLoseScore.toFixed(2) + '</span></div>';
+	cards += '<div class="tool-stats-card"><span class="tool-stats-card-label">当前版本谱面总失分（FTR/BYD/ETR/INS）</span>' +
+		'<span class="tool-stats-card-value">' + d.totalMaxLoseScore.toFixed(2) + '</span></div>';
+	cards += '<div class="tool-stats-card"><span class="tool-stats-card-label">0 失分谱面数（FTR/BYD/ETR/INS）</span>' +
+		'<span class="tool-stats-card-value">' + d.zeroLoseScoreCount + '</span></div>';
+	cards += '<div class="tool-stats-card"><span class="tool-stats-card-label">EX+及以上谱面平均准度</span>' +
+		'<span class="tool-stats-card-value">' + (d.exPlusAccN > 0 ? d.exPlusAccAvg.toFixed(2) + '%' : '—') + '</span></div>';
+	cards += '<div class="tool-stats-card"><span class="tool-stats-card-label">性歌数</span>' +
+		'<span class="tool-stats-card-value">' + d.ichiChartCount + '</span></div>';
 	cards += '</div>';
 	cards += '<p class="tool-stats-note">共 ' + d.n + ' 条成绩 · 统计 B50 使用前 ' + d.topN +
-		' 首 · 整体 PTT（约）' + fmt4(d.overallRaw) + '，截断显示 ' + d.overallDisplay.toFixed(3) + '</p>';
+		' 首 · 整体 PTT（约）' + fmt4(d.overallRaw) + '，截断显示 ' + d.overallDisplay.toFixed(3) /* +
+		'<br>失分两项按「失分数（loseScore）」统计，只算 Future / Beyond / Eternal / Inscribed 四种难度（'
+		+ d.loseScoreStatN + ' 条记录）；0 失分指失分数为 0 的记录（≠ PM —— PM 的定义是 far=0 且 lost=0）' +
+		'<br>平均准度取结算等级为 EX+ / FR / PM 的记录各条的「大P数 / 总Pure数」算术平均（共 '
+		+ d.exPlusAccN + ' 条）；性歌 = 恰好 1 far 0 lost 或 0 far 1 lost 的谱面</p>'; */
 
 	const gradeTitle = '成绩分级数量';
 	let gradeRows = '';

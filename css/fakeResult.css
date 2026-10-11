@@ -2,6 +2,7 @@
 	font-family: "NotoSans";
 	src: url('../Fonts/NotoSansCJKsc-Bold.otf');
 	unicode-range: U+0020-007E;
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 	/* ASCII range */
 }
 
@@ -9,6 +10,7 @@
 	font-family: "NotoSansRegular";
 	src: url('../Fonts/NotoSansCJKsc-Regular.otf');
 	unicode-range: U+0020-007E;
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 	/* ASCII range */
 }
 
@@ -16,53 +18,63 @@
 	font-family: "NotoSansLight";
 	src: url('../Fonts/NotoSansCJKsc-Light.otf');
 	unicode-range: U+0020-007E;
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 	/* ASCII range */
 }
 
 @font-face {
 	font-family: "Nanum";
 	src: url('../Fonts/NanumBarunGothic-Bold.otf');
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "NanumRegular";
 	src: url('../Fonts/NanumBarunGothic-regular.otf');
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "ExoLight";
 	src: url('../Fonts/Exo-Light.ttf');
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "ExoBold";
 	src: url('../Fonts/Exo-SemiBold.ttf');
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "ExoRegular";
 	src: url('../Fonts/Exo-Regular.ttf');
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "L2";
 	src: url('../Fonts/L2-SemiBold.ttf');
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 
 @font-face {
 	font-family: "L2Regular";
 	src: url('../Fonts/L2-Regular.ttf');
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "GeosansLight";
 	src: url('../Fonts/GeosansLight.ttf');
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @font-face {
 	font-family: "GeosansLightModified";
 	src: url('../Fonts/GeosansLight-Modified.otf');
+	font-display: swap;   /* 2026-10-09：避免字体下载完成前白屏 */
 }
 
 @keyframes floating-character {

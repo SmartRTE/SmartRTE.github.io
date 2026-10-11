@@ -24,6 +24,10 @@ let idx_constant = [];
 let diffSongNameMapping = null;
 let diffIllMapping = null;
 let currentVersionMaxPotential = 13.12;
+/* 0 = 表格（列表），1 = 卡片。
+   2026-10-11：**全端统一默认表格视图**。此前窄屏（<=768px）默认走卡片，
+   但用户更习惯列表，已撤销该分支 —— 窄屏下表格藏掉 5 列判定数、首列 NO. 吸附，
+   横向滚动即可看全，不再需要「默认卡片」这层特殊处理。 */
 let viewMode = 0;
 let rangeUpperBound = 12.0;
 let rangeLowerBound = 1.0;
@@ -71,15 +75,58 @@ $(document).ready(function () {
             rollAiRecommend();
         });
 
+        /* 侧栏开关。
+           2026-10-09 改版：窄屏下侧栏从「max-height 半高面板」变成左侧抽屉，
+           状态类由 .collapsed 改为 .open（语义相反：open = 抽屉拉出来）。
+           抽屉打开时给 body 加 .sidebar-locked 锁滚动，并显示遮罩 #sidebar-scrim。
+           桌面端（>768px）本按钮display:none，整段逻辑不会被触发。 */
+        const SIDEBAR_BP = window.matchMedia("(max-width: 768px)");
+        function setSidebarOpen(open) {
+            const $sb = $("#sidebar");
+            const $tg = $("#sidebar-toggle");
+            if (!SIDEBAR_BP.matches) return;      // 桌面端不受控
+            $sb.toggleClass("open", open);
+            $tg.toggleClass("open", open);
+            $tg.attr("aria-expanded", String(open));
+            document.body.classList.toggle("sidebar-locked", open);
+            let scrim = document.getElementById("sidebar-scrim");
+            if (!scrim) {
+                scrim = document.createElement("div");
+                scrim.id = "sidebar-scrim";
+                scrim.addEventListener("click", function () { setSidebarOpen(false); });
+                document.body.appendChild(scrim);
+            }
+            scrim.classList.toggle("show", open);
+        }
+        window.setSidebarOpen = setSidebarOpen;   // 供遮罩 / Esc 调用
+
         $("#sidebar-toggle").click(function () {
-            const collapsed = $("#sidebar").toggleClass("collapsed").hasClass("collapsed");
-            $(this).toggleClass("collapsed", collapsed);
-            $(this).attr("aria-expanded", String(!collapsed));
-            if (!collapsed) {
-                // 展开时回到顶部，方便直接看到侧边栏
-                window.scrollTo({ top: 0, behavior: "smooth" });
+            setSidebarOpen(!$("#sidebar").hasClass("open"));
+        });
+
+        /* 窄屏下用 Esc 关闭抽屉；桌面端无副作用 */
+        $(document).on("keydown", function (e) {
+            if (e.key === "Escape" && SIDEBAR_BP.matches && $("#sidebar").hasClass("open")) {
+                setSidebarOpen(false);
             }
         });
+
+        /* 从窄屏旋转/放大到桌面端时，抽屉状态必须清掉，
+           否则会留下一个遮罩挡住整个页面 */
+        (function () {
+            const mq = SIDEBAR_BP;
+            const onChange = function (e) {
+                if (!e.matches) {
+                    $("#sidebar").removeClass("open");
+                    $("#sidebar-toggle").removeClass("open");
+                    document.body.classList.remove("sidebar-locked");
+                    const scrim = document.getElementById("sidebar-scrim");
+                    if (scrim) scrim.classList.remove("show");
+                }
+            };
+            if (mq.addEventListener) mq.addEventListener("change", onChange);
+            else if (mq.addListener) mq.addListener(onChange);   // 旧 Safari
+        })();
 
         // 初始抽选：缓存里有成绩才显示推荐
         rollAiRecommend();
@@ -261,33 +308,82 @@ function renderIndexList() {
     renderIndexGroups(groups);
 }
 
+/* 最近一次算出的分组（表格/卡片共用），以及「各视图是按哪一版分组建的」。
+   搜索框每敲一个字都会走 renderIndexList，以前会把表格和卡片两套 DOM 都重建一遍，
+   现在只建当前显示的那一套；切视图时再按需补建另一套，内容没变就跳过。 */
+let indexGroups = null;
+let indexGroupsSeq = 0;
+const indexBuiltSeq = { table: -1, card: -1 };
+
 function renderIndexGroups(groups) {
+    indexGroups = groups;
+    indexGroupsSeq++;
+    renderActiveView();
+}
+
+/** 只渲染当前视图（viewMode：0 = 表格，1 = 卡片） */
+function renderActiveView() {
+    if (viewMode === 1) renderCardView();
+    else renderTableView();
+}
+
+function renderTableView() {
+    if (!indexGroups || indexBuiltSeq.table === indexGroupsSeq) return;
+    indexBuiltSeq.table = indexGroupsSeq;
+    // 有些数据源（比如不含判定数的分数表）会让这几列全是 0，那就整列藏掉
     const hasEmptyItems = (filteredArray || []).some(function (r) {
         return r.perfect === 0 && r.far === 0 && r.lost === 0;
     });
     $('.t-perfect, .t-normal-perfect, .t-critical-perfect, .t-far, .t-lost')[hasEmptyItems ? 'addClass' : 'removeClass']('hidden');
-    const $body = $('#result tbody').empty();
+    const tbody = document.querySelector('#result tbody');
+    tbody.innerHTML = '';
+    /* 2026-10-09 性能：原先在循环里逐条 $body.append()。
+       一次导入动辄上千行，逐条 append 会让 jQuery 反复走包装/合并路径，
+       且中间态一直在 DOM 里，浏览器多次做布局。
+       改为先攒进 DocumentFragment，最后一次性插入 —— 只触发一次插入。
+       注意：convertToTable 返回的 jQuery 对象上绑着 .on('click')（点曲绘改成绩），
+       这里 append 的是它内部的 DOM 节点，事件监听器随节点一起搬过去，不受影响。 */
+    const frag = document.createDocumentFragment();
     let rank = 0;
-    groups.forEach(function (g) {
+    indexGroups.forEach(function (g) {
         if (g.title !== null) {
-            $body.append('<tr class="index-group-header"><td colspan="11">' + esc(g.title) + '</td></tr>');
+            const tr = document.createElement('tr');
+            tr.className = 'index-group-header';
+            const td = document.createElement('td');
+            td.colSpan = 11;
+            td.textContent = g.title;
+            tr.appendChild(td);
+            frag.appendChild(tr);
         }
         g.rows.forEach(function (r) {
             rank++;
-            $body.append(convertToTable(r, rank));
+            frag.appendChild(convertToTable(r, rank)[0]);
         });
     });
-    const $card = $('#result-card').empty();
-    rank = 0;
-    groups.forEach(function (g) {
+    tbody.appendChild(frag);
+}
+
+function renderCardView() {
+    if (!indexGroups || indexBuiltSeq.card === indexGroupsSeq) return;
+    indexBuiltSeq.card = indexGroupsSeq;
+    const host = document.getElementById('result-card');
+    host.innerHTML = '';
+    /* 同 renderTableView：攒进 fragment 一次性插入（事件随节点搬过去） */
+    const frag = document.createDocumentFragment();
+    let rank = 0;
+    indexGroups.forEach(function (g) {
         if (g.title !== null) {
-            $card.append('<div class="index-card-group-header">' + esc(g.title) + '</div>');
+            const d = document.createElement('div');
+            d.className = 'index-card-group-header';
+            d.textContent = g.title;
+            frag.appendChild(d);
         }
         g.rows.forEach(function (r) {
             rank++;
-            $card.append(convertToCard(r, rank));
+            frag.appendChild(convertToCard(r, rank)[0]);
         });
     });
+    host.appendChild(frag);
 }
 
 // ─── 数据版本显示（读取自 constants.json）───
@@ -479,9 +575,17 @@ function displayB30(array) {
     try {
         revealDataPanels();
         $("#select-file").text("重新选择文件");
-        $("#notice").slideUp("slow");
-        $("#save-csv-btn-container").show("slow");
-        $("#result-table").show("slow");
+        // 2026-10-09：notice / 按钮容器 / 结果区的慢动作换成 reveal/hide 类（见 switchView 上方说明）
+        hideSection("#notice");
+        revealSection("#save-csv-btn-container");
+        // 只露出当前视图：否则在卡片视图下再导一次数据，表格会被这里 show 出来、两套叠在一起
+        if (viewMode === 1) {
+            revealSection("#result-card");
+            $("#result-table").hide();
+        } else {
+            revealSection("#result-table");
+            $("#result-card").hide();
+        }
         $("#result-quantity").text(array.length);
         rbm = calculateMax(array);
         localStorage.setItem("rbm", rbm);
@@ -497,6 +601,18 @@ function displayB30(array) {
     } catch (err) { console.error("displayB30 error:", err); }
 }
 
+// ─── 曲绘图片元素（懒加载 + 失败隐藏）───
+/* loading="lazy"：一次导入动辄上千行，不加的话首屏会同时发起上千个曲绘请求。
+   失败藏图用 onerror 属性而不是 .on('error')：元素还没插进 DOM 就可能已经加载失败，
+   那时候事件早错过了，绑上去也收不到。写法与 scores.js / 工具窗保持一致。 */
+function makeIllImg(cls, src) {
+    return $("<img>").addClass(cls).attr({
+        src: src,
+        loading: "lazy",
+        onerror: "this.style.visibility='hidden'"
+    });
+}
+
 // ─── 表格行转换 ───
 function convertToTable(currentRow, index) {
     try {
@@ -505,8 +621,7 @@ function convertToTable(currentRow, index) {
 
         $tr.append($("<td>").text(index));
         $tr.append($("<td>").append(
-            $("<img>").addClass("table-ill")
-                .attr("src", ILL_PATH + currentRow.illustration)
+            makeIllImg("table-ill", ILL_PATH + currentRow.illustration)
                 .on("click", function () { modifyPlayResult(currentRow.innerIndex); })
         ));
         $tr.append($("<td>").addClass("t-song-name").text(currentRow.songName));
@@ -519,7 +634,8 @@ function convertToTable(currentRow, index) {
         $tr.append($("<td>").addClass("t-constant").text((currentRow.constant || 0).toFixed(1)));
 
         let pct = currentRow.percentage || 0;
-        const isPm = pct >= 100 || currentRow.loseScore === 0;
+        // PM = far=0 且 lost=0（只有 Pure），与卡片视图一致；0 失分 ≠ PM，不能拿 loseScore 判
+        const isPm = pct >= 100 || (currentRow.far === 0 && currentRow.lost === 0);
 
         let rt = (String(currentRow.playRating).length - String(currentRow.playRating).indexOf(".") - 1) < 4
             ? (currentRow.playRating || 0).toFixed(4)
@@ -543,7 +659,7 @@ function convertToCard(currentRow, index) {
         $card.append($("<div>").addClass("card-rank").text("#" + index));
 
         let $ill = $("<div>").addClass("card-ill-container").on("click", function () { modifyPlayResult(currentRow.innerIndex); });
-        $ill.append($("<img>").addClass("card-ill").attr("src", ILL_PATH + currentRow.illustration));
+        $ill.append(makeIllImg("card-ill", ILL_PATH + currentRow.illustration));
         $card.append($ill);
 
         $card.append($("<div>").addClass("song-name").text(currentRow.songName));
@@ -605,17 +721,64 @@ function calculateR10() {
 }
 
 // ─── 切换视图 ───
+/* 2026-10-09：原先用 jQuery 的 .show("slow") / .slideUp("slow", cb)。
+   slow 是 600ms 线性缓动，观感上明显「慢半拍」，而 jQuery 动画期间还在
+   逐帧读 offsetHeight 触发布局，上千行表格时开销不小。
+   换成 css 的 reveal/hide 两组类（只用 opacity + transform，走合成层），
+   回调仍保留在动画结束后，用来清空切走的那一套 DOM。
+   prefers-reduced-motion 下 css/theme.css 会把过渡压到 0.01ms，回调立刻触发。 */
+const VIEW_ANIM_MS = 250;
+
+/*淡入并确保处于「可见的布局状态」。
+   .css("display","") 会回落到 css 里声明的 display（#result-card 是 grid、
+   #result-table 是 block、#save-csv-btn-container 是 flex），不能写死。 */
+function revealSection(sel) {
+    const $el = $(sel);
+    if (!$el.length) return;
+    $el.css("display", "")
+       .removeClass("hide-anim")
+       .addClass("reveal");
+    // 强制一次 reflow，保证从透明态真的过渡过来
+    void $el[0].offsetWidth;
+    $el.removeClass("reveal").addClass("reveal-active");
+}
+
+/* 淡出，并在动画结束后真正 display:none —— 必须真的移出布局流，
+   否则表格和卡片会同时占位、上下叠在一起（这正是原show/hide 对做的事）。
+   done 回调在隐藏之后才跑，用于清空切走的那一套 DOM。 */
+function hideSection(sel, done) {
+    const $el = $(sel);
+    if (!$el.length) { if (done) done(); return; }
+    $el.removeClass("reveal-active").addClass("hide-anim");
+    setTimeout(function () {
+        // 期间用户可能已切回来，此时不要隐藏、也不必跑清理
+        if (!$el.hasClass("hide-anim")) { if (done) done(); return; }
+        $el.css("display", "none").removeClass("hide-anim");
+        if (done) done();
+    }, VIEW_ANIM_MS);
+}
+
 function switchView() {
     try {
         if (viewMode === 1) {
             viewMode = 0;
-            $("#result-card").slideUp("slow");
-            $("#result-table").show("slow");
+            renderActiveView();
+            hideSection("#result-card", function () {
+                if (viewMode !== 0) return;
+                $("#result-card").empty();
+                indexBuiltSeq.card = -1;
+            });
+            revealSection("#result-table");
             $("#switch-view").text("显示为卡片");
         } else {
             viewMode = 1;
-            $("#result-table").slideUp("slow");
-            $("#result-card").show("slow");
+            renderActiveView();
+            hideSection("#result-table", function () {
+                if (viewMode !== 1) return;
+                $("#result tbody").empty();
+                indexBuiltSeq.table = -1;
+            });
+            revealSection("#result-card");
             $("#switch-view").text("显示为列表");
         }
     } catch (err) { console.warn("switchView error:", err); }

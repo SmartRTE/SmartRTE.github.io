@@ -26,10 +26,22 @@
             /(^|[?&])embed=1(&|$)/.test(window.location.search);
         if (OCR_EMBEDDED) document.documentElement.classList.add('embedded');
 
+        /* 主题切换的动画窗口时长（ms），与 CommonFunctions.js 的 THEME_ANIM_MS 一致。
+           要略大于 css 里 .theme-animating 的 0.25s，让过渡跑完再摘 class。 */
+        var THEME_ANIM_MS = 260;
+
+        /* 宿主页面切主题时，本页跟着换。这条路径同样走 .theme-animating 窗口，
+           否则 iframe 内的整页重算会和宿主叠加。 */
         window.addEventListener('storage', function (e) {
             if (e.key !== 'theme') return;
-            document.documentElement.dataset.theme = (e.newValue === 'dark') ? 'dark' : 'light';
+            var root = document.documentElement;
+            root.dataset.theme = (e.newValue === 'dark') ? 'dark' : 'light';
             updateThemeButton();
+            root.classList.add('theme-animating');
+            clearTimeout(window.__themeAnimTimer);
+            window.__themeAnimTimer = setTimeout(function () {
+                root.classList.remove('theme-animating');
+            }, THEME_ANIM_MS);
         });
 
         /** 给宿主页面发消息（没被嵌入时是空操作） */
@@ -55,10 +67,19 @@
         }
 
         function toggleTheme() {
+            var root = document.documentElement;
             var next = getCurrentTheme() === 'dark' ? 'light' : 'dark';
-            document.documentElement.dataset.theme = next;
+            root.dataset.theme = next;
             try { localStorage.setItem('theme', next); } catch (e) { }
             updateThemeButton();
+
+            /* 2026-10-09 性能修复：过渡只在切换进行中的这 260ms 内存在
+               （.theme-animating 同时让 css 临时关掉毛玻璃，见 css/theme.css）。 */
+            root.classList.add('theme-animating');
+            clearTimeout(window.__themeAnimTimer);
+            window.__themeAnimTimer = setTimeout(function () {
+                root.classList.remove('theme-animating');
+            }, THEME_ANIM_MS);
         }
 
         document.addEventListener('DOMContentLoaded', function () {

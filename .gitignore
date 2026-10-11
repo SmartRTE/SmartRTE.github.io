@@ -22,3 +22,5 @@ css-old/playresult.css
 extract_jackets.py
 .workbuddy
 .gitignore
+tools/
+data/
