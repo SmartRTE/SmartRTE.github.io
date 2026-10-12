@@ -1,5 +1,5 @@
 {
-  "version": "7.0.255",
+  "version": "7.0.260",
   "updatedAt": "2026/10/12",
   "songChartInfo": {
     "0": {
@@ -7004,12 +7004,8 @@
       "maxLoseScores": {
         "FTR": 406.6
       }
-    }
-  },
-  "unmapped": {
-    "chateaudecartes": {
-      "title": "Château de cartes",
-      "artist": "Inverted Silence ft. Pernelle",
+    },
+    "554": {
       "duration": "02:44",
       "durationSec": 164,
       "notes": {
@@ -7017,6 +7013,10 @@
         "PRS": 1186,
         "FTR": 1304,
         "ETR": 1391
+      },
+      "maxLoseScores": {
+        "FTR": 357.2,
+        "ETR": 391.4
       }
     }
   }

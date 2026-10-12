@@ -9,7 +9,11 @@ let idx_constant = [];
 let finalOutputScore = [];
 let songlist = {}; //idx - songId 键值对
 let idData = {};
-let unitQuantity = 80;
+// 各模式的默认显示单元数
+const DEFAULT_UNIT_QUANTITY = { b: 80, p: 80, s: 80 };
+// 各模式当前使用的显示单元数（手动调节后按模式分别记住）
+let unitQuantityByMode = Object.assign({}, DEFAULT_UNIT_QUANTITY);
+let unitQuantity = DEFAULT_UNIT_QUANTITY.b; // 当前模式（p30Flag 对应模式）的显示单元数
 let uidFlag = true;
 let loseScoreFlag = 0;
 let p30Flag = 0; //0=b 1=p 2=s
@@ -33,8 +37,7 @@ let b50PanStart = null;
 const B50_PINCH_MAX = 6;
 
 $(document).ready(async function() {
-	//首次加载保证transition生效
-	displayWindow('ptt-p30');
+	// #ptt-p30 在 b50gen.html 里默认带 hidden，切换到 P50/S50 时由 switchP30() 显示
 	//初始化设置监听
 	initializeSettingListener();
 	//初始化缓存设置
@@ -88,8 +91,8 @@ function initializeDataArray() {
 	} else if (localStorage.savedArrayData) {
 		currentArray = getResultArray();
 		// console.log(currentArray);
-		unitQuantity = localStorage.unitQuantity;
-		unitQuantity = 80;
+		unitQuantity = unitQuantityByMode[modeKeyOf(p30Flag)];
+		$('#unit-quantity').val(unitQuantity);
 		generateUnits(currentArray, unitQuantity);
 		displayB30(currentArray);
 	} else {
@@ -725,11 +728,13 @@ async function saveAsImage(captureId) {
 }
 
 /**
- * 更改显示单元数
+ * 更改显示单元数（只影响当前模式，切换模式后各自的数值会被记住）
  */
 function changeUnitQuantity() {
-	let q = $('#unit-quantity').val();
+	const q = parseInt($('#unit-quantity').val(), 10);
+	if (isNaN(q) || q <= 0) return;
 	unitQuantity = q;
+	unitQuantityByMode[modeKeyOf(p30Flag)] = q;
 	generateUnits(filteredArray, unitQuantity);
 }
 
@@ -959,37 +964,123 @@ function initB50PinchZoom() {
 }
 
 /**
- * 切换Pure30/Sex30/Best30时，将符合条件的对象压入filteredArray中
- * @param {Array<PlayResult>} 要筛选的分数对象数组
- * @param {number} type 0 = PM 1 = PM-1
+ * 切换 P50 / S50 时，将符合条件的成绩对象压入 filteredArray 中
+ * 传入数组需已按单曲潜力值降序排列，筛选后保持原顺序（即显示排名的顺序）
+ * @param {Array<PlayResult>} array 要筛选的分数对象数组
+ * @param {number} type 0 = P50（PM 满分）1 = S50（PM-1，只差一个物量就 PM）
+ * @return {Array<PlayResult>} 筛选后的数组（同时赋值给全局 filteredArray）
  */
 function filterP30S30(array, type) {
 	filteredArray = [];
 	if (type == 0) {
+		// P50：满分 PM（10,000,000）
 		array.forEach(function(currentRow, index) {
 			if (currentRow.score >= 10000000) {
 				filteredArray.push(currentRow);
 			}
 		});
 	} else {
-		currentArray.forEach(function(currentRow, index) {
-			if ((currentRow.far == 1 && currentRow.lost == 0) ||
+		// S50：只差一个物量就 PM 的三种情况
+		//   1. 0FAR 0LOST 且 Pure 与大 P 差 1（即仅有 1 个小 PURE）
+		//   2. 1FAR 0LOST
+		//   3. 0FAR 1LOST
+		array.forEach(function(currentRow, index) {
+			const onlyOneNormalPerfect = currentRow.far == 0 && currentRow.lost == 0 &&
+				(parseInt(currentRow.perfect) - parseInt(currentRow.criticalPerfect)) == 1;
+			if (onlyOneNormalPerfect ||
+				(currentRow.far == 1 && currentRow.lost == 0) ||
 				(currentRow.far == 0 && currentRow.lost == 1)) {
 				filteredArray.push(currentRow);
 			}
 		});
 	}
 	return filteredArray;
-
 }
+
 /**
- * B50：无 overflow 分栏，始终渲染全部 50 个单元（保留此入口以兼容旧调用）
+ * 取数组前 n 条（已按单曲潜力值降序）的平均单曲潜力值，用于 P50 / S50 的数值显示
+ * 不足 n 条时按实际条数平均，避免筛选结果数量不足时被低估
+ * @param {Array<PlayResult>} array 已按 playRating 降序排列的成绩数组
+ * @param {number} n 取前多少条
+ * @return {number} 平均单曲潜力值
+ */
+function averageTopPlayRating(array, n) {
+	const count = Math.min(array.length, n);
+	if (count <= 0) return 0;
+	let sum = 0;
+	for (let i = 0; i < count; i++) {
+		sum += parseFloat(array[i].playRating) || 0;
+	}
+	return sum / count;
+}
+
+/**
+ * 把 p30Flag 换算成“各模式显示单元数”表的键
+ * @param {number} flag 0 = B50，1 = P50，2 = S50
+ * @return {string} 'b' | 'p' | 's'
+ */
+function modeKeyOf(flag) {
+	return flag == 1 ? 'p' : (flag == 2 ? 's' : 'b');
+}
+
+/**
+ * 在 B50 / P50 / S50 之间循环切换
+ *   B50：全部成绩（默认）
+ *   P50：只显示 PM（10,000,000）的成绩
+ *   S50：只显示“只差一个物量就 PM”的成绩
+ * 三种模式都按各自的显示单元数渲染（默认 B50 = 80、P50/S50 = 70，不足不补），
+ * 第 51 条之前由 generateUnits 插入 OVERFLOW 分隔线。
+ * @param {number} add add=1 时正常循环切换；add=0 时按当前状态重新生成页面内容，不改变状态
  */
 function switchP30(add = 1) {
-	displayB30(currentArray);
-	filteredArray = currentArray;
-	generateUnits(currentArray, unitQuantity);
+	// 先记住当前模式手动调过的条数，再取出目标模式的条数
+	unitQuantityByMode[modeKeyOf(p30Flag)] = unitQuantity;
+	const nextFlag = (p30Flag + add) % 3;
+	unitQuantity = unitQuantityByMode[modeKeyOf(nextFlag)];
+	$('#unit-quantity').val(unitQuantity);
+
+	if (p30Flag + add - 1 == 0) { // b -> p
+		const f = filterP30S30(currentArray, 0);
+		generateUnits(f, unitQuantity);
+		$('#ptt-p30').html('P50 : <span>' + toFloor(averageTopPlayRating(f, 50), 5) + '</span>');
+		$('#switch-p30').text('看看S50');
+		$('#spliter-text-best30').attr('src', 'img/pure50.png');
+		showP50S50PttLine(true);
+	} else if (p30Flag + add - 1 == 1) { // p -> s
+		const f = filterP30S30(currentArray, 1);
+		generateUnits(f, unitQuantity);
+		$('#ptt-p30').html('S50 : <span>' + toFloor(averageTopPlayRating(f, 50), 5) + '</span>');
+		$('#switch-p30').text('回到B50');
+		$('#spliter-text-best30').attr('src', 'img/sex50.png');
+		showP50S50PttLine(true);
+	} else if (p30Flag + add - 1 == 2 || (add == 0 && p30Flag == 0)) { // s -> b
+		displayB30(currentArray);
+		filteredArray = currentArray;
+		generateUnits(currentArray, unitQuantity);
+		$('#switch-p30').text('看看P50');
+		$('#spliter-text-best30').attr('src', 'img/best50.png');
+		// 初始状态（p30Flag==0）时 Max/B50/B10 本来就显示、P50 行本来就隐藏，不必再切换
+		if (p30Flag != 0) {
+			showP50S50PttLine(false);
+		}
+	}
+	p30Flag = nextFlag;
+
 	switchLoseScore();
+}
+
+/**
+ * 切换个人潜力值区域的显示内容：
+ *   B50 模式依次显示 Max / B50 / B10（#ptt-p30 隐藏）
+ *   P50 / S50 模式只显示 P50 / S50 那一行
+ * 必须和 B30 页的 P30/S30 一样“替换”而不是“追加”，否则这一行会落到成绩网格下方被盖住。
+ * @param {boolean} showP50S50 true = 只显示 P50/S50 行；false = 显示 Max/B50/B10
+ */
+function showP50S50PttLine(showP50S50) {
+	displayWindow('ptt-max', !showP50S50);
+	displayWindow('ptt-b30', !showP50S50);
+	displayWindow('ptt-r10', !showP50S50);
+	displayWindow('ptt-p30', showP50S50);
 }
 /**
  * 生成OverFlow的分隔线和分割文字图片

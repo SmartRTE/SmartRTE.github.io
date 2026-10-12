@@ -518,6 +518,50 @@ ul {
     -webkit-overflow-scrolling: touch;
 }
 
+/* ===== 首屏顶满（2026-10-12）=====
+   还没上传成绩时（#sidebar 带 .no-data）主内容区里只有公告卡片，
+   卡片下方会空出小半屏。这里把 #main-content 固定成一屏高并改成纵向 flex，
+   让 #notice 吃掉剩余高度、公告文案区跟着撑开（内部滚动），上下就都顶满了。
+   ⚠ 只在空状态生效：上传成绩后 index.js 会去掉 .no-data（并隐藏 #notice），
+   以下规则随之全部失效，恢复原来的「文案限高 32vh、卡片按内容高度」布局。
+   ⚠ 用相邻兄弟选择器 + #sidebar.no-data，是为了在特异性上压过上面的基础规则。
+   ⚠ 矮屏（横屏手机等）本来卡片就超过一屏、没有留白，不加这条约束会被压得太扁。 */
+@media (min-height: 560px) {
+    #sidebar.no-data ~ #main-content {
+        display: flex;
+        flex-direction: column;
+        /* 窄屏 #app 是纵向 flex，#main-content 的主轴就是高度：
+           必须给 min-height:0，否则 min-height:auto 会按内容把主内容区撑高，顶满失效 */
+        min-height: 0;
+        /* dvh：避开移动端地址栏收放导致 vh 跳动（与窄屏抽屉一致） */
+        height: 100vh;
+        height: 100dvh;
+    }
+
+    #sidebar.no-data ~ #main-content #notice {
+        /* 吃掉主内容区的剩余高度；min-height:0 才能被压缩，不至于把页面撑高 */
+        flex: 1 1 auto;
+        min-height: 0;
+        margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #sidebar.no-data ~ #main-content #version {
+        /* 取消 32vh 限高，改由卡片自身高度约束；多余高度全给文案区，
+           免得卡片顶满了、里面却空一大块 */
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+    }
+
+    /* 表情和「使用说明」保持原高度，不跟着拉伸 */
+    #sidebar.no-data ~ #main-content #sticker,
+    #sidebar.no-data ~ #main-content #help-section {
+        flex: none;
+    }
+}
+
 .version-row {
     display: flex;
     gap: 20px;
@@ -1380,6 +1424,14 @@ ul {
     #main-content {
         /* 顶部让出固定的抽屉开关按钮的高度，否则按钮会压在 #notice 左上角 */
         padding: calc(52px + var(--safe-t, 0px)) 16px 16px;
+    }
+
+    /* 窄屏 #app 是纵向 flex，#main-content 的主轴就是高度：
+       基础规则里的 flex:1 是 flex-basis:0%（百分比），在主轴尺寸不确定的
+       纵向容器里会退化成 content，主内容区就被公告内容撑高、首屏顶满失效。
+       这里把 basis 改回 auto（配合 height:100dvh），让高度确定下来。 */
+    #sidebar.no-data ~ #main-content {
+        flex-basis: auto;
     }
 
     #result-card {

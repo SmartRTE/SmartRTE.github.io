@@ -28245,6 +28245,7 @@
             "bg_inverse": "undertale_conflict",
             "remote_dl": true,
             "world_unlock": false,
+            "no_stream": true,
             "date": 1741478400,
             "version": "6.3",
             "difficulties": [
@@ -28297,6 +28298,7 @@
             "bg_inverse": "undertale_conflict",
             "remote_dl": true,
             "world_unlock": false,
+            "no_stream": true,
             "date": 1741478401,
             "version": "6.3",
             "difficulties": [
@@ -28367,6 +28369,7 @@
             "remote_dl": true,
             "world_unlock": false,
             "byd_local_unlock": true,
+            "no_stream": true,
             "date": 1741478402,
             "version": "6.3",
             "difficulties": [
@@ -28438,6 +28441,7 @@
             "bg_inverse": "undertale_conflict",
             "remote_dl": true,
             "world_unlock": false,
+            "no_stream": true,
             "date": 1741478403,
             "version": "6.3",
             "difficulties": [
@@ -28507,6 +28511,7 @@
             "bg_inverse": "undertale_light",
             "remote_dl": true,
             "world_unlock": false,
+            "no_stream": true,
             "date": 1741478404,
             "version": "6.3",
             "difficulties": [
@@ -33654,6 +33659,7 @@
             },
             "remote_dl": true,
             "world_unlock": false,
+            "no_stream": true,
             "date": 1777507200,
             "version": "6.14",
             "difficulties": [
@@ -33726,6 +33732,7 @@
             },
             "remote_dl": true,
             "world_unlock": false,
+            "no_stream": true,
             "date": 1777507201,
             "version": "6.14",
             "difficulties": [
@@ -33795,6 +33802,7 @@
             },
             "remote_dl": true,
             "world_unlock": false,
+            "no_stream": true,
             "date": 1777507202,
             "version": "6.14",
             "difficulties": [
@@ -35117,7 +35125,11 @@
             "artist": "rejection & Supire feat. eili",
             "search_title": {
                 "ja": [
-                    "りべんぴるぐりめーじ"
+                    "りぶんぴるぐりみっじ",
+                    "りぶんぴるぐりめっじ",
+                    "りぶんぴるぐりめーじ",
+                    "りゔんぴるぐりみっじ",
+                    "りゔんぴるぐりめーじ"
                 ],
                 "ko": [
                     "리벤 필그러메이지"
@@ -35265,7 +35277,7 @@
             "artist": "Blacklolita vs Juggernaut.",
             "search_title": {
                 "ja": [
-                    "えいのすふぁいねいん"
+                    "でいのすふぁいねいん"
                 ],
                 "ko": [
                     "에이노스 파이네인"
@@ -35484,6 +35496,80 @@
                     "ratingPlus": true,
                     "hidden_until_unlocked": true,
                     "hidden_until": "song"
+                }
+            ]
+        },
+        {
+            "idx": 554,
+            "id": "chateaudecartes",
+            "title_localized": {
+                "en": "Château de cartes",
+                "ko_dialog": "Chateau de cartes"
+            },
+            "artist": "Inverted Silence ft. Pernelle",
+            "search_title": {
+                "en": [
+                    "Chateau"
+                ],
+                "ja": [
+                    "しゃとーどかると"
+                ],
+                "ko": [
+                    "샤또 드 카흐뜨",
+                    "샤또 드 카뜨"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "いんばーてっどさいれんす",
+                    "いんゔぁーてっどさいれんす",
+                    "ぺるねる"
+                ],
+                "ko": [
+                    "인버티드 사일런스",
+                    "페넬레",
+                    "페르넬레"
+                ]
+            },
+            "bpm": "126",
+            "bpm_base": 252,
+            "set": "single",
+            "category": "original",
+            "purchase": "chateaudecartes",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "alice_light",
+            "bg_inverse": "alice_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1789808400,
+            "version": "7.0",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Intérateur",
+                    "jacketDesigner": "辷",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Intérateur",
+                    "jacketDesigner": "辷",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Intérateur",
+                    "jacketDesigner": "辷",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "Intérateur",
+                    "jacketDesigner": "辷",
+                    "rating": 10
                 }
             ]
         }

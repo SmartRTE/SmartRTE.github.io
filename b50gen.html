@@ -65,6 +65,8 @@
 					<div id="ptt-b30">B50 : <span>6.16</span></div>
 					<div id="ptt-r10">B10 : <span>6.16</span></div>
 					<div><span></span></div>
+					<!-- 切换到 P50 / S50 后才显示（默认隐藏，由 switchP30() 控制） -->
+					<div id="ptt-p30" hidden="hidden">P50 : <span>0.0000</span></div>
 				</div>
 				<div class="spliter" id="spliter-best30">
 					<img class="spliter-image" src="img/divider.png" />
@@ -195,6 +197,12 @@
 						style="width:100%;display:none;">切到 B30</button>
 					<button class="btn-action" onclick="window.location.href='index.html'"
 						style="width:100%;">返回主页</button>
+				</div>
+				<div class="setting-card">
+					<span class="card-label">筛选</span>
+					<!-- 在 B50 / P50 / S50 之间循环切换（默认 B50） -->
+					<button class="btn-action" id="switch-p30" onclick="switchP30()"
+						style="width:100%;">看看P50</button>
 				</div>
 				<div class="setting-card">
 					<span class="card-label">管理</span>
