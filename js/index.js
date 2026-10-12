@@ -81,6 +81,25 @@ $(document).ready(function () {
            抽屉打开时给 body 加 .sidebar-locked 锁滚动，并显示遮罩 #sidebar-scrim。
            桌面端（>768px）本按钮display:none，整段逻辑不会被触发。 */
         const SIDEBAR_BP = window.matchMedia("(max-width: 768px)");
+
+        /* 抽屉遮罩：index.html 里本来就有一份 #sidebar-scrim，所以「绑事件」不能只写在
+           创建分支里 —— 走 HTML 那份时永远绑不上，点侧栏右边的空白就关不掉抽屉。
+           与 scores 页 ensureSidebarScrim 同一套做法：保证存在 + 保证绑过。 */
+        let scrimBound = false;
+        function ensureSidebarScrim() {
+            let scrim = document.getElementById("sidebar-scrim");
+            if (!scrim) {
+                scrim = document.createElement("div");
+                scrim.id = "sidebar-scrim";
+                document.body.appendChild(scrim);
+            }
+            if (!scrimBound) {
+                scrimBound = true;
+                scrim.addEventListener("click", function () { setSidebarOpen(false); });
+            }
+            return scrim;
+        }
+
         function setSidebarOpen(open) {
             const $sb = $("#sidebar");
             const $tg = $("#sidebar-toggle");
@@ -89,14 +108,7 @@ $(document).ready(function () {
             $tg.toggleClass("open", open);
             $tg.attr("aria-expanded", String(open));
             document.body.classList.toggle("sidebar-locked", open);
-            let scrim = document.getElementById("sidebar-scrim");
-            if (!scrim) {
-                scrim = document.createElement("div");
-                scrim.id = "sidebar-scrim";
-                scrim.addEventListener("click", function () { setSidebarOpen(false); });
-                document.body.appendChild(scrim);
-            }
-            scrim.classList.toggle("show", open);
+            ensureSidebarScrim().classList.toggle("show", open);
         }
         window.setSidebarOpen = setSidebarOpen;   // 供遮罩 / Esc 调用
 

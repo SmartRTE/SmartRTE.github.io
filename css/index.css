@@ -1574,8 +1574,10 @@ ul {
         display: none;
     }
 
-    #action-buttons,
-    #nav-buttons {
+    /* 手机端只有「选择文件 / 读取缓存」并排两列；
+       导航按钮（生成 B50 / 查看完成表 / 全曲成绩管理）文字较长，
+       两个并排太挤，保持基础样式的纵向 flex —— 每行一个、自动占满整行。 */
+    #action-buttons {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 6px;
