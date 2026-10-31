@@ -35572,6 +35572,479 @@
                     "rating": 10
                 }
             ]
+        },
+        {
+            "idx": 555,
+            "id": "voyagetofuture",
+            "title_localized": {
+                "en": "Voyage to the Future"
+            },
+            "artist": "Shunji Fujii feat. 千花",
+            "search_title": {
+                "en": [
+                    "chika"
+                ],
+                "ja": [
+                    "ぼやーじゅとぅざふゅーちゃー"
+                ],
+                "ko": [
+                    "보야지 투 더 퓨처",
+                    ""
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "しゅじふじい",
+                    "ちか"
+                ],
+                "ko": [
+                    "후지이 슌지",
+                    "치카"
+                ]
+            },
+            "bpm": "129",
+            "bpm_base": 129,
+            "set": "extend_4",
+            "purchase": "extend_4",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "diversesystem_light",
+            "bg_inverse": "diversesystem_conflict",
+            "remote_dl": true,
+            "world_unlock": true,
+            "date": 1793232000,
+            "version": "7.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "",
+                    "rating": 2
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "",
+                    "rating": 9
+                }
+            ]
+        },
+        {
+            "idx": 556,
+            "id": "ran",
+            "title_localized": {
+                "en": "Ran",
+                "ja": "蘭"
+            },
+            "artist": "Feryquitous",
+            "search_title": {
+                "en": [
+                    "ran"
+                ],
+                "ja": [
+                    "らん"
+                ],
+                "ko": [
+                    "란"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "ふぇりきたす"
+                ],
+                "ko": [
+                    "페리퀴토스"
+                ]
+            },
+            "bpm": "180",
+            "bpm_base": 180,
+            "set": "diversesystem",
+            "purchase": "diversesystem",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "diversesystem_light",
+            "bg_inverse": "diversesystem_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1793232001,
+            "version": "7.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Nitro",
+                    "jacketDesigner": "",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Nitro",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "antymis",
+                    "jacketDesigner": "",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "antymis",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 557,
+            "id": "etherdrive",
+            "title_localized": {
+                "en": "Ether Drive"
+            },
+            "artist": "crayvxn",
+            "search_title": {
+                "ja": [
+                    "いーさーどらいぶ",
+                    "えーてるどらいぶ"
+                ],
+                "ko": [
+                    "에테르 드라이브"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "くれいぶん"
+                ],
+                "ko": [
+                    "크레이븐"
+                ]
+            },
+            "bpm": "155",
+            "bpm_base": 155,
+            "set": "diversesystem",
+            "purchase": "diversesystem",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "diversesystem_light",
+            "bg_inverse": "diversesystem_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1793232002,
+            "version": "7.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Exschwasion",
+                    "jacketDesigner": "",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Exschwasion",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Exschwasion",
+                    "jacketDesigner": "",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "Exschwasion",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 558,
+            "id": "schrago",
+            "title_localized": {
+                "en": "Schra Go (Uchina Time)"
+            },
+            "artist": "REMO-CON",
+            "search_title": {
+                "ja": [
+                    "しゅらごー",
+                    "うちなーたいむ",
+                    "うちなたいむ"
+                ],
+                "ko": [
+                    "쉬라 고 우치나 테마"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "りもこん"
+                ],
+                "ko": [
+                    "레모콘",
+                    "리모콘"
+                ]
+            },
+            "bpm": "138-150",
+            "bpm_base": 150,
+            "set": "diversesystem",
+            "purchase": "diversesystem",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "diversesystem_conflict",
+            "bg_inverse": "diversesystem_light",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1793232003,
+            "version": "7.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "NITRO",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "NITRO",
+                    "jacketDesigner": "",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "NITRO",
+                    "jacketDesigner": "",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "NITRO",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 559,
+            "id": "fatality",
+            "title_localized": {
+                "en": "Fatality"
+            },
+            "artist": "Renpul",
+            "search_title": {
+                "ja": [
+                    "ふぇいたりてぃ"
+                ],
+                "ko": [
+                    "페이탈리티",
+                    ""
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "れんぷる",
+                    "れんぷーる"
+                ],
+                "ko": [
+                    "렌풀",
+                    "렌플"
+                ]
+            },
+            "bpm": "175",
+            "bpm_base": 175,
+            "set": "diversesystem",
+            "purchase": "diversesystem",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "diversesystem_conflict",
+            "bg_inverse": "diversesystem_light",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1793232004,
+            "version": "7.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "raycast",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "raycast",
+                    "jacketDesigner": "",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "raycast",
+                    "jacketDesigner": "",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "raycast",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 560,
+            "id": "parallax",
+            "title_localized": {
+                "en": "Parallax"
+            },
+            "artist": "xi vs ak+q (lowiro)",
+            "search_title": {
+                "ja": [
+                    "ぱららっくす"
+                ],
+                "ko": [
+                    "패럴렉스"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "さい",
+                    "えーけーきゅー",
+                    "えーけーぷらすきゅー"
+                ],
+                "ko": [
+                    "시",
+                    "에이케이 큐 플러스"
+                ]
+            },
+            "bpm": "169",
+            "bpm_base": 169,
+            "set": "diversesystem",
+            "purchase": "diversesystem",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "parallax",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1793232005,
+            "version": "7.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "M理論_ranked",
+                    "jacketDesigner": "PAN.D",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "M理論_ranked",
+                    "jacketDesigner": "PAN.D",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "M理論 vs 夜浪",
+                    "jacketDesigner": "PAN.D",
+                    "rating": 9,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "M理論 vs 夜浪",
+                    "jacketDesigner": "PAN.D",
+                    "rating": 11,
+                    "legacy11": true
+                }
+            ]
+        },
+        {
+            "idx": 820,
+            "id": "trickmaster",
+            "title_localized": {
+                "en": "Tr!cK Ma?tEr"
+            },
+            "artist": "Nothing But Requiem",
+            "search_title": {
+                "en": [
+                    "trick master"
+                ],
+                "ja": [
+                    "とりっくますたー"
+                ],
+                "ko": [
+                    "트릭 마스터",
+                    ""
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "なっしんぐばっとれくいえむ"
+                ],
+                "ko": [
+                    "낫띵 벗 레퀴엠"
+                ]
+            },
+            "bpm": "195?",
+            "bpm_base": 195,
+            "category": "original",
+            "set": "single",
+            "purchase": "trickmaster",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "single2_conflict",
+            "bg_inverse": "single2_light",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1793232006,
+            "version": "7.1",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "KAr?T",
+                    "jacketDesigner": "nonokuro",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "KAr?T",
+                    "jacketDesigner": "nonokuro",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "KAr?T",
+                    "jacketDesigner": "nonokuro",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "KAr?T",
+                    "jacketDesigner": "nonokuro",
+                    "rating": 10
+                }
+            ]
         }
     ]
 }

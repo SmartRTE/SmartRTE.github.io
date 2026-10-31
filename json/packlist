@@ -91,6 +91,22 @@
       }
     },
     {
+      "id": "diversesystem",
+      "section": "collab",
+      "custom_banner": true,
+      "plus_character": 101,
+      "name_localized": {
+        "en": "Diverse System"
+      },
+      "description_localized": {
+        "en": "The Diverse System Collaboration is here\nwith 5 new songs and the new Partner:\nNENE & silky6!\n\nOpen your eyes to a brilliant tapestry of sound,\ncomprised of beauty and life in this wondrous pack.",
+        "ja": "『Diverse System』とのコラボパックが登場！\n5つの名曲に加え、『ネネ & シルキー』を収録。\n\n束ねられたサウンド、培われたバイオグラフィ、\n違うまま集った輝き、その5つをここに。",
+        "ko": "Diverse System Collaboration Pack 등장!\n5개의 신곡과 새로운 파트너,\n네네 & 실키6가 담겨있습니다!\n\n눈을 뜨세요.\n아름다움과 생명으로 넘치는 음색의 \n태피스트리를 만끽해보세요!",
+        "zh-Hans": "Diverse System联动曲包热闹登场！\n收录 5 首风格多元的歌曲，\n以及全新搭档「NENE & silky6」！\n\n竖起耳朵、睁大双眼。\n畅享美妙旋律所带来的缤纷色彩，\n感受历经岁月编织而成，饱富生命力的种种物语。",
+        "zh-Hant": "Diverse System聯動曲包熱鬧登場！\n收錄 5 首風格多元的歌曲，\n以及全新搭檔「NENE & silky6」！\n\n豎起耳朵、睜大雙眼。\n暢享美妙旋律所帶來的繽紛色彩，\n感受歷經歲月編織而成，飽富生命力的種種物語。"
+      }
+    },
+    {
       "id": "konzetsu",
       "section": "mainstory2",
       "plus_character": -1,

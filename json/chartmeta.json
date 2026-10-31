@@ -1,6 +1,6 @@
 {
-  "version": "7.0.260",
-  "updatedAt": "2026/10/12",
+  "version": "7.1.0",
+  "updatedAt": "2026/10/31",
   "songChartInfo": {
     "0": {
       "duration": "01:55",
@@ -7017,6 +7017,104 @@
       "maxLoseScores": {
         "FTR": 357.2,
         "ETR": 391.4
+      }
+    },
+    "555": {
+      "duration": "02:49",
+      "durationSec": 169,
+      "notes": {
+        "PST": 516,
+        "PRS": 609,
+        "FTR": 634,
+        "ETR": 848
+      },
+      "maxLoseScores": {
+        "FTR": 296.4,
+        "ETR": 357.2
+      }
+    },
+    "556": {
+      "duration": "02:46",
+      "durationSec": 166,
+      "notes": {
+        "PST": 631,
+        "PRS": 813,
+        "FTR": 826,
+        "ETR": 1017
+      },
+      "maxLoseScores": {
+        "FTR": 338.2,
+        "ETR": 372.4
+      }
+    },
+    "557": {
+      "duration": "02:22",
+      "durationSec": 142,
+      "notes": {
+        "PST": 445,
+        "PRS": 600,
+        "FTR": 845,
+        "ETR": 1061
+      },
+      "maxLoseScores": {
+        "FTR": 334.4,
+        "ETR": 391.4
+      }
+    },
+    "558": {
+      "duration": "02:32",
+      "durationSec": 152,
+      "notes": {
+        "PST": 455,
+        "PRS": 666,
+        "FTR": 1000,
+        "ETR": 1115
+      },
+      "maxLoseScores": {
+        "FTR": 357.2,
+        "ETR": 387.6
+      }
+    },
+    "559": {
+      "duration": "02:32",
+      "durationSec": 152,
+      "notes": {
+        "PST": 646,
+        "PRS": 783,
+        "FTR": 961,
+        "ETR": 1148
+      },
+      "maxLoseScores": {
+        "FTR": 361,
+        "ETR": 395.2
+      }
+    },
+    "560": {
+      "duration": "02:40",
+      "durationSec": 160,
+      "notes": {
+        "PST": 703,
+        "PRS": 915,
+        "FTR": 1196,
+        "ETR": 1412
+      },
+      "maxLoseScores": {
+        "FTR": 376.2,
+        "ETR": 429.4
+      }
+    },
+    "820": {
+      "duration": "02:32",
+      "durationSec": 152,
+      "notes": {
+        "PST": 767,
+        "PRS": 922,
+        "FTR": 1023,
+        "ETR": 1172
+      },
+      "maxLoseScores": {
+        "FTR": 364.8,
+        "ETR": 399
       }
     }
   }
