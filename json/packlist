@@ -91,6 +91,23 @@
       }
     },
     {
+      "id": "arknights",
+      "section": "collab",
+      "custom_banner": true,
+      "plus_character": 102,
+      "limitedSaleEndTime": 1836731600,
+      "name_localized": {
+        "en": "Arknights"
+      },
+      "description_localized": {
+        "en": "8 Songs and Arcaea's first Motion Partner await in\nthis momentous pack. Welcome to Terra.\n\nIn addition to its songs, The Arknights Collaboration \nPack brings the animated Partner Amiya, as well\nas a brand new Story following her, told from the\nperspective of a familiar voice...",
+        "ja": "8つの楽曲と、Arcaea初のモーションパートナー、\n『アーミヤ』を収録した衝撃のパック。\n\n楽曲とモーションパートナーに加え、\nロドス・アイランドを巡る新規シナリオを収録。\n───さあ、『テラ』へようこそ。",
+        "ko": "8개의 악곡, 그리고 최초의 모션 파트너 아미야가\n여러분을 기다립니다. 테라에 오신 걸 환영합니다.\n\n악곡과 더불어, 움직이는 파트너 아미야,\n그리고 익숙한 목소리가 전하는,\n아미야에 대한 스토리...",
+        "zh-Hans": "欢迎来到泰拉。\n8 首歌曲与 Arcaea 首名动态搭档，行动开始。\n\n规模庞大的明日方舟联动曲包。除了收录各式曲目，\n还有附带动态演出的搭档“阿米娅”，\n以及一段围绕阿米娅的原创故事。\n通过熟悉的视角，一窥截然不同的世界……",
+        "zh-Hant": "歡迎來到泰拉。\n8 首歌曲與 Arcaea 首名動態搭檔，行動開始。\n\n規模龐大的明日方舟聯動曲包。除了收錄各式曲目，\n還有附帶動態演出的搭檔「阿米婭」，\n以及一段圍繞阿米婭的原創故事。\n透過熟悉的視角，一窺截然不同的世界……"
+      }
+    },
+    {
       "id": "diversesystem",
       "section": "collab",
       "custom_banner": true,

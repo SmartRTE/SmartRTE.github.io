@@ -1,6 +1,6 @@
 {
-  "version": "7.1.0",
-  "updatedAt": "2026/10/31",
+  "version": "7.3.1",
+  "updatedAt": "2026/11/19",
   "songChartInfo": {
     "0": {
       "duration": "01:55",
@@ -1333,7 +1333,7 @@
         "FTR": 952
       },
       "maxLoseScores": {
-        "FTR": 357.2
+        "FTR": 349.6
       }
     },
     "105": {
@@ -4992,7 +4992,7 @@
         "FTR": 939
       },
       "maxLoseScores": {
-        "FTR": 368.6
+        "FTR": 372.4
       }
     },
     "403": {
@@ -7103,7 +7103,7 @@
         "ETR": 429.4
       }
     },
-    "820": {
+    "561": {
       "duration": "02:32",
       "durationSec": 152,
       "notes": {
@@ -7115,6 +7115,128 @@
       "maxLoseScores": {
         "FTR": 364.8,
         "ETR": 399
+      }
+    },
+    "562": {
+      "duration": "02:25",
+      "durationSec": 145,
+      "notes": {
+        "PST": 351,
+        "PRS": 490,
+        "FTR": 611,
+        "ETR": 846
+      },
+      "maxLoseScores": {
+        "FTR": 296.4,
+        "ETR": 342
+      }
+    },
+    "563": {
+      "duration": "02:28",
+      "durationSec": 148,
+      "notes": {
+        "PST": 402,
+        "PRS": 606,
+        "FTR": 653
+      },
+      "maxLoseScores": {
+        "FTR": 319.2
+      }
+    },
+    "564": {
+      "duration": "02:21",
+      "durationSec": 141,
+      "notes": {
+        "PST": 348,
+        "PRS": 393,
+        "FTR": 533,
+        "ETR": 636
+      },
+      "maxLoseScores": {
+        "FTR": 296.4,
+        "ETR": 353.4
+      }
+    },
+    "565": {
+      "duration": "02:39",
+      "durationSec": 159,
+      "notes": {
+        "PST": 688,
+        "PRS": 826,
+        "FTR": 987,
+        "ETR": 1013
+      },
+      "maxLoseScores": {
+        "FTR": 323,
+        "ETR": 372.4
+      }
+    },
+    "566": {
+      "duration": "02:56",
+      "durationSec": 176,
+      "notes": {
+        "PST": 706,
+        "PRS": 887,
+        "FTR": 1091,
+        "ETR": 1325
+      },
+      "maxLoseScores": {
+        "FTR": 334.4,
+        "ETR": 380
+      }
+    },
+    "567": {
+      "duration": "02:41",
+      "durationSec": 161,
+      "notes": {
+        "PST": 552,
+        "PRS": 705,
+        "FTR": 1124
+      },
+      "maxLoseScores": {
+        "FTR": 387.6
+      }
+    },
+    "568": {
+      "duration": "02:18",
+      "durationSec": 138,
+      "notes": {
+        "PST": 491,
+        "PRS": 555,
+        "FTR": 783,
+        "ETR": 932
+      },
+      "maxLoseScores": {
+        "FTR": 349.6,
+        "ETR": 383.8
+      }
+    },
+    "569": {
+      "duration": "02:38",
+      "durationSec": 158,
+      "notes": {
+        "PST": 554,
+        "PRS": 808,
+        "FTR": 941,
+        "ETR": 1252
+      },
+      "maxLoseScores": {
+        "FTR": 364.8,
+        "ETR": 410.4
+      }
+    },
+    "570": {
+      "duration": "02:51",
+      "durationSec": 171,
+      "notes": {
+        "PST": 869,
+        "PRS": 875,
+        "FTR": 984,
+        "ETR": 1221
+      },
+      "maxLoseScores": {
+        "FTR": 376.2,
+        "ETR": 414.2
       }
     }
   }

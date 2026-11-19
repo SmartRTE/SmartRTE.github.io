@@ -35978,7 +35978,7 @@
             ]
         },
         {
-            "idx": 820,
+            "idx": 561,
             "id": "trickmaster",
             "title_localized": {
                 "en": "Tr!cK Ma?tEr"
@@ -36006,7 +36006,7 @@
             },
             "bpm": "195?",
             "bpm_base": 195,
-            "category": "original",
+            "category": "partner",
             "set": "single",
             "purchase": "trickmaster",
             "audioPreview": 0,
@@ -36043,6 +36043,620 @@
                     "chartDesigner": "KAr?T",
                     "jacketDesigner": "nonokuro",
                     "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 562,
+            "id": "renegadeark",
+            "title_localized": {
+                "en": "Renegade"
+            },
+            "artist": "Jason Walsh, Substantial, X. ARI",
+            "search_title": {
+                "ja": [
+                    "れねげーど"
+                ],
+                "ko": [
+                    "레니게이드"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "じぇいそんうぉるしゅ",
+                    "じぇいそんわるしゅ",
+                    "さぶすたんしゃる"
+                ],
+                "ko": [
+                    "제이슨 월시",
+                    "제이슨 왈시",
+                    "서브스텐셜",
+                    "엑스 아리"
+                ]
+            },
+            "bpm": "154",
+            "bpm_base": 154,
+            "set": "base",
+            "purchase": "",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "arknights_conflict",
+            "bg_inverse": "arknights_light",
+            "remote_dl": true,
+            "world_unlock": true,
+            "date": 1794873600,
+            "version": "7.3",
+	    "source_copyright": "©HYPERGRYPH",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Natsu",
+                    "jacketDesigner": "",
+                    "rating": 2
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Natsu",
+                    "jacketDesigner": "",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Natsu",
+                    "jacketDesigner": "",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "Natsu",
+                    "jacketDesigner": "",
+                    "rating": 9
+                }
+            ]
+        },
+        {
+            "idx": 563,
+            "id": "missyou",
+            "title_localized": {
+                "en": "Miss You"
+            },
+            "artist": "David Lin, Erik Castro",
+            "search_title": {
+                "ja": [
+                    "みすゆー",
+                    "みすゆう"
+                ],
+                "ko": [
+                    "미스 유"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "でいゔぃっどりん",
+                    "でゔぃっどりん",
+                    "でびっどりん",
+                    "えりっくかすとろ"
+                ],
+                "ko": [
+                    "데이비드 린",
+                    "에릭 카스트로"
+                ]
+            },
+            "bpm": "134",
+            "bpm_base": 134,
+            "set": "arknights",
+            "purchase": "arknights",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "arknights_light",
+            "bg_inverse": "arknights_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1794873601,
+            "version": "7.3",
+	    "source_copyright": "©HYPERGRYPH",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Nitro",
+                    "jacketDesigner": "",
+                    "rating": 2
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Nitro",
+                    "jacketDesigner": "",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Nitro",
+                    "jacketDesigner": "",
+                    "rating": 8
+                }
+            ]
+        },
+        {
+            "idx": 564,
+            "id": "speedoflight",
+            "title_localized": {
+                "en": "Speed of Light"
+            },
+            "artist": "DJ OKAWARI, 二宮愛",
+            "search_title": {
+                "ja": [
+                    "すぴーどおぶらいと"
+                ],
+                "ko": [
+                    "스피드 오브 라이트"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "でぃーじぇーおかわり",
+                    "にのみやあい"
+                ],
+                "ko": [
+                    "디제이 오카와리",
+                    "니노미야 아이"
+                ]
+            },
+            "bpm": "112",
+            "bpm_base": 112,
+            "set": "arknights",
+            "purchase": "arknights",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "arknights_light",
+            "bg_inverse": "arknights_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1794873602,
+            "version": "7.3",
+	    "source_copyright": "©HYPERGRYPH",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "",
+                    "rating": 2
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "karat",
+                    "jacketDesigner": "",
+                    "rating": 9
+                }
+            ]
+        },
+        {
+            "idx": 565,
+            "id": "fadingsky",
+            "title_localized": {
+                "en": "Fading Sky"
+            },
+            "artist": "AJURIKA",
+            "search_title": {
+                "ja": [
+                    "ふぇいでぃんぐすかい",
+                    "ふぇーでぃんぐすかい"
+                ],
+                "ko": [
+                    "페이딩 스카이"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "あじゅりか"
+                ],
+                "ko": [
+                    "아주리카",
+                    "아쥬리카",
+                    ""
+                ]
+            },
+            "bpm": "178",
+            "bpm_base": 178,
+            "set": "arknights",
+            "purchase": "arknights",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "arknights_light",
+            "bg_inverse": "arknights_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1794873603,
+            "version": "7.3",
+	    "source_copyright": "©HYPERGRYPH",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Nitro",
+                    "jacketDesigner": "",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Nitro",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "antymis",
+                    "jacketDesigner": "",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "antymis",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 566,
+            "id": "radiant",
+            "title_localized": {
+                "en": "Radiant"
+            },
+            "artist": "Mary Clare, Erik Castro",
+            "search_title": {
+                "ja": [
+                    "れいでぃあんと"
+                ],
+                "ko": [
+                    "래디언트"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "めありーくれあ",
+                    "えりっくかすとろ",
+                    "まりーくれあ"
+                ],
+                "ko": [
+                    "메리 클레어",
+                    "에릭 카스트로"
+                ]
+            },
+            "bpm": "176",
+            "bpm_base": 176,
+            "set": "arknights",
+            "purchase": "arknights",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 0,
+            "bg": "arknights_light",
+            "bg_inverse": "arknights_conflict",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1794873604,
+            "version": "7.3",
+	    "source_copyright": "©HYPERGRYPH",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "sidewaves",
+                    "jacketDesigner": "",
+                    "rating": 3
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "sidewaves",
+                    "jacketDesigner": "",
+                    "rating": 6
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "sidewaves",
+                    "jacketDesigner": "",
+                    "rating": 8,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "sidewaves",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 567,
+            "id": "alive",
+            "title_localized": {
+                "en": "ALIVE"
+            },
+            "artist": "Obadiah Brown-Beach, Cristina Vee",
+            "search_title": {
+                "ja": [
+                    "あらいぶ"
+                ],
+                "ko": [
+                    "얼라이브"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "おばだいあぶらうんびーち",
+                    "くりすてぃなびー",
+                    "くりすてぃなゔぃー"
+                ],
+                "ko": [
+                    "오바디아 브라운 비치",
+                    "크리스티나 비"
+                ]
+            },
+            "bpm": "125",
+            "bpm_base": 125,
+            "set": "arknights",
+            "purchase": "arknights",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "arknights_conflict",
+            "bg_inverse": "arknights_light",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1794873605,
+            "version": "7.3",
+	    "source_copyright": "©HYPERGRYPH",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "RAYCAST",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "RAYCAST",
+                    "jacketDesigner": "",
+                    "rating": 7,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "RAYCAST",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ]
+        },
+        {
+            "idx": 568,
+            "id": "hascome",
+            "title_localized": {
+                "en": "......已至。"
+            },
+            "artist": "秋田真典",
+            "search_title": {
+                "en": [
+                    "masanori akita"
+                ],
+                "ja": [
+                    "もうすでに"
+                ],
+                "ko": [
+                    "이 즈",
+                    "해즈 컴",
+                    "왔다"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "あきたまさのり"
+                ],
+                "ko": [
+                    "아키타 마사노리"
+                ]
+            },
+            "bpm": "146",
+            "bpm_base": 146,
+            "set": "arknights",
+            "purchase": "arknights",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "arknights_conflict",
+            "bg_inverse": "arknights_light",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1794873606,
+            "version": "7.3",
+	    "source_copyright": "©HYPERGRYPH",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "nora::neko [Prophetic Image]",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "nora::neko [Framework of The End]",
+                    "jacketDesigner": "",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "nora::neko [Body of The End]",
+                    "jacketDesigner": "",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "nora::neko [Reality of The End]",
+                    "jacketDesigner": "",
+                    "rating": 10
+                }
+            ],
+            "additional_files": [
+                {
+                    "file_name": "video.mp4",
+                    "requirement": "required"
+                }
+            ]
+        },
+        {
+            "idx": 569,
+            "id": "opspectheme",
+            "title_localized": {
+                "en": "Operation Spectrum Battle Theme"
+            },
+            "artist": "cybermiso, DOT96, tigerlily",
+            "search_title": {
+                "ja": [
+                    "おぺれーしょんすぺくとらむばとるてーま"
+                ],
+                "ko": [
+                    "오퍼레이션 스펙트럼 배틀 테마",
+                    "오퍼레이션 스펙트럼 배틀 팀"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "さいばーみそ",
+                    "どっとくろ",
+                    "どっときゅうじゅうろく",
+                    "たいがーりりぃ"
+                ],
+                "ko": [
+                    "사이버미소",
+                    "도트구육",
+                    "도트나인티식스",
+                    "타이거릴리",
+                    ""
+                ]
+            },
+            "bpm": "174",
+            "bpm_base": 174,
+            "set": "arknights",
+            "purchase": "arknights",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "arknights_conflict",
+            "bg_inverse": "arknights_light",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1794873607,
+            "version": "7.3",
+	    "source_copyright": "©HYPERGRYPH",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "sidewaves: 危機等級4",
+                    "jacketDesigner": "",
+                    "rating": 4
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "sidewaves: 危機等級8",
+                    "jacketDesigner": "",
+                    "rating": 7
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "sidewaves: 危機等級18",
+                    "jacketDesigner": "",
+                    "rating": 9
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "瑞獣×夜浪: 危機等級32",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
+                }
+            ]
+        },
+        {
+            "idx": 570,
+            "id": "somniomancer",
+            "title_localized": {
+                "en": "Somniomancer [null set]"
+            },
+            "artist": "Crywolf",
+            "search_title": {
+                "ja": [
+                    "そむにおまんさーぬるせっと",
+                    "ぬるせっと"
+                ],
+                "ko": [
+                    "솜니오맨서",
+                    "섬니오맨서"
+                ]
+            },
+            "search_artist": {
+                "ja": [
+                    "くらいうるふ"
+                ],
+                "ko": [
+                    "크라이울프"
+                ]
+            },
+            "bpm": "100",
+            "bpm_base": 150,
+            "set": "arknights",
+            "purchase": "arknights",
+            "audioPreview": 0,
+            "audioPreviewEnd": 0,
+            "side": 1,
+            "bg": "arknights_conflict",
+            "bg_inverse": "arknights_light",
+            "remote_dl": true,
+            "world_unlock": false,
+            "date": 1794873608,
+            "version": "7.3",
+	    "source_copyright": "©HYPERGRYPH",
+            "difficulties": [
+                {
+                    "ratingClass": 0,
+                    "chartDesigner": "Natsu",
+                    "jacketDesigner": "",
+                    "rating": 5
+                },
+                {
+                    "ratingClass": 1,
+                    "chartDesigner": "Natsu",
+                    "jacketDesigner": "",
+                    "rating": 8
+                },
+                {
+                    "ratingClass": 2,
+                    "chartDesigner": "Natsu",
+                    "jacketDesigner": "",
+                    "rating": 9,
+                    "ratingPlus": true
+                },
+                {
+                    "ratingClass": 4,
+                    "chartDesigner": "絶滅 the New Covenant",
+                    "jacketDesigner": "",
+                    "rating": 10,
+                    "ratingPlus": true
                 }
             ]
         }
